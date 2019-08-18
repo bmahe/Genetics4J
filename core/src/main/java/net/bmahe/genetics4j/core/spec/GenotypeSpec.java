@@ -1,0 +1,54 @@
+package net.bmahe.genetics4j.core.spec;
+
+import java.util.List;
+
+import org.apache.commons.lang3.Validate;
+import org.immutables.value.Value;
+
+import net.bmahe.genetics4j.core.Fitness;
+import net.bmahe.genetics4j.core.Termination;
+import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
+import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
+import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
+import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
+
+@Value.Immutable
+public abstract class GenotypeSpec {
+	public static final double DEFAULT_OFFSPRING_RATIO = 0.7;
+
+	public abstract List<ChromosomeSpec> chromosomeSpecs();
+
+	public abstract SelectionPolicy parentSelectionPolicy();
+
+	public abstract SelectionPolicy survivorSelectionPolicy();
+
+	public abstract CombinationPolicy combinationPolicy();
+
+	public abstract List<MutationPolicy> mutationPolicies();
+
+	public abstract Fitness fitness();
+
+	public abstract Termination termination();
+
+	@Value.Default
+	public double offspringRatio() {
+		return DEFAULT_OFFSPRING_RATIO;
+	}
+
+	@Value.Check
+	protected void check() {
+		Validate.isTrue(chromosomeSpecs().size() > 0);
+		Validate.inclusiveBetween(0.0d, 1.0d, offspringRatio());
+	}
+
+	public ChromosomeSpec getChromosomeSpec(final int index) {
+		Validate.isTrue(index >= 0);
+		Validate.isTrue(index < chromosomeSpecs().size());
+
+		return chromosomeSpecs().get(index);
+	}
+
+	public int numChromosomes() {
+		return chromosomeSpecs().size();
+	}
+}
