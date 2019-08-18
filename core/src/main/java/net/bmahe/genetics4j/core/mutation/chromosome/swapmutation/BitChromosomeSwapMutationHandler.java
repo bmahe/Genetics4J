@@ -11,7 +11,6 @@ import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
 import net.bmahe.genetics4j.core.spec.chromosome.BitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
-import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
 
 public class BitChromosomeSwapMutationHandler implements ChromosomeMutationHandler<BitChromosome> {
@@ -36,7 +35,7 @@ public class BitChromosomeSwapMutationHandler implements ChromosomeMutationHandl
 	public BitChromosome mutate(final MutationPolicy mutationPolicy, final Chromosome chromosome) {
 		Validate.notNull(mutationPolicy);
 		Validate.notNull(chromosome);
-		Validate.isInstanceOf(RandomMutation.class, mutationPolicy);
+		Validate.isInstanceOf(SwapMutation.class, mutationPolicy);
 		Validate.isInstanceOf(BitChromosome.class, chromosome);
 
 		final SwapMutation swapMutation = (SwapMutation) mutationPolicy;
