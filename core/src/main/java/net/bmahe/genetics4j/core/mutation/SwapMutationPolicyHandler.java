@@ -38,7 +38,6 @@ public class SwapMutationPolicyHandler implements MutationPolicyHandler {
 		Validate.isTrue(original.getChromosomes().length == chromosomeMutationHandlers.size());
 
 		final SwapMutation swapMutation = (SwapMutation) mutationPolicy;
-		final int numSwap = swapMutation.numSwap();
 		final double populationMutationProbability = swapMutation.populationMutationProbability();
 
 		final Chromosome[] chromosomes = original.getChromosomes();
