@@ -15,12 +15,21 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Terminations;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
+import net.bmahe.genetics4j.core.spec.ImmutableGenotypeSpec;
+import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
+import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
 public class RandomSelectionPolicyHandlerTest {
+	private final ImmutableGenotypeSpec SIMPLE_MAXIMIZING_GENOTYPE_SPEC = ImmutableGenotypeSpec.builder()
+			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3)).parentSelectionPolicy(RandomSelectionPolicy.build())
+			.survivorSelectionPolicy(RandomSelectionPolicy.build()).combinationPolicy(SinglePointCrossover.build())
+			.fitness((genoType) -> genoType.hashCode() / Double.MAX_VALUE * 10.0)
+			.termination(Terminations.ofMaxGeneration(100)).build();
 
 	@Test(expected = NullPointerException.class)
 	public void randomIsRequired() {
@@ -46,28 +55,31 @@ public class RandomSelectionPolicyHandlerTest {
 	public void selectRequirePolicy() {
 		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(new Random());
 
-		selectionPolicyHandler.select(null, 10, new Genotype[1], new double[1]);
+		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, null, 10, new Genotype[1], new double[1]);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void selectRequireNonZeroParent() {
 		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(new Random());
 
-		selectionPolicyHandler.select(RandomSelectionPolicy.build(), 0, new Genotype[1], new double[1]);
+		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, RandomSelectionPolicy.build(), 0, new Genotype[1],
+				new double[1]);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void selectRequirePositiveNumberParent() {
 		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(new Random());
 
-		selectionPolicyHandler.select(RandomSelectionPolicy.build(), -10, new Genotype[1], new double[1]);
+		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, RandomSelectionPolicy.build(), -10,
+				new Genotype[1], new double[1]);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void selectRequireMatchingPopulationFitnessSizes() {
 		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(new Random());
 
-		selectionPolicyHandler.select(RandomSelectionPolicy.build(), 10, new Genotype[1], new double[10]);
+		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, RandomSelectionPolicy.build(), 10, new Genotype[1],
+				new double[10]);
 	}
 
 	@Test
@@ -94,8 +106,8 @@ public class RandomSelectionPolicyHandlerTest {
 		}
 
 		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(random);
-		final List<Genotype> selected = selectionPolicyHandler.select(RandomSelectionPolicy.build(), 100, population,
-				fitnessScore);
+		final List<Genotype> selected = selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
+				RandomSelectionPolicy.build(), 100, population, fitnessScore);
 
 		assertNotNull(selected);
 		assertEquals(100, selected.size());

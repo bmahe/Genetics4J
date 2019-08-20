@@ -9,6 +9,7 @@ import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.ImmutableGenotypeSpec;
+import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.ImmutableGenotypeSpec.Builder;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableIntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.ImmutableMultiPointCrossover;
@@ -30,6 +31,7 @@ public class SimpleTest {
 				.offspringRatio(0.7d)
 				.combinationPolicy(ImmutableMultiPointCrossover.of(2))
 				.mutationPolicies(Arrays.asList(ImmutableRandomMutation.of(0.15)))
+				.optimization(Optimization.MINIMIZE)
 				.fitness((genoType) -> {
 					final IntChromosome intChromosome = genoType.getChromosome(0, IntChromosome.class);
 					double denominator = 0.0;
@@ -37,21 +39,11 @@ public class SimpleTest {
 						denominator += Math.abs(i - intChromosome.getAllele(i));
 					}
 					
-					final double intScore = 1.0d / (denominator + 1.0d);
-					return intScore;
+					return denominator;
 				})
 				.termination(
 						(generation, population, fitness) -> {
-							double sum = 0.0d;
-							for (int i = 0; i < fitness.length; i++) {
-								double score = fitness[i];
-
-								sum += score;
-							}
-
-							final double average = sum / fitness.length;
-
-							return average > 0.90 ;//|| generation > 500;
+							return Arrays.stream(fitness).min().orElseThrow() < 0.0001;
 					});
 		//@formatter:on
 		final GenotypeSpec genotypeSpec = genotypeSpecBuilder.build();

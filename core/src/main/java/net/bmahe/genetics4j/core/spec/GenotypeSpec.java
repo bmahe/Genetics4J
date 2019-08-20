@@ -15,6 +15,7 @@ import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 @Value.Immutable
 public abstract class GenotypeSpec {
 	public static final double DEFAULT_OFFSPRING_RATIO = 0.7;
+	public static final Optimization DEFAULT_OPTIMIZATION = Optimization.MAXIMZE;
 
 	public abstract List<ChromosomeSpec> chromosomeSpecs();
 
@@ -35,9 +36,14 @@ public abstract class GenotypeSpec {
 		return DEFAULT_OFFSPRING_RATIO;
 	}
 
+	@Value.Default
+	public Optimization optimization() {
+		return DEFAULT_OPTIMIZATION;
+	}
+
 	@Value.Check
 	protected void check() {
-		Validate.isTrue(chromosomeSpecs().size() > 0);
+		Validate.isTrue(chromosomeSpecs().size() > 0, "No chromosomes were specified");
 		Validate.inclusiveBetween(0.0d, 1.0d, offspringRatio());
 	}
 

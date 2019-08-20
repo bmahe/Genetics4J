@@ -7,6 +7,7 @@ import java.util.Random;
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
@@ -27,8 +28,9 @@ public class RandomSelectionPolicyHandler implements SelectionPolicyHandler {
 	}
 
 	@Override
-	public List<Genotype> select(final SelectionPolicy selectionPolicy, final int numParent, final Genotype[] population,
-			final double[] fitnessScore) {
+	public List<Genotype> select(final GenotypeSpec genotypeSpec, final SelectionPolicy selectionPolicy,
+			final int numParent, final Genotype[] population, final double[] fitnessScore) {
+		Validate.notNull(genotypeSpec);
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(RandomSelectionPolicy.class, selectionPolicy);
 		Validate.notNull(population);

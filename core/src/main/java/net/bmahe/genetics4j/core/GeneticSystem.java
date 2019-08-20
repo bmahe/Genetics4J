@@ -124,8 +124,8 @@ public class GeneticSystem {
 
 			final int parentsNeeded = (int) (populationSize * offspringRatio * 2);
 			logger.trace("Will select {} parents", parentsNeeded);
-			final List<Genotype> selectedParents = parentSelector.select(genotypeSpec.parentSelectionPolicy(),
-					parentsNeeded, population, fitnessScore);
+			final List<Genotype> selectedParents = parentSelector.select(genotypeSpec,
+					genotypeSpec.parentSelectionPolicy(), parentsNeeded, population, fitnessScore);
 			logger.trace("Selected parents: {}", selectedParents);
 
 			Genotype[] newPopulation = new Genotype[populationSize];
@@ -160,7 +160,7 @@ public class GeneticSystem {
 				populationIndex++;
 			}
 
-			final List<Genotype> survivors = survivorSelector.select(genotypeSpec.survivorSelectionPolicy(),
+			final List<Genotype> survivors = survivorSelector.select(genotypeSpec, genotypeSpec.survivorSelectionPolicy(),
 					populationSize - populationIndex, population, fitnessScore);
 			for (final Genotype genotype : survivors) {
 				newPopulation[populationIndex] = genotype;
@@ -177,6 +177,6 @@ public class GeneticSystem {
 			}
 		}
 
-		return ImmutableEvolutionResult.of(generation, population, fitnessScore);
+		return ImmutableEvolutionResult.of(genotypeSpec, generation, population, fitnessScore);
 	}
 }
