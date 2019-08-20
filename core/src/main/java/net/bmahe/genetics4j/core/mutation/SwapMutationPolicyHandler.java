@@ -44,6 +44,7 @@ public class SwapMutationPolicyHandler implements MutationPolicyHandler {
 		final Chromosome[] newChromosomes = new Chromosome[chromosomes.length];
 
 		if (random.nextDouble() < populationMutationProbability) {
+
 			for (int i = 0; i < chromosomes.length; i++) {
 				final Chromosome chromosome = chromosomes[i];
 				final Chromosome mutatedChromosome = chromosomeMutationHandlers.get(i).mutate(mutationPolicy, chromosome);
