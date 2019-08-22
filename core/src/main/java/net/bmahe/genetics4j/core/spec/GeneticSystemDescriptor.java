@@ -14,6 +14,7 @@ import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryP
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.multipointcrossover.BitChromosomeMultiPointCrossover;
 import net.bmahe.genetics4j.core.combination.multipointcrossover.IntChromosomeMultiPointCrossover;
+import net.bmahe.genetics4j.core.combination.ordercrossover.IntChromosomeOrderCrossover;
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.BitChromosomeSinglePointCrossover;
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.IntChromosomeSinglePointCrossover;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
@@ -38,7 +39,7 @@ public abstract class GeneticSystemDescriptor {
 	public List<ChromosomeCombinator> chromosomeCombinators() {
 		return Arrays.asList(new BitChromosomeSinglePointCrossover(random()),
 				new IntChromosomeSinglePointCrossover(random()), new BitChromosomeMultiPointCrossover(random()),
-				new IntChromosomeMultiPointCrossover(random()));
+				new IntChromosomeMultiPointCrossover(random()), new IntChromosomeOrderCrossover(random()));
 	}
 
 	@Value.Default
