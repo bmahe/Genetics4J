@@ -121,7 +121,6 @@ public class GeneticSystemFactory {
 
 		return new GeneticSystem(genotypeSpec, fitness, populationSize, chromosomeCombinators,
 				genotypeSpec.offspringRatio(), parentSelectionPolicyHandler, survivorSelectionPolicyHandler,
-				mutationPolicyHandlers, chromosomeMutationHandlers, geneticSystemDescriptor.chromosomeFactoryProvider(),
-				geneticSystemDescriptor);
+				mutationPolicyHandlers, chromosomeMutationHandlers, geneticSystemDescriptor);
 	}
 }

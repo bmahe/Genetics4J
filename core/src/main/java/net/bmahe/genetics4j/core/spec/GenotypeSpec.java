@@ -1,11 +1,14 @@
 package net.bmahe.genetics4j.core.spec;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 
 import net.bmahe.genetics4j.core.Fitness;
+import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Termination;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
@@ -30,6 +33,8 @@ public abstract class GenotypeSpec {
 	public abstract Fitness fitness();
 
 	public abstract Termination termination();
+
+	public abstract Optional<Supplier<Genotype>> populationGenerator();
 
 	@Value.Default
 	public double offspringRatio() {

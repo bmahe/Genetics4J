@@ -1,6 +1,7 @@
 package net.bmahe.genetics4j.core;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.commons.lang3.Validate;
 
@@ -10,10 +11,19 @@ public class Genotype {
 
 	private final Chromosome[] chromosomes;
 
-	public Genotype(final Chromosome[] _chromosomes) {
+	public Genotype(final Chromosome... _chromosomes) {
 		Validate.notNull(_chromosomes);
 
 		this.chromosomes = _chromosomes;
+	}
+
+	public Genotype(final Collection<Chromosome> _chromosomes) {
+		Validate.notNull(_chromosomes);
+		Validate.isTrue(_chromosomes.size() > 0);
+
+		final Chromosome[] chromosomesArray = _chromosomes.toArray(new Chromosome[_chromosomes.size()]);
+
+		this.chromosomes = chromosomesArray;
 	}
 
 	public Chromosome[] getChromosomes() {

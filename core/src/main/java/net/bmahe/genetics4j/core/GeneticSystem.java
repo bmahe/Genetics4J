@@ -2,6 +2,8 @@ package net.bmahe.genetics4j.core;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +46,6 @@ public class GeneticSystem {
 			final SelectionPolicyHandler _parentSelectionPolicyHandler, final SelectionPolicyHandler _survivorSelector,
 			final List<MutationPolicyHandler> _mutationPolicyHandlers,
 			final List<List<ChromosomeMutationHandler<? extends Chromosome>>> _chromosomeMutationHandlers,
-			final ChromosomeFactoryProvider _chromosomeFactoryProvider,
 			final GeneticSystemDescriptor _geneticSystemDescriptor) {
 		Validate.notNull(_genotypeSpec);
 		Validate.notNull(_fitness);
@@ -54,7 +55,6 @@ public class GeneticSystem {
 		Validate.inclusiveBetween(0.0, 1.0, _offspringRatio);
 		Validate.notNull(_parentSelectionPolicyHandler);
 		Validate.notNull(_survivorSelector);
-		Validate.notNull(_chromosomeFactoryProvider);
 		Validate.notNull(_geneticSystemDescriptor);
 
 		this.genotypeSpec = _genotypeSpec;
@@ -65,7 +65,7 @@ public class GeneticSystem {
 		this.offspringRatio = _offspringRatio;
 		this.mutationPolicyHandlers = _mutationPolicyHandlers;
 		this.allChromosomeMutationHandlers = _chromosomeMutationHandlers;
-		this.chromosomeFactoryProvider = _chromosomeFactoryProvider;
+		this.chromosomeFactoryProvider = _geneticSystemDescriptor.chromosomeFactoryProvider();
 
 		parentSelector = _parentSelectionPolicyHandler;
 		survivorSelector = _survivorSelector;
@@ -83,25 +83,40 @@ public class GeneticSystem {
 		return fitness;
 	}
 
-	private Genotype[] generatePopulation() {
+	private Genotype[] generatePopulation(final GenotypeSpec genotypeSpec) {
+		Validate.notNull(genotypeSpec);
+
+		final Optional<Supplier<Genotype>> populationGenerator = genotypeSpec.populationGenerator();
+
 		final Genotype[] population = new Genotype[populationSize];
 
-		final int numChromosomes = genotypeSpec.numChromosomes();
-		final ChromosomeFactory<? extends Chromosome>[] chromosomeFactories = new ChromosomeFactory<?>[numChromosomes];
-		for (int i = 0; i < numChromosomes; i++) {
-			chromosomeFactories[i] = chromosomeFactoryProvider.provideChromosomeFactory(genotypeSpec.getChromosomeSpec(i));
-		}
+		// Override
+		if (populationGenerator.isPresent()) {
+			final Supplier<Genotype> populationSupplier = populationGenerator.get();
 
-		for (int i = 0; i < populationSize; i++) {
-
-			final Chromosome[] chromosomes = new Chromosome[numChromosomes];
-			for (int j = 0; j < numChromosomes; j++) {
-				chromosomes[j] = chromosomeFactories[j].generate(genotypeSpec.getChromosomeSpec(j));
+			for (int i = 0; i < populationSize; i++) {
+				population[i] = populationSupplier.get();
 			}
 
-			population[i] = new Genotype(chromosomes);
-		}
+		} else {
 
+			final int numChromosomes = genotypeSpec.numChromosomes();
+			final ChromosomeFactory<? extends Chromosome>[] chromosomeFactories = new ChromosomeFactory<?>[numChromosomes];
+			for (int i = 0; i < numChromosomes; i++) {
+				chromosomeFactories[i] = chromosomeFactoryProvider
+						.provideChromosomeFactory(genotypeSpec.getChromosomeSpec(i));
+			}
+
+			for (int i = 0; i < populationSize; i++) {
+
+				final Chromosome[] chromosomes = new Chromosome[numChromosomes];
+				for (int j = 0; j < numChromosomes; j++) {
+					chromosomes[j] = chromosomeFactories[j].generate(genotypeSpec.getChromosomeSpec(j));
+				}
+
+				population[i] = new Genotype(chromosomes);
+			}
+		}
 		return population;
 	}
 
@@ -109,7 +124,7 @@ public class GeneticSystem {
 		final Termination termination = genotypeSpec.termination();
 
 		long generation = 0;
-		Genotype[] population = generatePopulation();
+		Genotype[] population = generatePopulation(genotypeSpec);
 
 		double[] fitnessScore = new double[populationSize];
 		for (int i = 0; i < populationSize; i++) {
