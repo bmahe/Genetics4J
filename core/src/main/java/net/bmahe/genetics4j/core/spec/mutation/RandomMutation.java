@@ -13,4 +13,16 @@ public abstract class RandomMutation implements MutationPolicy {
 	protected void check() {
 		Validate.inclusiveBetween(0.0, 1.0, populationMutationProbability());
 	}
+
+	/**
+	 * Construct a new immutable {@code RandomMutation} instance.
+	 *
+	 * @param populationMutationProbability The value for the
+	 *                                      {@code populationMutationProbability}
+	 *                                      attribute
+	 * @return An immutable RandomMutation instance
+	 */
+	public static RandomMutation of(final double populationMutationProbability) {
+		return ImmutableRandomMutation.of(populationMutationProbability);
+	}
 }

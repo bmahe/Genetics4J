@@ -7,13 +7,12 @@ import net.bmahe.genetics4j.core.GeneticSystemFactory;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder;
 import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.ImmutableGenotypeSpec;
 import net.bmahe.genetics4j.core.spec.Optimization;
-import net.bmahe.genetics4j.core.spec.ImmutableGenotypeSpec.Builder;
-import net.bmahe.genetics4j.core.spec.chromosome.ImmutableIntChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.combination.ImmutableMultiPointCrossover;
-import net.bmahe.genetics4j.core.spec.mutation.ImmutableRandomMutation;
+import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
+import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
+import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
@@ -23,14 +22,14 @@ public class SimpleTest {
 		System.out.println("XXXXXXXXXXXX");
 
 		//@formatter:off
-		final Builder genotypeSpecBuilder = ImmutableGenotypeSpec.builder();
+		final Builder genotypeSpecBuilder = new GenotypeSpec.Builder();
 		genotypeSpecBuilder
-				.chromosomeSpecs(Arrays.asList(ImmutableIntChromosomeSpec.of(10, 0, 10)))
+				.chromosomeSpecs(IntChromosomeSpec.of(10, 0, 10))
 				.parentSelectionPolicy(RouletteWheelSelection.build())
 				.survivorSelectionPolicy(TournamentSelection.build(30))
 				.offspringRatio(0.7d)
-				.combinationPolicy(ImmutableMultiPointCrossover.of(2))
-				.mutationPolicies(Arrays.asList(ImmutableRandomMutation.of(0.15)))
+				.combinationPolicy(MultiPointCrossover.of(2))
+				.mutationPolicies(RandomMutation.of(0.15))
 				.optimization(Optimization.MINIMIZE)
 				.fitness((genoType) -> {
 					final IntChromosome intChromosome = genoType.getChromosome(0, IntChromosome.class);
