@@ -1,5 +1,6 @@
 package net.bmahe.genetics4j.core.spec;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -61,5 +62,16 @@ public abstract class GenotypeSpec {
 
 	public int numChromosomes() {
 		return chromosomeSpecs().size();
+	}
+
+	public static class Builder extends ImmutableGenotypeSpec.Builder {
+
+		public final GenotypeSpec.Builder chromosomeSpecs(final ChromosomeSpec... elements) {
+			return this.chromosomeSpecs(Arrays.asList(elements));
+		}
+
+		public final GenotypeSpec.Builder mutationPolicies(final MutationPolicy... elements) {
+			return this.mutationPolicies(Arrays.asList(elements));
+		}
 	}
 }

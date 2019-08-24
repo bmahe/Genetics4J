@@ -18,14 +18,14 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Terminations;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
-import net.bmahe.genetics4j.core.spec.ImmutableGenotypeSpec;
+import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
 public class RandomSelectionPolicyHandlerTest {
-	private final ImmutableGenotypeSpec SIMPLE_MAXIMIZING_GENOTYPE_SPEC = ImmutableGenotypeSpec.builder()
+	private final GenotypeSpec SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3)).parentSelectionPolicy(RandomSelectionPolicy.build())
 			.survivorSelectionPolicy(RandomSelectionPolicy.build()).combinationPolicy(SinglePointCrossover.build())
 			.fitness((genoType) -> genoType.hashCode() / Double.MAX_VALUE * 10.0)

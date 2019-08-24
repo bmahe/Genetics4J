@@ -17,4 +17,18 @@ public abstract class SwapMutation implements MutationPolicy {
 		Validate.inclusiveBetween(0.0, 1.0, populationMutationProbability());
 		Validate.isTrue(numSwap() > 0);
 	}
+
+	/**
+	 * Construct a new immutable {@code SwapMutation} instance.
+	 * 
+	 * @param populationMutationProbability The value for the
+	 *                                      {@code populationMutationProbability}
+	 *                                      attribute
+	 * @param numSwap                       The value for the {@code numSwap}
+	 *                                      attribute
+	 * @return An immutable SwapMutation instance
+	 */
+	public static SwapMutation of(double populationMutationProbability, int numSwap) {
+		return ImmutableSwapMutation.of(populationMutationProbability, numSwap);
+	}
 }

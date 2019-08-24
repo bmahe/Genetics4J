@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.samples;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -13,27 +13,16 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder;
 import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.ImmutableGenotypeSpec;
-import net.bmahe.genetics4j.core.spec.ImmutableGenotypeSpec.Builder;
 import net.bmahe.genetics4j.core.spec.Optimization;
-import net.bmahe.genetics4j.core.spec.chromosome.ImmutableIntChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.combination.ImmutableOrderCrossover;
-import net.bmahe.genetics4j.core.spec.mutation.ImmutableSwapMutation;
+import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
+import net.bmahe.genetics4j.core.spec.combination.OrderCrossover;
+import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
 public class TSVExample {
-
-	public static class Position {
-		public final int x;
-		public final int y;
-
-		public Position(final int _x, final int _y) {
-			this.x = _x;
-			this.y = _y;
-		}
-	}
 
 	public static double distance(final Position pos1, final Position pos2) {
 		final double xs = (pos2.x - pos1.x) * (pos2.x - pos1.x);
@@ -43,24 +32,31 @@ public class TSVExample {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("XXXXXXXXXXXX");
+		System.out.println("XXXXXXXXXXXX " + Arrays.deepToString(args));
+
+		final TSPLIBParser tsplibParser = new TSPLIBParser();
+		TSPLIBProblem tsplibProblem = null;
+		try {
+			tsplibProblem = tsplibParser.parse(args[0]);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 
 		final Random random = new Random();
 
-		final int numCities = 200;
-		final List<Position> cities = new ArrayList<TSVExample.Position>();
-		for (int i = 0; i < numCities; i++) {
-			cities.add(new Position(random.nextInt(10000), random.nextInt(10000)));
-		}
+		final List<Position> cities = tsplibProblem.cities;
+		final int numCities = cities.size();
+
 		//@formatter:off
-		final Builder genotypeSpecBuilder = ImmutableGenotypeSpec.builder();
+		final Builder genotypeSpecBuilder = new GenotypeSpec.Builder();
 		genotypeSpecBuilder
-				.chromosomeSpecs(Arrays.asList(ImmutableIntChromosomeSpec.of(numCities, 0, numCities)))
+				.chromosomeSpecs(IntChromosomeSpec.of(numCities, 0, numCities))
 				.parentSelectionPolicy(RouletteWheelSelection.build())
-				.survivorSelectionPolicy(TournamentSelection.build(30))
+				.survivorSelectionPolicy(TournamentSelection.build(15))
 				.offspringRatio(0.7d)
-				.combinationPolicy(ImmutableOrderCrossover.builder().build())
-				.mutationPolicies(Arrays.asList(ImmutableSwapMutation.of(0.10, 1)))
+				.combinationPolicy(OrderCrossover.build())
+				.mutationPolicies(SwapMutation.of(0.15, 1))
 				.optimization(Optimization.MINIMIZE)
 				.fitness((genoType) -> {
 					final IntChromosome intChromosome = genoType.getChromosome(0, IntChromosome.class);
@@ -78,7 +74,7 @@ public class TSVExample {
 					
 					return cost;
 				})
-				.termination(Terminations.ofMaxGeneration(100_000))
+				.termination(Terminations.ofMaxGeneration(200_000))
 				.populationGenerator(() -> {
 					final int[] values = random.ints(0, numCities).distinct()
 							.limit(numCities).toArray();
@@ -91,7 +87,7 @@ public class TSVExample {
 
 		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
 				.builder();
-		geneticSystemDescriptorBuilder.populationSize(200);
+		geneticSystemDescriptorBuilder.populationSize(500);
 
 		final ImmutableGeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 
