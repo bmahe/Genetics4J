@@ -29,8 +29,6 @@ public class GeneticSystem {
 	private final GeneticSystemDescriptor geneticSystemDescriptor;
 	private final int populationSize;
 
-	private final Fitness fitness;
-
 	private final List<ChromosomeCombinator> chromosomeCombinators;
 	private final List<MutationPolicyHandler> mutationPolicyHandlers;
 	private final List<List<ChromosomeMutationHandler<? extends Chromosome>>> allChromosomeMutationHandlers;
@@ -41,14 +39,13 @@ public class GeneticSystem {
 	private SelectionPolicyHandler parentSelector;
 	private SelectionPolicyHandler survivorSelector;
 
-	public GeneticSystem(final GenotypeSpec _genotypeSpec, final Fitness _fitness, final long _populationSize,
+	public GeneticSystem(final GenotypeSpec _genotypeSpec, final long _populationSize,
 			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
 			final SelectionPolicyHandler _parentSelectionPolicyHandler, final SelectionPolicyHandler _survivorSelector,
 			final List<MutationPolicyHandler> _mutationPolicyHandlers,
 			final List<List<ChromosomeMutationHandler<? extends Chromosome>>> _chromosomeMutationHandlers,
 			final GeneticSystemDescriptor _geneticSystemDescriptor) {
 		Validate.notNull(_genotypeSpec);
-		Validate.notNull(_fitness);
 		Validate.isTrue(_populationSize > 0);
 		Validate.notNull(_chromosomeCombinators);
 		Validate.isTrue(_chromosomeCombinators.size() == _genotypeSpec.numChromosomes());
@@ -59,7 +56,6 @@ public class GeneticSystem {
 
 		this.genotypeSpec = _genotypeSpec;
 		this.geneticSystemDescriptor = _geneticSystemDescriptor;
-		this.fitness = _fitness;
 		this.populationSize = (int) _populationSize;
 		this.chromosomeCombinators = _chromosomeCombinators;
 		this.offspringRatio = _offspringRatio;
@@ -80,7 +76,7 @@ public class GeneticSystem {
 	}
 
 	public Fitness getFitness() {
-		return fitness;
+		return genotypeSpec.fitness();
 	}
 
 	private Genotype[] generatePopulation(final GenotypeSpec genotypeSpec) {
@@ -122,6 +118,8 @@ public class GeneticSystem {
 
 	public EvolutionResult evolve() {
 		final Termination termination = genotypeSpec.termination();
+
+		final Fitness fitness = genotypeSpec.fitness();
 
 		long generation = 0;
 		Genotype[] population = generatePopulation(genotypeSpec);

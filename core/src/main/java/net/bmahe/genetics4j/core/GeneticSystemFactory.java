@@ -116,11 +116,10 @@ public class GeneticSystemFactory {
 
 		}
 
-		final Fitness fitness = genotypeSpec.fitness();
 		final long populationSize = geneticSystemDescriptor.populationSize();
 
-		return new GeneticSystem(genotypeSpec, fitness, populationSize, chromosomeCombinators,
-				genotypeSpec.offspringRatio(), parentSelectionPolicyHandler, survivorSelectionPolicyHandler,
-				mutationPolicyHandlers, chromosomeMutationHandlers, geneticSystemDescriptor);
+		return new GeneticSystem(genotypeSpec, populationSize, chromosomeCombinators, genotypeSpec.offspringRatio(),
+				parentSelectionPolicyHandler, survivorSelectionPolicyHandler, mutationPolicyHandlers,
+				chromosomeMutationHandlers, geneticSystemDescriptor);
 	}
 }
