@@ -46,8 +46,10 @@ public class IntChromosomeMultiPointCrossover implements ChromosomeCombinator {
 		Validate.isTrue(multiPointCrossoverPolicy.numCrossovers() < chromosome1.getNumAlleles());
 		Validate.isTrue(multiPointCrossoverPolicy.numCrossovers() < chromosome2.getNumAlleles());
 
-		final int[] alleleSplits = random.ints(0, chromosome1.getNumAlleles()).distinct()
-				.limit(multiPointCrossoverPolicy.numCrossovers()).toArray();
+		final int[] alleleSplits = random.ints(0, chromosome1.getNumAlleles())
+				.distinct()
+				.limit(multiPointCrossoverPolicy.numCrossovers())
+				.toArray();
 		Arrays.sort(alleleSplits);
 
 		final IntChromosome intChromosome1 = (IntChromosome) chromosome1;

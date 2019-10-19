@@ -26,10 +26,13 @@ import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
 public class RandomSelectionPolicyHandlerTest {
 	private final GenotypeSpec SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder()
-			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3)).parentSelectionPolicy(RandomSelectionPolicy.build())
-			.survivorSelectionPolicy(RandomSelectionPolicy.build()).combinationPolicy(SinglePointCrossover.build())
+			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
+			.parentSelectionPolicy(RandomSelectionPolicy.build())
+			.survivorSelectionPolicy(RandomSelectionPolicy.build())
+			.combinationPolicy(SinglePointCrossover.build())
 			.fitness((genoType) -> genoType.hashCode() / Double.MAX_VALUE * 10.0)
-			.termination(Terminations.ofMaxGeneration(100)).build();
+			.termination(Terminations.ofMaxGeneration(100))
+			.build();
 
 	@Test(expected = NullPointerException.class)
 	public void randomIsRequired() {
@@ -90,8 +93,10 @@ public class RandomSelectionPolicyHandlerTest {
 		final int oddIndex = 3;
 
 		final Random random = mock(Random.class);
-		when(random.nextInt(anyInt())).thenReturn(2, Stream.iterate(1, i -> i + 1).limit(numRequestedSelection)
-				.map(i -> i % 2 == 0 ? evenIndex : oddIndex).toArray((s) -> new Integer[s]));
+		when(random.nextInt(anyInt())).thenReturn(2, Stream.iterate(1, i -> i + 1)
+				.limit(numRequestedSelection)
+				.map(i -> i % 2 == 0 ? evenIndex : oddIndex)
+				.toArray((s) -> new Integer[s]));
 
 		final int populationSize = 5;
 		final Genotype[] population = new Genotype[populationSize];

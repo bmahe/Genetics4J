@@ -38,7 +38,8 @@ public class IntChromosomeOrderCrossoverTest {
 		final Random random = new Random();
 		final IntChromosomeOrderCrossover intChromosomeOrderCrossover = new IntChromosomeOrderCrossover(random);
 
-		intChromosomeOrderCrossover.canHandle(ImmutableOrderCrossover.builder().build(), null);
+		intChromosomeOrderCrossover.canHandle(ImmutableOrderCrossover.builder()
+				.build(), null);
 	}
 
 	@Test
@@ -46,12 +47,12 @@ public class IntChromosomeOrderCrossoverTest {
 		final Random random = new Random();
 		final IntChromosomeOrderCrossover intChromosomeOrderCrossover = new IntChromosomeOrderCrossover(random);
 
-		assertTrue(intChromosomeOrderCrossover.canHandle(ImmutableOrderCrossover.builder().build(),
-				ImmutableIntChromosomeSpec.of(10, 0, 5)));
+		assertTrue(intChromosomeOrderCrossover.canHandle(ImmutableOrderCrossover.builder()
+				.build(), ImmutableIntChromosomeSpec.of(10, 0, 5)));
 		assertFalse(intChromosomeOrderCrossover.canHandle(SinglePointCrossover.build(),
 				ImmutableIntChromosomeSpec.of(10, 0, 5)));
-		assertFalse(intChromosomeOrderCrossover.canHandle(ImmutableOrderCrossover.builder().build(),
-				ImmutableBitChromosomeSpec.of(10)));
+		assertFalse(intChromosomeOrderCrossover.canHandle(ImmutableOrderCrossover.builder()
+				.build(), ImmutableBitChromosomeSpec.of(10)));
 	}
 
 	@Test
@@ -67,8 +68,8 @@ public class IntChromosomeOrderCrossoverTest {
 		final IntChromosome chromosome1 = new IntChromosome(5, 0, 10, new int[] { 0, 1, 2, 3, 4 });
 		final IntChromosome chromosome2 = new IntChromosome(5, 0, 10, new int[] { 4, 3, 2, 1, 0 });
 
-		final IntChromosome combinedChromosomes = intChromosomeOrderCrossover
-				.combine(ImmutableOrderCrossover.builder().build(), chromosome1, chromosome2);
+		final IntChromosome combinedChromosomes = intChromosomeOrderCrossover.combine(ImmutableOrderCrossover.builder()
+				.build(), chromosome1, chromosome2);
 		assertNotNull(combinedChromosomes);
 		assertEquals(5, combinedChromosomes.getNumAlleles());
 		assertEquals(combinedChromosomes.getSize(), combinedChromosomes.getNumAlleles());

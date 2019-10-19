@@ -50,15 +50,20 @@ public class RouletteWheelSelectionPolicyHandler implements SelectionPolicyHandl
 
 		final List<Genotype> selectedParents = new LinkedList<>();
 
-		final double minFitness = Arrays.stream(fitnessScore).min().orElseThrow();
-		final double maxFitness = Arrays.stream(fitnessScore).max().orElseThrow();
+		final double minFitness = Arrays.stream(fitnessScore)
+				.min()
+				.orElseThrow();
+		final double maxFitness = Arrays.stream(fitnessScore)
+				.max()
+				.orElseThrow();
 		final double reversedBase = minFitness + maxFitness; // Used as a base when minimizing
 
 		double sumFitness = 0.0;
 		final double[] probabilities = new double[population.length];
 
 		for (int i = 0; i < population.length; i++) {
-			if (genotypeSpec.optimization().equals(Optimization.MAXIMZE)) {
+			if (genotypeSpec.optimization()
+					.equals(Optimization.MAXIMZE)) {
 				sumFitness += fitnessScore[i];
 			} else {
 				sumFitness += reversedBase - fitnessScore[i];

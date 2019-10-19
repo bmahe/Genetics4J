@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
-
 public class IntChromosomeTest {
 
 	@Test(expected = NullPointerException.class)

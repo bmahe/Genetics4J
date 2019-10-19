@@ -21,10 +21,8 @@ public class SimpleTest {
 	public static void main(String[] args) {
 		System.out.println("XXXXXXXXXXXX");
 
-		//@formatter:off
 		final Builder genotypeSpecBuilder = new GenotypeSpec.Builder();
-		genotypeSpecBuilder
-				.chromosomeSpecs(IntChromosomeSpec.of(10, 0, 10))
+		genotypeSpecBuilder.chromosomeSpecs(IntChromosomeSpec.of(10, 0, 10))
 				.parentSelectionPolicy(RouletteWheelSelection.build())
 				.survivorSelectionPolicy(TournamentSelection.build(30))
 				.offspringRatio(0.7d)
@@ -37,14 +35,14 @@ public class SimpleTest {
 					for (int i = 0; i < intChromosome.getNumAlleles(); i++) {
 						denominator += Math.abs(i - intChromosome.getAllele(i));
 					}
-					
+
 					return denominator;
 				})
-				.termination(
-						(generation, population, fitness) -> {
-							return Arrays.stream(fitness).min().orElseThrow() < 0.0001;
-					});
-		//@formatter:on
+				.termination((generation, population, fitness) -> {
+					return Arrays.stream(fitness)
+							.min()
+							.orElseThrow() < 0.0001;
+				});
 		final GenotypeSpec genotypeSpec = genotypeSpecBuilder.build();
 
 		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor

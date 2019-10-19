@@ -1,6 +1,5 @@
 package net.bmahe.genetics4j.core.mutation;
 
-import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.Validate;
@@ -8,8 +7,11 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
+import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
+import net.bmahe.genetics4j.core.util.ChromosomeResolverUtils;
 
 public class RandomMutationPolicyHandler implements MutationPolicyHandler {
 
@@ -22,42 +24,54 @@ public class RandomMutationPolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public boolean canHandle(final MutationPolicy mutationPolicy) {
+	public boolean canHandle(final MutationPolicyHandlerResolver mutationPolicyHandlerResolver,
+			final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicy);
 
 		return mutationPolicy instanceof RandomMutation;
 	}
 
 	@Override
-	public Genotype mutate(final MutationPolicy mutationPolicy, final Genotype original,
-			final List<ChromosomeMutationHandler<? extends Chromosome>> chromosomeMutationHandlers) {
+	public Mutator createMutator(final GeneticSystemDescriptor geneticSystemDescriptor, final GenotypeSpec genotypeSpec,
+			final MutationPolicyHandlerResolver mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
+		Validate.notNull(geneticSystemDescriptor);
+		Validate.notNull(genotypeSpec);
 		Validate.notNull(mutationPolicy);
-		Validate.notNull(original);
-		Validate.notNull(chromosomeMutationHandlers);
-		Validate.isInstanceOf(RandomMutation.class, mutationPolicy);
-		Validate.isTrue(original.getChromosomes().length == chromosomeMutationHandlers.size());
+		Validate.notNull(mutationPolicyHandlerResolver);
 
 		final RandomMutation randomMutationPolicy = (RandomMutation) mutationPolicy;
 		final double populationMutationProbability = randomMutationPolicy.populationMutationProbability();
 
-		final Chromosome[] chromosomes = original.getChromosomes();
-		final Chromosome[] newChromosomes = new Chromosome[chromosomes.length];
+		@SuppressWarnings("rawtypes")
+		final ChromosomeMutationHandler[] chromosomeMutationHandlers = ChromosomeResolverUtils
+				.resolveChromosomeMutationHandlers(geneticSystemDescriptor, genotypeSpec, mutationPolicy);
 
-		if (random.nextDouble() < populationMutationProbability) {
+		return new Mutator() {
 
-			for (int i = 0; i < chromosomes.length; i++) {
-				final Chromosome chromosome = chromosomes[i];
-				final Chromosome mutatedChromosome = chromosomeMutationHandlers.get(i).mutate(mutationPolicy, chromosome);
+			@Override
+			public Genotype mutate(final Genotype original) {
+				Validate.notNull(original);
 
-				newChromosomes[i] = mutatedChromosome;
+				final Chromosome[] chromosomes = original.getChromosomes();
+				final Chromosome[] newChromosomes = new Chromosome[chromosomes.length];
+
+				if (random.nextDouble() < populationMutationProbability) {
+
+					for (int i = 0; i < chromosomes.length; i++) {
+						final Chromosome chromosome = chromosomes[i];
+						final Chromosome mutatedChromosome = chromosomeMutationHandlers[i].mutate(mutationPolicy, chromosome);
+
+						newChromosomes[i] = mutatedChromosome;
+					}
+				} else {
+					for (int i = 0; i < chromosomes.length; i++) {
+						final Chromosome chromosome = chromosomes[i];
+						newChromosomes[i] = chromosome;
+					}
+				}
+
+				return new Genotype(newChromosomes);
 			}
-		} else {
-			for (int i = 0; i < chromosomes.length; i++) {
-				final Chromosome chromosome = chromosomes[i];
-				newChromosomes[i] = chromosome;
-			}
-		}
-
-		return new Genotype(newChromosomes);
+		};
 	}
 }

@@ -4,13 +4,17 @@ import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public abstract class BitChromosomeSpec implements ChromosomeSpec{
+public abstract class BitChromosomeSpec implements ChromosomeSpec {
 
 	@Value.Parameter
 	public abstract int numBits();
-	
+
 	@Value.Check
 	protected void check() {
 		Validate.isTrue(numBits() > 0);
+	}
+
+	public static BitChromosomeSpec of(final int numBits) {
+		return ImmutableBitChromosomeSpec.of(numBits);
 	}
 }

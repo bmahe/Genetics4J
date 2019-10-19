@@ -26,7 +26,8 @@ public abstract class ChromosomeFactoryProvider {
 		final List<ChromosomeFactory<? extends Chromosome>> chromosomeFactories = chromosomeFactories();
 
 		return chromosomeFactories.stream()
-				.dropWhile((chromosomeFactory) -> chromosomeFactory.canHandle(chromosomeSpec) == false).findFirst()
+				.dropWhile((chromosomeFactory) -> chromosomeFactory.canHandle(chromosomeSpec) == false)
+				.findFirst()
 				.orElseThrow(() -> new IllegalStateException(
 						"Could not find a chromosome factory for chromosome spec: " + chromosomeSpec));
 	}

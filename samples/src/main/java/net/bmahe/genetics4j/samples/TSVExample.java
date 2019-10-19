@@ -18,6 +18,7 @@ import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.OrderCrossover;
+import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
@@ -56,7 +57,7 @@ public class TSVExample {
 				.survivorSelectionPolicy(TournamentSelection.build(15))
 				.offspringRatio(0.7d)
 				.combinationPolicy(OrderCrossover.build())
-				.mutationPolicies(SwapMutation.of(0.15, 1))
+				.mutationPolicies(MultiMutations.of(SwapMutation.of(0.15, 1)))
 				.optimization(Optimization.MINIMIZE)
 				.fitness((genoType) -> {
 					final IntChromosome intChromosome = genoType.getChromosome(0, IntChromosome.class);

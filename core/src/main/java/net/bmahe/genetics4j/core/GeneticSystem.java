@@ -13,14 +13,12 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactory;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
-import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
-import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
+import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.ImmutableEvolutionResult;
-import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
 public class GeneticSystem {
 	final static public Logger logger = LogManager.getLogger(GeneticSystem.class);
@@ -30,9 +28,9 @@ public class GeneticSystem {
 	private final int populationSize;
 
 	private final List<ChromosomeCombinator> chromosomeCombinators;
-	private final List<MutationPolicyHandler> mutationPolicyHandlers;
-	private final List<List<ChromosomeMutationHandler<? extends Chromosome>>> allChromosomeMutationHandlers;
 	private final ChromosomeFactoryProvider chromosomeFactoryProvider;
+
+	private final List<Mutator> mutators;
 
 	private final double offspringRatio;
 
@@ -42,9 +40,7 @@ public class GeneticSystem {
 	public GeneticSystem(final GenotypeSpec _genotypeSpec, final long _populationSize,
 			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
 			final SelectionPolicyHandler _parentSelectionPolicyHandler, final SelectionPolicyHandler _survivorSelector,
-			final List<MutationPolicyHandler> _mutationPolicyHandlers,
-			final List<List<ChromosomeMutationHandler<? extends Chromosome>>> _chromosomeMutationHandlers,
-			final GeneticSystemDescriptor _geneticSystemDescriptor) {
+			final List<Mutator> _mutators, final GeneticSystemDescriptor _geneticSystemDescriptor) {
 		Validate.notNull(_genotypeSpec);
 		Validate.isTrue(_populationSize > 0);
 		Validate.notNull(_chromosomeCombinators);
@@ -59,8 +55,7 @@ public class GeneticSystem {
 		this.populationSize = (int) _populationSize;
 		this.chromosomeCombinators = _chromosomeCombinators;
 		this.offspringRatio = _offspringRatio;
-		this.mutationPolicyHandlers = _mutationPolicyHandlers;
-		this.allChromosomeMutationHandlers = _chromosomeMutationHandlers;
+		this.mutators = _mutators;
 		this.chromosomeFactoryProvider = _geneticSystemDescriptor.chromosomeFactoryProvider();
 
 		parentSelector = _parentSelectionPolicyHandler;
@@ -161,14 +156,11 @@ public class GeneticSystem {
 				}
 
 				Genotype offspring = new Genotype(chromosomes);
-				for (int i = 0; i < genotypeSpec.mutationPolicies().size(); i++) {
-					final MutationPolicy mutationPolicy = genotypeSpec.mutationPolicies().get(i);
-					final MutationPolicyHandler mutationPolicyHandler = mutationPolicyHandlers.get(i);
-					final List<ChromosomeMutationHandler<? extends Chromosome>> chromosomeMutationHandlers = allChromosomeMutationHandlers
-							.get(i);
 
-					offspring = mutationPolicyHandler.mutate(mutationPolicy, offspring, chromosomeMutationHandlers);
+				for (final Mutator mutator : mutators) {
+					offspring = mutator.mutate(offspring);
 				}
+
 				newPopulation[populationIndex] = offspring;
 				populationIndex++;
 			}

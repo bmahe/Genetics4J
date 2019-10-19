@@ -28,10 +28,13 @@ import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 public class TournamentSelectionPolicyHandlerTest {
 
 	private final GenotypeSpec SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder()
-			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3)).parentSelectionPolicy(RandomSelectionPolicy.build())
-			.survivorSelectionPolicy(RandomSelectionPolicy.build()).combinationPolicy(SinglePointCrossover.build())
+			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
+			.parentSelectionPolicy(RandomSelectionPolicy.build())
+			.survivorSelectionPolicy(RandomSelectionPolicy.build())
+			.combinationPolicy(SinglePointCrossover.build())
 			.fitness((genoType) -> genoType.hashCode() / Double.MAX_VALUE * 10.0)
-			.termination(Terminations.ofMaxGeneration(100)).build();
+			.termination(Terminations.ofMaxGeneration(100))
+			.build();
 
 	@Test(expected = NullPointerException.class)
 	public void randomIsRequired() {
@@ -140,7 +143,8 @@ public class TournamentSelectionPolicyHandlerTest {
 		}
 
 		final GenotypeSpec genotypeSpec = new GenotypeSpec.Builder().from(SIMPLE_MAXIMIZING_GENOTYPE_SPEC)
-				.optimization(Optimization.MINIMIZE).build();
+				.optimization(Optimization.MINIMIZE)
+				.build();
 
 		final TournamentSelectionPolicyHandler selectionPolicyHandler = new TournamentSelectionPolicyHandler(random);
 		final List<Genotype> selected = selectionPolicyHandler.select(genotypeSpec, TournamentSelection.build(2), 2,

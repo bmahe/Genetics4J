@@ -17,6 +17,7 @@ import net.bmahe.genetics4j.core.combination.multipointcrossover.IntChromosomeMu
 import net.bmahe.genetics4j.core.combination.ordercrossover.IntChromosomeOrderCrossover;
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.BitChromosomeSinglePointCrossover;
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.IntChromosomeSinglePointCrossover;
+import net.bmahe.genetics4j.core.mutation.MultiMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.RandomMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.SwapMutationPolicyHandler;
@@ -50,7 +51,8 @@ public abstract class GeneticSystemDescriptor {
 
 	@Value.Default
 	public List<MutationPolicyHandler> mutationPolicyHandlers() {
-		return Arrays.asList(new RandomMutationPolicyHandler(random()), new SwapMutationPolicyHandler(random()));
+		return Arrays.asList(new RandomMutationPolicyHandler(random()), new SwapMutationPolicyHandler(random()),
+				new MultiMutationPolicyHandler(random()));
 	}
 
 	@Value.Default
@@ -72,7 +74,9 @@ public abstract class GeneticSystemDescriptor {
 
 	@Value.Default
 	public ChromosomeFactoryProvider chromosomeFactoryProvider() {
-		return ImmutableChromosomeFactoryProvider.builder().random(random()).build();
+		return ImmutableChromosomeFactoryProvider.builder()
+				.random(random())
+				.build();
 	}
 
 	@Value.Default
