@@ -17,7 +17,7 @@ import net.bmahe.genetics4j.core.combination.multipointcrossover.IntChromosomeMu
 import net.bmahe.genetics4j.core.combination.ordercrossover.IntChromosomeOrderCrossover;
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.BitChromosomeSinglePointCrossover;
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.IntChromosomeSinglePointCrossover;
-import net.bmahe.genetics4j.core.mutation.MultiMutationPolicyHandler;
+import net.bmahe.genetics4j.core.mutation.MultiMutationsPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.RandomMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.SwapMutationPolicyHandler;
@@ -26,6 +26,7 @@ import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.BitChromosom
 import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.IntChromosomeRandomMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.BitChromosomeSwapMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.IntChromosomeSwapMutationHandler;
+import net.bmahe.genetics4j.core.selection.MultiSelectionsPolicyHandler;
 import net.bmahe.genetics4j.core.selection.RandomSelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.RouletteWheelSelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
@@ -46,13 +47,14 @@ public abstract class GeneticSystemDescriptor {
 	@Value.Default
 	public List<SelectionPolicyHandler> selectionPolicyHandlers() {
 		return Arrays.asList(new RandomSelectionPolicyHandler(random()),
-				new RouletteWheelSelectionPolicyHandler(random()), new TournamentSelectionPolicyHandler(random()));
+				new RouletteWheelSelectionPolicyHandler(random()), new TournamentSelectionPolicyHandler(random()),
+				new MultiSelectionsPolicyHandler(random()));
 	}
 
 	@Value.Default
 	public List<MutationPolicyHandler> mutationPolicyHandlers() {
 		return Arrays.asList(new RandomMutationPolicyHandler(random()), new SwapMutationPolicyHandler(random()),
-				new MultiMutationPolicyHandler(random()));
+				new MultiMutationsPolicyHandler(random()));
 	}
 
 	@Value.Default

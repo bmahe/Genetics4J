@@ -18,6 +18,7 @@ import net.bmahe.genetics4j.core.Terminations;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
@@ -59,41 +60,6 @@ public class TournamentSelectionPolicyHandlerTest {
 		assertFalse(selectionPolicyHandler.canHandle(RouletteWheelSelection.build()));
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void selectRequirePolicy() {
-		final TournamentSelectionPolicyHandler selectionPolicyHandler = new TournamentSelectionPolicyHandler(
-				new Random());
-
-		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, null, 10, new Genotype[1], new double[1]);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void selectRequireNonZeroParent() {
-		final TournamentSelectionPolicyHandler selectionPolicyHandler = new TournamentSelectionPolicyHandler(
-				new Random());
-
-		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, TournamentSelection.build(2), 0, new Genotype[1],
-				new double[1]);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void selectRequirePositiveNumberParent() {
-		final TournamentSelectionPolicyHandler selectionPolicyHandler = new TournamentSelectionPolicyHandler(
-				new Random());
-
-		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, TournamentSelection.build(2), -10, new Genotype[1],
-				new double[1]);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void selectRequireMatchingPopulationFitnessSizes() {
-		final TournamentSelectionPolicyHandler selectionPolicyHandler = new TournamentSelectionPolicyHandler(
-				new Random());
-
-		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, TournamentSelection.build(2), 10, new Genotype[1],
-				new double[10]);
-	}
-
 	@Test
 	public void selectMaximize() {
 
@@ -113,9 +79,18 @@ public class TournamentSelectionPolicyHandlerTest {
 			fitnessScore[i] = i * 10;
 		}
 
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
+				.builder();
+		geneticSystemDescriptorBuilder.populationSize(100);
+
+		final ImmutableGeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final SelectionPolicyHandlerResolver selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver(
+				geneticSystemDescriptor);
+
 		final TournamentSelectionPolicyHandler selectionPolicyHandler = new TournamentSelectionPolicyHandler(random);
-		final List<Genotype> selected = selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
-				TournamentSelection.build(2), 2, population, fitnessScore);
+		final Selector selector = selectionPolicyHandler.resolve(geneticSystemDescriptor, SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
+				selectionPolicyHandlerResolver, TournamentSelection.build(2));
+		final List<Genotype> selected = selector.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, 2, population, fitnessScore);
 
 		assertNotNull(selected);
 		assertEquals(2, selected.size());
@@ -142,13 +117,22 @@ public class TournamentSelectionPolicyHandlerTest {
 			fitnessScore[i] = i * 10;
 		}
 
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
+				.builder();
+		geneticSystemDescriptorBuilder.populationSize(100);
+
+		final ImmutableGeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final SelectionPolicyHandlerResolver selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver(
+				geneticSystemDescriptor);
+
 		final GenotypeSpec genotypeSpec = new GenotypeSpec.Builder().from(SIMPLE_MAXIMIZING_GENOTYPE_SPEC)
 				.optimization(Optimization.MINIMIZE)
 				.build();
 
 		final TournamentSelectionPolicyHandler selectionPolicyHandler = new TournamentSelectionPolicyHandler(random);
-		final List<Genotype> selected = selectionPolicyHandler.select(genotypeSpec, TournamentSelection.build(2), 2,
-				population, fitnessScore);
+		final Selector selector = selectionPolicyHandler.resolve(geneticSystemDescriptor, SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
+				selectionPolicyHandlerResolver, TournamentSelection.build(2));
+		final List<Genotype> selected = selector.select(genotypeSpec, 2, population, fitnessScore);
 
 		assertNotNull(selected);
 		assertEquals(2, selected.size());

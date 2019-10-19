@@ -19,6 +19,7 @@ import net.bmahe.genetics4j.core.Terminations;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
@@ -54,37 +55,6 @@ public class RandomSelectionPolicyHandlerTest {
 		assertFalse(selectionPolicyHandler.canHandle(TournamentSelection.build(2)));
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void selectRequirePolicy() {
-		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(new Random());
-
-		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, null, 10, new Genotype[1], new double[1]);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void selectRequireNonZeroParent() {
-		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(new Random());
-
-		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, RandomSelectionPolicy.build(), 0, new Genotype[1],
-				new double[1]);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void selectRequirePositiveNumberParent() {
-		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(new Random());
-
-		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, RandomSelectionPolicy.build(), -10,
-				new Genotype[1], new double[1]);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void selectRequireMatchingPopulationFitnessSizes() {
-		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(new Random());
-
-		selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, RandomSelectionPolicy.build(), 10, new Genotype[1],
-				new double[10]);
-	}
-
 	@Test
 	public void select() {
 
@@ -101,7 +71,6 @@ public class RandomSelectionPolicyHandlerTest {
 		final int populationSize = 5;
 		final Genotype[] population = new Genotype[populationSize];
 		final double[] fitnessScore = new double[populationSize];
-
 		for (int i = 0; i < populationSize; i++) {
 			final IntChromosome intChromosome = new IntChromosome(4, 0, 10, new int[] { i, i + 1, i + 2, i + 3 });
 			final Genotype genotype = new Genotype(new Chromosome[] { intChromosome });
@@ -110,9 +79,18 @@ public class RandomSelectionPolicyHandlerTest {
 			fitnessScore[i] = i;
 		}
 
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
+				.builder();
+		geneticSystemDescriptorBuilder.populationSize(100);
+
+		final ImmutableGeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final SelectionPolicyHandlerResolver selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver(
+				geneticSystemDescriptor);
+
 		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(random);
-		final List<Genotype> selected = selectionPolicyHandler.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
-				RandomSelectionPolicy.build(), 100, population, fitnessScore);
+		final Selector selector = selectionPolicyHandler.resolve(geneticSystemDescriptor, SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
+				selectionPolicyHandlerResolver, RandomSelectionPolicy.build());
+		final List<Genotype> selected = selector.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, 100, population, fitnessScore);
 
 		assertNotNull(selected);
 		assertEquals(100, selected.size());
@@ -121,4 +99,5 @@ public class RandomSelectionPolicyHandlerTest {
 			assertEquals(population[expectedIndex], selected.get(i));
 		}
 	}
+
 }

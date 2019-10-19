@@ -8,6 +8,7 @@ import java.util.Random;
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
@@ -30,58 +31,66 @@ public class RouletteWheelSelectionPolicyHandler implements SelectionPolicyHandl
 	}
 
 	@Override
-	public List<Genotype> select(final GenotypeSpec genotypeSpec, final SelectionPolicy selectionPolicy,
-			final int numParent, final Genotype[] population, final double[] fitnessScore) {
-		Validate.notNull(genotypeSpec);
+	public Selector resolve(GeneticSystemDescriptor geneticSystemDescriptor, GenotypeSpec genotypeSpec,
+			SelectionPolicyHandlerResolver selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(RouletteWheelSelection.class, selectionPolicy);
-		Validate.notNull(population);
-		Validate.notNull(fitnessScore);
-		Validate.isTrue(numParent > 0);
-		Validate.isTrue(population.length == fitnessScore.length);
 
-		switch (genotypeSpec.optimization()) {
-			case MAXIMZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec.optimization());
-		}
+		return new Selector() {
 
-		final List<Genotype> selectedParents = new LinkedList<>();
+			@Override
+			public List<Genotype> select(GenotypeSpec genotypeSpec, int numIndividuals, Genotype[] population,
+					double[] fitnessScore) {
+				Validate.notNull(genotypeSpec);
+				Validate.notNull(population);
+				Validate.notNull(fitnessScore);
+				Validate.isTrue(numIndividuals > 0);
+				Validate.isTrue(population.length == fitnessScore.length);
 
-		final double minFitness = Arrays.stream(fitnessScore)
-				.min()
-				.orElseThrow();
-		final double maxFitness = Arrays.stream(fitnessScore)
-				.max()
-				.orElseThrow();
-		final double reversedBase = minFitness + maxFitness; // Used as a base when minimizing
+				switch (genotypeSpec.optimization()) {
+					case MAXIMZE:
+					case MINIMIZE:
+						break;
+					default:
+						throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec.optimization());
+				}
 
-		double sumFitness = 0.0;
-		final double[] probabilities = new double[population.length];
+				final List<Genotype> selectedParents = new LinkedList<>();
 
-		for (int i = 0; i < population.length; i++) {
-			if (genotypeSpec.optimization()
-					.equals(Optimization.MAXIMZE)) {
-				sumFitness += fitnessScore[i];
-			} else {
-				sumFitness += reversedBase - fitnessScore[i];
+				final double minFitness = Arrays.stream(fitnessScore)
+						.min()
+						.orElseThrow();
+				final double maxFitness = Arrays.stream(fitnessScore)
+						.max()
+						.orElseThrow();
+				final double reversedBase = minFitness + maxFitness; // Used as a base when minimizing
+
+				double sumFitness = 0.0;
+				final double[] probabilities = new double[population.length];
+
+				for (int i = 0; i < population.length; i++) {
+					if (genotypeSpec.optimization()
+							.equals(Optimization.MAXIMZE)) {
+						sumFitness += fitnessScore[i];
+					} else {
+						sumFitness += reversedBase - fitnessScore[i];
+					}
+					probabilities[i] = sumFitness;
+				}
+
+				for (int i = 0; i < numIndividuals; i++) {
+					final double targetScore = random.nextDouble() * sumFitness;
+
+					int index = 0;
+					while (probabilities[index] < targetScore) {
+						index++;
+					}
+
+					selectedParents.add(population[index]);
+				}
+
+				return selectedParents;
 			}
-			probabilities[i] = sumFitness;
-		}
-
-		for (int i = 0; i < numParent; i++) {
-			final double targetScore = random.nextDouble() * sumFitness;
-
-			int index = 0;
-			while (probabilities[index] < targetScore) {
-				index++;
-			}
-
-			selectedParents.add(population[index]);
-		}
-
-		return selectedParents;
+		};
 	}
 }

@@ -20,6 +20,7 @@ import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.OrderCrossover;
 import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
+import net.bmahe.genetics4j.core.spec.selection.MultiSelections;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
@@ -53,8 +54,8 @@ public class TSVExample {
 		final Builder genotypeSpecBuilder = new GenotypeSpec.Builder();
 		genotypeSpecBuilder
 				.chromosomeSpecs(IntChromosomeSpec.of(numCities, 0, numCities))
-				.parentSelectionPolicy(RouletteWheelSelection.build())
-				.survivorSelectionPolicy(TournamentSelection.build(15))
+				.parentSelectionPolicy(MultiSelections.of(RouletteWheelSelection.build(), TournamentSelection.build(15)))
+				.survivorSelectionPolicy(MultiSelections.of(RouletteWheelSelection.build(), TournamentSelection.build(15)))
 				.offspringRatio(0.7d)
 				.combinationPolicy(OrderCrossover.build())
 				.mutationPolicies(MultiMutations.of(SwapMutation.of(0.15, 1)))

@@ -12,11 +12,11 @@ import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
-public class MultiMutationPolicyHandler implements MutationPolicyHandler {
+public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
 
 	private final Random random;
 
-	public MultiMutationPolicyHandler(final Random _random) {
+	public MultiMutationsPolicyHandler(final Random _random) {
 		Validate.notNull(_random);
 
 		this.random = _random;

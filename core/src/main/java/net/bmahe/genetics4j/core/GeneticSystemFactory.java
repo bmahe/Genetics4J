@@ -11,28 +11,15 @@ import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
+import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
+import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
-import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
 public class GeneticSystemFactory {
-
-	private SelectionPolicyHandler findMatchingSelectionPolicyHandler(
-			final GeneticSystemDescriptor geneticSystemDescriptor, final SelectionPolicy selectionPolicy) {
-		Validate.notNull(geneticSystemDescriptor);
-		Validate.notNull(selectionPolicy);
-
-		final List<SelectionPolicyHandler> selectionPolicyHandlers = geneticSystemDescriptor.selectionPolicyHandlers();
-
-		return selectionPolicyHandlers.stream()
-				.dropWhile((sph) -> sph.canHandle(selectionPolicy) == false)
-				.findFirst()
-				.orElseThrow(() -> new IllegalStateException(
-						"Could not find suitable selection policy handler for policy: " + selectionPolicy));
-	}
 
 	private ChromosomeCombinator findMatchingChromosomeCombinatorHandler(
 			final GeneticSystemDescriptor geneticSystemDescriptor, final CombinationPolicy combinationPolicy,
@@ -56,14 +43,19 @@ public class GeneticSystemFactory {
 		Validate.notNull(genotypeSpec);
 		Validate.notNull(geneticSystemDescriptor);
 
-		// TODO move to a SelectionPolicyHandlerResolver
-		final SelectionPolicyHandler parentSelectionPolicyHandler = findMatchingSelectionPolicyHandler(
-				geneticSystemDescriptor, genotypeSpec.parentSelectionPolicy());
+		final SelectionPolicyHandlerResolver selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver(
+				geneticSystemDescriptor);
 
-		final SelectionPolicyHandler survivorSelectionPolicyHandler = findMatchingSelectionPolicyHandler(
-				geneticSystemDescriptor, genotypeSpec.survivorSelectionPolicy());
+		final SelectionPolicyHandler parentSelectionPolicyHandler = selectionPolicyHandlerResolver
+				.resolve(genotypeSpec.parentSelectionPolicy());
+		final Selector parentSelector = parentSelectionPolicyHandler.resolve(geneticSystemDescriptor, genotypeSpec,
+				selectionPolicyHandlerResolver, genotypeSpec.parentSelectionPolicy());
 
-		// TODO move to a MutationPolicyHandlerResolver
+		final SelectionPolicyHandler survivorSelectionPolicyHandler = selectionPolicyHandlerResolver
+				.resolve(genotypeSpec.survivorSelectionPolicy());
+		final Selector survivorSelector = survivorSelectionPolicyHandler.resolve(geneticSystemDescriptor, genotypeSpec,
+				selectionPolicyHandlerResolver, genotypeSpec.survivorSelectionPolicy());
+
 		final MutationPolicyHandlerResolver mutationPolicyHandlerResolver = new MutationPolicyHandlerResolver(
 				geneticSystemDescriptor);
 
@@ -93,6 +85,6 @@ public class GeneticSystemFactory {
 		final long populationSize = geneticSystemDescriptor.populationSize();
 
 		return new GeneticSystem(genotypeSpec, populationSize, chromosomeCombinators, genotypeSpec.offspringRatio(),
-				parentSelectionPolicyHandler, survivorSelectionPolicyHandler, mutators, geneticSystemDescriptor);
+				parentSelector, survivorSelector, mutators, geneticSystemDescriptor);
 	}
 }

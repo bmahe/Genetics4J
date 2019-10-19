@@ -14,7 +14,7 @@ import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactory;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.mutation.Mutator;
-import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
+import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
@@ -34,13 +34,13 @@ public class GeneticSystem {
 
 	private final double offspringRatio;
 
-	private SelectionPolicyHandler parentSelector;
-	private SelectionPolicyHandler survivorSelector;
+	private Selector parentSelector;
+	private Selector survivorSelector;
 
 	public GeneticSystem(final GenotypeSpec _genotypeSpec, final long _populationSize,
 			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
-			final SelectionPolicyHandler _parentSelectionPolicyHandler, final SelectionPolicyHandler _survivorSelector,
-			final List<Mutator> _mutators, final GeneticSystemDescriptor _geneticSystemDescriptor) {
+			final Selector _parentSelectionPolicyHandler, final Selector _survivorSelector, final List<Mutator> _mutators,
+			final GeneticSystemDescriptor _geneticSystemDescriptor) {
 		Validate.notNull(_genotypeSpec);
 		Validate.isTrue(_populationSize > 0);
 		Validate.notNull(_chromosomeCombinators);
@@ -132,8 +132,8 @@ public class GeneticSystem {
 
 			final int parentsNeeded = (int) (populationSize * offspringRatio * 2);
 			logger.trace("Will select {} parents", parentsNeeded);
-			final List<Genotype> selectedParents = parentSelector.select(genotypeSpec,
-					genotypeSpec.parentSelectionPolicy(), parentsNeeded, population, fitnessScore);
+			final List<Genotype> selectedParents = parentSelector.select(genotypeSpec, parentsNeeded, population,
+					fitnessScore);
 			logger.trace("Selected parents: {}", selectedParents);
 
 			Genotype[] newPopulation = new Genotype[populationSize];
@@ -165,8 +165,8 @@ public class GeneticSystem {
 				populationIndex++;
 			}
 
-			final List<Genotype> survivors = survivorSelector.select(genotypeSpec, genotypeSpec.survivorSelectionPolicy(),
-					populationSize - populationIndex, population, fitnessScore);
+			final List<Genotype> survivors = survivorSelector.select(genotypeSpec, populationSize - populationIndex,
+					population, fitnessScore);
 			for (final Genotype genotype : survivors) {
 				newPopulation[populationIndex] = genotype;
 				populationIndex++;
