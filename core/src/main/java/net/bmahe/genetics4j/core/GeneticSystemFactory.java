@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
+import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorResolver;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
@@ -15,30 +16,10 @@ import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
-import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
 public class GeneticSystemFactory {
-
-	private ChromosomeCombinator findMatchingChromosomeCombinatorHandler(
-			final GeneticSystemDescriptor geneticSystemDescriptor, final CombinationPolicy combinationPolicy,
-			final ChromosomeSpec chromosome) {
-		Validate.notNull(geneticSystemDescriptor);
-		Validate.notNull(combinationPolicy);
-		Validate.notNull(chromosome);
-
-		final List<ChromosomeCombinator> chromosomeCombinators = geneticSystemDescriptor.chromosomeCombinators();
-
-		return chromosomeCombinators.stream()
-				.dropWhile((cch) -> cch.canHandle(combinationPolicy, chromosome) == false)
-				.findFirst()
-				.orElseThrow(() -> new IllegalStateException(
-						"Could not find suitable chromosome combination policy handler for policy " + combinationPolicy
-								+ " and chromosome " + chromosome));
-
-	}
-
 	public GeneticSystem from(final GenotypeSpec genotypeSpec, final GeneticSystemDescriptor geneticSystemDescriptor) {
 		Validate.notNull(genotypeSpec);
 		Validate.notNull(geneticSystemDescriptor);
@@ -59,12 +40,13 @@ public class GeneticSystemFactory {
 		final MutationPolicyHandlerResolver mutationPolicyHandlerResolver = new MutationPolicyHandlerResolver(
 				geneticSystemDescriptor);
 
-		// TODO move to a chromosome combinator resolver
+		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
+				geneticSystemDescriptor);
 		final CombinationPolicy combinationPolicy = genotypeSpec.combinationPolicy();
 		final List<ChromosomeCombinator> chromosomeCombinators = genotypeSpec.chromosomeSpecs()
 				.stream()
 				.map((chromosome) -> {
-					return findMatchingChromosomeCombinatorHandler(geneticSystemDescriptor, combinationPolicy, chromosome);
+					return chromosomeCombinatorResolver.resolve(combinationPolicy, chromosome);
 				})
 				.collect(Collectors.toList());
 

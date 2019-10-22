@@ -8,10 +8,6 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.chromosomes.BitChromosome;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
-import net.bmahe.genetics4j.core.spec.chromosome.BitChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
-import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 
 public class BitChromosomeSinglePointCrossover implements ChromosomeCombinator {
 
@@ -24,17 +20,7 @@ public class BitChromosomeSinglePointCrossover implements ChromosomeCombinator {
 	}
 
 	@Override
-	public boolean canHandle(final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
-		Validate.notNull(combinationPolicy);
-		Validate.notNull(chromosome);
-
-		return combinationPolicy instanceof SinglePointCrossover && chromosome instanceof BitChromosomeSpec;
-	}
-
-	@Override
-	public BitChromosome combine(final CombinationPolicy combinationPolicy, final Chromosome chromosome1,
-			final Chromosome chromosome2) {
-		Validate.notNull(combinationPolicy);
+	public BitChromosome combine(final Chromosome chromosome1, final Chromosome chromosome2) {
 		Validate.notNull(chromosome1);
 		Validate.notNull(chromosome2);
 		Validate.isInstanceOf(BitChromosome.class, chromosome1);

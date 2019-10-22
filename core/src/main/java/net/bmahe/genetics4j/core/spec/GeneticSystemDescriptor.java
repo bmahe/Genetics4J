@@ -11,12 +11,11 @@ import net.bmahe.genetics4j.core.SimpleEvolutionListener;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider;
-import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
-import net.bmahe.genetics4j.core.combination.multipointcrossover.BitChromosomeMultiPointCrossover;
-import net.bmahe.genetics4j.core.combination.multipointcrossover.IntChromosomeMultiPointCrossover;
-import net.bmahe.genetics4j.core.combination.ordercrossover.IntChromosomeOrderCrossover;
-import net.bmahe.genetics4j.core.combination.singlepointcrossover.BitChromosomeSinglePointCrossover;
-import net.bmahe.genetics4j.core.combination.singlepointcrossover.IntChromosomeSinglePointCrossover;
+import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorHandler;
+import net.bmahe.genetics4j.core.combination.multicombinations.MultiCombinationsHandler;
+import net.bmahe.genetics4j.core.combination.multipointcrossover.MultiPointCrossoverCombinationHandler;
+import net.bmahe.genetics4j.core.combination.ordercrossover.IntOrderCrossoverHandler;
+import net.bmahe.genetics4j.core.combination.singlepointcrossover.SinglePointCrossoverHandler;
 import net.bmahe.genetics4j.core.mutation.MultiMutationsPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.RandomMutationPolicyHandler;
@@ -38,10 +37,9 @@ public abstract class GeneticSystemDescriptor {
 	public static final long DEFAULT_POPULATION_SIZE = 100;
 
 	@Value.Default
-	public List<ChromosomeCombinator> chromosomeCombinators() {
-		return Arrays.asList(new BitChromosomeSinglePointCrossover(random()),
-				new IntChromosomeSinglePointCrossover(random()), new BitChromosomeMultiPointCrossover(random()),
-				new IntChromosomeMultiPointCrossover(random()), new IntChromosomeOrderCrossover(random()));
+	public List<ChromosomeCombinatorHandler> chromosomeCombinatorHandlers() {
+		return Arrays.asList(new MultiCombinationsHandler(random()), new IntOrderCrossoverHandler(random()),
+				new MultiPointCrossoverCombinationHandler(random()), new SinglePointCrossoverHandler(random()));
 	}
 
 	@Value.Default

@@ -9,41 +9,30 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.chromosomes.BitChromosome;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
-import net.bmahe.genetics4j.core.spec.chromosome.BitChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
 
 public class BitChromosomeMultiPointCrossover implements ChromosomeCombinator {
 
 	private final Random random;
 
-	public BitChromosomeMultiPointCrossover(final Random _random) {
+	private final MultiPointCrossover multiPointCrossoverPolicy;
+
+	public BitChromosomeMultiPointCrossover(final Random _random, final MultiPointCrossover _multiPointCrossoverPolicy) {
 		Validate.notNull(_random);
+		Validate.notNull(_multiPointCrossoverPolicy);
 
 		this.random = _random;
+		this.multiPointCrossoverPolicy = _multiPointCrossoverPolicy;
 	}
 
 	@Override
-	public boolean canHandle(final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
-		Validate.notNull(combinationPolicy);
-		Validate.notNull(chromosome);
-
-		return combinationPolicy instanceof MultiPointCrossover && chromosome instanceof BitChromosomeSpec;
-	}
-
-	@Override
-	public BitChromosome combine(final CombinationPolicy combinationPolicy, final Chromosome chromosome1,
-			final Chromosome chromosome2) {
-		Validate.notNull(combinationPolicy);
+	public BitChromosome combine(final Chromosome chromosome1, final Chromosome chromosome2) {
 		Validate.notNull(chromosome1);
 		Validate.notNull(chromosome2);
-		Validate.isInstanceOf(MultiPointCrossover.class, combinationPolicy);
 		Validate.isInstanceOf(BitChromosome.class, chromosome1);
 		Validate.isInstanceOf(BitChromosome.class, chromosome2);
 		Validate.isTrue(chromosome1.getNumAlleles() == chromosome2.getNumAlleles());
 
-		final MultiPointCrossover multiPointCrossoverPolicy = (MultiPointCrossover) combinationPolicy;
 		Validate.isTrue(multiPointCrossoverPolicy.numCrossovers() < chromosome1.getNumAlleles());
 		Validate.isTrue(multiPointCrossoverPolicy.numCrossovers() < chromosome2.getNumAlleles());
 

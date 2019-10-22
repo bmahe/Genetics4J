@@ -149,7 +149,7 @@ public class GeneticSystem {
 					final Chromosome secondChromosome = secondParent.getChromosome(chromosomeIndex);
 
 					final Chromosome combinedChromosome = chromosomeCombinators.get(chromosomeIndex)
-							.combine(genotypeSpec.combinationPolicy(), firstChromosome, secondChromosome);
+							.combine(firstChromosome, secondChromosome);
 
 					chromosomes[chromosomeIndex] = combinedChromosome;
 					logger.trace("Combining {} with {} ---> {}", firstChromosome, secondChromosome, combinedChromosome);

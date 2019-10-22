@@ -1,9 +1,7 @@
 package net.bmahe.genetics4j.core.combination.multipointcrossover;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -14,48 +12,13 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
-import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.chromosome.ImmutableIntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.ImmutableMultiPointCrossover;
-import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 
 public class IntChromosomeMultiPointCrossoverTest {
 
 	@Test(expected = NullPointerException.class)
 	public void randomIsRequired() {
-		new IntChromosomeMultiPointCrossover(null);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void canHandleMissingFirstParameter() {
-		final Random random = new Random();
-		final IntChromosomeMultiPointCrossover intChromosomeMultiPointCrossover = new IntChromosomeMultiPointCrossover(
-				random);
-
-		intChromosomeMultiPointCrossover.canHandle(null, ImmutableBitChromosomeSpec.of(10));
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void canHandleMissingSecondParameter() {
-		final Random random = new Random();
-		final IntChromosomeMultiPointCrossover intChromosomeMultiPointCrossover = new IntChromosomeMultiPointCrossover(
-				random);
-
-		intChromosomeMultiPointCrossover.canHandle(ImmutableMultiPointCrossover.of(3), null);
-	}
-
-	@Test
-	public void canHandleTest() {
-		final Random random = new Random();
-		final IntChromosomeMultiPointCrossover intChromosomeMultiPointCrossover = new IntChromosomeMultiPointCrossover(
-				random);
-
-		assertTrue(intChromosomeMultiPointCrossover.canHandle(ImmutableMultiPointCrossover.of(3),
-				ImmutableIntChromosomeSpec.of(10, 0, 10)));
-		assertFalse(intChromosomeMultiPointCrossover.canHandle(SinglePointCrossover.build(),
-				ImmutableBitChromosomeSpec.of(10)));
-		assertFalse(intChromosomeMultiPointCrossover.canHandle(ImmutableMultiPointCrossover.of(3),
-				ImmutableBitChromosomeSpec.of(10)));
+		new IntChromosomeMultiPointCrossover(null, null);
 	}
 
 	@Test
@@ -65,13 +28,12 @@ public class IntChromosomeMultiPointCrossoverTest {
 		when(mockRandom.ints(anyInt(), anyInt())).thenReturn(IntStream.of(1, 3, 4));
 
 		final IntChromosomeMultiPointCrossover intChromosomeMultiPointCrossover = new IntChromosomeMultiPointCrossover(
-				mockRandom);
+				mockRandom, ImmutableMultiPointCrossover.of(3));
 
 		final IntChromosome chromosome1 = new IntChromosome(5, 0, 100, new int[] { 10, 11, 12, 13, 14 });
 		final IntChromosome chromosome2 = new IntChromosome(5, 0, 100, new int[] { 20, 21, 22, 23, 24 });
 
-		final IntChromosome combinedChromosomes = intChromosomeMultiPointCrossover
-				.combine(ImmutableMultiPointCrossover.of(3), chromosome1, chromosome2);
+		final IntChromosome combinedChromosomes = intChromosomeMultiPointCrossover.combine(chromosome1, chromosome2);
 		assertNotNull(combinedChromosomes);
 		assertEquals(5, combinedChromosomes.getNumAlleles());
 
