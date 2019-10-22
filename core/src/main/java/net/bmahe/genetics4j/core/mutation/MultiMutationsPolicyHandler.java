@@ -27,7 +27,10 @@ public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
 			final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicyHandlerResolver);
 		Validate.notNull(mutationPolicy);
-		Validate.isInstanceOf(MutationPolicy.class, mutationPolicy);
+
+		if (mutationPolicy instanceof MultiMutations == false) {
+			return false;
+		}
 
 		final MultiMutations multiMutations = (MultiMutations) mutationPolicy;
 

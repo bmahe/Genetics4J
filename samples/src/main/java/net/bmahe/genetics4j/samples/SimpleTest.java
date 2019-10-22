@@ -12,6 +12,7 @@ import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
+import net.bmahe.genetics4j.core.spec.mutation.PartialMutation;
 import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
@@ -27,7 +28,7 @@ public class SimpleTest {
 				.survivorSelectionPolicy(TournamentSelection.build(30))
 				.offspringRatio(0.7d)
 				.combinationPolicy(MultiPointCrossover.of(2))
-				.mutationPolicies(RandomMutation.of(0.15))
+				.mutationPolicies(RandomMutation.of(0.15), PartialMutation.of(0, RandomMutation.of(0.05)))
 				.optimization(Optimization.MINIMIZE)
 				.fitness((genoType) -> {
 					final IntChromosome intChromosome = genoType.getChromosome(0, IntChromosome.class);

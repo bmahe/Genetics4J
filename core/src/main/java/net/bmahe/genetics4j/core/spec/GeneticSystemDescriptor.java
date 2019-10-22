@@ -18,6 +18,7 @@ import net.bmahe.genetics4j.core.combination.ordercrossover.IntOrderCrossoverHan
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.SinglePointCrossoverHandler;
 import net.bmahe.genetics4j.core.mutation.MultiMutationsPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
+import net.bmahe.genetics4j.core.mutation.PartialMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.RandomMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.SwapMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
@@ -52,7 +53,7 @@ public abstract class GeneticSystemDescriptor {
 	@Value.Default
 	public List<MutationPolicyHandler> mutationPolicyHandlers() {
 		return Arrays.asList(new RandomMutationPolicyHandler(random()), new SwapMutationPolicyHandler(random()),
-				new MultiMutationsPolicyHandler(random()));
+				new MultiMutationsPolicyHandler(random()), new PartialMutationPolicyHandler());
 	}
 
 	@Value.Default
