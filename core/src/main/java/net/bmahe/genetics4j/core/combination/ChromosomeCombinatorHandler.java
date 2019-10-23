@@ -4,9 +4,9 @@ import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 
 public interface ChromosomeCombinatorHandler {
-	boolean canHandle(ChromosomeCombinatorResolver chromosomeCombinatorResolver, CombinationPolicy combinationPolicy,
-			ChromosomeSpec chromosome);
+	boolean canHandle(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome);
 
-	ChromosomeCombinator resolve(ChromosomeCombinatorResolver chromosomeCombinatorResolver,
-			CombinationPolicy combinationPolicy, ChromosomeSpec chromosome);
+	ChromosomeCombinator resolve(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome);
 }

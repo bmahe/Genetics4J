@@ -12,6 +12,7 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorHandler;
+import net.bmahe.genetics4j.core.combination.erx.EdgeRecombinationCrossoverHandler;
 import net.bmahe.genetics4j.core.combination.multicombinations.MultiCombinationsHandler;
 import net.bmahe.genetics4j.core.combination.multipointcrossover.MultiPointCrossoverCombinationHandler;
 import net.bmahe.genetics4j.core.combination.ordercrossover.IntOrderCrossoverHandler;
@@ -40,7 +41,8 @@ public abstract class GeneticSystemDescriptor {
 	@Value.Default
 	public List<ChromosomeCombinatorHandler> chromosomeCombinatorHandlers() {
 		return Arrays.asList(new MultiCombinationsHandler(random()), new IntOrderCrossoverHandler(random()),
-				new MultiPointCrossoverCombinationHandler(random()), new SinglePointCrossoverHandler(random()));
+				new MultiPointCrossoverCombinationHandler(random()), new SinglePointCrossoverHandler(random()),
+				new EdgeRecombinationCrossoverHandler(random()));
 	}
 
 	@Value.Default

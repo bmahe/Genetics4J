@@ -17,6 +17,7 @@ import net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder;
 import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
+import net.bmahe.genetics4j.core.spec.combination.EdgeRecombinationCrossover;
 import net.bmahe.genetics4j.core.spec.combination.MultiCombinations;
 import net.bmahe.genetics4j.core.spec.combination.OrderCrossover;
 import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
@@ -57,9 +58,9 @@ public class TSVExample {
 				.chromosomeSpecs(IntChromosomeSpec.of(numCities, 0, numCities))
 				.parentSelectionPolicy(MultiSelections.of(RouletteWheelSelection.build(), TournamentSelection.build(15)))
 				.survivorSelectionPolicy(MultiSelections.of(RouletteWheelSelection.build(), TournamentSelection.build(15)))
-				.offspringRatio(0.7d)
-				.combinationPolicy(MultiCombinations.of(OrderCrossover.build()))
-				.mutationPolicies(MultiMutations.of(SwapMutation.of(0.15, 1)))
+				.offspringRatio(0.9d)
+				.combinationPolicy(MultiCombinations.of(OrderCrossover.build(), EdgeRecombinationCrossover.build()))
+				.mutationPolicies(MultiMutations.of(SwapMutation.of(0.05, 80, false)))
 				.optimization(Optimization.MINIMIZE)
 				.fitness((genoType) -> {
 					final IntChromosome intChromosome = genoType.getChromosome(0, IntChromosome.class);
@@ -90,7 +91,7 @@ public class TSVExample {
 
 		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
 				.builder();
-		geneticSystemDescriptorBuilder.populationSize(500);
+		geneticSystemDescriptorBuilder.populationSize(1500);
 
 		final ImmutableGeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 

@@ -12,6 +12,9 @@ public abstract class SwapMutation implements MutationPolicy {
 	@Value.Parameter
 	public abstract int numSwap();
 
+	@Value.Parameter
+	public abstract boolean isNumSwapFixed();
+
 	@Value.Check
 	protected void check() {
 		Validate.inclusiveBetween(0.0, 1.0, populationMutationProbability());
@@ -28,7 +31,7 @@ public abstract class SwapMutation implements MutationPolicy {
 	 *                                      attribute
 	 * @return An immutable SwapMutation instance
 	 */
-	public static SwapMutation of(double populationMutationProbability, int numSwap) {
-		return ImmutableSwapMutation.of(populationMutationProbability, numSwap);
+	public static SwapMutation of(double populationMutationProbability, int numSwap, boolean isNumSwapFixed) {
+		return ImmutableSwapMutation.of(populationMutationProbability, numSwap, isNumSwapFixed);
 	}
 }

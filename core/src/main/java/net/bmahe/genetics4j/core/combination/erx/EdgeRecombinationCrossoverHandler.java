@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.combination.ordercrossover;
+package net.bmahe.genetics4j.core.combination.erx;
 
 import java.util.Random;
 
@@ -10,13 +10,13 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorResolver;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
-import net.bmahe.genetics4j.core.spec.combination.OrderCrossover;
+import net.bmahe.genetics4j.core.spec.combination.EdgeRecombinationCrossover;
 
-public class IntOrderCrossoverHandler implements ChromosomeCombinatorHandler {
+public class EdgeRecombinationCrossoverHandler implements ChromosomeCombinatorHandler {
 
 	private final Random random;
 
-	public IntOrderCrossoverHandler(final Random _random) {
+	public EdgeRecombinationCrossoverHandler(final Random _random) {
 		Validate.notNull(_random);
 
 		this.random = _random;
@@ -28,7 +28,7 @@ public class IntOrderCrossoverHandler implements ChromosomeCombinatorHandler {
 		Validate.notNull(combinationPolicy);
 		Validate.notNull(chromosome);
 
-		return combinationPolicy instanceof OrderCrossover && chromosome instanceof IntChromosomeSpec;
+		return combinationPolicy instanceof EdgeRecombinationCrossover && chromosome instanceof IntChromosomeSpec;
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class IntOrderCrossoverHandler implements ChromosomeCombinatorHandler {
 		Validate.notNull(chromosome);
 		Validate.isTrue(canHandle(chromosomeCombinatorResolver, combinationPolicy, chromosome));
 
-		return new IntChromosomeOrderCrossover(random);
+		return new IntEdgeRecombinationCrossover(random);
 	}
 
 }

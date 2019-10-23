@@ -29,7 +29,7 @@ public class SupersimpleTest {
 				.parentSelectionPolicy(RandomSelectionPolicy.build())
 				.survivorSelectionPolicy(RandomSelectionPolicy.build())
 				.combinationPolicy(SinglePointCrossover.build())
-				.addMutationPolicies(MultiMutations.of(RandomMutation.of(0.15), SwapMutation.of(0.05, 2)));
+				.addMutationPolicies(MultiMutations.of(RandomMutation.of(0.15), SwapMutation.of(0.05, 2, true)));
 
 		final GenotypeSpec genotypeSpec = genotypeSpecBuilder.build();
 

@@ -15,7 +15,7 @@ public class IntChromosome implements Chromosome {
 		Validate.isTrue(_size > 0);
 		Validate.isTrue(_minValue <= _maxValue);
 		Validate.notNull(_values);
-		Validate.isTrue(_size == _values.length);
+		Validate.isTrue(_size == _values.length, "Provided size does not match the size of the content");
 
 		this.size = _size;
 		this.minValue = _minValue;

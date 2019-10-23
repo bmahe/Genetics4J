@@ -39,7 +39,8 @@ public class BitChromosomeSwapMutationHandler implements ChromosomeMutationHandl
 		Validate.isInstanceOf(BitChromosome.class, chromosome);
 
 		final SwapMutation swapMutation = (SwapMutation) mutationPolicy;
-		final int numSwap = swapMutation.numSwap();
+		final int numSwap = swapMutation.isNumSwapFixed() ? swapMutation.numSwap()
+				: 1 + random.nextInt(swapMutation.numSwap());
 
 		final BitChromosome bitChromosome = (BitChromosome) chromosome;
 

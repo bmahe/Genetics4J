@@ -39,7 +39,8 @@ public class IntChromosomeSwapMutationHandler implements ChromosomeMutationHandl
 		Validate.isInstanceOf(IntChromosome.class, chromosome);
 
 		final SwapMutation swapMutation = (SwapMutation) mutationPolicy;
-		final int numSwap = swapMutation.numSwap();
+		final int numSwap = swapMutation.isNumSwapFixed() ? swapMutation.numSwap()
+				: 1 + random.nextInt(swapMutation.numSwap());
 
 		final IntChromosome intChromosome = (IntChromosome) chromosome;
 
