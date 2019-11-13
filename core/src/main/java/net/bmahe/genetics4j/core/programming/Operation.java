@@ -1,58 +1,31 @@
 package net.bmahe.genetics4j.core.programming;
 
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Parameter;
 
 @Value.Immutable
-public abstract class Operation {
+public abstract class Operation<T> {
+
 	@Parameter
 	public abstract String getName();
 
 	@Parameter
 	public abstract int getArity();
 
+	@SuppressWarnings("rawtypes")
 	@Parameter
 	public abstract Class returnedType();
 
 	@Parameter
-	public abstract Operation[] input();
+	public abstract BiFunction<T[], Object[], Object> compute();
 
-	@Parameter
-	public abstract Supplier<Object> compute();
-
-	public Object apply() {
-		return compute().get();
+	public Object apply(final T[] input, final Object[] parameters) {
+		return compute().apply(input, parameters);
 	}
 
 	public boolean isTerminal() {
 		return getArity() == 0;
-	}
-
-	@Override
-	public String toString() {
-		final StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(getName());
-
-		final Operation[] children = input();
-
-		if (children.length > 0) {
-			stringBuilder.append("(");
-			for (int i = 0; i < children.length; i++) {
-				final Operation operation = children[i];
-				final String operationStr = operation.toString();
-
-				stringBuilder.append(operationStr);
-
-				if (i < children.length - 1) {
-					stringBuilder.append(", ");
-
-				}
-			}
-			stringBuilder.append(")");
-		}
-
-		return stringBuilder.toString();
 	}
 }

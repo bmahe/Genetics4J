@@ -5,21 +5,18 @@ import net.bmahe.genetics4j.core.programming.OperationFactory;
 
 public final class Functions {
 
-	public static OperationFactory ADD = OperationFactories
-			.ofBiFunction("ADD", Double.class, Double.class, Double.class, (Double i0, Double i1) -> i0 + i1);
+	public static final OperationFactory COS = OperationFactories.ofUnary("Cos", Double.class, Double.class, Math::cos);
+	public static final OperationFactory SIN = OperationFactories.ofUnary("Sin", Double.class, Double.class, Math::sin);
 
-	public static OperationFactory SUB = OperationFactories
-			.ofBiFunction("SUB", Double.class, Double.class, Double.class, (Double i0, Double i1) -> i0 - i1);
+	public static final OperationFactory ADD = OperationFactories
+			.ofBinary("Add", Double.class, Double.class, Double.class, (a, b) -> a + b);
 
-	public static OperationFactory MUL = OperationFactories
-			.ofBiFunction("MUL", Double.class, Double.class, Double.class, (Double i0, Double i1) -> i0 * i1);
+	public static final OperationFactory SUB = OperationFactories
+			.ofBinary("Sub", Double.class, Double.class, Double.class, (a, b) -> a - b);
 
-	public static OperationFactory DIV = OperationFactories
-			.ofBiFunction("DIV", Double.class, Double.class, Double.class, (Double i0, Double i1) -> i0 / i1);
+	public static final OperationFactory MUL = OperationFactories
+			.ofBinary("Mul", Double.class, Double.class, Double.class, (a, b) -> a * b);
 
-	public static OperationFactory COS = OperationFactories
-			.ofFunction("COS", Double.class, Double.class, (Double i0) -> Math.cos(i0));
-
-	public static OperationFactory SIN = OperationFactories
-			.ofFunction("SIN", Double.class, Double.class, (Double i0) -> Math.sin(i0));
+	public static final OperationFactory DIV = OperationFactories
+			.ofBinary("Div", Double.class, Double.class, Double.class, (a, b) -> a / b);
 }
