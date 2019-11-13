@@ -72,21 +72,21 @@ public class SimpleGPTest {
 		return candidates.get(random.nextInt(candidates.size()));
 	}
 
-	private TreeNode<Operation> generate(final Random random, final Program program, Class acceptedType, int maxHeight,
-			int height) {
+	private <T> TreeNode<Operation<T>> generate(final Random random, final Program program, Class acceptedType,
+			int maxHeight, int height) {
 
 		OperationFactory currentNode = height < maxHeight && random.nextDouble() < 0.5
 				? pickRandomFunction(random, program, acceptedType)
 				: pickRandomTerminal(random, program, acceptedType);
 
-		final Operation currentOperation = currentNode.build();
-		final TreeNode<Operation> currentTreeNode = new TreeNode<>(currentOperation);
+		final Operation<T> currentOperation = currentNode.build(program.inputSpec());
+		final TreeNode<Operation<T>> currentTreeNode = new TreeNode<>(currentOperation);
 
 		Class[] acceptedTypes = currentNode.acceptedTypes();
 
 		for (int i = 0; i < acceptedTypes.length; i++) {
 			final Class childAcceptedType = acceptedTypes[i];
-			final TreeNode<Operation> operation = generate(random, program, childAcceptedType, maxHeight, height + 1);
+			final TreeNode<Operation<T>> operation = generate(random, program, childAcceptedType, maxHeight, height + 1);
 
 			currentTreeNode.addChild(operation);
 		}
@@ -94,21 +94,19 @@ public class SimpleGPTest {
 		return currentTreeNode;
 	}
 
-	private TreeNode<Operation> generate(final Random random, final Program program, int maxHeight) {
+	private <T> TreeNode<Operation<T>> generate(final Random random, final Program program, int maxHeight) {
 
 		OperationFactory currentNode = random.nextDouble() < 0.98 ? pickRandomFunction(random, program)
 				: pickRandomTerminal(random, program);
 
-		final Operation currentOperation = currentNode.build();
-		final TreeNode<Operation> currentTreeNode = new TreeNode<>(currentOperation);
+		final Operation<T> currentOperation = currentNode.build(program.inputSpec());
+		final TreeNode<Operation<T>> currentTreeNode = new TreeNode<>(currentOperation);
 
 		Class[] acceptedTypes = currentNode.acceptedTypes();
 
-		final Operation[] input = new Operation[acceptedTypes.length];
-
 		for (int i = 0; i < acceptedTypes.length; i++) {
 			final Class acceptedType = acceptedTypes[i];
-			final TreeNode<Operation> operation = generate(random, program, acceptedType, maxHeight, 1);
+			final TreeNode<Operation<T>> operation = generate(random, program, acceptedType, maxHeight, 1);
 
 			currentTreeNode.addChild(operation);
 		}
@@ -116,10 +114,10 @@ public class SimpleGPTest {
 		return currentTreeNode;
 	}
 
-	public String toStringTreeNode(final TreeNode<Operation> node) {
+	public String toStringTreeNode(final TreeNode<Operation<Double>> node) {
 
-		final Operation operation = node.getData();
-		final List<TreeNode<Operation>> children = node.getChildren();
+		final Operation<Double> operation = node.getData();
+		final List<TreeNode<Operation<Double>>> children = node.getChildren();
 
 		final StringBuilder stringBuilder = new StringBuilder();
 
@@ -127,9 +125,9 @@ public class SimpleGPTest {
 		if (children != null && children.isEmpty() == false) {
 			stringBuilder.append("(");
 
-			final Iterator<TreeNode<Operation>> iterator = children.iterator();
+			final Iterator<TreeNode<Operation<Double>>> iterator = children.iterator();
 			while (iterator.hasNext()) {
-				final TreeNode<Operation> treeNode = iterator.next();
+				final TreeNode<Operation<Double>> treeNode = iterator.next();
 
 				stringBuilder.append(toStringTreeNode(treeNode));
 
@@ -149,15 +147,20 @@ public class SimpleGPTest {
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder
 				.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS, Functions.SIN);
-		programBuilder.addTerminal(Terminals.INPUT, Terminals.PI, Terminals.E, Terminals.Coefficient(random, 0, 100));
+		programBuilder.addTerminal(Terminals.INPUT(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -5, 7));
 
 		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
 
 		final ImmutableProgram program = programBuilder.build();
-
-		final TreeNode<Operation> operation = generate(random, program, 3);
-		TreeChromosome<Operation> treeChromosome = new TreeChromosome<>(operation);
-		System.out.println(toStringTreeNode(treeChromosome.getRoot()));
+		for (int i = 0; i < 10; i++) {
+			final TreeNode<Operation<Double>> operation = generate(random, program, 3);
+			TreeChromosome<Operation<Double>> treeChromosome = new TreeChromosome<>(operation);
+			System.out.println(toStringTreeNode(treeChromosome.getRoot()));
+		}
 	}
 
 }

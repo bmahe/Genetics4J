@@ -10,7 +10,7 @@ public final class OperationFactories {
 
 	@SuppressWarnings("rawtypes")
 	public static OperationFactory of(final Class[] acceptedTypes, final Class returnedType,
-			final Supplier<Operation> build) {
+			final Function<InputSpec, Operation> build) {
 		return new OperationFactory() {
 			@Override
 			public Class[] acceptedTypes() {
@@ -23,8 +23,8 @@ public final class OperationFactories {
 			}
 
 			@Override
-			public Operation build() {
-				return build.get();
+			public Operation build(final InputSpec inputSpec) {
+				return build.apply(inputSpec);
 			}
 		};
 	}
@@ -45,7 +45,7 @@ public final class OperationFactories {
 			}
 
 			@Override
-			public Operation build() {
+			public Operation build(final InputSpec inputSpec) {
 				return ImmutableOperation.of(name, acceptedTypes.length, returnedType, compute);
 			}
 		};

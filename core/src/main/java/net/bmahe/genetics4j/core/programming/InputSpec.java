@@ -12,7 +12,7 @@ public abstract class InputSpec {
 	@Parameter
 	public abstract List<Class> types();
 
-	public int numberColumns() {
+	public int inputSize() {
 		return types().size();
 	}
 

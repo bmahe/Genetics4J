@@ -11,7 +11,7 @@ public interface OperationFactory {
 
 	Class returnedType();
 
-	Operation build();
+	Operation build(final InputSpec inputSpec);
 
 	static OperationFactory of(final Class[] acceptedTypes, final Class returnedType,
 			final Supplier<Operation> buildSupplier) {
@@ -32,7 +32,7 @@ public interface OperationFactory {
 			}
 
 			@Override
-			public Operation build() {
+			public Operation build(final InputSpec inputSpec) {
 				return buildSupplier.get();
 			}
 		};
