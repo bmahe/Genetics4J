@@ -28,7 +28,7 @@ public class Terminals {
 
 			final double value = random.nextInt(max - min) + min;
 
-			return ImmutableOperation.of("Coefficientrounded[" + value + "]", 0, Double.class, (input, parameter) -> value);
+			return ImmutableOperation.of("CoefficientRounded[" + value + "]", 0, Double.class, (input, parameter) -> value);
 		});
 	}
 
