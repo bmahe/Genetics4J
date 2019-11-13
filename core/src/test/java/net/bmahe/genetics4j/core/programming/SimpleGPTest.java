@@ -145,8 +145,13 @@ public class SimpleGPTest {
 	public void simple() {
 		final Random random = new Random();
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder
-				.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS, Functions.SIN);
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
 		programBuilder.addTerminal(Terminals.INPUT(random),
 				Terminals.PI,
 				Terminals.E,
