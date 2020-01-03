@@ -7,12 +7,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.BitSet;
+import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.BitChromosome;
+import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.spec.combination.ImmutableMultiPointCrossover;
 
 public class BitChromosomeMultiPointCrossoverTest {
@@ -43,14 +45,15 @@ public class BitChromosomeMultiPointCrossoverTest {
 		final BitChromosome chromosome1 = new BitChromosome(5, bitSet1);
 		final BitChromosome chromosome2 = new BitChromosome(5, bitSet2);
 
-		final BitChromosome combinedChromosomes = bitChromosomeMultiPointCrossover.combine(chromosome1, chromosome2);
-		assertNotNull(combinedChromosomes);
-		assertEquals(5, combinedChromosomes.getNumAlleles());
+		final List<Chromosome> combinedChromosomes = bitChromosomeMultiPointCrossover.combine(chromosome1, chromosome2);
+		final BitChromosome combinedChromosome = (BitChromosome) combinedChromosomes.get(0);
+		assertNotNull(combinedChromosome);
+		assertEquals(5, combinedChromosome.getNumAlleles());
 
-		assertEquals(chromosome1.getBit(0), combinedChromosomes.getBit(0));
-		assertEquals(chromosome2.getBit(1), combinedChromosomes.getBit(1));
-		assertEquals(chromosome2.getBit(2), combinedChromosomes.getBit(2));
-		assertEquals(chromosome1.getBit(3), combinedChromosomes.getBit(3));
-		assertEquals(chromosome2.getBit(4), combinedChromosomes.getBit(4));
+		assertEquals(chromosome1.getBit(0), combinedChromosome.getBit(0));
+		assertEquals(chromosome2.getBit(1), combinedChromosome.getBit(1));
+		assertEquals(chromosome2.getBit(2), combinedChromosome.getBit(2));
+		assertEquals(chromosome1.getBit(3), combinedChromosome.getBit(3));
+		assertEquals(chromosome2.getBit(4), combinedChromosome.getBit(4));
 	}
 }

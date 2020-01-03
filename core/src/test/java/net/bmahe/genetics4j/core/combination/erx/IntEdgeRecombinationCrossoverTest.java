@@ -1,5 +1,6 @@
 package net.bmahe.genetics4j.core.combination.erx;
 
+import java.util.List;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +23,7 @@ public class IntEdgeRecombinationCrossoverTest {
 
 		logger.info("Chromosome 1: {}", chromosome1);
 		logger.info("Chromosome 2: {}", chromosome2);
-		final Chromosome combined = intEdgeRecombinationCrossover.combine(chromosome1, chromosome2);
+		final List<Chromosome> combined = intEdgeRecombinationCrossover.combine(chromosome1, chromosome2);
 
 		logger.info("Chromosome combined: {}", combined);
 	}

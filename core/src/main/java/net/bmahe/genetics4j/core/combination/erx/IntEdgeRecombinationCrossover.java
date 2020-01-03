@@ -2,6 +2,7 @@ package net.bmahe.genetics4j.core.combination.erx;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -95,7 +96,7 @@ public class IntEdgeRecombinationCrossover implements ChromosomeCombinator {
 	}
 
 	@Override
-	public Chromosome combine(final Chromosome chromosome1, final Chromosome chromosome2) {
+	public List<Chromosome> combine(final Chromosome chromosome1, final Chromosome chromosome2) {
 		Validate.notNull(chromosome1);
 		Validate.notNull(chromosome2);
 		Validate.isInstanceOf(IntChromosome.class, chromosome1);
@@ -160,8 +161,8 @@ public class IntEdgeRecombinationCrossover implements ChromosomeCombinator {
 			}
 		}
 
-		return new IntChromosome(chromosome1.getNumAlleles(), intChromosome1.getMinValue(), intChromosome1.getMaxValue(),
-				chromosome);
+		return List.of(new IntChromosome(chromosome1.getNumAlleles(), intChromosome1.getMinValue(),
+				intChromosome1.getMaxValue(), chromosome));
 	}
 
 }

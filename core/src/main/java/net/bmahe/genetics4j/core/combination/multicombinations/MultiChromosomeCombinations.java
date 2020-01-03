@@ -22,7 +22,7 @@ public class MultiChromosomeCombinations implements ChromosomeCombinator {
 	}
 
 	@Override
-	public Chromosome combine(final Chromosome chromosome1, final Chromosome chromosome2) {
+	public List<Chromosome> combine(final Chromosome chromosome1, final Chromosome chromosome2) {
 
 		final int chromosomeCombinatorIndex = random.nextInt(chromosomeCombinators.size());
 		final ChromosomeCombinator chromosomeCombinator = chromosomeCombinators.get(chromosomeCombinatorIndex);

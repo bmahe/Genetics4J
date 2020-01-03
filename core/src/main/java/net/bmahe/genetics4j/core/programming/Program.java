@@ -16,4 +16,7 @@ public abstract class Program {
 
 	@Parameter
 	public abstract InputSpec inputSpec();
+
+	@Parameter
+	public abstract int maxDepth();
 }

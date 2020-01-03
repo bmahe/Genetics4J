@@ -6,10 +6,12 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Random;
 
 import org.junit.Test;
 
+import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 
 public class IntChromosomeSinglePointCrossoverTest {
@@ -32,16 +34,17 @@ public class IntChromosomeSinglePointCrossoverTest {
 		final IntChromosome chromosome1 = new IntChromosome(4, 0, 10, new int[] { 0, 1, 2, 3 });
 		final IntChromosome chromosome2 = new IntChromosome(4, 0, 10, new int[] { 3, 2, 1, 0 });
 
-		final IntChromosome combinedChromosomes = intChromosomeSinglePointCrossover.combine(chromosome1, chromosome2);
-		assertNotNull(combinedChromosomes);
-		assertEquals(4, combinedChromosomes.getNumAlleles());
-		assertEquals(combinedChromosomes.getSize(), combinedChromosomes.getNumAlleles());
+		final List<Chromosome> combinedChromosomes = intChromosomeSinglePointCrossover.combine(chromosome1, chromosome2);
+		final IntChromosome combinedChromosome = (IntChromosome) combinedChromosomes.get(0);
+		assertNotNull(combinedChromosome);
+		assertEquals(4, combinedChromosome.getNumAlleles());
+		assertEquals(combinedChromosome.getSize(), combinedChromosome.getNumAlleles());
 
-		for (int i = 0; i < combinedChromosomes.getNumAlleles(); i++) {
+		for (int i = 0; i < combinedChromosome.getNumAlleles(); i++) {
 			if (i < splitIndex) {
-				assertEquals(chromosome1.getAllele(i), combinedChromosomes.getAllele(i));
+				assertEquals(chromosome1.getAllele(i), combinedChromosome.getAllele(i));
 			} else {
-				assertEquals(chromosome2.getAllele(i), combinedChromosomes.getAllele(i));
+				assertEquals(chromosome2.getAllele(i), combinedChromosome.getAllele(i));
 			}
 		}
 	}

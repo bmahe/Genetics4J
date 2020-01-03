@@ -2,6 +2,7 @@ package net.bmahe.genetics4j.core.combination.multipointcrossover;
 
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.Validate;
@@ -26,7 +27,7 @@ public class BitChromosomeMultiPointCrossover implements ChromosomeCombinator {
 	}
 
 	@Override
-	public BitChromosome combine(final Chromosome chromosome1, final Chromosome chromosome2) {
+	public List<Chromosome> combine(final Chromosome chromosome1, final Chromosome chromosome2) {
 		Validate.notNull(chromosome1);
 		Validate.notNull(chromosome2);
 		Validate.isInstanceOf(BitChromosome.class, chromosome1);
@@ -64,7 +65,7 @@ public class BitChromosomeMultiPointCrossover implements ChromosomeCombinator {
 			}
 		}
 
-		return new BitChromosome(numAlleles, bitSet);
+		return List.of(new BitChromosome(numAlleles, bitSet));
 	}
 
 }

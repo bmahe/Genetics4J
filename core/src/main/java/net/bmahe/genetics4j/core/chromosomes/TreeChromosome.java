@@ -20,4 +20,12 @@ public class TreeChromosome<T> implements Chromosome {
 	public TreeNode<T> getRoot() {
 		return root;
 	}
+
+	public int getSize() {
+		if (root == null) {
+			return 0;
+		}
+
+		return root.getSize();
+	}
 }

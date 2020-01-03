@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Validate;
 @SuppressWarnings("rawtypes")
 public interface OperationFactory {
 
+	//TODO make a List<Class>
 	Class[] acceptedTypes();
 
 	Class returnedType();

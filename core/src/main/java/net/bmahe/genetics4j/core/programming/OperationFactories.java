@@ -1,5 +1,6 @@
 package net.bmahe.genetics4j.core.programming;
 
+import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -31,7 +32,7 @@ public final class OperationFactories {
 
 	@SuppressWarnings("rawtypes")
 	public static OperationFactory of(final String name, final Class[] acceptedTypes, final Class returnedType,
-			final BiFunction<Operation[], Object[], Object> compute) {
+			final BiFunction<Object[], Object[], Object> compute) {
 		return new OperationFactory() {
 
 			@Override
@@ -46,7 +47,7 @@ public final class OperationFactories {
 
 			@Override
 			public Operation build(final InputSpec inputSpec) {
-				return ImmutableOperation.of(name, acceptedTypes.length, returnedType, compute);
+				return ImmutableOperation.of(name, Arrays.asList(acceptedTypes), returnedType, compute);
 			}
 		};
 	}
@@ -54,7 +55,9 @@ public final class OperationFactories {
 	@SuppressWarnings("rawtypes")
 	public static OperationFactory ofTerminal(final String name, final Class returnedType,
 			final Supplier<Object> compute) {
-		return of(name, new Class[] {}, returnedType, (input, parameter) -> compute.get());
+		return of(name, new Class[] {}, returnedType, (input, parameter) -> {
+			return compute.get();
+		});
 	}
 
 	@SuppressWarnings("unchecked")

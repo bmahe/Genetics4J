@@ -12,6 +12,7 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorHandler;
+import net.bmahe.genetics4j.core.combination.PickFirstParentHandler;
 import net.bmahe.genetics4j.core.combination.erx.EdgeRecombinationCrossoverHandler;
 import net.bmahe.genetics4j.core.combination.multicombinations.MultiCombinationsHandler;
 import net.bmahe.genetics4j.core.combination.multipointcrossover.MultiPointCrossoverCombinationHandler;
@@ -40,28 +41,35 @@ public abstract class GeneticSystemDescriptor {
 
 	@Value.Default
 	public List<ChromosomeCombinatorHandler> chromosomeCombinatorHandlers() {
-		return Arrays.asList(new MultiCombinationsHandler(random()), new IntOrderCrossoverHandler(random()),
-				new MultiPointCrossoverCombinationHandler(random()), new SinglePointCrossoverHandler(random()),
-				new EdgeRecombinationCrossoverHandler(random()));
+		return Arrays.asList(new MultiCombinationsHandler(random()),
+				new IntOrderCrossoverHandler(random()),
+				new MultiPointCrossoverCombinationHandler(random()),
+				new SinglePointCrossoverHandler(random()),
+				new EdgeRecombinationCrossoverHandler(random()),
+				new PickFirstParentHandler());
 	}
 
 	@Value.Default
 	public List<SelectionPolicyHandler> selectionPolicyHandlers() {
 		return Arrays.asList(new RandomSelectionPolicyHandler(random()),
-				new RouletteWheelSelectionPolicyHandler(random()), new TournamentSelectionPolicyHandler(random()),
+				new RouletteWheelSelectionPolicyHandler(random()),
+				new TournamentSelectionPolicyHandler(random()),
 				new MultiSelectionsPolicyHandler(random()));
 	}
 
 	@Value.Default
 	public List<MutationPolicyHandler> mutationPolicyHandlers() {
-		return Arrays.asList(new RandomMutationPolicyHandler(random()), new SwapMutationPolicyHandler(random()),
-				new MultiMutationsPolicyHandler(random()), new PartialMutationPolicyHandler());
+		return Arrays.asList(new RandomMutationPolicyHandler(random()),
+				new SwapMutationPolicyHandler(random()),
+				new MultiMutationsPolicyHandler(random()),
+				new PartialMutationPolicyHandler());
 	}
 
 	@Value.Default
 	public List<ChromosomeMutationHandler<? extends Chromosome>> chromosomeMutationPolicyHandlers() {
 		return Arrays.asList(new BitChromosomeRandomMutationHandler(random()),
-				new IntChromosomeRandomMutationHandler(random()), new BitChromosomeSwapMutationHandler(random()),
+				new IntChromosomeRandomMutationHandler(random()),
+				new BitChromosomeSwapMutationHandler(random()),
 				new IntChromosomeSwapMutationHandler(random()));
 	}
 

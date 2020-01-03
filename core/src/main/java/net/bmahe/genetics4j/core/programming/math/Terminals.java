@@ -1,9 +1,12 @@
 package net.bmahe.genetics4j.core.programming.math;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.programming.ImmutableOperation;
 import net.bmahe.genetics4j.core.programming.OperationFactories;
@@ -19,7 +22,8 @@ public class Terminals {
 
 			final double value = random.nextDouble() * (max - min) + min;
 
-			return ImmutableOperation.of("Coefficient[" + value + "]", 0, Double.class, (input, parameter) -> value);
+			return ImmutableOperation
+					.of("Coefficient[" + value + "]", Collections.emptyList(), Double.class, (input, parameter) -> value);
 		});
 	}
 
@@ -28,28 +32,44 @@ public class Terminals {
 
 			final double value = random.nextInt(max - min) + min;
 
-			return ImmutableOperation.of("CoefficientRounded[" + value + "]", 0, Double.class, (input, parameter) -> value);
+			return ImmutableOperation.of("CoefficientRounded[" + value + "]",
+					Collections.emptyList(),
+					Double.class,
+					(input, parameter) -> value);
 		});
 	}
 
-	public static OperationFactory INPUT(final Random random) {
-		return OperationFactories.of(new Class[] {}, Double.class, (inputSpec) -> {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T> OperationFactory Input(final Random random, final Class<T> clazz) {
+		Validate.notNull(random);
+		Validate.notNull(clazz);
+
+		return OperationFactories.of(new Class[] {}, clazz, (inputSpec) -> {
 			final List<Class> types = inputSpec.types();
 			final List<Integer> candidates = IntStream.range(0, types.size())
 					.filter((i) -> types.get(i)
-							.isAssignableFrom(Double.class))
+							.isAssignableFrom(clazz))
 					.boxed()
 					.collect(Collectors.toList());
 
 			if (candidates.isEmpty()) {
-				throw new IllegalArgumentException("No input with type Double found");
+				throw new IllegalArgumentException("No input with type " + clazz + " found");
 			}
 
 			final Integer inputIdx = candidates.get(random.nextInt(candidates.size()));
 
-			return ImmutableOperation.of("Input[" + inputIdx + "]", 0, Double.class, (input, parameter) -> {
+			return ImmutableOperation.of("Input[" + inputIdx + "]", Collections.emptyList(), clazz, (input, parameter) -> {
 				return input[inputIdx];
 			});
 		});
 	}
+
+	public static OperationFactory InputDouble(final Random random) {
+		return Input(random, Double.class);
+	}
+
+	public static OperationFactory InputString(final Random random) {
+		return Input(random, String.class);
+	}
+
 }

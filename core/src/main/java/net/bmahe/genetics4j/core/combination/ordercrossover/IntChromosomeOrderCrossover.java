@@ -1,6 +1,7 @@
 package net.bmahe.genetics4j.core.combination.ordercrossover;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class IntChromosomeOrderCrossover implements ChromosomeCombinator {
 	}
 
 	@Override
-	public IntChromosome combine(final Chromosome chromosome1, final Chromosome chromosome2) {
+	public List<Chromosome> combine(final Chromosome chromosome1, final Chromosome chromosome2) {
 		Validate.notNull(chromosome1);
 		Validate.notNull(chromosome2);
 		Validate.isInstanceOf(IntChromosome.class, chromosome1);
@@ -62,6 +63,7 @@ public class IntChromosomeOrderCrossover implements ChromosomeCombinator {
 			}
 		}
 
-		return new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome1.getMaxValue(), newValues);
+		return List
+				.of(new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome1.getMaxValue(), newValues));
 	}
 }

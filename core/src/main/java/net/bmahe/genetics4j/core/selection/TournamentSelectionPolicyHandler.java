@@ -70,11 +70,13 @@ public class TournamentSelectionPolicyHandler implements SelectionPolicyHandler 
 					for (int i = 0; i < tournamentSelection.numCandidates(); i++) {
 						final int candidateIndex = random.nextInt(fitnessScore.length);
 
-						if (bestCandidate == null || isScoreBetter.apply(bestScore, fitnessScore[candidateIndex])) {
+						if (bestCandidate == null || Double.isFinite(bestScore) == false
+								|| isScoreBetter.apply(bestScore, fitnessScore[candidateIndex])) {
 							bestScore = fitnessScore[candidateIndex];
 							bestCandidate = population[candidateIndex];
 						}
 					}
+
 					selected.add(bestCandidate);
 				}
 

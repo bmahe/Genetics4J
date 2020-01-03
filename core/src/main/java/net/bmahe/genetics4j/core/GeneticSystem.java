@@ -1,9 +1,11 @@
 package net.bmahe.genetics4j.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +15,7 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactory;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
+import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
 import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
@@ -74,18 +77,19 @@ public class GeneticSystem {
 		return genotypeSpec.fitness();
 	}
 
-	private Genotype[] generatePopulation(final GenotypeSpec genotypeSpec) {
+	private Genotype[] generatePopulation(final GenotypeSpec genotypeSpec, final int numPopulation) {
 		Validate.notNull(genotypeSpec);
+		Validate.isTrue(numPopulation > 0);
 
 		final Optional<Supplier<Genotype>> populationGenerator = genotypeSpec.populationGenerator();
 
-		final Genotype[] population = new Genotype[populationSize];
+		final Genotype[] population = new Genotype[numPopulation];
 
 		// Override
 		if (populationGenerator.isPresent()) {
 			final Supplier<Genotype> populationSupplier = populationGenerator.get();
 
-			for (int i = 0; i < populationSize; i++) {
+			for (int i = 0; i < numPopulation; i++) {
 				population[i] = populationSupplier.get();
 			}
 
@@ -98,7 +102,7 @@ public class GeneticSystem {
 						.provideChromosomeFactory(genotypeSpec.getChromosomeSpec(i));
 			}
 
-			for (int i = 0; i < populationSize; i++) {
+			for (int i = 0; i < numPopulation; i++) {
 
 				final Chromosome[] chromosomes = new Chromosome[numChromosomes];
 				for (int j = 0; j < numChromosomes; j++) {
@@ -117,7 +121,7 @@ public class GeneticSystem {
 		final Fitness fitness = genotypeSpec.fitness();
 
 		long generation = 0;
-		Genotype[] population = generatePopulation(genotypeSpec);
+		Genotype[] population = generatePopulation(genotypeSpec, populationSize);
 
 		double[] fitnessScore = new double[populationSize];
 		for (int i = 0; i < populationSize; i++) {
@@ -130,46 +134,88 @@ public class GeneticSystem {
 				evolutionListener.onEvolution(generation, population, fitnessScore);
 			}
 
-			final int parentsNeeded = (int) (populationSize * offspringRatio * 2);
+			final int childrenNeeded = (int) (populationSize * offspringRatio);
+			final int parentsNeeded = (int) (childrenNeeded * 2);
 			logger.trace("Will select {} parents", parentsNeeded);
-			final List<Genotype> selectedParents = parentSelector.select(genotypeSpec, parentsNeeded, population,
-					fitnessScore);
+			final List<Genotype> selectedParents = parentSelector
+					.select(genotypeSpec, parentsNeeded, population, fitnessScore);
 			logger.trace("Selected parents: {}", selectedParents);
 
-			Genotype[] newPopulation = new Genotype[populationSize];
-			int populationIndex = 0;
+			final List<Genotype> children = new ArrayList<>();
 			while (selectedParents.isEmpty() == false) {
 				final Genotype firstParent = selectedParents.remove(0);
 				final Genotype secondParent = selectedParents.remove(0);
 
-				final Chromosome[] chromosomes = new Chromosome[genotypeSpec.numChromosomes()];
+				final List<List<Chromosome>> chromosomes = new ArrayList<>();
 				for (int chromosomeIndex = 0; chromosomeIndex < genotypeSpec.numChromosomes(); chromosomeIndex++) {
 
 					final Chromosome firstChromosome = firstParent.getChromosome(chromosomeIndex);
 					final Chromosome secondChromosome = secondParent.getChromosome(chromosomeIndex);
 
-					final Chromosome combinedChromosome = chromosomeCombinators.get(chromosomeIndex)
+					final List<Chromosome> combinedChromosomes = chromosomeCombinators.get(chromosomeIndex)
 							.combine(firstChromosome, secondChromosome);
-
-					chromosomes[chromosomeIndex] = combinedChromosome;
-					logger.trace("Combining {} with {} ---> {}", firstChromosome, secondChromosome, combinedChromosome);
+//XXXX
+					chromosomes.add(combinedChromosomes);
+					logger.trace("Combining {} with {} ---> {}", firstChromosome, secondChromosome, combinedChromosomes);
 				}
 
-				Genotype offspring = new Genotype(chromosomes);
+				final GenotypeCombinator genotypeCombinator = genotypeSpec.genotypeCombinator();
+				final List<Genotype> offsprings = genotypeCombinator.combine(genotypeSpec, chromosomes);
 
-				for (final Mutator mutator : mutators) {
-					offspring = mutator.mutate(offspring);
-				}
+				children.addAll(offsprings);
 
-				newPopulation[populationIndex] = offspring;
+			}
+
+			final List<Genotype> selectedChildren = children.size() <= childrenNeeded ? children.stream()
+					.limit(childrenNeeded)
+					.collect(Collectors.toList())
+					: geneticSystemDescriptor.random()
+							.ints(0, children.size())
+							.distinct()
+							.limit(childrenNeeded)
+							.boxed()
+							.map(idx -> children.get(idx))
+							.collect(Collectors.toList());
+
+			final List<Genotype> mutatedChildren = selectedChildren.stream()
+					.map(child -> {
+						Genotype mutatedChild = child;
+
+						for (final Mutator mutator : mutators) {
+							mutatedChild = mutator.mutate(mutatedChild);
+						}
+
+						return mutatedChild;
+					})
+					.collect(Collectors.toList());
+
+			// TODO make a List<Genotype>
+			Genotype[] newPopulation = new Genotype[populationSize];
+			int populationIndex = 0;
+
+			logger.info("Number of children: {}", mutatedChildren.size());
+			for (final Genotype mutatedChild : mutatedChildren) {
+
+				newPopulation[populationIndex] = mutatedChild;
 				populationIndex++;
 			}
 
-			final List<Genotype> survivors = survivorSelector.select(genotypeSpec, populationSize - populationIndex,
-					population, fitnessScore);
+			final List<Genotype> survivors = survivorSelector
+					.select(genotypeSpec, populationSize - childrenNeeded, population, fitnessScore);
+			logger.info("Number of survivors: {}", survivors.size());
 			for (final Genotype genotype : survivors) {
 				newPopulation[populationIndex] = genotype;
 				populationIndex++;
+			}
+
+			if (populationIndex < populationSize) {
+				final Genotype[] additionalIndividuals = generatePopulation(genotypeSpec, populationSize - populationIndex);
+				logger.info("Number of generated individuals: {}", additionalIndividuals.length);
+
+				for (final Genotype genotype : additionalIndividuals) {
+					newPopulation[populationIndex] = genotype;
+					populationIndex++;
+				}
 			}
 
 			logger.trace("[Generation {}] New population: {}", generation, Arrays.asList(newPopulation));

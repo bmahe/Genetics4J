@@ -26,6 +26,10 @@ public class Genotype {
 		this.chromosomes = chromosomesArray;
 	}
 
+	public int getSize() {
+		return chromosomes.length;
+	}
+
 	public Chromosome[] getChromosomes() {
 		return chromosomes;
 	}

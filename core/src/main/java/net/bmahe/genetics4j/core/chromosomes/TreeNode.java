@@ -1,7 +1,9 @@
 package net.bmahe.genetics4j.core.chromosomes;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 
@@ -42,6 +44,19 @@ public class TreeNode<T> {
 		Validate.notNull(childData);
 
 		children.add(childData);
+	}
+
+	public void addChildren(final Collection<TreeNode<T>> childrenNodes) {
+		Validate.notNull(childrenNodes);
+		Validate.isTrue(childrenNodes.isEmpty() == false);
+
+		children.addAll(childrenNodes);
+	}
+
+	public int getSize() {
+		return 1 + children.stream()
+				.map(TreeNode::getSize)
+				.collect(Collectors.summingInt(x -> x));
 	}
 
 	@Override

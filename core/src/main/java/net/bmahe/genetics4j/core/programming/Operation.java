@@ -1,5 +1,6 @@
 package net.bmahe.genetics4j.core.programming;
 
+import java.util.List;
 import java.util.function.BiFunction;
 
 import org.immutables.value.Value;
@@ -11,8 +12,9 @@ public abstract class Operation<T> {
 	@Parameter
 	public abstract String getName();
 
+	@SuppressWarnings("rawtypes")
 	@Parameter
-	public abstract int getArity();
+	public abstract List<Class> acceptedTypes();
 
 	@SuppressWarnings("rawtypes")
 	@Parameter
@@ -22,7 +24,12 @@ public abstract class Operation<T> {
 	public abstract BiFunction<T[], Object[], Object> compute();
 
 	public Object apply(final T[] input, final Object[] parameters) {
-		return compute().apply(input, parameters);
+		final BiFunction<T[], Object[], Object> function = compute();
+		return function.apply(input, parameters);
+	}
+
+	public int getArity() {
+		return acceptedTypes().size();
 	}
 
 	public boolean isTerminal() {

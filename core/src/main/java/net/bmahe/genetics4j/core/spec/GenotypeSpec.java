@@ -11,6 +11,8 @@ import org.immutables.value.Value;
 import net.bmahe.genetics4j.core.Fitness;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Termination;
+import net.bmahe.genetics4j.core.combination.AllCasesGenotypeCombinator;
+import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
@@ -36,6 +38,11 @@ public abstract class GenotypeSpec {
 	public abstract Termination termination();
 
 	public abstract Optional<Supplier<Genotype>> populationGenerator();
+
+	@Value.Default
+	public GenotypeCombinator genotypeCombinator() {
+		return new AllCasesGenotypeCombinator();
+	}
 
 	@Value.Default
 	public double offspringRatio() {
