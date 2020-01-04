@@ -60,7 +60,7 @@
 		<maven.install.plugin.version>2.5.2</maven.install.plugin.version>
 		<maven.jacoco.plugin.version>0.8.3</maven.jacoco.plugin.version>
 		<maven.jar.plugin.verison>3.1.1</maven.jar.plugin.verison>
-		<maven.javadoc.plugin.version>3.1.0</maven.javadoc.plugin.version>
+		<maven.javadoc.plugin.version>3.1.1</maven.javadoc.plugin.version>
 		<maven.jxr.plugin.version>2.3</maven.jxr.plugin.version>
 		<maven.pmd.plugin>3.11.0</maven.pmd.plugin>
 		<maven.project.info.reports.plugin.version>3.0.0</maven.project.info.reports.plugin.version>
@@ -294,7 +294,6 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>${maven.javadoc.plugin.version}</version>
 					<configuration>
-						<additionalparam>-Xdoclint:none</additionalparam>
 					</configuration>
 					<executions>
 						<execution>
@@ -312,6 +311,7 @@
 								<additionalOptions>
 									<!--<additionalOption>...</additionalOption> -->
 								</additionalOptions>
+								<doclint>none</doclint>
 							</configuration>
 						</execution>
 					</executions>
@@ -419,6 +419,7 @@
 					<additionalOptions>
 						<additionalOption>-private</additionalOption>
 					</additionalOptions>
+					<doclint>none</doclint>
 				</configuration>
 				<reportSets>
 					<reportSet>
