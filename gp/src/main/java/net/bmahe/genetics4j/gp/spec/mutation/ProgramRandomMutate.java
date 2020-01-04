@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.spec.gp.mutation;
+package net.bmahe.genetics4j.gp.spec.mutation;
 
 import org.immutables.value.Value;
 

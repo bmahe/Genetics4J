@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.programming.math;
+package net.bmahe.genetics4j.gp.math;
 
 import java.util.Collections;
 import java.util.List;
@@ -8,9 +8,9 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.Validate;
 
-import net.bmahe.genetics4j.core.programming.ImmutableOperation;
-import net.bmahe.genetics4j.core.programming.OperationFactories;
-import net.bmahe.genetics4j.core.programming.OperationFactory;
+import net.bmahe.genetics4j.gp.ImmutableOperation;
+import net.bmahe.genetics4j.gp.OperationFactories;
+import net.bmahe.genetics4j.gp.OperationFactory;
 
 public class Terminals {
 	public static OperationFactory PI = OperationFactories.ofTerminal("PI", Double.class, () -> Math.PI);

@@ -1,7 +1,7 @@
-package net.bmahe.genetics4j.core.programming.math;
+package net.bmahe.genetics4j.gp.math;
 
-import net.bmahe.genetics4j.core.programming.OperationFactories;
-import net.bmahe.genetics4j.core.programming.OperationFactory;
+import net.bmahe.genetics4j.gp.OperationFactories;
+import net.bmahe.genetics4j.gp.OperationFactory;
 
 public final class Functions {
 

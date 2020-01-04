@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.programming;
+package net.bmahe.genetics4j.gp;
 
 import java.util.function.Supplier;
 

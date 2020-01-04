@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.programming;
+package net.bmahe.genetics4j.gp;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -15,29 +15,27 @@ import net.bmahe.genetics4j.core.GeneticSystem;
 import net.bmahe.genetics4j.core.GeneticSystemFactory;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Terminations;
-import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactory;
 import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider;
-import net.bmahe.genetics4j.core.combination.gp.ProgramRandomCombineHandler;
-import net.bmahe.genetics4j.core.mutation.gp.ProgramRandomMutatePolicyHandler;
-import net.bmahe.genetics4j.core.mutation.gp.ProgramRandomPrunePolicyHandler;
-import net.bmahe.genetics4j.core.programming.ImmutableProgram.Builder;
-import net.bmahe.genetics4j.core.programming.math.Functions;
-import net.bmahe.genetics4j.core.programming.math.Terminals;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.chromosome.ProgramTreeChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.gp.combination.ProgramRandomCombine;
-import net.bmahe.genetics4j.core.spec.gp.mutation.ProgramRandomMutate;
-import net.bmahe.genetics4j.core.spec.gp.mutation.ProgramRandomPrune;
-import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
+import net.bmahe.genetics4j.gp.ImmutableProgram.Builder;
+import net.bmahe.genetics4j.gp.combination.ProgramRandomCombineHandler;
+import net.bmahe.genetics4j.gp.math.Functions;
+import net.bmahe.genetics4j.gp.math.Terminals;
+import net.bmahe.genetics4j.gp.mutation.ProgramRandomMutatePolicyHandler;
+import net.bmahe.genetics4j.gp.mutation.ProgramRandomPrunePolicyHandler;
+import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
+import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
+import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
+import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 
 public class SimpleGPTest {
 	final static public Logger logger = LogManager.getLogger(SimpleGPTest.class);

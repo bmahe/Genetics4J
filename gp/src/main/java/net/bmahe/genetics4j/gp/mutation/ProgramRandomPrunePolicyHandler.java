@@ -1,11 +1,9 @@
-package net.bmahe.genetics4j.core.mutation.gp;
+package net.bmahe.genetics4j.gp.mutation;
 
 import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.Validate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
@@ -14,23 +12,23 @@ import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
-import net.bmahe.genetics4j.core.programming.Operation;
-import net.bmahe.genetics4j.core.programming.Program;
-import net.bmahe.genetics4j.core.programming.ProgramGenerator;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.chromosome.ProgramTreeChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.gp.mutation.ProgramRandomMutate;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
+import net.bmahe.genetics4j.gp.Operation;
+import net.bmahe.genetics4j.gp.OperationFactory;
+import net.bmahe.genetics4j.gp.Program;
+import net.bmahe.genetics4j.gp.ProgramGenerator;
+import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
+import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 
-public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
-	final static public Logger logger = LogManager.getLogger(ProgramRandomMutatePolicyHandler.class);
+public class ProgramRandomPrunePolicyHandler implements MutationPolicyHandler {
 
 	private final Random random;
 	private final ProgramGenerator programGenerator;
 
-	public ProgramRandomMutatePolicyHandler(final Random _random, final ProgramGenerator _programGenerator) {
+	public ProgramRandomPrunePolicyHandler(final Random _random, final ProgramGenerator _programGenerator) {
 		Validate.notNull(_random);
 		Validate.notNull(_programGenerator);
 
@@ -44,7 +42,7 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 		Validate.notNull(mutationPolicyHandlerResolver);
 		Validate.notNull(mutationPolicy);
 
-		return mutationPolicy instanceof ProgramRandomMutate;
+		return mutationPolicy instanceof ProgramRandomPrune;
 	}
 
 	@Override
@@ -54,14 +52,14 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 		Validate.notNull(genotypeSpec);
 		Validate.notNull(mutationPolicyHandlerResolver);
 		Validate.notNull(mutationPolicy);
-		Validate.isInstanceOf(ProgramRandomMutate.class, mutationPolicy);
+		Validate.isInstanceOf(ProgramRandomPrune.class, mutationPolicy);
 
-		final ProgramRandomMutate programRandomMutate = (ProgramRandomMutate) mutationPolicy;
-		final double populationMutationProbability = programRandomMutate.populationMutationProbability();
+		final ProgramRandomPrune programRandomPrune = (ProgramRandomPrune) mutationPolicy;
+		final double populationMutationProbability = programRandomPrune.populationMutationProbability();
 
 		return new Mutator() {
 
-			private TreeNode<Operation<?>> duplicateAndMutate(final Program program, final TreeNode<Operation<?>> root,
+			private TreeNode<Operation<?>> duplicateAndCut(final Program program, final TreeNode<Operation<?>> root,
 					final int cutPoint, final int nodeIndex) {
 				Validate.notNull(root);
 				Validate.isTrue(cutPoint >= 0);
@@ -69,9 +67,10 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 				final Operation<?> rootData = root.getData();
 
 				if (nodeIndex == cutPoint) {
-					//TODO use depth, not size
-					return programGenerator
-							.generate(program, Math.max(1, program.maxDepth() - root.getSize()), rootData.returnedType());
+					final OperationFactory randomTerminal = programGenerator.pickRandomTerminal(program,
+							rootData.returnedType());
+					final Operation<?> operation = randomTerminal.build(program.inputSpec());
+					return new TreeNode<Operation<?>>(operation);
 				} else {
 					final List<TreeNode<Operation<?>>> children = root.getChildren();
 
@@ -82,10 +81,7 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 						final TreeNode<Operation<?>> treeNode = children.get(i);
 						final int childSize = treeNode.getSize();
 
-						final TreeNode<Operation<?>> childCopy = duplicateAndMutate(program,
-								treeNode,
-								cutPoint,
-								currentIndex);
+						final TreeNode<Operation<?>> childCopy = duplicateAndCut(program, treeNode, cutPoint, currentIndex);
 						duplicateRoot.addChild(childCopy);
 						currentIndex += childSize;
 					}
@@ -125,21 +121,16 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 							final int cutPoint = random.nextInt(chromosomeSize - 1) + 1;
 
 							final TreeNode<Operation<?>> root = treeChromosome.getRoot();
-							final TreeNode<Operation<?>> newRoot = duplicateAndMutate(programTreeChromosomeSpec.program(),
+							final TreeNode<Operation<?>> newRoot = duplicateAndCut(programTreeChromosomeSpec.program(),
 									root,
 									cutPoint,
 									0);
 							final TreeChromosome<Operation<?>> newTreeChromosome = new TreeChromosome<>(newRoot);
 							newChromosomes[chromosomeIndex] = newTreeChromosome;
 						} else {
-							final TreeNode<Operation<Object>> newRoot = programGenerator.generate(
-									programTreeChromosomeSpec.program(),
-									programTreeChromosomeSpec.program()
-											.maxDepth());
-							final TreeChromosome<Operation<Object>> newTreeChromosome = new TreeChromosome<>(newRoot);
-
-							newChromosomes[chromosomeIndex] = newTreeChromosome;
+							newChromosomes[chromosomeIndex] = chromosome;
 						}
+
 					}
 
 					return new Genotype(newChromosomes);
@@ -149,4 +140,5 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 			}
 		};
 	}
+
 }

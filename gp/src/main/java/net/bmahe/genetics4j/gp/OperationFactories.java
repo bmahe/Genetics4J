@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.programming;
+package net.bmahe.genetics4j.gp;
 
 import java.util.Arrays;
 import java.util.function.BiFunction;
@@ -6,6 +6,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang3.Validate;
+
+import net.bmahe.genetics4j.gp.ImmutableOperation;
 
 public final class OperationFactories {
 
