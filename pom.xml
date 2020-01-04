@@ -71,7 +71,7 @@
 		<maven.taglist.plugin>2.4</maven.taglist.plugin>
 		<maven.versions.plugin>2.2</maven.versions.plugin>
 		<umldoclet.version>2.0.2</umldoclet.version>
-		<pitest.plugin.version>1.4.8</pitest.plugin.version>
+		<pitest.plugin.version>1.4.10</pitest.plugin.version>
 
 		<apache.commons.cli.version>1.4</apache.commons.cli.version>
 		<apache.commons.csv.version>1.6</apache.commons.csv.version>
