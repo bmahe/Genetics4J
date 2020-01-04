@@ -11,7 +11,7 @@
 
 	<name>Genetics4j</name>
 	<description>Genetics4j</description>
-	<url>https://bmahe.gitlab.io/locality-sensitive-hashing-java/</url>
+	<url>https://bmahe.gitlab.io/genetic4j/</url>
 	<inceptionYear>2019</inceptionYear>
 
 	<licenses>
@@ -22,20 +22,20 @@
 	</licenses>
 
 	<issueManagement>
-		<url>https://gitlab.com/bmahe/locality-sensitive-hashing-java/issues</url>
+		<url>https://gitlab.com/bmahe/genetic4j/issues</url>
 		<system>Gitlab</system>
 	</issueManagement>
 
 	<scm>
-		<url>https://gitlab.com/bmahe/locality-sensitive-hashing-java</url>
-		<connection>scm:git:git@gitlab.com:bmahe/locality-sensitive-hashing-java.git</connection>
-		<developerConnection>scm:git:git@gitlab.com:bmahe/locality-sensitive-hashing-java.git</developerConnection>
+		<url>https://gitlab.com/bmahe/genetic4j</url>
+		<connection>scm:git:git@gitlab.com:bmahe/genetic4j.git</connection>
+		<developerConnection>scm:git:git@gitlab.com:bmahe/genetic4j.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
 	<properties>
-		<website.url>https://bmahe.gitlab.io/locality-sensitive-hashing-java</website.url>
-		<gitlab.project.id>12813983</gitlab.project.id>
+		<website.url>https://bmahe.gitlab.io/genetic4j</website.url>
+		<gitlab.project.id>106954434</gitlab.project.id>
 		<project.recommended.version>${project.version}</project.recommended.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
