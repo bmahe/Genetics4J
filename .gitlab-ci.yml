@@ -55,14 +55,13 @@ verify:jdk13:
     JOB_MAVEN_OVERRIDE: " -Djava.version=13 "
 
 # Verify merge requests using JDK14
-# XXX Not yet supported by pitest
-#verify:jdk14:
-#  <<: *verify
-#  image: maven:3.6.3-jdk-14
-#  cache:
-#    key: "$CI_JOB_NAME-java14"
-#  variables:
-#    JOB_MAVEN_OVERRIDE: " -Djava.version=14 "
+verify:jdk14:
+  <<: *verify
+  image: maven:3.6.3-jdk-14
+  cache:
+    key: "$CI_JOB_NAME-java14"
+  variables:
+    JOB_MAVEN_OVERRIDE: " -Djava.version=14 "
 
 site:
   stage: package

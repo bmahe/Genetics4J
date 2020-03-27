@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.bmahe.genetics4j</groupId>
 	<artifactId>parent</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Genetics4j</name>
@@ -71,7 +69,7 @@
 		<maven.taglist.plugin>2.4</maven.taglist.plugin>
 		<maven.versions.plugin>2.2</maven.versions.plugin>
 		<umldoclet.version>2.0.2</umldoclet.version>
-		<pitest.plugin.version>1.4.10</pitest.plugin.version>
+		<pitest.plugin.version>1.5.0</pitest.plugin.version>
 
 		<apache.commons.cli.version>1.4</apache.commons.cli.version>
 		<apache.commons.csv.version>1.6</apache.commons.csv.version>
@@ -97,13 +95,13 @@
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>core</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>1.1-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>gp</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>1.1-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
