@@ -23,6 +23,11 @@ public abstract class Operation<T> {
 	@Parameter
 	public abstract BiFunction<T[], Object[], Object> compute();
 
+	@Value.Default
+	public String getPrettyName() {
+		return getName();
+	}
+
 	public Object apply(final T[] input, final Object[] parameters) {
 		final BiFunction<T[], Object[], Object> function = compute();
 		return function.apply(input, parameters);

@@ -69,7 +69,7 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 				final Operation<?> rootData = root.getData();
 
 				if (nodeIndex == cutPoint) {
-					//TODO use depth, not size
+					// TODO use depth, not size
 					return programGenerator
 							.generate(program, Math.max(1, program.maxDepth() - root.getSize()), rootData.returnedType());
 				} else {
@@ -122,7 +122,7 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 						final int chromosomeSize = treeChromosome.getSize();
 
 						if (chromosomeSize > 2) {
-							final int cutPoint = random.nextInt(chromosomeSize - 1) + 1;
+							final int cutPoint = random.nextInt(chromosomeSize - 1);
 
 							final TreeNode<Operation<?>> root = treeChromosome.getRoot();
 							final TreeNode<Operation<?>> newRoot = duplicateAndMutate(programTreeChromosomeSpec.program(),

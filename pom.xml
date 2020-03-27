@@ -211,6 +211,9 @@
 							<avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
 							<avoidCallsTo>org.apache.commons.lang3.Validate</avoidCallsTo>
 						</avoidCallsTo>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
 					</configuration>
 				</plugin>
 
