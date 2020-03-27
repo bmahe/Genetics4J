@@ -13,7 +13,16 @@ public class StdProgramGenerator implements ProgramGenerator {
 
 	private final Random random;
 
+	public StdProgramGenerator(final Random _random) {
+		Validate.notNull(_random);
+
+		this.random = _random;
+	}
+
 	public OperationFactory pickRandomFunction(final Program program) {
+		Validate.notNull(program);
+		Validate.isTrue(program.functions()
+				.size() > 0);
 
 		final Set<OperationFactory> functions = program.functions();
 		return functions.stream()
@@ -23,6 +32,10 @@ public class StdProgramGenerator implements ProgramGenerator {
 	}
 
 	public <T> OperationFactory pickRandomFunction(final Program program, final Class<T> requiredClass) {
+		Validate.notNull(program);
+		Validate.notNull(requiredClass);
+		Validate.isTrue(program.functions()
+				.size() > 0);
 
 		final Set<OperationFactory> functions = program.functions();
 		@SuppressWarnings("unchecked")
@@ -71,7 +84,7 @@ public class StdProgramGenerator implements ProgramGenerator {
 	private <T, U> TreeNode<Operation<T>> generate(final Program program, Class<U> acceptedType, int maxDepth,
 			int depth) {
 
-		OperationFactory currentNode = depth < maxDepth && random.nextDouble() < 0.5
+		OperationFactory currentNode = depth < maxDepth - 1 && random.nextDouble() < 0.5
 				? pickRandomFunction(program, acceptedType)
 				: pickRandomTerminal(program, acceptedType);
 
@@ -90,19 +103,13 @@ public class StdProgramGenerator implements ProgramGenerator {
 		return currentTreeNode;
 	}
 
-	public StdProgramGenerator(final Random _random) {
-		Validate.notNull(_random);
-
-		this.random = _random;
-	}
-
 	@SuppressWarnings("rawtypes")
 	@Override
 	public TreeNode<Operation> generate(final Program program, final int maxDepth) {
 		Validate.notNull(program);
 		Validate.isTrue(maxDepth > 0);
 
-		OperationFactory currentNode = random.nextDouble() < 0.98 ? pickRandomFunction(program)
+		final OperationFactory currentNode = random.nextDouble() < 0.98 ? pickRandomFunction(program)
 				: pickRandomTerminal(program);
 
 		final Operation currentOperation = currentNode.build(program.inputSpec());

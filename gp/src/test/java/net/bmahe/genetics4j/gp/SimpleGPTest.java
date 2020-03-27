@@ -14,26 +14,29 @@ import net.bmahe.genetics4j.core.EvolutionListener;
 import net.bmahe.genetics4j.core.GeneticSystem;
 import net.bmahe.genetics4j.core.GeneticSystemFactory;
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.SimpleEvolutionListener;
 import net.bmahe.genetics4j.core.Terminations;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
-import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactory;
 import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.Optimization;
-import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 import net.bmahe.genetics4j.gp.ImmutableProgram.Builder;
+import net.bmahe.genetics4j.gp.chromosomes.factory.ProgramTreeChromosomeFactory;
 import net.bmahe.genetics4j.gp.combination.ProgramRandomCombineHandler;
 import net.bmahe.genetics4j.gp.math.Functions;
+import net.bmahe.genetics4j.gp.math.SimplificationRules;
 import net.bmahe.genetics4j.gp.math.Terminals;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomMutatePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomPrunePolicyHandler;
+import net.bmahe.genetics4j.gp.mutation.ProgramRulesApplicatorPolicyHandler;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
+import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 
@@ -71,7 +74,7 @@ public class SimpleGPTest {
 
 		final StringBuilder stringBuilder = new StringBuilder();
 
-		stringBuilder.append(operation.getName());
+		stringBuilder.append(operation.getPrettyName());
 		if (children != null && children.isEmpty() == false) {
 			stringBuilder.append("(");
 
@@ -148,9 +151,11 @@ public class SimpleGPTest {
 		genotypeSpecBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(TournamentSelection.build(3))
 				.survivorSelectionPolicy(TournamentSelection.build(3))
-				.offspringRatio(0.98d)
+				.offspringRatio(0.90d)
 				.combinationPolicy(ProgramRandomCombine.build())
-				.mutationPolicies(ProgramRandomMutate.of(0.10), ProgramRandomPrune.of(0.10))
+				.mutationPolicies(ProgramRandomMutate.of(0.10),
+						ProgramRandomPrune.of(0.10),
+						ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
 				.optimization(Optimization.MINIMIZE)
 				.termination(Terminations.ofMaxGeneration(1000))
 				.fitness((genoType) -> {
@@ -189,27 +194,14 @@ public class SimpleGPTest {
 				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programGenerator));
 		geneticSystemDescriptorBuilder
 				.addMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
+		geneticSystemDescriptorBuilder.addMutationPolicyHandlers(new ProgramRulesApplicatorPolicyHandler());
 
 		geneticSystemDescriptorBuilder.addChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
 		chromosomeFactoryProviderBuilder.random(random);
-		chromosomeFactoryProviderBuilder.addChromosomeFactories(new ChromosomeFactory<TreeChromosome<Operation>>() {
-
-			@Override
-			public boolean canHandle(ChromosomeSpec chromosomeSpec) {
-				return chromosomeSpec instanceof ProgramTreeChromosomeSpec;
-			}
-
-			@Override
-			public TreeChromosome<Operation> generate(ChromosomeSpec chromosomeSpec) {
-
-				ProgramTreeChromosomeSpec ptcs = (ProgramTreeChromosomeSpec) chromosomeSpec;
-
-				return new TreeChromosome<Operation>(programGenerator.generate(ptcs.program()));
-			}
-		});
+		chromosomeFactoryProviderBuilder.addChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
 
 		geneticSystemDescriptorBuilder.addEvolutionListeners(new EvolutionListener() {
@@ -227,7 +219,7 @@ public class SimpleGPTest {
 				}
 
 			}
-		});
+		}, new SimpleEvolutionListener());
 
 		final GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 		final GeneticSystemFactory geneticSystemFactory = new GeneticSystemFactory();

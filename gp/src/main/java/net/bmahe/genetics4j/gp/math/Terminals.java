@@ -1,6 +1,5 @@
 package net.bmahe.genetics4j.gp.math;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -8,34 +7,47 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.Validate;
 
-import net.bmahe.genetics4j.gp.ImmutableOperation;
 import net.bmahe.genetics4j.gp.OperationFactories;
 import net.bmahe.genetics4j.gp.OperationFactory;
+import net.bmahe.genetics4j.gp.math.ImmutableCoefficientOperation.Builder;
 
 public class Terminals {
+
+	public final static String TYPE_COEFFICIENT = "Coefficient";
+	public final static String TYPE_INPUT = "Input";
+
 	public static OperationFactory PI = OperationFactories.ofTerminal("PI", Double.class, () -> Math.PI);
 
 	public static OperationFactory E = OperationFactories.ofTerminal("E", Double.class, () -> Math.E);
 
 	public static OperationFactory Coefficient(final Random random, final double min, final double max) {
-		return OperationFactory.of(new Class[] {}, Double.class, () -> {
+		return OperationFactories.ofOperationSupplier(new Class[] {}, Double.class, () -> {
 
 			final double value = random.nextDouble() * (max - min) + min;
 
-			return ImmutableOperation
-					.of("Coefficient[" + value + "]", Collections.emptyList(), Double.class, (input, parameter) -> value);
+			final Builder<Double> operationBuilder = ImmutableCoefficientOperation.builder();
+
+			operationBuilder.name(TYPE_COEFFICIENT)
+					.prettyName(TYPE_COEFFICIENT + "[" + value + "]")
+					.returnedType(Double.class)
+					.value(value);
+
+			return operationBuilder.build();
 		});
 	}
 
 	public static OperationFactory CoefficientRounded(final Random random, final int min, final int max) {
-		return OperationFactory.of(new Class[] {}, Double.class, () -> {
+		return OperationFactories.ofOperationSupplier(new Class[] {}, Double.class, () -> {
 
 			final double value = random.nextInt(max - min) + min;
 
-			return ImmutableOperation.of("CoefficientRounded[" + value + "]",
-					Collections.emptyList(),
-					Double.class,
-					(input, parameter) -> value);
+			final Builder<Double> operationBuilder = ImmutableCoefficientOperation.builder();
+			operationBuilder.name(TYPE_COEFFICIENT)
+					.prettyName("CoefficientRounded[" + value + "]")
+					.returnedType(Double.class)
+					.value(value);
+
+			return operationBuilder.build();
 		});
 	}
 
@@ -58,9 +70,14 @@ public class Terminals {
 
 			final Integer inputIdx = candidates.get(random.nextInt(candidates.size()));
 
-			return ImmutableOperation.of("Input[" + inputIdx + "]", Collections.emptyList(), clazz, (input, parameter) -> {
-				return input[inputIdx];
-			});
+			final net.bmahe.genetics4j.gp.math.ImmutableInputOperation.Builder<T> operationBuilder = ImmutableInputOperation
+					.builder();
+			operationBuilder.name(TYPE_INPUT)
+					.prettyName(TYPE_INPUT + "[" + inputIdx + "]")
+					.returnedType(clazz)
+					.index(inputIdx);
+
+			return operationBuilder.build();
 		});
 	}
 
@@ -71,5 +88,4 @@ public class Terminals {
 	public static OperationFactory InputString(final Random random) {
 		return Input(random, String.class);
 	}
-
 }

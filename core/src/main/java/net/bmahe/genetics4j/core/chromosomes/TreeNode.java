@@ -2,6 +2,7 @@ package net.bmahe.genetics4j.core.chromosomes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +58,13 @@ public class TreeNode<T> {
 		return 1 + children.stream()
 				.map(TreeNode::getSize)
 				.collect(Collectors.summingInt(x -> x));
+	}
+
+	public int getDepth() {
+		return 1 + children.stream()
+				.map(TreeNode::getDepth)
+				.max(Comparator.naturalOrder())
+				.orElse(0);
 	}
 
 	@Override

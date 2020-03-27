@@ -77,6 +77,9 @@
 						<phase>verify</phase>
 					</execution>
 				</executions>
+				<configuration>
+					<skipTests>${skipTests}</skipTests>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
