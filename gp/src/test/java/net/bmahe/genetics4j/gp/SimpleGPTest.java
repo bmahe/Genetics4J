@@ -91,7 +91,7 @@ public class SimpleGPTest {
 		return stringBuilder.toString();
 	}
 
-	@Test
+	//@Test
 	public void simple() {
 		final Random random = new Random();
 		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
