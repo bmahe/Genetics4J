@@ -206,7 +206,16 @@
 					<groupId>org.pitest</groupId>
 					<artifactId>pitest-maven</artifactId>
 					<version>${pitest.plugin.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>mutationCoverage</goal>
+							</goals>
+							<phase>verify</phase>
+						</execution>
+					</executions>
 					<configuration>
+						<skipTests>${skipTests}</skipTests>
 						<timestampedReports>false</timestampedReports>
 						<mutators>
 							<mutator>ALL</mutator>
