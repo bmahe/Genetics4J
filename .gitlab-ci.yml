@@ -71,7 +71,7 @@ site:
   script:
     - apt-get update -yqq
     - apt-get install -yqq gnuplot graphviz
-    - mvn verify site site:stage -Dproject.recommended.version="${RECOMMENDED_VERSION}"
+    - mvn test verify site site:stage -Dproject.recommended.version="${RECOMMENDED_VERSION}"
 
 
 pages:
