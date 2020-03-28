@@ -33,6 +33,13 @@
 		<tag>HEAD</tag>
 	</scm>
 
+	<developers>
+		<developer>
+			<name>Bruno Mahé</name>
+			<email>bruno@bmahe.net</email>
+		</developer>
+	</developers>
+
 	<properties>
 		<website.url>https://bmahe.gitlab.io/genetics4j</website.url>
 		<gitlab.project.id>13863766</gitlab.project.id>
