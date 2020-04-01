@@ -33,6 +33,13 @@
 		<tag>HEAD</tag>
 	</scm>
 
+	<developers>
+		<developer>
+			<name>Bruno Mahé</name>
+			<email>bruno@bmahe.net</email>
+		</developer>
+	</developers>
+
 	<properties>
 		<website.url>https://bmahe.gitlab.io/genetics4j</website.url>
 		<gitlab.project.id>13863766</gitlab.project.id>
@@ -199,7 +206,16 @@
 					<groupId>org.pitest</groupId>
 					<artifactId>pitest-maven</artifactId>
 					<version>${pitest.plugin.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>mutationCoverage</goal>
+							</goals>
+							<phase>verify</phase>
+						</execution>
+					</executions>
 					<configuration>
+						<skipTests>${skipITs}</skipTests>
 						<timestampedReports>false</timestampedReports>
 						<mutators>
 							<mutator>ALL</mutator>

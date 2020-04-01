@@ -16,5 +16,5 @@ public interface Rule {
 	Predicate<TreeNode<Operation<?>>> predicate();
 
 	@Value.Parameter
-	BiFunction<Program, TreeNode<Operation<?>>, TreeNode<Operation<?>>> simplify();
+	BiFunction<Program, TreeNode<Operation<?>>, TreeNode<Operation<?>>> applicator();
 }

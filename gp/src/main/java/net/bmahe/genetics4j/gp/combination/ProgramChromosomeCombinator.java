@@ -31,17 +31,13 @@ final class ProgramChromosomeCombinator implements ChromosomeCombinator {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Map<Class, List<TreeNode<Operation<?>>>> returnedTypeToNode(final TreeNode<Operation<?>> root) {
+	protected Map<Class, List<TreeNode<Operation<?>>>> returnedTypeToNode(final TreeNode<Operation<?>> root) {
 		Validate.notNull(root);
 
 		final Map<Class, List<TreeNode<Operation<?>>>> returnedTypeIndex = new HashMap<>();
 
 		final Deque<TreeNode<Operation<?>>> nodes = new ArrayDeque<>();
-
-		if (root.getChildren() != null && root.getChildren()
-				.isEmpty() == false) {
-			nodes.addAll(root.getChildren());
-		}
+		nodes.add(root);
 
 		while (nodes.isEmpty() == false) {
 			final TreeNode<Operation<?>> node = nodes.remove();
@@ -57,13 +53,12 @@ final class ProgramChromosomeCombinator implements ChromosomeCombinator {
 					.isEmpty() == false) {
 				nodes.addAll(node.getChildren());
 			}
-
 		}
 
 		return returnedTypeIndex;
 	}
 
-	private TreeNode<Operation<?>> copyAndReplace(final TreeNode<Operation<?>> root,
+	protected TreeNode<Operation<?>> copyAndReplace(final TreeNode<Operation<?>> root,
 			final TreeNode<Operation<?>> replaced, final TreeNode<Operation<?>> replacement) {
 		Validate.notNull(root);
 		Validate.notNull(replaced);
