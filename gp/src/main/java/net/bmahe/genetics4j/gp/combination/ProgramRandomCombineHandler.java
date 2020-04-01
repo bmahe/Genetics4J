@@ -41,10 +41,10 @@ public class ProgramRandomCombineHandler implements ChromosomeCombinatorHandler 
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
 		Validate.notNull(chromosomeSpec);
-
-		if (chromosomeSpec instanceof ProgramTreeChromosomeSpec == false) {
-			throw new IllegalArgumentException("This combinator does not support chromosome specs " + chromosomeSpec);
-		}
+		Validate.isInstanceOf(ProgramTreeChromosomeSpec.class,
+				chromosomeSpec,
+				"This combinator does not support chromosome specs %s",
+				chromosomeSpec);
 
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = (ProgramTreeChromosomeSpec) chromosomeSpec;
 
