@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,7 @@ import net.bmahe.genetics4j.core.spec.ImmutableEvolutionResult;
 public class GeneticSystem {
 	final static public Logger logger = LogManager.getLogger(GeneticSystem.class);
 
+	private final ExecutorService executorService;
 	private final GenotypeSpec genotypeSpec;
 	private final GeneticSystemDescriptor geneticSystemDescriptor;
 	private final int populationSize;
@@ -43,7 +46,7 @@ public class GeneticSystem {
 	public GeneticSystem(final GenotypeSpec _genotypeSpec, final long _populationSize,
 			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
 			final Selector _parentSelectionPolicyHandler, final Selector _survivorSelector, final List<Mutator> _mutators,
-			final GeneticSystemDescriptor _geneticSystemDescriptor) {
+			final GeneticSystemDescriptor _geneticSystemDescriptor, final ExecutorService _executorService) {
 		Validate.notNull(_genotypeSpec);
 		Validate.isTrue(_populationSize > 0);
 		Validate.notNull(_chromosomeCombinators);
@@ -52,7 +55,9 @@ public class GeneticSystem {
 		Validate.notNull(_parentSelectionPolicyHandler);
 		Validate.notNull(_survivorSelector);
 		Validate.notNull(_geneticSystemDescriptor);
+		Validate.notNull(_executorService);
 
+		this.executorService = _executorService;
 		this.genotypeSpec = _genotypeSpec;
 		this.geneticSystemDescriptor = _geneticSystemDescriptor;
 		this.populationSize = (int) _populationSize;
@@ -222,12 +227,48 @@ public class GeneticSystem {
 			population = newPopulation;
 			generation++;
 
-			for (int i = 0; i < populationSize; i++) {
-				fitnessScore[i] = fitness.compute(population[i]);
-				logger.trace("Score {} --> {}", fitnessScore[i], population[i]);
+			final int numPartitions = geneticSystemDescriptor.numberOfPartitions();
+			final int partitionSize = (int) Math.ceil(populationSize / numPartitions);
+			final List<CompletableFuture<TaskResult>> tasks = new ArrayList<>();
+			for (int i = 0; i < populationSize;) {
+				final int numSubPopulation = populationSize - i > partitionSize ? partitionSize : populationSize - i;
+				final int partitionStart = i;
+				final int partitionEnd = partitionStart + numSubPopulation;
+				final Genotype[] partition = Arrays.copyOfRange(population, partitionStart, partitionEnd);
+				final CompletableFuture<TaskResult> asyncFitnessCompute = CompletableFuture.supplyAsync(() -> {
+					final double[] fitnessPartition = new double[numSubPopulation];
+					for (int j = 0; j < partition.length; j++) {
+						fitnessPartition[j] = fitness.compute(partition[j]);
+					}
+					final TaskResult taskResult = new TaskResult();
+					taskResult.from = partitionStart;
+					taskResult.fitness = fitnessPartition;
+					return taskResult;
+				}, executorService);
+				tasks.add(asyncFitnessCompute);
+
+				i += numSubPopulation;
+			}
+
+			CompletableFuture.allOf(tasks.toArray(new CompletableFuture[tasks.size()]));
+			for (final CompletableFuture<TaskResult> taskResultCF : tasks) {
+				try {
+					final TaskResult taskResult = taskResultCF.get();
+					final int offset = taskResult.from;
+					for (int i = 0; i < taskResult.fitness.length; i++) {
+						fitnessScore[i + offset] = taskResult.fitness[i];
+					}
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 			}
 		}
 
 		return ImmutableEvolutionResult.of(genotypeSpec, generation, population, fitnessScore);
+	}
+
+	private static class TaskResult {
+		public int from;
+		public double[] fitness;
 	}
 }

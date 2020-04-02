@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -94,7 +96,7 @@ public class SimpleGPTest {
 		return stringBuilder.toString();
 	}
 
-	//@Test
+	// @Test
 	public void simple() {
 		final Random random = new Random();
 		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
@@ -124,7 +126,7 @@ public class SimpleGPTest {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void simple2() {
 		final Random random = new Random();
 		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
@@ -208,16 +210,21 @@ public class SimpleGPTest {
 
 			@Override
 			public void onEvolution(long generation, Genotype[] population, double[] fitness) {
-
 				logger.info("Generation {}", generation);
-				for (int i = 0; i < population.length; i++) {
-					final Genotype genotype = population[i];
+
+				final List<Integer> topGenotypes = IntStream.range(0, population.length)
+						.boxed()
+						.sorted((a, b) -> Double.compare(fitness[a], fitness[b]))
+						.limit(5)
+						.collect(Collectors.toList());
+
+				for (final Integer topCandidateIndex : topGenotypes) {
+					final Genotype genotype = population[topCandidateIndex];
 					final TreeChromosome<Operation> chromosome = (TreeChromosome<Operation>) genotype.getChromosome(0);
 					final TreeNode<Operation> root = chromosome.getRoot();
 
-					logger.info("\t{}\t{}", fitness[i], toStringTreeNode(root));
+					logger.info("\t{}\t{}", fitness[topCandidateIndex], toStringTreeNode(root));
 				}
-
 			}
 		}, new SimpleEvolutionListener());
 

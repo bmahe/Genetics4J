@@ -83,6 +83,18 @@ public abstract class GeneticSystemDescriptor {
 		return DEFAULT_POPULATION_SIZE;
 	}
 
+	/**
+	 * XXX TODO review how to specify the execution system. This might need some
+	 * abstraction as to accomodate different execution systems
+	 * 
+	 * @return
+	 */
+	@Value.Default
+	public int numberOfPartitions() {
+		return Runtime.getRuntime()
+				.availableProcessors();
+	}
+
 	@Value.Default
 	public ChromosomeFactoryProvider chromosomeFactoryProvider() {
 		return ImmutableChromosomeFactoryProvider.builder()
