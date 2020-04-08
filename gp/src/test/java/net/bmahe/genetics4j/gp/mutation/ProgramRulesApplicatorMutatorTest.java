@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
@@ -36,8 +38,10 @@ import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 import net.bmahe.genetics4j.gp.spec.mutation.Rule;
+import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 
 public class ProgramRulesApplicatorMutatorTest {
+	final static public Logger logger = LogManager.getLogger(ProgramRulesApplicatorMutatorTest.class);
 
 	@Test(expected = NullPointerException.class)
 	public void ctorNoRules() {
@@ -293,6 +297,10 @@ public class ProgramRulesApplicatorMutatorTest {
 		final TreeNode<Operation<?>> outputRule = mutatedChromosome.getRoot();
 		assertNotNull(outputRule);
 		assertEquals(root.getData(), outputRule.getData());
+
+		logger.info("Root: {}", TreeNodeUtils.toStringTreeNode(root));
+		logger.info("OutputRoot: {}", TreeNodeUtils.toStringTreeNode(outputRule));
+
 		assertEquals(root.getSize() - 1, outputRule.getSize());
 		assertEquals(root.getChild(0)
 				.getData(),

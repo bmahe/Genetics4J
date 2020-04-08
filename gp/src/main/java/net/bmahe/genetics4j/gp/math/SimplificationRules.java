@@ -210,11 +210,132 @@ public class SimplificationRules {
 		return new TreeNode<Operation<?>>(newOperation);
 	});
 
+	final public static Rule ADD_INPUT_TO_SAME_INPUT = ImmutableRule.of((t) -> {
+		boolean result = isOperation(t, Functions.NAME_ADD) && hasChildOperation(t, 0, Terminals.TYPE_INPUT)
+				&& hasChildOperation(t, 1, Terminals.TYPE_INPUT);
+
+		if (result == false) {
+			return false;
+		}
+
+		final InputOperation<?> firstInput = getChildAs(t, 0, InputOperation.class);
+		final InputOperation<?> secondInput = getChildAs(t, 1, InputOperation.class);
+
+		return firstInput.index() == secondInput.index();
+	}, (program, t) -> {
+
+		final InputSpec inputSpec = program.inputSpec();
+
+		final TreeNode<Operation<?>> multBaseTreeNode = new TreeNode<Operation<?>>(Functions.MUL.build(inputSpec));
+
+		final OperationFactory coefficientFactory = OperationFactories
+				.ofCoefficient(Terminals.TYPE_COEFFICIENT, Double.class, 2.0d);
+		final TreeNode<Operation<?>> timesTwoTreeNode = new TreeNode<Operation<?>>(coefficientFactory.build(inputSpec));
+		multBaseTreeNode.addChild(timesTwoTreeNode);
+
+		final InputOperation<?> firstInput = (InputOperation<Double>) t.getChild(0)
+				.getData();
+		final TreeNode<Operation<?>> firstInputTreeNode = new TreeNode<Operation<?>>(firstInput);
+		multBaseTreeNode.addChild(firstInputTreeNode);
+
+		return multBaseTreeNode;
+	});
+
+	final public static Rule MULTIPLY_INPUT_WITH_SAME_INPUT = ImmutableRule.of((t) -> {
+
+		if (isOperation(t, Functions.NAME_MUL) == false) {
+			return false;
+		}
+
+		if (hasChildOperation(t, 0, Terminals.TYPE_INPUT) == false) {
+			return false;
+		}
+		if (hasChildOperation(t, 1, Terminals.TYPE_INPUT) == false) {
+			return false;
+		}
+
+		final InputOperation<?> firstInput = (InputOperation<Double>) t.getChild(0)
+				.getData();
+
+		final InputOperation<?> secondInput = (InputOperation<Double>) t.getChild(1)
+				.getData();
+
+		return firstInput.index() == secondInput.index();
+	}, (program, t) -> {
+
+		final InputSpec inputSpec = program.inputSpec();
+
+		final TreeNode<Operation<?>> expBaseTreeNode = new TreeNode<Operation<?>>(Functions.EXP.build(inputSpec));
+
+		final InputOperation<?> firstInput = (InputOperation<Double>) t.getChild(0)
+				.getData();
+		final TreeNode<Operation<?>> firstInputTreeNode = new TreeNode<Operation<?>>(firstInput);
+		expBaseTreeNode.addChild(firstInputTreeNode);
+
+		final OperationFactory coefficientFactory = OperationFactories
+				.ofCoefficient(Terminals.TYPE_COEFFICIENT, Double.class, 2.0d);
+		final TreeNode<Operation<?>> twoTreeNode = new TreeNode<Operation<?>>(coefficientFactory.build(inputSpec));
+		expBaseTreeNode.addChild(twoTreeNode);
+
+		return expBaseTreeNode;
+	});
+
+	final public static Rule MULTIPLY_INPUT_WITH_EXP_SAME_INPUT_COEFF = ImmutableRule.of((t) -> {
+		// ex: MULT( EXP( INPUT[0], 3), INPUT[0])
+		// ==> EXP( INPUT[0], 4)
+
+		if (isOperation(t, Functions.NAME_MUL) == false) {
+			return false;
+		}
+		if (hasChildOperation(t, 0, Functions.NAME_EXP) == false) {
+			return false;
+		}
+		if (hasChildOperation(t, 1, Terminals.TYPE_INPUT) == false) {
+			return false;
+		}
+
+		final TreeNode<Operation<?>> expTreeNode = t.getChild(0);
+		if (hasChildOperation(expTreeNode, 0, Terminals.TYPE_INPUT) == false) {
+			return false;
+		}
+		if (hasChildOperation(expTreeNode, 1, Terminals.TYPE_COEFFICIENT) == false) {
+			return false;
+		}
+
+		final InputOperation<?> expInput = getChildAs(expTreeNode, 0, InputOperation.class);
+		final InputOperation<?> secondInput = getChildAs(t, 1, InputOperation.class);
+
+		return expInput.index() == secondInput.index();
+	}, (program, t) -> {
+
+		final InputSpec inputSpec = program.inputSpec();
+		final TreeNode<Operation<?>> originalExpTreeNode = t.getChild(0);
+		final CoefficientOperation<Double> originalCoefficientExp = getChildAs(originalExpTreeNode,
+				1,
+				CoefficientOperation.class);
+
+		final TreeNode<Operation<?>> expBaseTreeNode = new TreeNode<Operation<?>>(Functions.EXP.build(inputSpec));
+
+		final InputOperation<?> firstInput = (InputOperation<Double>) t.getChild(0)
+				.getData();
+		final TreeNode<Operation<?>> firstInputTreeNode = new TreeNode<Operation<?>>(firstInput);
+		expBaseTreeNode.addChild(firstInputTreeNode);
+
+		final OperationFactory coefficientFactory = OperationFactories
+				.ofCoefficient(Terminals.TYPE_COEFFICIENT, Double.class, originalCoefficientExp.value() + 1.0d);
+		final TreeNode<Operation<?>> newCoeffTreeNode = new TreeNode<Operation<?>>(coefficientFactory.build(inputSpec));
+		expBaseTreeNode.addChild(newCoeffTreeNode);
+
+		return expBaseTreeNode;
+	});
+
 	final public static List<Rule> SIMPLIFY_RULES = Arrays.asList(ADD_TWO_COEFFCIENTS,
 			MUL_TWO_COEFFICIENTS,
 			SUB_TWO_COEFFICIENTS,
 			SUB_INPUT_FROM_SAME_INPUT,
 			SUB_ZERO_FROM_INPUT,
-			DIV_TWO_COEFFICIENT_FINITE);
+			DIV_TWO_COEFFICIENT_FINITE,
+			ADD_INPUT_TO_SAME_INPUT,
+			MULTIPLY_INPUT_WITH_SAME_INPUT);
 
 }

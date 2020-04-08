@@ -41,6 +41,7 @@ import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
+import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 
 public class SimpleGPTest {
 	final static public Logger logger = LogManager.getLogger(SimpleGPTest.class);
@@ -59,41 +60,10 @@ public class SimpleGPTest {
 		final Operation operation = node.getData();
 		final List<TreeNode<Operation>> children = node.getChildren();
 
-		final Object[] parameters = children != null ? children.stream()
-				.map(child -> execute(child, input))
-				.toArray() : new Object[] {};
+		final Object[] parameters = children != null ? children.stream().map(child -> execute(child, input)).toArray()
+				: new Object[] {};
 
-//		logger.info("operation: {}", operation);
-//		logger.info("input: {}", input);
-//		logger.info("Parameter: {}", parameters);
 		return operation.apply(input, parameters);
-	}
-
-	public String toStringTreeNode(final TreeNode<Operation> node) {
-
-		final Operation operation = node.getData();
-		final List<TreeNode<Operation>> children = node.getChildren();
-
-		final StringBuilder stringBuilder = new StringBuilder();
-
-		stringBuilder.append(operation.getPrettyName());
-		if (children != null && children.isEmpty() == false) {
-			stringBuilder.append("(");
-
-			final Iterator<TreeNode<Operation>> iterator = children.iterator();
-			while (iterator.hasNext()) {
-				final TreeNode<Operation> treeNode = iterator.next();
-
-				stringBuilder.append(toStringTreeNode(treeNode));
-
-				if (iterator.hasNext()) {
-					stringBuilder.append(", ");
-				}
-			}
-
-			stringBuilder.append(")");
-		}
-		return stringBuilder.toString();
 	}
 
 	// @Test
@@ -102,27 +72,19 @@ public class SimpleGPTest {
 		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD,
-				Functions.MUL,
-				Functions.DIV,
-				Functions.SUB,
-				Functions.COS,
-				Functions.SIN,
-				Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random),
-				Terminals.PI,
-				Terminals.E,
-				Terminals.Coefficient(random, -50, 100),
-				Terminals.CoefficientRounded(random, -5, 7));
+		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
+				Functions.SIN, Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
+				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -5, 7));
 
 		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
 		programBuilder.maxDepth(4);
 
 		final Program program = programBuilder.build();
 		for (int i = 0; i < 10; i++) {
-			final TreeNode<Operation> operation = programGenerator.generate(program);
-			TreeChromosome<Operation> treeChromosome = new TreeChromosome<>(operation);
-			System.out.println(toStringTreeNode(treeChromosome.getRoot()));
+			final TreeNode<Operation<?>> operation = programGenerator.generate(program);
+			TreeChromosome<Operation<?>> treeChromosome = new TreeChromosome<>(operation);
+			System.out.println(TreeNodeUtils.toStringTreeNode(treeChromosome.getRoot()));
 		}
 	}
 
@@ -132,18 +94,10 @@ public class SimpleGPTest {
 		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD,
-				Functions.MUL,
-				Functions.DIV,
-				Functions.SUB,
-				Functions.COS,
-				Functions.SIN,
-				Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random),
-				Terminals.PI,
-				Terminals.E,
-				Terminals.Coefficient(random, -50, 100),
-				Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
+				Functions.SIN, Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
+				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
 		programBuilder.maxDepth(4);
@@ -155,11 +109,10 @@ public class SimpleGPTest {
 				.survivorSelectionPolicy(TournamentSelection.build(3))
 				.offspringRatio(0.90d)
 				.combinationPolicy(ProgramRandomCombine.build())
-				.mutationPolicies(ProgramRandomMutate.of(0.10),
-						ProgramRandomPrune.of(0.10),
+				.mutationPolicies(ProgramRandomMutate.of(0.10), ProgramRandomPrune.of(0.12),
 						ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
 				.optimization(Optimization.MINIMIZE)
-				.termination(Terminations.ofMaxGeneration(1000))
+				.termination(Terminations.ofMaxGeneration(100))
 				.fitness((genoType) -> {
 					final TreeChromosome<Operation> chromosome = (TreeChromosome<Operation>) genoType.getChromosome(0);
 					final Double[][] inputs = new Double[100][1];
@@ -177,7 +130,8 @@ public class SimpleGPTest {
 						if (Double.isFinite(expected)) {
 							if (result instanceof Double) {
 								final Double resultDouble = (Double) result;
-								mse += Double.isFinite(resultDouble) ? (expected - resultDouble) * (expected - resultDouble)
+								mse += Double.isFinite(resultDouble)
+										? (expected - resultDouble) * (expected - resultDouble)
 										: 1_000_000_000;
 							} else {
 								logger.error("NOT A DOUBLE: {}", result);
@@ -191,7 +145,7 @@ public class SimpleGPTest {
 
 		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
 				.builder();
-		geneticSystemDescriptorBuilder.populationSize(500);
+		geneticSystemDescriptorBuilder.populationSize(5000);
 		geneticSystemDescriptorBuilder
 				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programGenerator));
 		geneticSystemDescriptorBuilder
@@ -220,10 +174,11 @@ public class SimpleGPTest {
 
 				for (final Integer topCandidateIndex : topGenotypes) {
 					final Genotype genotype = population[topCandidateIndex];
-					final TreeChromosome<Operation> chromosome = (TreeChromosome<Operation>) genotype.getChromosome(0);
-					final TreeNode<Operation> root = chromosome.getRoot();
+					final TreeChromosome<Operation<?>> chromosome = (TreeChromosome<Operation<?>>) genotype
+							.getChromosome(0);
+					final TreeNode<Operation<?>> root = chromosome.getRoot();
 
-					logger.info("\t{}\t{}", fitness[topCandidateIndex], toStringTreeNode(root));
+					logger.info("\t{}\t{}", fitness[topCandidateIndex], TreeNodeUtils.toStringTreeNode(root));
 				}
 			}
 		}, new SimpleEvolutionListener());
@@ -234,9 +189,10 @@ public class SimpleGPTest {
 
 		final EvolutionResult evolutionResult = geneticSystem.evolve();
 		final Genotype bestGenotype = evolutionResult.bestGenotype();
-		final TreeChromosome<Operation> bestChromosome = (TreeChromosome<Operation>) bestGenotype.getChromosome(0);
+		final TreeChromosome<Operation<?>> bestChromosome = (TreeChromosome<Operation<?>>) bestGenotype
+				.getChromosome(0);
 		logger.info("Best genotype: {}", bestChromosome.getRoot());
-		logger.info("Best genotype - pretty print: {}", toStringTreeNode(bestChromosome.getRoot()));
+		logger.info("Best genotype - pretty print: {}", TreeNodeUtils.toStringTreeNode(bestChromosome.getRoot()));
 	}
 
 }

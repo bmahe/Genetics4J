@@ -1,5 +1,6 @@
 package net.bmahe.genetics4j.gp.mutation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.Program;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.mutation.Rule;
+import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 
 public class ProgramRulesApplicatorMutator implements Mutator {
 
@@ -34,31 +36,38 @@ public class ProgramRulesApplicatorMutator implements Mutator {
 	protected TreeNode<Operation<?>> duplicateAndApplyRule(final Program program, final TreeNode<Operation<?>> root) {
 		Validate.notNull(root);
 
-		final Operation<?> rootData = root.getData();
-
-		final Optional<Rule> applicableRule = rules.stream()
-				.filter((rule) -> rule.predicate()
-						.test(root))
-				.findFirst();
-
-		if (applicableRule.isPresent()) {
-
-			return applicableRule.get()
-					.applicator()
-					.apply(program, root);
-		}
-
-		final TreeNode<Operation<?>> duplicateRoot = new TreeNode<Operation<?>>(rootData);
-
+		final Operation<?> rootOperation = root.getData();
 		final List<TreeNode<Operation<?>>> children = root.getChildren();
-		for (int i = 0; i < children.size(); i++) {
-			final TreeNode<Operation<?>> treeNode = children.get(i);
 
-			final TreeNode<Operation<?>> childCopy = duplicateAndApplyRule(program, treeNode);
-			duplicateRoot.addChild(childCopy);
+		TreeNode<Operation<?>> currentRoot = new TreeNode<Operation<?>>(rootOperation);
+
+		if (children.size() > 0) {
+			final List<TreeNode<Operation<?>>> newChildren = new ArrayList<>();
+			for (int i = 0; i < children.size(); i++) {
+				final TreeNode<Operation<?>> childNode = children.get(i);
+
+				final TreeNode<Operation<?>> childCopy = duplicateAndApplyRule(program, childNode);
+				newChildren.add(childCopy);
+
+			}
+			currentRoot.addChildren(newChildren);
 		}
 
-		return duplicateRoot;
+		boolean done = false;
+		while (done == false) {
+			final TreeNode<Operation<?>> localRoot = currentRoot;
+
+			final Optional<Rule> applicableRule = rules.stream().filter((rule) -> rule.test(localRoot)).findFirst();
+			final Optional<TreeNode<Operation<?>>> newRootOpt = applicableRule.map(x -> x.apply(program, localRoot));
+
+			done = newRootOpt.map(newRoot -> TreeNodeUtils.areSame(newRoot, localRoot)).orElse(true);
+
+			if (newRootOpt.isPresent()) {
+				currentRoot = newRootOpt.get();
+			}
+		}
+
+		return currentRoot;
 	}
 
 	@Override
@@ -77,14 +86,12 @@ public class ProgramRulesApplicatorMutator implements Mutator {
 
 			if (chromosome instanceof TreeChromosome<?> == false) {
 				throw new IllegalArgumentException(
-						"This mutator does not support chromosome of type " + chromosome.getClass()
-								.getSimpleName());
+						"This mutator does not support chromosome of type " + chromosome.getClass().getSimpleName());
 			}
 
 			final ProgramTreeChromosomeSpec programTreeChromosomeSpec = (ProgramTreeChromosomeSpec) chromosomeSpec;
 
 			final TreeChromosome<Operation<?>> treeChromosome = (TreeChromosome<Operation<?>>) chromosome;
-			final int chromosomeSize = treeChromosome.getSize();
 
 			final TreeNode<Operation<?>> root = treeChromosome.getRoot();
 			final TreeNode<Operation<?>> newRoot = duplicateAndApplyRule(programTreeChromosomeSpec.program(), root);

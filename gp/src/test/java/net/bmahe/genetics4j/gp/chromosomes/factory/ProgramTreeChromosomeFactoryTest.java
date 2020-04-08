@@ -99,7 +99,7 @@ public class ProgramTreeChromosomeFactoryTest {
 
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = ProgramTreeChromosomeSpec.of(program);
 
-		final TreeChromosome<Operation> chromosome = programTreeChromosomeFactory.generate(programTreeChromosomeSpec);
+		final TreeChromosome<Operation<?>> chromosome = programTreeChromosomeFactory.generate(programTreeChromosomeSpec);
 		assertNotNull(chromosome);
 	}
 }

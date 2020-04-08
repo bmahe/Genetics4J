@@ -105,7 +105,7 @@ public class StdProgramGenerator implements ProgramGenerator {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public TreeNode<Operation> generate(final Program program, final int maxDepth) {
+	public TreeNode<Operation<?>> generate(final Program program, final int maxDepth) {
 		Validate.notNull(program);
 		Validate.isTrue(maxDepth > 0);
 
@@ -113,13 +113,13 @@ public class StdProgramGenerator implements ProgramGenerator {
 				: pickRandomTerminal(program);
 
 		final Operation currentOperation = currentNode.build(program.inputSpec());
-		final TreeNode<Operation> currentTreeNode = new TreeNode<>(currentOperation);
+		final TreeNode<Operation<?>> currentTreeNode = new TreeNode<>(currentOperation);
 
 		Class[] acceptedTypes = currentNode.acceptedTypes();
 
 		for (int i = 0; i < acceptedTypes.length; i++) {
 			final Class acceptedType = acceptedTypes[i];
-			final TreeNode<Operation> operation = generate(program, acceptedType, maxDepth, 1);
+			final TreeNode<Operation<?>> operation = generate(program, acceptedType, maxDepth, 1);
 
 			currentTreeNode.addChild(operation);
 		}
@@ -128,7 +128,7 @@ public class StdProgramGenerator implements ProgramGenerator {
 	}
 
 	@Override
-	public TreeNode<Operation> generate(final Program program) {
+	public TreeNode<Operation<?>> generate(final Program program) {
 		return generate(program, program.maxDepth());
 	}
 
@@ -140,5 +140,4 @@ public class StdProgramGenerator implements ProgramGenerator {
 
 		return generate(program, rootType, maxDepth, 0);
 	}
-
 }

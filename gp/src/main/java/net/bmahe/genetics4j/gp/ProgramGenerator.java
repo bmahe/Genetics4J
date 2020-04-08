@@ -12,7 +12,7 @@ public interface ProgramGenerator {
 
 	OperationFactory pickRandomTerminal(final Program program);
 
-	TreeNode<Operation> generate(final Program program);
+	TreeNode<Operation<?>> generate(final Program program);
 
 	<T> TreeNode<Operation<T>> generate(final Program program, final int maxDepth);
 

@@ -11,7 +11,7 @@ import net.bmahe.genetics4j.gp.Program;
 import net.bmahe.genetics4j.gp.ProgramGenerator;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 
-public class ProgramTreeChromosomeFactory implements ChromosomeFactory<TreeChromosome<Operation>> {
+public class ProgramTreeChromosomeFactory implements ChromosomeFactory<TreeChromosome<Operation<?>>> {
 
 	private final ProgramGenerator programGenerator;
 
@@ -29,13 +29,13 @@ public class ProgramTreeChromosomeFactory implements ChromosomeFactory<TreeChrom
 	}
 
 	@Override
-	public TreeChromosome<Operation> generate(final ChromosomeSpec chromosomeSpec) {
+	public TreeChromosome<Operation<?>> generate(final ChromosomeSpec chromosomeSpec) {
 		Validate.notNull(chromosomeSpec);
 
 		final ProgramTreeChromosomeSpec ptcs = (ProgramTreeChromosomeSpec) chromosomeSpec;
 		final Program program = ptcs.program();
 
-		final TreeNode<Operation> generatedProgram = programGenerator.generate(program);
-		return new TreeChromosome<Operation>(generatedProgram);
+		final TreeNode<Operation<?>> generatedProgram = programGenerator.generate(program);
+		return new TreeChromosome<Operation<?>>(generatedProgram);
 	}
 }

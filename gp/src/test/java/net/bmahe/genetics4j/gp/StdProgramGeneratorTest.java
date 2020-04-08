@@ -400,7 +400,7 @@ public class StdProgramGeneratorTest {
 
 		final StdProgramGenerator programGenerator = new StdProgramGenerator(random);
 
-		final TreeNode<Operation> program = programGenerator.generate(mockProgram, 3);
+		final TreeNode<Operation<?>> program = programGenerator.generate(mockProgram, 3);
 		assertTrue("Message longer than expected. Depth: " + program.getDepth() + "; Program: " + program,
 				program.getDepth() <= 3);
 	}

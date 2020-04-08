@@ -21,6 +21,7 @@ public abstract class Operation<T> {
 	public abstract Class returnedType();
 
 	@Parameter
+	@Value.Auxiliary
 	public abstract BiFunction<T[], Object[], Object> compute();
 
 	@Value.Default
