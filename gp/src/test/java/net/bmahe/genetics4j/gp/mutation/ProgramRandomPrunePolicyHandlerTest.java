@@ -14,8 +14,7 @@ import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
-import net.bmahe.genetics4j.gp.ProgramGenerator;
-import net.bmahe.genetics4j.gp.StdProgramGenerator;
+import net.bmahe.genetics4j.gp.program.ProgramHelper;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 
 public class ProgramRandomPrunePolicyHandlerTest {
@@ -27,7 +26,10 @@ public class ProgramRandomPrunePolicyHandlerTest {
 
 	@Test(expected = NullPointerException.class)
 	public void noRandomCtorArguments() {
-		new ProgramRandomPrunePolicyHandler(null, new StdProgramGenerator(new Random()));
+		final Random random = new Random();
+		final ProgramHelper programHelper = new ProgramHelper(random);
+
+		new ProgramRandomPrunePolicyHandler(null, programHelper);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -38,12 +40,12 @@ public class ProgramRandomPrunePolicyHandlerTest {
 	@Test(expected = NullPointerException.class)
 	public void canHandleNoMutationPolicyHandlerResolver() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
 
 		final ProgramRandomPrune mutationPolicy = ProgramRandomPrune.of(0.12);
 
 		final ProgramRandomPrunePolicyHandler programRandomPrunePolicyHandler = new ProgramRandomPrunePolicyHandler(
-				random, programGenerator);
+				random, programHelper);
 
 		programRandomPrunePolicyHandler.canHandle(null, mutationPolicy);
 	}
@@ -51,25 +53,27 @@ public class ProgramRandomPrunePolicyHandlerTest {
 	@Test(expected = NullPointerException.class)
 	public void canHandleNoMutationPolicy() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
 
 		final ProgramRandomPrunePolicyHandler programRandomPrunePolicyHandler = new ProgramRandomPrunePolicyHandler(
-				random, programGenerator);
+				random, programHelper);
 
-		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(MutationPolicyHandlerResolver.class);
+		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(
+				MutationPolicyHandlerResolver.class);
 		programRandomPrunePolicyHandler.canHandle(mockMutationPolicyHandlerResolver, null);
 	}
 
 	@Test
 	public void canHandle() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
 
 		final ProgramRandomPrune mutationPolicy = ProgramRandomPrune.of(0.12);
 		final ProgramRandomPrunePolicyHandler programRandomPrunePolicyHandler = new ProgramRandomPrunePolicyHandler(
-				random, programGenerator);
+				random, programHelper);
 
-		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(MutationPolicyHandlerResolver.class);
+		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(
+				MutationPolicyHandlerResolver.class);
 
 		assertTrue(programRandomPrunePolicyHandler.canHandle(mockMutationPolicyHandlerResolver, mutationPolicy));
 		assertFalse(programRandomPrunePolicyHandler.canHandle(mockMutationPolicyHandlerResolver,
@@ -79,20 +83,19 @@ public class ProgramRandomPrunePolicyHandlerTest {
 	@Test
 	public void createMutator() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
 
 		final ProgramRandomPrune mutationPolicy = ProgramRandomPrune.of(0.12);
 		final ProgramRandomPrunePolicyHandler programRandomPrunePolicyHandler = new ProgramRandomPrunePolicyHandler(
-				random, programGenerator);
+				random, programHelper);
 
-		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(MutationPolicyHandlerResolver.class);
+		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(
+				MutationPolicyHandlerResolver.class);
 		final GeneticSystemDescriptor mockGeneticSystemDescriptor = mock(GeneticSystemDescriptor.class);
 		final GenotypeSpec mockGenotypeSpec = mock(GenotypeSpec.class);
 
 		final Mutator mutator = programRandomPrunePolicyHandler.createMutator(mockGeneticSystemDescriptor,
-				mockGenotypeSpec,
-				mockMutationPolicyHandlerResolver,
-				mutationPolicy);
+				mockGenotypeSpec, mockMutationPolicyHandlerResolver, mutationPolicy);
 		assertNotNull(mutator);
 		assertTrue(mutator instanceof ProgramRandomPruneMutator);
 	}

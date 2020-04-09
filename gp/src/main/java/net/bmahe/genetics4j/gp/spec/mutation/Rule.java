@@ -8,7 +8,7 @@ import org.immutables.value.Value;
 
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.gp.Operation;
-import net.bmahe.genetics4j.gp.Program;
+import net.bmahe.genetics4j.gp.program.Program;
 
 @Value.Immutable
 public interface Rule {

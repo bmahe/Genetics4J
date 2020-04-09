@@ -14,23 +14,27 @@ import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.OperationFactory;
-import net.bmahe.genetics4j.gp.Program;
-import net.bmahe.genetics4j.gp.ProgramGenerator;
+import net.bmahe.genetics4j.gp.program.Program;
+import net.bmahe.genetics4j.gp.program.ProgramHelper;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 
 public class ProgramRandomPruneMutator implements Mutator {
 
-	private final ProgramGenerator programGenerator;
+	private final ProgramHelper programHelper;
 	private final Random random;
 	private final GenotypeSpec genotypeSpec;
 	private final double populationMutationProbability;
 
-	public ProgramRandomPruneMutator(final ProgramGenerator _programGenerator, final Random _random,
-			final GenotypeSpec genotypeSpec, final double populationMutationProbability) {
+	public ProgramRandomPruneMutator(final ProgramHelper _programHelper, final Random _random,
+			final GenotypeSpec _genotypeSpec, final double populationMutationProbability) {
+		Validate.notNull(_programHelper);
+		Validate.notNull(_random);
+		Validate.notNull(_genotypeSpec);
+		Validate.inclusiveBetween(0.0, 1.0, populationMutationProbability);
 
-		this.programGenerator = _programGenerator;
+		this.programHelper = _programHelper;
 		this.random = _random;
-		this.genotypeSpec = genotypeSpec;
+		this.genotypeSpec = _genotypeSpec;
 		this.populationMutationProbability = populationMutationProbability;
 	}
 
@@ -42,7 +46,7 @@ public class ProgramRandomPruneMutator implements Mutator {
 		final Operation<?> rootData = root.getData();
 
 		if (nodeIndex == cutPoint) {
-			final OperationFactory randomTerminal = programGenerator.pickRandomTerminal(program, rootData.returnedType());
+			final OperationFactory randomTerminal = programHelper.pickRandomTerminal(program, rootData.returnedType());
 			final Operation<?> operation = randomTerminal.build(program.inputSpec());
 			return new TreeNode<Operation<?>>(operation);
 		} else {
@@ -84,8 +88,7 @@ public class ProgramRandomPruneMutator implements Mutator {
 
 			if (chromosome instanceof TreeChromosome<?> == false) {
 				throw new IllegalArgumentException(
-						"This mutator does not support chromosome of type " + chromosome.getClass()
-								.getSimpleName());
+						"This mutator does not support chromosome of type " + chromosome.getClass().getSimpleName());
 			}
 
 			final ProgramTreeChromosomeSpec programTreeChromosomeSpec = (ProgramTreeChromosomeSpec) chromosomeSpec;
@@ -97,10 +100,8 @@ public class ProgramRandomPruneMutator implements Mutator {
 				final int cutPoint = random.nextInt(chromosomeSize - 1) + 1;
 
 				final TreeNode<Operation<?>> root = treeChromosome.getRoot();
-				final TreeNode<Operation<?>> newRoot = duplicateAndCut(programTreeChromosomeSpec.program(),
-						root,
-						cutPoint,
-						0);
+				final TreeNode<Operation<?>> newRoot = duplicateAndCut(programTreeChromosomeSpec.program(), root,
+						cutPoint, 0);
 				final TreeChromosome<Operation<?>> newTreeChromosome = new TreeChromosome<>(newRoot);
 				newChromosomes[chromosomeIndex] = newTreeChromosome;
 			} else {

@@ -1,9 +1,12 @@
-package net.bmahe.genetics4j.gp;
+package net.bmahe.genetics4j.gp.program;
 
 import java.util.Set;
 
 import org.immutables.value.Value;
 import org.immutables.value.Value.Parameter;
+
+import net.bmahe.genetics4j.gp.InputSpec;
+import net.bmahe.genetics4j.gp.OperationFactory;
 
 @Value.Immutable
 public abstract class Program {

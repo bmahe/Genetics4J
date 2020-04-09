@@ -10,20 +10,20 @@ import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
-import net.bmahe.genetics4j.gp.ProgramGenerator;
+import net.bmahe.genetics4j.gp.program.ProgramHelper;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 
 public class ProgramRandomPrunePolicyHandler implements MutationPolicyHandler {
 
 	final Random random;
-	final ProgramGenerator programGenerator;
+	final ProgramHelper programHelper;
 
-	public ProgramRandomPrunePolicyHandler(final Random _random, final ProgramGenerator _programGenerator) {
+	public ProgramRandomPrunePolicyHandler(final Random _random, final ProgramHelper _programHelper) {
 		Validate.notNull(_random);
-		Validate.notNull(_programGenerator);
+		Validate.notNull(_programHelper);
 
 		this.random = _random;
-		this.programGenerator = _programGenerator;
+		this.programHelper = _programHelper;
 	}
 
 	@Override
@@ -47,6 +47,6 @@ public class ProgramRandomPrunePolicyHandler implements MutationPolicyHandler {
 		final ProgramRandomPrune programRandomPrune = (ProgramRandomPrune) mutationPolicy;
 		final double populationMutationProbability = programRandomPrune.populationMutationProbability();
 
-		return new ProgramRandomPruneMutator(programGenerator, random, genotypeSpec, populationMutationProbability);
+		return new ProgramRandomPruneMutator(programHelper, random, genotypeSpec, populationMutationProbability);
 	}
 }

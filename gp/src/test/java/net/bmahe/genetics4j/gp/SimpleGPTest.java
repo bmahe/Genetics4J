@@ -1,7 +1,6 @@
 package net.bmahe.genetics4j.gp;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -10,7 +9,6 @@ import java.util.stream.IntStream;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
 
 import net.bmahe.genetics4j.core.EvolutionListener;
 import net.bmahe.genetics4j.core.GeneticSystem;
@@ -27,7 +25,6 @@ import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
-import net.bmahe.genetics4j.gp.ImmutableProgram.Builder;
 import net.bmahe.genetics4j.gp.chromosomes.factory.ProgramTreeChromosomeFactory;
 import net.bmahe.genetics4j.gp.combination.ProgramRandomCombineHandler;
 import net.bmahe.genetics4j.gp.math.Functions;
@@ -36,6 +33,13 @@ import net.bmahe.genetics4j.gp.math.Terminals;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomMutatePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomPrunePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRulesApplicatorPolicyHandler;
+import net.bmahe.genetics4j.gp.program.FullProgramGenerator;
+import net.bmahe.genetics4j.gp.program.ImmutableProgram;
+import net.bmahe.genetics4j.gp.program.ImmutableProgram.Builder;
+import net.bmahe.genetics4j.gp.program.Program;
+import net.bmahe.genetics4j.gp.program.ProgramGenerator;
+import net.bmahe.genetics4j.gp.program.ProgramHelper;
+import net.bmahe.genetics4j.gp.program.StdProgramGenerator;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
@@ -69,7 +73,8 @@ public class SimpleGPTest {
 	// @Test
 	public void simple() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
+		final ProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
@@ -88,10 +93,12 @@ public class SimpleGPTest {
 		}
 	}
 
-	// @Test
+//	@Test
 	public void simple2() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+//		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
+		final ProgramGenerator programGenerator = new FullProgramGenerator(programHelper);
 
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
@@ -147,7 +154,7 @@ public class SimpleGPTest {
 				.builder();
 		geneticSystemDescriptorBuilder.populationSize(5000);
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programGenerator));
+				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
 		geneticSystemDescriptorBuilder
 				.addMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 		geneticSystemDescriptorBuilder.addMutationPolicyHandlers(new ProgramRulesApplicatorPolicyHandler());
@@ -159,6 +166,7 @@ public class SimpleGPTest {
 		chromosomeFactoryProviderBuilder.random(random);
 		chromosomeFactoryProviderBuilder.addChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
+		geneticSystemDescriptorBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 1));
 
 		geneticSystemDescriptorBuilder.addEvolutionListeners(new EvolutionListener() {
 

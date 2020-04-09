@@ -7,8 +7,8 @@ import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactory;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.gp.Operation;
-import net.bmahe.genetics4j.gp.Program;
-import net.bmahe.genetics4j.gp.ProgramGenerator;
+import net.bmahe.genetics4j.gp.program.Program;
+import net.bmahe.genetics4j.gp.program.ProgramGenerator;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 
 public class ProgramTreeChromosomeFactory implements ChromosomeFactory<TreeChromosome<Operation<?>>> {

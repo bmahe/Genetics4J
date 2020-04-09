@@ -12,7 +12,7 @@ import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
-import net.bmahe.genetics4j.gp.ProgramGenerator;
+import net.bmahe.genetics4j.gp.program.ProgramGenerator;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 
 public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {

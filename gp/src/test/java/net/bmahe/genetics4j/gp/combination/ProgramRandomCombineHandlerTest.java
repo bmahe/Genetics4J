@@ -17,16 +17,16 @@ import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
-import net.bmahe.genetics4j.gp.ImmutableProgram;
-import net.bmahe.genetics4j.gp.ImmutableProgram.Builder;
-import net.bmahe.genetics4j.gp.Program;
-import net.bmahe.genetics4j.gp.ProgramGenerator;
-import net.bmahe.genetics4j.gp.StdProgramGenerator;
 import net.bmahe.genetics4j.gp.chromosomes.factory.ProgramTreeChromosomeFactory;
 import net.bmahe.genetics4j.gp.math.Functions;
 import net.bmahe.genetics4j.gp.math.Terminals;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomMutatePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomPrunePolicyHandler;
+import net.bmahe.genetics4j.gp.program.ImmutableProgram;
+import net.bmahe.genetics4j.gp.program.ImmutableProgram.Builder;
+import net.bmahe.genetics4j.gp.program.Program;
+import net.bmahe.genetics4j.gp.program.ProgramHelper;
+import net.bmahe.genetics4j.gp.program.StdProgramGenerator;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
 
@@ -40,21 +40,14 @@ public class ProgramRandomCombineHandlerTest {
 	@Test
 	public void canHandle() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
+		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD,
-				Functions.MUL,
-				Functions.DIV,
-				Functions.SUB,
-				Functions.COS,
-				Functions.SIN,
-				Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random),
-				Terminals.PI,
-				Terminals.E,
-				Terminals.Coefficient(random, -50, 100),
-				Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
+				Functions.SIN, Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
+				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
 		programBuilder.maxDepth(4);
@@ -64,7 +57,7 @@ public class ProgramRandomCombineHandlerTest {
 				.builder();
 		geneticSystemDescriptorBuilder.populationSize(500);
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programGenerator));
+				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
 		geneticSystemDescriptorBuilder
 				.addMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
@@ -85,34 +78,27 @@ public class ProgramRandomCombineHandlerTest {
 
 		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
 
-		assertTrue(programRandomCombineHandler
-				.canHandle(chromosomeCombinatorResolver, programRandomCombine, programTreeChromosomeSpec));
-		assertFalse(programRandomCombineHandler
-				.canHandle(chromosomeCombinatorResolver, programRandomCombine, IntChromosomeSpec.of(10, 0, 100)));
-		assertFalse(programRandomCombineHandler
-				.canHandle(chromosomeCombinatorResolver, MultiPointCrossover.of(10), programTreeChromosomeSpec));
-		assertFalse(programRandomCombineHandler
-				.canHandle(chromosomeCombinatorResolver, MultiPointCrossover.of(10), IntChromosomeSpec.of(10, 0, 100)));
+		assertTrue(programRandomCombineHandler.canHandle(chromosomeCombinatorResolver, programRandomCombine,
+				programTreeChromosomeSpec));
+		assertFalse(programRandomCombineHandler.canHandle(chromosomeCombinatorResolver, programRandomCombine,
+				IntChromosomeSpec.of(10, 0, 100)));
+		assertFalse(programRandomCombineHandler.canHandle(chromosomeCombinatorResolver, MultiPointCrossover.of(10),
+				programTreeChromosomeSpec));
+		assertFalse(programRandomCombineHandler.canHandle(chromosomeCombinatorResolver, MultiPointCrossover.of(10),
+				IntChromosomeSpec.of(10, 0, 100)));
 	}
 
 	@Test
 	public void resolve() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
+		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD,
-				Functions.MUL,
-				Functions.DIV,
-				Functions.SUB,
-				Functions.COS,
-				Functions.SIN,
-				Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random),
-				Terminals.PI,
-				Terminals.E,
-				Terminals.Coefficient(random, -50, 100),
-				Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
+				Functions.SIN, Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
+				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
 		programBuilder.maxDepth(4);
@@ -122,7 +108,7 @@ public class ProgramRandomCombineHandlerTest {
 				.builder();
 		geneticSystemDescriptorBuilder.populationSize(500);
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programGenerator));
+				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
 		geneticSystemDescriptorBuilder
 				.addMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
@@ -151,7 +137,8 @@ public class ProgramRandomCombineHandlerTest {
 	@Test(expected = NullPointerException.class)
 	public void resolveNoResolver() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
+		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder.addFunctions(Functions.ADD, Functions.SIN, Functions.EXP);
@@ -166,14 +153,15 @@ public class ProgramRandomCombineHandlerTest {
 
 		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
 
-		final ChromosomeCombinator chromosomeCombinator = programRandomCombineHandler
-				.resolve(null, programRandomCombine, programTreeChromosomeSpec);
+		final ChromosomeCombinator chromosomeCombinator = programRandomCombineHandler.resolve(null,
+				programRandomCombine, programTreeChromosomeSpec);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void resolveNoCombinationPolicy() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
+		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder.addFunctions(Functions.ADD, Functions.SIN, Functions.EXP);
@@ -187,7 +175,7 @@ public class ProgramRandomCombineHandlerTest {
 				.builder();
 		geneticSystemDescriptorBuilder.populationSize(500);
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programGenerator));
+				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
 		geneticSystemDescriptorBuilder
 				.addMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
@@ -214,13 +202,14 @@ public class ProgramRandomCombineHandlerTest {
 	@Test(expected = NullPointerException.class)
 	public void resolveNoChromosomeSpec() {
 		final Random random = new Random();
-		final ProgramGenerator programGenerator = new StdProgramGenerator(random);
+		final ProgramHelper programHelper = new ProgramHelper(random);
+		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
 				.builder();
 		geneticSystemDescriptorBuilder.populationSize(500);
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programGenerator));
+				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
 		geneticSystemDescriptorBuilder
 				.addMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
