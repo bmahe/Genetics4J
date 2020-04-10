@@ -15,13 +15,18 @@
 	<packaging>jar</packaging>
 
 	<name>Samples</name>
-	<description>Samples programs</description>
+	<description>Samples programs demonstrating Genetics4j capabilities</description>
 
 	<dependencies>
 
 		<dependency>
 			<groupId>net.bmahe.genetics4j</groupId>
 			<artifactId>core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>net.bmahe.genetics4j</groupId>
+			<artifactId>gp</artifactId>
 		</dependency>
 
 		<dependency>
