@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
 
@@ -68,11 +69,39 @@ public class ProgramHelper {
 		final Set<OperationFactory> terminals = program.terminal();
 		final List<OperationFactory> candidates = terminals.stream().collect(Collectors.toList());
 
-		if (candidates == null || candidates.isEmpty()) {
-			throw new IllegalArgumentException("Could not find a suitable terminal ");
-		}
-
 		return candidates.get(random.nextInt(candidates.size()));
+	}
+
+	public OperationFactory pickRandomFunctionOrTerminal(final Program program) {
+		Validate.notNull(program);
+
+		final Set<OperationFactory> terminals = program.terminal();
+		final Set<OperationFactory> functions = program.functions();
+		final int totalNumberCandidates = terminals.size() + functions.size();
+
+		final Stream<OperationFactory> candidates = Stream.concat(terminals.stream(), functions.stream());
+		final int chosenCandidate = random.nextInt(totalNumberCandidates);
+
+		return candidates.skip(chosenCandidate).findFirst().get();
+	}
+
+	public <T> OperationFactory pickRandomFunctionOrTerminal(final Program program, final Class<T> requiredClass) {
+		Validate.notNull(program);
+		Validate.notNull(requiredClass);
+
+		final Set<OperationFactory> terminals = program.terminal();
+		final Set<OperationFactory> functions = program.functions();
+
+		final Stream<OperationFactory> candidates = Stream.concat(terminals.stream(), functions.stream());
+
+		@SuppressWarnings("unchecked")
+		final List<OperationFactory> filteredCandidates = candidates
+				.filter((operationFactory) -> operationFactory.returnedType().isAssignableFrom(requiredClass))
+				.collect(Collectors.toList());
+
+		final int chosenCandidate = random.nextInt(filteredCandidates.size());
+
+		return filteredCandidates.get(chosenCandidate);
 	}
 
 }

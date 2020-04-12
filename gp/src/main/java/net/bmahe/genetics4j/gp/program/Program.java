@@ -2,6 +2,7 @@ package net.bmahe.genetics4j.gp.program;
 
 import java.util.Set;
 
+import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Parameter;
 
@@ -22,4 +23,13 @@ public abstract class Program {
 
 	@Parameter
 	public abstract int maxDepth();
+
+	@Value.Check
+	protected void check() {
+		Validate.notNull(functions());
+		Validate.isTrue(functions().size() > 0);
+
+		Validate.notNull(terminal());
+		Validate.isTrue(terminal().size() > 0);
+	}
 }

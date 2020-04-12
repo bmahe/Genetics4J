@@ -367,4 +367,85 @@ public class ProgramHelperTest {
 		assertEquals(spaceStringTerminalFactory, randomTerminal);
 	}
 
+	@Test
+	public void pickRandomTerminalOrFunciton() {
+
+		final Random mockRandom = mock(Random.class);
+		when(mockRandom.nextInt(anyInt())).thenReturn(2).thenReturn(6);
+
+		final Program mockProgram = mock(Program.class);
+
+		// Used a linkedhashset to have a predictable iteration
+		final LinkedHashSet<OperationFactory> functions = new LinkedHashSet<>();
+		functions.add(Functions.ADD);
+		functions.add(Functions.MUL);
+		functions.add(Functions.DIV);
+		functions.add(Functions.SUB);
+		functions.add(Functions.COS);
+		functions.add(Functions.SIN);
+		functions.add(Functions.EXP);
+		when(mockProgram.functions()).thenReturn(functions);
+
+		// Used a linkedhashset to have a predictable iteration
+		final LinkedHashSet<OperationFactory> terminals = new LinkedHashSet<>();
+		terminals.add(Terminals.PI);
+		terminals.add(Terminals.Coefficient(mockRandom, -50, 100));
+		terminals.add(Terminals.E);
+		terminals.add(Terminals.CoefficientRounded(mockRandom, -5, 7));
+		when(mockProgram.terminal()).thenReturn(terminals);
+
+		when(mockProgram.inputSpec()).thenReturn(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
+		when(mockProgram.maxDepth()).thenReturn(4);
+
+		final ProgramHelper programHelper = new ProgramHelper(mockRandom);
+
+		final OperationFactory randomTerminal = programHelper.pickRandomFunctionOrTerminal(mockProgram);
+		assertEquals(Terminals.E, randomTerminal);
+
+		final OperationFactory randomTerminal2 = programHelper.pickRandomFunctionOrTerminal(mockProgram);
+		assertEquals(Functions.DIV, randomTerminal2);
+	}
+
+	@Test
+	public void pickRandomTerminalOrFunctionWithConstraint() {
+
+		final Random random = new Random();
+
+		final Program mockProgram = mock(Program.class);
+
+		// Used a linkedhashset to have a predictable iteration
+		final LinkedHashSet<OperationFactory> functions = new LinkedHashSet<>();
+		functions.add(Functions.ADD);
+		functions.add(Functions.MUL);
+		functions.add(Functions.DIV);
+		functions.add(Functions.SUB);
+		functions.add(Functions.COS);
+		functions.add(Functions.SIN);
+		functions.add(Functions.EXP);
+		when(mockProgram.functions()).thenReturn(functions);
+
+		final OperationFactory spaceStringTerminalFactory = OperationFactories.ofTerminal("SpaceString", String.class,
+				() -> StringUtils.SPACE);
+		// Used a linkedhashset to have a predictable iteration
+		final LinkedHashSet<OperationFactory> terminals = new LinkedHashSet<>();
+		terminals.add(Terminals.PI);
+		terminals.add(Terminals.E);
+		terminals.add(spaceStringTerminalFactory);
+		terminals.add(Terminals.Coefficient(random, -50, 100));
+		terminals.add(Terminals.CoefficientRounded(random, -5, 7));
+		when(mockProgram.terminal()).thenReturn(terminals);
+
+		when(mockProgram.inputSpec()).thenReturn(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
+		when(mockProgram.maxDepth()).thenReturn(4);
+
+		final ProgramHelper programHelper = new ProgramHelper(random);
+
+		/**
+		 * There is only one operation factory defined as returning a String. So it must
+		 * pick that one
+		 */
+		final OperationFactory randomTerminal = programHelper.pickRandomTerminal(mockProgram, String.class);
+		assertEquals(spaceStringTerminalFactory, randomTerminal);
+	}
+
 }
