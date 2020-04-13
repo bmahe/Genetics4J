@@ -36,11 +36,13 @@ import net.bmahe.genetics4j.gp.mutation.ProgramRandomMutatePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomPrunePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRulesApplicatorPolicyHandler;
 import net.bmahe.genetics4j.gp.program.FullProgramGenerator;
+import net.bmahe.genetics4j.gp.program.GrowProgramGenerator;
 import net.bmahe.genetics4j.gp.program.ImmutableProgram;
+import net.bmahe.genetics4j.gp.program.ImmutableProgram.Builder;
+import net.bmahe.genetics4j.gp.program.MultiProgramGenerator;
 import net.bmahe.genetics4j.gp.program.Program;
 import net.bmahe.genetics4j.gp.program.ProgramGenerator;
 import net.bmahe.genetics4j.gp.program.ProgramHelper;
-import net.bmahe.genetics4j.gp.program.ImmutableProgram.Builder;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
@@ -74,7 +76,10 @@ public class SymbolicRegression {
 	public void run() {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
-		final ProgramGenerator programGenerator = new FullProgramGenerator(programHelper);
+		final ProgramGenerator fullProgramGenerator = new FullProgramGenerator(programHelper);
+		final GrowProgramGenerator growProgramGenerator = new GrowProgramGenerator(programHelper);
+		final ProgramGenerator programGenerator = new MultiProgramGenerator(random,
+				List.of(fullProgramGenerator, growProgramGenerator));
 
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
