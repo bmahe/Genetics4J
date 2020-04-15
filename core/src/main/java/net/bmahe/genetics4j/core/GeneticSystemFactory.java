@@ -22,35 +22,32 @@ import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
 public class GeneticSystemFactory {
-	public GeneticSystem from(final GenotypeSpec genotypeSpec, final GeneticSystemDescriptor geneticSystemDescriptor) {
+	public <T extends Comparable<T>> GeneticSystem<T> from(final GenotypeSpec<T> genotypeSpec,
+			final GeneticSystemDescriptor<T> geneticSystemDescriptor) {
 		final ExecutorService executorService = ForkJoinPool.commonPool();
 		return from(genotypeSpec, geneticSystemDescriptor, executorService);
 	}
 
-	public GeneticSystem from(final GenotypeSpec genotypeSpec, final GeneticSystemDescriptor geneticSystemDescriptor,
-			final ExecutorService executorService) {
+	public <T extends Comparable<T>> GeneticSystem<T> from(final GenotypeSpec<T> genotypeSpec,
+			final GeneticSystemDescriptor<T> geneticSystemDescriptor, final ExecutorService executorService) {
 		Validate.notNull(genotypeSpec);
 		Validate.notNull(geneticSystemDescriptor);
 		Validate.notNull(executorService);
 
-		final SelectionPolicyHandlerResolver selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver(
+		final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 
-		final SelectionPolicyHandler parentSelectionPolicyHandler = selectionPolicyHandlerResolver
+		final SelectionPolicyHandler<T> parentSelectionPolicyHandler = selectionPolicyHandlerResolver
 				.resolve(genotypeSpec.parentSelectionPolicy());
-		final Selector parentSelector = parentSelectionPolicyHandler.resolve(geneticSystemDescriptor,
-				genotypeSpec,
-				selectionPolicyHandlerResolver,
-				genotypeSpec.parentSelectionPolicy());
+		final Selector<T> parentSelector = parentSelectionPolicyHandler.resolve(geneticSystemDescriptor, genotypeSpec,
+				selectionPolicyHandlerResolver, genotypeSpec.parentSelectionPolicy());
 
-		final SelectionPolicyHandler survivorSelectionPolicyHandler = selectionPolicyHandlerResolver
+		final SelectionPolicyHandler<T> survivorSelectionPolicyHandler = selectionPolicyHandlerResolver
 				.resolve(genotypeSpec.survivorSelectionPolicy());
-		final Selector survivorSelector = survivorSelectionPolicyHandler.resolve(geneticSystemDescriptor,
-				genotypeSpec,
-				selectionPolicyHandlerResolver,
-				genotypeSpec.survivorSelectionPolicy());
+		final Selector<T> survivorSelector = survivorSelectionPolicyHandler.resolve(geneticSystemDescriptor,
+				genotypeSpec, selectionPolicyHandlerResolver, genotypeSpec.survivorSelectionPolicy());
 
-		final MutationPolicyHandlerResolver mutationPolicyHandlerResolver = new MutationPolicyHandlerResolver(
+		final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver = new MutationPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 
 		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
@@ -64,14 +61,12 @@ public class GeneticSystemFactory {
 				.collect(Collectors.toList());
 
 		final List<Mutator> mutators = new ArrayList<Mutator>();
-		for (int i = 0; i < genotypeSpec.mutationPolicies()
-				.size(); i++) {
-			final MutationPolicy mutationPolicy = genotypeSpec.mutationPolicies()
-					.get(i);
+		for (int i = 0; i < genotypeSpec.mutationPolicies().size(); i++) {
+			final MutationPolicy mutationPolicy = genotypeSpec.mutationPolicies().get(i);
 
 			final MutationPolicyHandler mutationPolicyHandler = mutationPolicyHandlerResolver.resolve(mutationPolicy);
-			final Mutator mutator = mutationPolicyHandler
-					.createMutator(geneticSystemDescriptor, genotypeSpec, mutationPolicyHandlerResolver, mutationPolicy);
+			final Mutator mutator = mutationPolicyHandler.createMutator(geneticSystemDescriptor, genotypeSpec,
+					mutationPolicyHandlerResolver, mutationPolicy);
 
 			mutators.add(mutator);
 
@@ -79,7 +74,7 @@ public class GeneticSystemFactory {
 
 		final long populationSize = geneticSystemDescriptor.populationSize();
 
-		return new GeneticSystem(genotypeSpec, populationSize, chromosomeCombinators, genotypeSpec.offspringRatio(),
+		return new GeneticSystem<>(genotypeSpec, populationSize, chromosomeCombinators, genotypeSpec.offspringRatio(),
 				parentSelector, survivorSelector, mutators, geneticSystemDescriptor, executorService);
 	}
 }

@@ -1,5 +1,7 @@
 package net.bmahe.genetics4j.core.mutation;
 
+import java.util.List;
+
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.GeneticSystem;
@@ -22,22 +24,22 @@ public class SupersimpleTest {
 	@Test
 	public void simple() {
 
-		final Builder genotypeSpecBuilder = new GenotypeSpec.Builder();
+		final Builder<Double> genotypeSpecBuilder = new GenotypeSpec.Builder<Double>();
 		genotypeSpecBuilder.chromosomeSpecs(BitChromosomeSpec.of(5), IntChromosomeSpec.of(6, 10, 100))
 				.fitness((genotype) -> 1.0)
-				.termination((long generation, Genotype[] population, double[] fitness) -> true)
+				.termination((long generation, Genotype[] population, List<Double> fitness) -> true)
 				.parentSelectionPolicy(RandomSelectionPolicy.build())
 				.survivorSelectionPolicy(RandomSelectionPolicy.build())
 				.combinationPolicy(SinglePointCrossover.build())
 				.addMutationPolicies(MultiMutations.of(RandomMutation.of(0.15), SwapMutation.of(0.05, 2, true)));
 
-		final GenotypeSpec genotypeSpec = genotypeSpecBuilder.build();
+		final GenotypeSpec<Double> genotypeSpec = genotypeSpecBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Double> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
 				.builder();
-		GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		GeneticSystemDescriptor<Double> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 
 		final GeneticSystemFactory geneticSystemFactory = new GeneticSystemFactory();
-		final GeneticSystem geneticSystem = geneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
+		final GeneticSystem<Double> geneticSystem = geneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
 	}
 }

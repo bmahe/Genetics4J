@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -26,7 +27,7 @@ import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
 public class RouletteWheelSelectionPolicyHandlerTest {
-	private final GenotypeSpec SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder()
+	private final GenotypeSpec<Double> SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder<Double>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
 			.parentSelectionPolicy(RandomSelectionPolicy.build())
 			.survivorSelectionPolicy(RandomSelectionPolicy.build())
@@ -37,12 +38,12 @@ public class RouletteWheelSelectionPolicyHandlerTest {
 
 	@Test(expected = NullPointerException.class)
 	public void randomIsRequired() {
-		new RouletteWheelSelectionPolicyHandler(null);
+		new RouletteWheelSelectionPolicyHandler<Double>(null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void canHandleRequireSelection() {
-		final RouletteWheelSelectionPolicyHandler selectionPolicyHandler = new RouletteWheelSelectionPolicyHandler(
+		final RouletteWheelSelectionPolicyHandler<Double> selectionPolicyHandler = new RouletteWheelSelectionPolicyHandler<>(
 				new Random());
 
 		selectionPolicyHandler.canHandle(null);
@@ -50,7 +51,7 @@ public class RouletteWheelSelectionPolicyHandlerTest {
 
 	@Test
 	public void canHandle() {
-		final RouletteWheelSelectionPolicyHandler selectionPolicyHandler = new RouletteWheelSelectionPolicyHandler(
+		final RouletteWheelSelectionPolicyHandler<Double> selectionPolicyHandler = new RouletteWheelSelectionPolicyHandler<>(
 				new Random());
 
 		assertTrue(selectionPolicyHandler.canHandle(RouletteWheelSelection.build()));
@@ -66,28 +67,28 @@ public class RouletteWheelSelectionPolicyHandlerTest {
 
 		final int populationSize = 5;
 		final Genotype[] population = new Genotype[populationSize];
-		final double[] fitnessScore = new double[populationSize];
+		final List<Double> fitnessScore = new ArrayList<>(populationSize);
 
 		for (int i = 0; i < populationSize; i++) {
 			final IntChromosome intChromosome = new IntChromosome(4, 0, 10, new int[] { i, i + 1, i + 2, i + 3 });
 			final Genotype genotype = new Genotype(new Chromosome[] { intChromosome });
 
 			population[i] = genotype;
-			fitnessScore[i] = i * 10;
+			fitnessScore.add((double) (i * 10));
 		}
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Double> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
 				.builder();
 		geneticSystemDescriptorBuilder.populationSize(100);
 
-		final ImmutableGeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
-		final SelectionPolicyHandlerResolver selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver(
+		final ImmutableGeneticSystemDescriptor<Double> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final SelectionPolicyHandlerResolver<Double> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 
-		final RouletteWheelSelectionPolicyHandler selectionPolicyHandler = new RouletteWheelSelectionPolicyHandler(
+		final RouletteWheelSelectionPolicyHandler<Double> selectionPolicyHandler = new RouletteWheelSelectionPolicyHandler<>(
 				random);
-		final Selector selector = selectionPolicyHandler.resolve(geneticSystemDescriptor, SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
-				selectionPolicyHandlerResolver, RouletteWheelSelection.build());
+		final Selector<Double> selector = selectionPolicyHandler.resolve(geneticSystemDescriptor,
+				SIMPLE_MAXIMIZING_GENOTYPE_SPEC, selectionPolicyHandlerResolver, RouletteWheelSelection.build());
 
 		final List<Genotype> selected = selector.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, 3, population, fitnessScore);
 
@@ -106,31 +107,32 @@ public class RouletteWheelSelectionPolicyHandlerTest {
 
 		final int populationSize = 5;
 		final Genotype[] population = new Genotype[populationSize];
-		final double[] fitnessScore = new double[populationSize];
+		final List<Double> fitnessScore = new ArrayList<>(populationSize);
 
 		for (int i = 0; i < populationSize; i++) {
 			final IntChromosome intChromosome = new IntChromosome(4, 0, 10, new int[] { i, i + 1, i + 2, i + 3 });
 			final Genotype genotype = new Genotype(new Chromosome[] { intChromosome });
 
 			population[i] = genotype;
-			fitnessScore[i] = i * 10;
+			fitnessScore.add((double) (i * 10));
 		}
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Double> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
 				.builder();
 		geneticSystemDescriptorBuilder.populationSize(100);
 
-		final ImmutableGeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
-		final SelectionPolicyHandlerResolver selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver(
+		final ImmutableGeneticSystemDescriptor<Double> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final SelectionPolicyHandlerResolver<Double> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 
-		final GenotypeSpec genotypeSpec = new GenotypeSpec.Builder().from(SIMPLE_MAXIMIZING_GENOTYPE_SPEC)
+		final GenotypeSpec<Double> genotypeSpec = new GenotypeSpec.Builder<Double>()
+				.from(SIMPLE_MAXIMIZING_GENOTYPE_SPEC)
 				.optimization(Optimization.MINIMIZE)
 				.build();
-		final RouletteWheelSelectionPolicyHandler selectionPolicyHandler = new RouletteWheelSelectionPolicyHandler(
+		final RouletteWheelSelectionPolicyHandler<Double> selectionPolicyHandler = new RouletteWheelSelectionPolicyHandler<>(
 				random);
-		final Selector selector = selectionPolicyHandler.resolve(geneticSystemDescriptor, SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
-				selectionPolicyHandlerResolver, RouletteWheelSelection.build());
+		final Selector<Double> selector = selectionPolicyHandler.resolve(geneticSystemDescriptor,
+				SIMPLE_MAXIMIZING_GENOTYPE_SPEC, selectionPolicyHandlerResolver, RouletteWheelSelection.build());
 		final List<Genotype> selected = selector.select(genotypeSpec, 3, population, fitnessScore);
 
 		assertNotNull(selected);

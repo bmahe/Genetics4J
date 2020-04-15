@@ -7,12 +7,12 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
-public class MutationPolicyHandlerResolver {
+public class MutationPolicyHandlerResolver<T extends Comparable<T>> {
 
-	private final GeneticSystemDescriptor geneticSystemDescriptor;
+	private final GeneticSystemDescriptor<T> geneticSystemDescriptor;
 	private final List<MutationPolicyHandler> mutationPolicyHandlers;
 
-	public MutationPolicyHandlerResolver(final GeneticSystemDescriptor _geneticSystemDescriptor) {
+	public MutationPolicyHandlerResolver(final GeneticSystemDescriptor<T> _geneticSystemDescriptor) {
 		Validate.notNull(_geneticSystemDescriptor);
 
 		this.geneticSystemDescriptor = _geneticSystemDescriptor;
@@ -22,8 +22,7 @@ public class MutationPolicyHandlerResolver {
 	public boolean canHandle(final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicy);
 
-		return mutationPolicyHandlers.stream()
-				.anyMatch((sph) -> sph.canHandle(this, mutationPolicy));
+		return mutationPolicyHandlers.stream().anyMatch((sph) -> sph.canHandle(this, mutationPolicy));
 	}
 
 	public MutationPolicyHandler resolve(final MutationPolicy mutationPolicy) {

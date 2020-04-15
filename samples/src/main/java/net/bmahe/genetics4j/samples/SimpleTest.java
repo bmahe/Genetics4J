@@ -1,10 +1,16 @@
 package net.bmahe.genetics4j.samples;
 
-import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Random;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.bmahe.genetics4j.core.GeneticSystem;
 import net.bmahe.genetics4j.core.GeneticSystemFactory;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
+import net.bmahe.genetics4j.core.selection.RouletteWheelSelectionPolicyHandler;
+import net.bmahe.genetics4j.core.selection.TournamentSelectionPolicyHandler;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder;
@@ -18,11 +24,13 @@ import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
 public class SimpleTest {
+	final static public Logger logger = LogManager.getLogger(SimpleTest.class);
 
 	public static void main(String[] args) {
-		System.out.println("XXXXXXXXXXXX");
 
-		final Builder genotypeSpecBuilder = new GenotypeSpec.Builder();
+		final Random random = new Random();
+
+		final Builder<Double> genotypeSpecBuilder = new GenotypeSpec.Builder<>();
 		genotypeSpecBuilder.chromosomeSpecs(IntChromosomeSpec.of(10, 0, 10))
 				.parentSelectionPolicy(RouletteWheelSelection.build())
 				.survivorSelectionPolicy(TournamentSelection.build(30))
@@ -40,22 +48,25 @@ public class SimpleTest {
 					return denominator;
 				})
 				.termination((generation, population, fitness) -> {
-					return Arrays.stream(fitness)
-							.min()
-							.orElseThrow() < 0.0001;
+					return fitness.stream().min(Comparator.naturalOrder()).orElseThrow() < 0.0001;
 				});
-		final GenotypeSpec genotypeSpec = genotypeSpecBuilder.build();
+		final GenotypeSpec<Double> genotypeSpec = genotypeSpecBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Double> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
 				.builder();
 		geneticSystemDescriptorBuilder.populationSize(100);
+		geneticSystemDescriptorBuilder.random(random);
+		geneticSystemDescriptorBuilder.addSelectionPolicyHandlers(new RouletteWheelSelectionPolicyHandler<>(random),
+				new TournamentSelectionPolicyHandler<>(random));
 
-		final ImmutableGeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final ImmutableGeneticSystemDescriptor<Double> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 
 		final GeneticSystemFactory geneticSystemFactory = new GeneticSystemFactory();
-		final GeneticSystem geneticSystem = geneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
+		final GeneticSystem<Double> geneticSystem = geneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
 
-		final EvolutionResult evolutionResult = geneticSystem.evolve();
-		System.out.println("Best genotype: " + evolutionResult.bestGenotype());
+		final EvolutionResult<Double> evolutionResult = geneticSystem.evolve();
+		logger.info("Best genotype: " + evolutionResult.bestGenotype());
+
+		System.exit(0);
 	}
 }

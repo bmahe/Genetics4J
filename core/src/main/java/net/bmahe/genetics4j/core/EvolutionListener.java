@@ -1,7 +1,9 @@
 package net.bmahe.genetics4j.core;
 
-@FunctionalInterface
-public interface EvolutionListener {
+import java.util.List;
 
-	void onEvolution(long generation, Genotype[] population, double[] fitness);
+@FunctionalInterface
+public interface EvolutionListener<T> {
+
+	void onEvolution(final long generation, final Genotype[] population, final List<T> fitness);
 }

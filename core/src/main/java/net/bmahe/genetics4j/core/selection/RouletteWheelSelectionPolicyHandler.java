@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.core.selection;
 
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -14,7 +14,8 @@ import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
-public class RouletteWheelSelectionPolicyHandler implements SelectionPolicyHandler {
+public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T>>
+		implements SelectionPolicyHandler<T> {
 
 	private final Random random;
 
@@ -31,37 +32,39 @@ public class RouletteWheelSelectionPolicyHandler implements SelectionPolicyHandl
 	}
 
 	@Override
-	public Selector resolve(GeneticSystemDescriptor geneticSystemDescriptor, GenotypeSpec genotypeSpec,
-			SelectionPolicyHandlerResolver selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
+	public Selector<T> resolve(GeneticSystemDescriptor<T> geneticSystemDescriptor, GenotypeSpec<T> genotypeSpec,
+			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(RouletteWheelSelection.class, selectionPolicy);
 
-		return new Selector() {
+		return new Selector<T>() {
 
 			@Override
-			public List<Genotype> select(GenotypeSpec genotypeSpec, int numIndividuals, Genotype[] population,
-					double[] fitnessScore) {
+			public List<Genotype> select(GenotypeSpec<T> genotypeSpec, int numIndividuals, Genotype[] population,
+					List<T> fitnessScore) {
 				Validate.notNull(genotypeSpec);
 				Validate.notNull(population);
 				Validate.notNull(fitnessScore);
 				Validate.isTrue(numIndividuals > 0);
-				Validate.isTrue(population.length == fitnessScore.length);
+				Validate.isTrue(population.length == fitnessScore.size());
 
 				switch (genotypeSpec.optimization()) {
-					case MAXIMZE:
-					case MINIMIZE:
-						break;
-					default:
-						throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec.optimization());
+				case MAXIMZE:
+				case MINIMIZE:
+					break;
+				default:
+					throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec.optimization());
 				}
 
 				final List<Genotype> selectedParents = new LinkedList<>();
 
-				final double minFitness = Arrays.stream(fitnessScore)
-						.min()
+				final double minFitness = fitnessScore.stream()
+						.map(Number::doubleValue)
+						.min(Comparator.naturalOrder())
 						.orElseThrow();
-				final double maxFitness = Arrays.stream(fitnessScore)
-						.max()
+				final double maxFitness = fitnessScore.stream()
+						.map(Number::doubleValue)
+						.max(Comparator.naturalOrder())
 						.orElseThrow();
 				final double reversedBase = minFitness + maxFitness; // Used as a base when minimizing
 
@@ -69,11 +72,10 @@ public class RouletteWheelSelectionPolicyHandler implements SelectionPolicyHandl
 				final double[] probabilities = new double[population.length];
 
 				for (int i = 0; i < population.length; i++) {
-					if (genotypeSpec.optimization()
-							.equals(Optimization.MAXIMZE)) {
-						sumFitness += fitnessScore[i];
+					if (genotypeSpec.optimization().equals(Optimization.MAXIMZE)) {
+						sumFitness += fitnessScore.get(i).doubleValue();
 					} else {
-						sumFitness += reversedBase - fitnessScore[i];
+						sumFitness += reversedBase - fitnessScore.get(i).doubleValue();
 					}
 					probabilities[i] = sumFitness;
 				}

@@ -1,9 +1,9 @@
 package net.bmahe.genetics4j.core.selection;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import java.util.function.BiFunction;
 
 import org.apache.commons.lang3.Validate;
 
@@ -14,7 +14,7 @@ import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
-public class TournamentSelectionPolicyHandler implements SelectionPolicyHandler {
+public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implements SelectionPolicyHandler<T> {
 	private final Random random;
 
 	public TournamentSelectionPolicyHandler(final Random _random) {
@@ -30,49 +30,49 @@ public class TournamentSelectionPolicyHandler implements SelectionPolicyHandler 
 	}
 
 	@Override
-	public Selector resolve(GeneticSystemDescriptor geneticSystemDescriptor, GenotypeSpec genotypeSpec,
-			SelectionPolicyHandlerResolver selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
+	public Selector<T> resolve(GeneticSystemDescriptor<T> geneticSystemDescriptor, GenotypeSpec<T> genotypeSpec,
+			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(TournamentSelection.class, selectionPolicy);
 
-		return new Selector() {
+		return new Selector<T>() {
 
 			@Override
-			public List<Genotype> select(GenotypeSpec genotypeSpec, int numIndividuals, Genotype[] population,
-					double[] fitnessScore) {
+			public List<Genotype> select(GenotypeSpec<T> genotypeSpec, int numIndividuals, Genotype[] population,
+					List<T> fitnessScore) {
 				Validate.notNull(genotypeSpec);
 				Validate.notNull(population);
 				Validate.notNull(fitnessScore);
 				Validate.isTrue(numIndividuals > 0);
-				Validate.isTrue(population.length == fitnessScore.length);
+				Validate.isTrue(population.length == fitnessScore.size());
 
 				switch (genotypeSpec.optimization()) {
-					case MAXIMZE:
-					case MINIMIZE:
-						break;
-					default:
-						throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec.optimization());
+				case MAXIMZE:
+				case MINIMIZE:
+					break;
+				default:
+					throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec.optimization());
 				}
 
 				final List<Genotype> selected = new ArrayList<>(numIndividuals);
 
-				// TODO can't wait for switch expressions
-				final BiFunction<Double, Double, Boolean> isScoreBetter = Optimization.MAXIMZE
-						.equals(genotypeSpec.optimization()) ? (best, score) -> best < score : (best, score) -> best > score;
+				final Comparator<T> comparator = Optimization.MAXIMZE.equals(genotypeSpec.optimization())
+						? Comparator.naturalOrder()
+						: Comparator.reverseOrder();
 
 				final TournamentSelection tournamentSelection = (TournamentSelection) selectionPolicy;
 
 				while (selected.size() < numIndividuals) {
 
 					Genotype bestCandidate = null;
-					double bestScore = 0;
+					T bestFitness = null;
 
 					for (int i = 0; i < tournamentSelection.numCandidates(); i++) {
-						final int candidateIndex = random.nextInt(fitnessScore.length);
+						final int candidateIndex = random.nextInt(fitnessScore.size());
 
-						if (bestCandidate == null || Double.isFinite(bestScore) == false
-								|| isScoreBetter.apply(bestScore, fitnessScore[candidateIndex])) {
-							bestScore = fitnessScore[candidateIndex];
+						if (bestCandidate == null
+								|| comparator.compare(bestFitness, fitnessScore.get(candidateIndex)) < 0) {
+							bestFitness = fitnessScore.get(candidateIndex);
 							bestCandidate = population[candidateIndex];
 						}
 					}

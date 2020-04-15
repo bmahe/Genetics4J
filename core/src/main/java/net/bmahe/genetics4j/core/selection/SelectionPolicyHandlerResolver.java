@@ -7,19 +7,19 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
-public class SelectionPolicyHandlerResolver {
-	private final GeneticSystemDescriptor geneticSystemDescriptor;
+public class SelectionPolicyHandlerResolver<T extends Comparable<T>> {
+	private final GeneticSystemDescriptor<T> geneticSystemDescriptor;
 
-	private final List<SelectionPolicyHandler> selectionPolicyHandlers;
+	private final List<SelectionPolicyHandler<T>> selectionPolicyHandlers;
 
-	public SelectionPolicyHandlerResolver(final GeneticSystemDescriptor _geneticSystemDescriptor) {
+	public SelectionPolicyHandlerResolver(final GeneticSystemDescriptor<T> _geneticSystemDescriptor) {
 		Validate.notNull(_geneticSystemDescriptor);
 
 		this.geneticSystemDescriptor = _geneticSystemDescriptor;
 		this.selectionPolicyHandlers = geneticSystemDescriptor.selectionPolicyHandlers();
 	}
 
-	public SelectionPolicyHandler resolve(final SelectionPolicy selectionPolicy) {
+	public SelectionPolicyHandler<T> resolve(final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 
 		return selectionPolicyHandlers.stream()

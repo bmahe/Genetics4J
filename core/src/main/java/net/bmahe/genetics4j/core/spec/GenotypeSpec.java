@@ -19,7 +19,7 @@ import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
 @Value.Immutable
-public abstract class GenotypeSpec {
+public abstract class GenotypeSpec<T extends Comparable<T>> {
 	public static final double DEFAULT_OFFSPRING_RATIO = 0.7;
 	public static final Optimization DEFAULT_OPTIMIZATION = Optimization.MAXIMZE;
 
@@ -33,9 +33,9 @@ public abstract class GenotypeSpec {
 
 	public abstract List<MutationPolicy> mutationPolicies();
 
-	public abstract Fitness fitness();
+	public abstract Fitness<T> fitness();
 
-	public abstract Termination termination();
+	public abstract Termination<T> termination();
 
 	public abstract Optional<Supplier<Genotype>> populationGenerator();
 
@@ -71,13 +71,13 @@ public abstract class GenotypeSpec {
 		return chromosomeSpecs().size();
 	}
 
-	public static class Builder extends ImmutableGenotypeSpec.Builder {
+	public static class Builder<T extends Comparable<T>> extends ImmutableGenotypeSpec.Builder<T> {
 
-		public final GenotypeSpec.Builder chromosomeSpecs(final ChromosomeSpec... elements) {
+		public final GenotypeSpec.Builder<T> chromosomeSpecs(final ChromosomeSpec... elements) {
 			return this.chromosomeSpecs(Arrays.asList(elements));
 		}
 
-		public final GenotypeSpec.Builder mutationPolicies(final MutationPolicy... elements) {
+		public final GenotypeSpec.Builder<T> mutationPolicies(final MutationPolicy... elements) {
 			return this.mutationPolicies(Arrays.asList(elements));
 		}
 	}

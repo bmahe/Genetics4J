@@ -1,6 +1,7 @@
 package net.bmahe.genetics4j.core.spec;
 
-import java.util.function.BiFunction;
+import java.util.Comparator;
+import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
@@ -8,10 +9,10 @@ import org.immutables.value.Value;
 import net.bmahe.genetics4j.core.Genotype;
 
 @Value.Immutable
-public abstract class EvolutionResult {
+public abstract class EvolutionResult<T extends Comparable<T>> {
 
 	@Value.Parameter
-	public abstract GenotypeSpec genotypeSpec();
+	public abstract GenotypeSpec<T> genotypeSpec();
 
 	@Value.Parameter
 	public abstract long generation();
@@ -20,35 +21,36 @@ public abstract class EvolutionResult {
 	public abstract Genotype[] population();
 
 	@Value.Parameter
-	public abstract double[] fitness();
+	public abstract List<T> fitness();
 
 	public Genotype bestGenotype() {
 		final Genotype[] population = population();
-		final double[] fitness = fitness();
+		final List<T> fitness = fitness();
 
 		Validate.notNull(population);
 		Validate.notNull(fitness);
-		Validate.isTrue(population.length == fitness.length);
+		Validate.isTrue(population.length == fitness.size());
 		Validate.isTrue(population.length > 0);
 
 		switch (genotypeSpec().optimization()) {
-			case MAXIMZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec().optimization());
+		case MAXIMZE:
+		case MINIMIZE:
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec().optimization());
 		}
 
-		final BiFunction<Double, Double, Boolean> isScoreBetter = Optimization.MAXIMZE
-				.equals(genotypeSpec().optimization()) ? (best, score) -> best < score : (best, score) -> best > score;
+		final Comparator<T> comparator = Optimization.MAXIMZE.equals(genotypeSpec().optimization())
+				? Comparator.naturalOrder()
+				: Comparator.reverseOrder();
 
 		Genotype bestCandidate = population[0];
-		double bestScore = fitness[0];
+		T bestScore = fitness.get(0);
 
-		for (int i = 0; i < fitness.length; i++) {
-			final double score = fitness[i];
+		for (int i = 0; i < fitness.size(); i++) {
+			final T score = fitness.get(i);
 
-			if (isScoreBetter.apply(bestScore, score)) {
+			if (comparator.compare(bestScore, score) < 0) {
 				bestScore = score;
 				bestCandidate = population[i];
 			}

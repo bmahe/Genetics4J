@@ -25,12 +25,12 @@ import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.ImmutableEvolutionResult;
 
-public class GeneticSystem {
+public class GeneticSystem<T extends Comparable<T>> {
 	final static public Logger logger = LogManager.getLogger(GeneticSystem.class);
 
 	private final ExecutorService executorService;
-	private final GenotypeSpec genotypeSpec;
-	private final GeneticSystemDescriptor geneticSystemDescriptor;
+	private final GenotypeSpec<T> genotypeSpec;
+	private final GeneticSystemDescriptor<T> geneticSystemDescriptor;
 	private final int populationSize;
 
 	private final List<ChromosomeCombinator> chromosomeCombinators;
@@ -40,13 +40,14 @@ public class GeneticSystem {
 
 	private final double offspringRatio;
 
-	private Selector parentSelector;
-	private Selector survivorSelector;
+	private Selector<T> parentSelector;
+	private Selector<T> survivorSelector;
 
-	public GeneticSystem(final GenotypeSpec _genotypeSpec, final long _populationSize,
+	public GeneticSystem(final GenotypeSpec<T> _genotypeSpec, final long _populationSize,
 			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
-			final Selector _parentSelectionPolicyHandler, final Selector _survivorSelector, final List<Mutator> _mutators,
-			final GeneticSystemDescriptor _geneticSystemDescriptor, final ExecutorService _executorService) {
+			final Selector<T> _parentSelectionPolicyHandler, final Selector<T> _survivorSelector,
+			final List<Mutator> _mutators, final GeneticSystemDescriptor<T> _geneticSystemDescriptor,
+			final ExecutorService _executorService) {
 		Validate.notNull(_genotypeSpec);
 		Validate.isTrue(_populationSize > 0);
 		Validate.notNull(_chromosomeCombinators);
@@ -70,7 +71,7 @@ public class GeneticSystem {
 		survivorSelector = _survivorSelector;
 	}
 
-	public GenotypeSpec getGenotypeSpec() {
+	public GenotypeSpec<T> getGenotypeSpec() {
 		return genotypeSpec;
 	}
 
@@ -78,11 +79,11 @@ public class GeneticSystem {
 		return populationSize;
 	}
 
-	public Fitness getFitness() {
+	public Fitness<T> getFitness() {
 		return genotypeSpec.fitness();
 	}
 
-	private Genotype[] generatePopulation(final GenotypeSpec genotypeSpec, final int numPopulation) {
+	private Genotype[] generatePopulation(final GenotypeSpec<T> genotypeSpec, final int numPopulation) {
 		Validate.notNull(genotypeSpec);
 		Validate.isTrue(numPopulation > 0);
 
@@ -120,30 +121,30 @@ public class GeneticSystem {
 		return population;
 	}
 
-	public EvolutionResult evolve() {
-		final Termination termination = genotypeSpec.termination();
+	public EvolutionResult<T> evolve() {
+		final Termination<T> termination = genotypeSpec.termination();
 
-		final Fitness fitness = genotypeSpec.fitness();
+		final Fitness<T> fitness = genotypeSpec.fitness();
 
 		long generation = 0;
 		Genotype[] population = generatePopulation(genotypeSpec, populationSize);
 
-		double[] fitnessScore = new double[populationSize];
+		final ArrayList<T> fitnessScore = new ArrayList<>(populationSize);
 		for (int i = 0; i < populationSize; i++) {
-			fitnessScore[i] = fitness.compute(population[i]);
+			fitnessScore.add(fitness.compute(population[i]));
 		}
 
 		while (termination.isDone(generation, population, fitnessScore) == false) {
 
-			for (final EvolutionListener evolutionListener : geneticSystemDescriptor.evolutionListeners()) {
+			for (final EvolutionListener<T> evolutionListener : geneticSystemDescriptor.evolutionListeners()) {
 				evolutionListener.onEvolution(generation, population, fitnessScore);
 			}
 
 			final int childrenNeeded = (int) (populationSize * offspringRatio);
 			final int parentsNeeded = (int) (childrenNeeded * 2);
 			logger.trace("Will select {} parents", parentsNeeded);
-			final List<Genotype> selectedParents = parentSelector
-					.select(genotypeSpec, parentsNeeded, population, fitnessScore);
+			final List<Genotype> selectedParents = parentSelector.select(genotypeSpec, parentsNeeded, population,
+					fitnessScore);
 			logger.trace("Selected parents: {}", selectedParents);
 
 			final List<Genotype> children = new ArrayList<>();
@@ -161,7 +162,8 @@ public class GeneticSystem {
 							.combine(firstChromosome, secondChromosome);
 //XXXX
 					chromosomes.add(combinedChromosomes);
-					logger.trace("Combining {} with {} ---> {}", firstChromosome, secondChromosome, combinedChromosomes);
+					logger.trace("Combining {} with {} ---> {}", firstChromosome, secondChromosome,
+							combinedChromosomes);
 				}
 
 				final GenotypeCombinator genotypeCombinator = genotypeSpec.genotypeCombinator();
@@ -171,9 +173,8 @@ public class GeneticSystem {
 
 			}
 
-			final List<Genotype> selectedChildren = children.size() <= childrenNeeded ? children.stream()
-					.limit(childrenNeeded)
-					.collect(Collectors.toList())
+			final List<Genotype> selectedChildren = children.size() <= childrenNeeded
+					? children.stream().limit(childrenNeeded).collect(Collectors.toList())
 					: geneticSystemDescriptor.random()
 							.ints(0, children.size())
 							.distinct()
@@ -182,17 +183,15 @@ public class GeneticSystem {
 							.map(idx -> children.get(idx))
 							.collect(Collectors.toList());
 
-			final List<Genotype> mutatedChildren = selectedChildren.stream()
-					.map(child -> {
-						Genotype mutatedChild = child;
+			final List<Genotype> mutatedChildren = selectedChildren.stream().map(child -> {
+				Genotype mutatedChild = child;
 
-						for (final Mutator mutator : mutators) {
-							mutatedChild = mutator.mutate(mutatedChild);
-						}
+				for (final Mutator mutator : mutators) {
+					mutatedChild = mutator.mutate(mutatedChild);
+				}
 
-						return mutatedChild;
-					})
-					.collect(Collectors.toList());
+				return mutatedChild;
+			}).collect(Collectors.toList());
 
 			// TODO make a List<Genotype>
 			Genotype[] newPopulation = new Genotype[populationSize];
@@ -205,8 +204,8 @@ public class GeneticSystem {
 				populationIndex++;
 			}
 
-			final List<Genotype> survivors = survivorSelector
-					.select(genotypeSpec, populationSize - childrenNeeded, population, fitnessScore);
+			final List<Genotype> survivors = survivorSelector.select(genotypeSpec, populationSize - childrenNeeded,
+					population, fitnessScore);
 			logger.info("Number of survivors: {}", survivors.size());
 			for (final Genotype genotype : survivors) {
 				newPopulation[populationIndex] = genotype;
@@ -214,7 +213,8 @@ public class GeneticSystem {
 			}
 
 			if (populationIndex < populationSize) {
-				final Genotype[] additionalIndividuals = generatePopulation(genotypeSpec, populationSize - populationIndex);
+				final Genotype[] additionalIndividuals = generatePopulation(genotypeSpec,
+						populationSize - populationIndex);
 				logger.info("Number of generated individuals: {}", additionalIndividuals.length);
 
 				for (final Genotype genotype : additionalIndividuals) {
@@ -229,18 +229,18 @@ public class GeneticSystem {
 
 			final int numPartitions = geneticSystemDescriptor.numberOfPartitions();
 			final int partitionSize = (int) Math.ceil(populationSize / numPartitions);
-			final List<CompletableFuture<TaskResult>> tasks = new ArrayList<>();
+			final List<CompletableFuture<TaskResult<T>>> tasks = new ArrayList<>();
 			for (int i = 0; i < populationSize;) {
 				final int numSubPopulation = populationSize - i > partitionSize ? partitionSize : populationSize - i;
 				final int partitionStart = i;
 				final int partitionEnd = partitionStart + numSubPopulation;
 				final Genotype[] partition = Arrays.copyOfRange(population, partitionStart, partitionEnd);
-				final CompletableFuture<TaskResult> asyncFitnessCompute = CompletableFuture.supplyAsync(() -> {
-					final double[] fitnessPartition = new double[numSubPopulation];
+				final CompletableFuture<TaskResult<T>> asyncFitnessCompute = CompletableFuture.supplyAsync(() -> {
+					final List<T> fitnessPartition = new ArrayList<>(numSubPopulation);
 					for (int j = 0; j < partition.length; j++) {
-						fitnessPartition[j] = fitness.compute(partition[j]);
+						fitnessPartition.add(fitness.compute(partition[j]));
 					}
-					final TaskResult taskResult = new TaskResult();
+					final TaskResult<T> taskResult = new TaskResult<>();
 					taskResult.from = partitionStart;
 					taskResult.fitness = fitnessPartition;
 					return taskResult;
@@ -251,12 +251,12 @@ public class GeneticSystem {
 			}
 
 			CompletableFuture.allOf(tasks.toArray(new CompletableFuture[tasks.size()]));
-			for (final CompletableFuture<TaskResult> taskResultCF : tasks) {
+			for (final CompletableFuture<TaskResult<T>> taskResultCF : tasks) {
 				try {
-					final TaskResult taskResult = taskResultCF.get();
+					final TaskResult<T> taskResult = taskResultCF.get();
 					final int offset = taskResult.from;
-					for (int i = 0; i < taskResult.fitness.length; i++) {
-						fitnessScore[i + offset] = taskResult.fitness[i];
+					for (int i = 0; i < taskResult.fitness.size(); i++) {
+						fitnessScore.set(i + offset, taskResult.fitness.get(i));
 					}
 				} catch (Exception e) {
 					throw new RuntimeException(e);
@@ -267,8 +267,8 @@ public class GeneticSystem {
 		return ImmutableEvolutionResult.of(genotypeSpec, generation, population, fitnessScore);
 	}
 
-	private static class TaskResult {
+	private static class TaskResult<T> {
 		public int from;
-		public double[] fitness;
+		public List<T> fitness;
 	}
 }

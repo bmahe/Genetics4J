@@ -6,8 +6,8 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 
 @FunctionalInterface
-public interface Selector {
+public interface Selector<T extends Comparable<T>> {
 
-	List<Genotype> select(final GenotypeSpec genotypeSpec, final int numIndividuals, final Genotype[] population,
-			final double[] fitnessScore);
+	List<Genotype> select(final GenotypeSpec<T> genotypeSpec, final int numIndividuals, final Genotype[] population,
+			final List<T> fitnessScore);
 }

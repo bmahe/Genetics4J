@@ -35,14 +35,12 @@ import net.bmahe.genetics4j.gp.math.Terminals;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomMutatePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomPrunePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRulesApplicatorPolicyHandler;
-import net.bmahe.genetics4j.gp.program.FullProgramGenerator;
-import net.bmahe.genetics4j.gp.program.GrowProgramGenerator;
 import net.bmahe.genetics4j.gp.program.ImmutableProgram;
 import net.bmahe.genetics4j.gp.program.ImmutableProgram.Builder;
-import net.bmahe.genetics4j.gp.program.MultiProgramGenerator;
 import net.bmahe.genetics4j.gp.program.Program;
 import net.bmahe.genetics4j.gp.program.ProgramGenerator;
 import net.bmahe.genetics4j.gp.program.ProgramHelper;
+import net.bmahe.genetics4j.gp.program.RampedHalfAndHalfProgramGenerator;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
@@ -53,19 +51,19 @@ import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 public class SymbolicRegression {
 	final static public Logger logger = LogManager.getLogger(SymbolicRegression.class);
 
-	public Object execute(final TreeChromosome<Operation> treeChromosome, final Object[] input) {
+	public Object execute(final TreeChromosome<Operation<?>> treeChromosome, final Object[] input) {
 		Validate.notNull(treeChromosome);
 
-		final TreeNode<Operation> root = treeChromosome.getRoot();
+		final TreeNode<Operation<?>> root = treeChromosome.getRoot();
 
 		return execute(root, input);
 	}
 
-	public Object execute(final TreeNode<Operation> node, final Object[] input) {
+	public Object execute(final TreeNode<Operation<?>> node, final Object[] input) {
 		Validate.notNull(node);
 
 		final Operation operation = node.getData();
-		final List<TreeNode<Operation>> children = node.getChildren();
+		final List<TreeNode<Operation<?>>> children = node.getChildren();
 
 		final Object[] parameters = children != null ? children.stream().map(child -> execute(child, input)).toArray()
 				: new Object[] {};
@@ -73,13 +71,11 @@ public class SymbolicRegression {
 		return operation.apply(input, parameters);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void run() {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
-		final ProgramGenerator fullProgramGenerator = new FullProgramGenerator(programHelper);
-		final GrowProgramGenerator growProgramGenerator = new GrowProgramGenerator(programHelper);
-		final ProgramGenerator programGenerator = new MultiProgramGenerator(random,
-				List.of(fullProgramGenerator, growProgramGenerator));
+		final ProgramGenerator programGenerator = new RampedHalfAndHalfProgramGenerator(random, programHelper);
 
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
@@ -91,7 +87,7 @@ public class SymbolicRegression {
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder genotypeSpecBuilder = new GenotypeSpec.Builder();
+		net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder<Double> genotypeSpecBuilder = new GenotypeSpec.Builder<>();
 		genotypeSpecBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(TournamentSelection.build(3))
 				.survivorSelectionPolicy(TournamentSelection.build(3))
@@ -102,7 +98,7 @@ public class SymbolicRegression {
 				.optimization(Optimization.MINIMIZE)
 				.termination(Terminations.ofMaxGeneration(100))
 				.fitness((genoType) -> {
-					final TreeChromosome<Operation> chromosome = (TreeChromosome<Operation>) genoType.getChromosome(0);
+					final TreeChromosome<Operation<?>> chromosome = (TreeChromosome<Operation<?>>) genoType.getChromosome(0);
 					final Double[][] inputs = new Double[100][1];
 					for (int i = 0; i < 100; i++) {
 						inputs[i][0] = (i - 50) * 1.2;
@@ -129,9 +125,9 @@ public class SymbolicRegression {
 					}
 					return Double.isFinite(mse) ? Math.sqrt(mse) + 1.5 * chromosome.getSize() : Double.MAX_VALUE;
 				});
-		final GenotypeSpec genotypeSpec = genotypeSpecBuilder.build();
+		final GenotypeSpec<Double> genotypeSpec = genotypeSpecBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Double> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
 				.builder();
 		geneticSystemDescriptorBuilder.populationSize(5000);
 		geneticSystemDescriptorBuilder
@@ -149,15 +145,15 @@ public class SymbolicRegression {
 		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
 		geneticSystemDescriptorBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 1));
 
-		geneticSystemDescriptorBuilder.addEvolutionListeners(new EvolutionListener() {
+		geneticSystemDescriptorBuilder.addEvolutionListeners(new EvolutionListener<>() {
 
 			@Override
-			public void onEvolution(long generation, Genotype[] population, double[] fitness) {
+			public void onEvolution(long generation, Genotype[] population, List<Double> fitness) {
 				logger.info("Generation {}", generation);
 
 				final List<Integer> topGenotypes = IntStream.range(0, population.length)
 						.boxed()
-						.sorted((a, b) -> Double.compare(fitness[a], fitness[b]))
+						.sorted((a, b) -> Double.compare(fitness.get(a), fitness.get(b)))
 						.limit(5)
 						.collect(Collectors.toList());
 
@@ -167,16 +163,16 @@ public class SymbolicRegression {
 							.getChromosome(0);
 					final TreeNode<Operation<?>> root = chromosome.getRoot();
 
-					logger.info("\t{}\t{}", fitness[topCandidateIndex], TreeNodeUtils.toStringTreeNode(root));
+					logger.info("\t{}\t{}", fitness.get(topCandidateIndex), TreeNodeUtils.toStringTreeNode(root));
 				}
 			}
-		}, new SimpleEvolutionListener());
+		}, new SimpleEvolutionListener<>());
 
-		final GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final GeneticSystemDescriptor<Double> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 		final GeneticSystemFactory geneticSystemFactory = new GeneticSystemFactory();
-		final GeneticSystem geneticSystem = geneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
+		final GeneticSystem<Double> geneticSystem = geneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
 
-		final EvolutionResult evolutionResult = geneticSystem.evolve();
+		final EvolutionResult<Double> evolutionResult = geneticSystem.evolve();
 		final Genotype bestGenotype = evolutionResult.bestGenotype();
 		final TreeChromosome<Operation<?>> bestChromosome = (TreeChromosome<Operation<?>>) bestGenotype
 				.getChromosome(0);

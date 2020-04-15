@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core;
 
 @FunctionalInterface
-public interface Fitness {
+public interface Fitness<T extends Comparable<T>> {
 
-	Double compute(Genotype genotype);
+	T compute(Genotype genotype);
 }

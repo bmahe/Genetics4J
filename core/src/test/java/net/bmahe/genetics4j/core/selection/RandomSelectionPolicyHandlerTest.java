@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -26,7 +27,7 @@ import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
 public class RandomSelectionPolicyHandlerTest {
-	private final GenotypeSpec SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder()
+	private final GenotypeSpec<Double> SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder<Double>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
 			.parentSelectionPolicy(RandomSelectionPolicy.build())
 			.survivorSelectionPolicy(RandomSelectionPolicy.build())
@@ -37,19 +38,21 @@ public class RandomSelectionPolicyHandlerTest {
 
 	@Test(expected = NullPointerException.class)
 	public void randomIsRequired() {
-		new RandomSelectionPolicyHandler(null);
+		new RandomSelectionPolicyHandler<Double>(null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void canHandleRequireSelection() {
-		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(new Random());
+		final RandomSelectionPolicyHandler<Double> selectionPolicyHandler = new RandomSelectionPolicyHandler<>(
+				new Random());
 
 		selectionPolicyHandler.canHandle(null);
 	}
 
 	@Test
 	public void canHandle() {
-		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(new Random());
+		final RandomSelectionPolicyHandler<Double> selectionPolicyHandler = new RandomSelectionPolicyHandler<>(
+				new Random());
 
 		assertTrue(selectionPolicyHandler.canHandle(RandomSelectionPolicy.build()));
 		assertFalse(selectionPolicyHandler.canHandle(TournamentSelection.build(2)));
@@ -63,33 +66,34 @@ public class RandomSelectionPolicyHandlerTest {
 		final int oddIndex = 3;
 
 		final Random random = mock(Random.class);
-		when(random.nextInt(anyInt())).thenReturn(2, Stream.iterate(1, i -> i + 1)
-				.limit(numRequestedSelection)
-				.map(i -> i % 2 == 0 ? evenIndex : oddIndex)
-				.toArray((s) -> new Integer[s]));
+		when(random.nextInt(anyInt())).thenReturn(2,
+				Stream.iterate(1, i -> i + 1)
+						.limit(numRequestedSelection)
+						.map(i -> i % 2 == 0 ? evenIndex : oddIndex)
+						.toArray((s) -> new Integer[s]));
 
 		final int populationSize = 5;
 		final Genotype[] population = new Genotype[populationSize];
-		final double[] fitnessScore = new double[populationSize];
+		final List<Double> fitnessScore = new ArrayList<>(populationSize);
 		for (int i = 0; i < populationSize; i++) {
 			final IntChromosome intChromosome = new IntChromosome(4, 0, 10, new int[] { i, i + 1, i + 2, i + 3 });
 			final Genotype genotype = new Genotype(new Chromosome[] { intChromosome });
 
 			population[i] = genotype;
-			fitnessScore[i] = i;
+			fitnessScore.add((double) i);
 		}
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Double> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
 				.builder();
 		geneticSystemDescriptorBuilder.populationSize(100);
 
-		final ImmutableGeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
-		final SelectionPolicyHandlerResolver selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver(
+		final ImmutableGeneticSystemDescriptor<Double> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final SelectionPolicyHandlerResolver<Double> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 
-		final RandomSelectionPolicyHandler selectionPolicyHandler = new RandomSelectionPolicyHandler(random);
-		final Selector selector = selectionPolicyHandler.resolve(geneticSystemDescriptor, SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
-				selectionPolicyHandlerResolver, RandomSelectionPolicy.build());
+		final RandomSelectionPolicyHandler<Double> selectionPolicyHandler = new RandomSelectionPolicyHandler<>(random);
+		final Selector<Double> selector = selectionPolicyHandler.resolve(geneticSystemDescriptor,
+				SIMPLE_MAXIMIZING_GENOTYPE_SPEC, selectionPolicyHandlerResolver, RandomSelectionPolicy.build());
 		final List<Genotype> selected = selector.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, 100, population, fitnessScore);
 
 		assertNotNull(selected);

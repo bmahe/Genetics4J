@@ -12,7 +12,7 @@ import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
-public class RandomSelectionPolicyHandler implements SelectionPolicyHandler {
+public class RandomSelectionPolicyHandler<T extends Comparable<T>> implements SelectionPolicyHandler<T> {
 
 	private final Random random;
 
@@ -29,23 +29,23 @@ public class RandomSelectionPolicyHandler implements SelectionPolicyHandler {
 	}
 
 	@Override
-	public Selector resolve(GeneticSystemDescriptor geneticSystemDescriptor, GenotypeSpec genotypeSpec,
-			SelectionPolicyHandlerResolver selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
+	public Selector<T> resolve(GeneticSystemDescriptor<T> geneticSystemDescriptor, GenotypeSpec<T> genotypeSpec,
+			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(RandomSelectionPolicy.class, selectionPolicy);
 
-		return new Selector() {
+		return new Selector<T>() {
 
 			@Override
-			public List<Genotype> select(GenotypeSpec genotypeSpec, int numIndividuals, Genotype[] population,
-					double[] fitnessScore) {
+			public List<Genotype> select(GenotypeSpec<T> genotypeSpec, int numIndividuals, Genotype[] population,
+					List<T> fitnessScore) {
 				Validate.notNull(genotypeSpec);
 				Validate.notNull(population);
 				Validate.notNull(fitnessScore);
 				Validate.isTrue(numIndividuals > 0);
 				Validate.isTrue(population.length > 0);
-				Validate.isTrue(fitnessScore.length > 0);
-				Validate.isTrue(fitnessScore.length == population.length);
+				Validate.isTrue(fitnessScore.size() > 0);
+				Validate.isTrue(fitnessScore.size() == population.length);
 
 				final List<Genotype> selected = new ArrayList<>(numIndividuals);
 

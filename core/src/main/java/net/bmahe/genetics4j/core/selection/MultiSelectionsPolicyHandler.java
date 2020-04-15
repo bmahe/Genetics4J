@@ -2,7 +2,6 @@ package net.bmahe.genetics4j.core.selection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
@@ -13,14 +12,10 @@ import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.selection.MultiSelections;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
-public class MultiSelectionsPolicyHandler implements SelectionPolicyHandler {
+public class MultiSelectionsPolicyHandler<T extends Comparable<T>> implements SelectionPolicyHandler<T> {
 
-	private final Random random;
 
-	public MultiSelectionsPolicyHandler(final Random _random) {
-		Validate.notNull(_random);
-
-		this.random = _random;
+	public MultiSelectionsPolicyHandler() {
 	}
 
 	@Override
@@ -30,8 +25,9 @@ public class MultiSelectionsPolicyHandler implements SelectionPolicyHandler {
 	}
 
 	@Override
-	public Selector resolve(GeneticSystemDescriptor geneticSystemDescriptor, GenotypeSpec genotypeSpec,
-			SelectionPolicyHandlerResolver selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
+	public Selector<T> resolve(final GeneticSystemDescriptor<T> geneticSystemDescriptor,
+			final GenotypeSpec<T> genotypeSpec, final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
+			final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(MultiSelections.class, selectionPolicy);
 
@@ -39,31 +35,30 @@ public class MultiSelectionsPolicyHandler implements SelectionPolicyHandler {
 		final List<SelectionPolicy> selectionPolicies = multiSelections.selectionPolicies();
 		Validate.isTrue(selectionPolicies.isEmpty() == false);
 
-		final List<Selector> selectors = selectionPolicies.stream()
-				.map((sp) -> {
+		final List<Selector<T>> selectors = selectionPolicies.stream().map((sp) -> {
 
-					final SelectionPolicyHandler spHandler = selectionPolicyHandlerResolver.resolve(sp);
-					return spHandler.resolve(geneticSystemDescriptor, genotypeSpec, selectionPolicyHandlerResolver, sp);
-				})
-				.collect(Collectors.toList());
+			final SelectionPolicyHandler<T> spHandler = selectionPolicyHandlerResolver.resolve(sp);
+			return spHandler.resolve(geneticSystemDescriptor, genotypeSpec, selectionPolicyHandlerResolver, sp);
+		}).collect(Collectors.toList());
 
-		return new Selector() {
+		return new Selector<T>() {
 
 			@Override
-			public List<Genotype> select(GenotypeSpec genotypeSpec, int numIndividuals, Genotype[] population,
-					double[] fitnessScore) {
+			public List<Genotype> select(GenotypeSpec<T> genotypeSpec, int numIndividuals, Genotype[] population,
+					List<T> fitnessScore) {
 				final int incrementSelection = numIndividuals / selectors.size();
 
 				final List<Genotype> selectedIndividuals = new ArrayList<Genotype>();
-				for (final Selector selector : selectors) {
-					selectedIndividuals.addAll(selector.select(genotypeSpec, incrementSelection, population, fitnessScore));
+				for (final Selector<T> selector : selectors) {
+					selectedIndividuals
+							.addAll(selector.select(genotypeSpec, incrementSelection, population, fitnessScore));
 				}
 
 				int i = 0;
 				while (selectedIndividuals.size() < numIndividuals) {
 
-					selectedIndividuals.addAll(selectors.get(i)
-							.select(genotypeSpec, incrementSelection, population, fitnessScore));
+					selectedIndividuals.addAll(
+							selectors.get(i).select(genotypeSpec, incrementSelection, population, fitnessScore));
 
 					i = (i + 1) % selectors.size();
 				}
