@@ -14,7 +14,7 @@ See website https://bmahe.gitlab.io/genetics4j/ for more information, quickstart
 * Multi-Objective Optimization support with algorithms such as NSGA2
 * Multithreaded implementation for faster execution
 * Clear separation between the problem definition and its execution model
-* Enhanced test coverage with mutation testing :)
+* Enhanced test coverage with [mutation testing](https://en.wikipedia.org/wiki/Mutation_testing) :)
 
 # License
 
