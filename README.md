@@ -10,7 +10,8 @@ See website https://bmahe.gitlab.io/genetics4j/ for more information, quickstart
 # Features
 
 * Configurable and user friendly
-* Strongly typed genetic programming
+* Genetic Algorithms
+* Strongly Typed Genetic Programming
 * Multi-Objective Optimization support with algorithms such as NSGA2
 * Multithreaded implementation for faster execution
 * Clear separation between the problem definition and its execution model
