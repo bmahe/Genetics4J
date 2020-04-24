@@ -10,28 +10,17 @@
 	</parent>
 
 	<groupId>net.bmahe.genetics4j</groupId>
-	<artifactId>samples</artifactId>
+	<artifactId>moo</artifactId>
 	<version>1.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Samples</name>
-	<description>Samples programs demonstrating Genetics4j capabilities</description>
+	<name>Multi-Objective Optimization</name>
+	<description>Library for supporting Multi-Objective Optimization in the context of Genetic Algorithms</description>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>net.bmahe.genetics4j</groupId>
 			<artifactId>core</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>net.bmahe.genetics4j</groupId>
-			<artifactId>gp</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>net.bmahe.genetics4j</groupId>
-			<artifactId>moo</artifactId>
 		</dependency>
 
 		<dependency>
@@ -47,6 +36,12 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>value</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Test dependencies -->
@@ -71,11 +66,26 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 
 	<reporting>
 		<plugins>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
 		</plugins>
 	</reporting>
 </project>

@@ -55,20 +55,28 @@ public class TreeNode<T> {
 	}
 
 	public int getSize() {
-		return 1 + children.stream()
-				.map(TreeNode::getSize)
-				.collect(Collectors.summingInt(x -> x));
+		return 1 + children.stream().map(TreeNode::getSize).collect(Collectors.summingInt(x -> x));
 	}
 
 	public int getDepth() {
-		return 1 + children.stream()
-				.map(TreeNode::getDepth)
-				.max(Comparator.naturalOrder())
-				.orElse(0);
+		return 1 + children.stream().map(TreeNode::getDepth).max(Comparator.naturalOrder()).orElse(0);
 	}
 
 	@Override
 	public String toString() {
 		return "TreeNode [data=" + data + ", children=" + children + "]";
+	}
+
+	public static <U> TreeNode<U> of(final U data, final Collection<TreeNode<U>> children) {
+		Validate.notNull(data);
+		Validate.notNull(children);
+		Validate.isTrue(children.size() > 0);
+
+		final TreeNode<U> rootNode = new TreeNode<>(data);
+		for (TreeNode<U> childNode : children) {
+			rootNode.addChild(childNode);
+		}
+
+		return rootNode;
 	}
 }

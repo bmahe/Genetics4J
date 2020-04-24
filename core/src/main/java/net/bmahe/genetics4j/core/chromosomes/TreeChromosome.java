@@ -14,7 +14,7 @@ public class TreeChromosome<T> implements Chromosome {
 
 	@Override
 	public int getNumAlleles() {
-		return 0;
+		return 1;
 	}
 
 	public TreeNode<T> getRoot() {
@@ -22,10 +22,6 @@ public class TreeChromosome<T> implements Chromosome {
 	}
 
 	public int getSize() {
-		if (root == null) {
-			return 0;
-		}
-
 		return root.getSize();
 	}
 }

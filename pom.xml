@@ -94,6 +94,7 @@
 	<modules>
 		<module>core</module>
 		<module>gp</module>
+		<module>moo</module>
 		<module>samples</module>
 	</modules>
 
@@ -108,6 +109,12 @@
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>gp</artifactId>
+				<version>1.4-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.bmahe.genetics4j</groupId>
+				<artifactId>moo</artifactId>
 				<version>1.4-SNAPSHOT</version>
 			</dependency>
 
@@ -214,6 +221,7 @@
 					</executions>
 					<configuration>
 						<skipTests>${skipITs}</skipTests>
+						<exportLineCoverage>true</exportLineCoverage>
 						<timestampedReports>false</timestampedReports>
 						<mutators>
 							<mutator>ALL</mutator>
@@ -225,9 +233,6 @@
 							<avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
 							<avoidCallsTo>org.apache.commons.lang3.Validate</avoidCallsTo>
 						</avoidCallsTo>
-						<configuration>
-							<skipTests>${skipTests}</skipTests>
-						</configuration>
 					</configuration>
 				</plugin>
 
