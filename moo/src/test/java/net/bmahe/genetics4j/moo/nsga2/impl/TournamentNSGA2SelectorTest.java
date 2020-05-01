@@ -11,11 +11,11 @@ import java.util.Random;
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
-import net.bmahe.genetics4j.core.Terminations;
 import net.bmahe.genetics4j.core.chromosomes.factory.BitChromosomeFactory;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
+import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.moo.FitnessVector;
 import net.bmahe.genetics4j.moo.nsga2.spec.ImmutableTournamentNSGA2Selection;
 import net.bmahe.genetics4j.moo.nsga2.spec.TournamentNSGA2Selection;

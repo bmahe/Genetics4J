@@ -10,13 +10,13 @@ import org.immutables.value.Value;
 
 import net.bmahe.genetics4j.core.Fitness;
 import net.bmahe.genetics4j.core.Genotype;
-import net.bmahe.genetics4j.core.Termination;
 import net.bmahe.genetics4j.core.combination.AllCasesGenotypeCombinator;
 import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
+import net.bmahe.genetics4j.core.termination.Termination;
 
 @Value.Immutable
 public abstract class GenotypeSpec<T extends Comparable<T>> {

@@ -1,8 +1,10 @@
 package net.bmahe.genetics4j.core.chromosomes.factory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
@@ -16,8 +18,28 @@ public abstract class ChromosomeFactoryProvider {
 	public abstract Random random();
 
 	@Value.Default
-	public List<ChromosomeFactory<? extends Chromosome>> chromosomeFactories() {
+	public List<ChromosomeFactory<? extends Chromosome>> defaultChromosomeFactories() {
 		return Arrays.asList(new BitChromosomeFactory(random()), new IntChromosomeFactory(random()));
+	}
+
+	public abstract List<Function<ChromosomeFactoryProvider, ChromosomeFactory<? extends Chromosome>>>
+			chromosomeFactoriesGenerator();
+
+	@Value.Derived
+	public List<ChromosomeFactory<? extends Chromosome>> chromosomeFactories() {
+
+		final List<ChromosomeFactory<? extends Chromosome>> chromosomeFactories = new ArrayList<>();
+
+		final List<ChromosomeFactory<? extends Chromosome>> defaultChromosomeFactories = defaultChromosomeFactories();
+		if (defaultChromosomeFactories.isEmpty() == false) {
+			chromosomeFactories.addAll(defaultChromosomeFactories);
+		}
+
+		chromosomeFactoriesGenerator().stream()
+				.map(generator -> generator.apply(this))
+				.forEach(cf -> chromosomeFactories.add(cf));
+
+		return chromosomeFactories;
 	}
 
 	public ChromosomeFactory<? extends Chromosome> provideChromosomeFactory(final ChromosomeSpec chromosomeSpec) {

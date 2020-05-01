@@ -18,7 +18,10 @@ public class PartialMutationPolicyHandler implements MutationPolicyHandler {
 			final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicyHandlerResolver);
 		Validate.notNull(mutationPolicy);
-		Validate.isInstanceOf(PartialMutation.class, mutationPolicy);
+
+		if (mutationPolicy instanceof PartialMutation == false) {
+			return false;
+		}
 
 		final PartialMutation partialMutation = (PartialMutation) mutationPolicy;
 
@@ -41,8 +44,10 @@ public class PartialMutationPolicyHandler implements MutationPolicyHandler {
 		final MutationPolicy childMutationPolicy = partialMutation.mutationPolicy();
 		final MutationPolicyHandler mutationPolicyHandler = mutationPolicyHandlerResolver.resolve(childMutationPolicy);
 
-		final Mutator childMutator = mutationPolicyHandler.createMutator(geneticSystemDescriptor, genotypeSpec,
-				mutationPolicyHandlerResolver, childMutationPolicy);
+		final Mutator childMutator = mutationPolicyHandler.createMutator(geneticSystemDescriptor,
+				genotypeSpec,
+				mutationPolicyHandlerResolver,
+				childMutationPolicy);
 
 		return new Mutator() {
 
@@ -50,7 +55,8 @@ public class PartialMutationPolicyHandler implements MutationPolicyHandler {
 			public Genotype mutate(final Genotype original) {
 				Validate.notNull(original);
 
-				final Chromosome[] chromosomes = Arrays.copyOf(original.getChromosomes(), original.getChromosomes().length);
+				final Chromosome[] chromosomes = Arrays.copyOf(original.getChromosomes(),
+						original.getChromosomes().length);
 				final Genotype mutated = childMutator.mutate(original);
 
 				chromosomes[mutatedChromosomeIndex] = mutated.getChromosome(mutatedChromosomeIndex);

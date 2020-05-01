@@ -2,6 +2,8 @@ package net.bmahe.genetics4j.core.spec;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
@@ -23,7 +25,9 @@ public abstract class EvolutionResult<T extends Comparable<T>> {
 	@Value.Parameter
 	public abstract List<T> fitness();
 
-	public Genotype bestGenotype() {
+	@Value.Derived
+	public GenotypeFitness<T> bestIndividual() {
+
 		final Genotype[] population = population();
 		final List<T> fitness = fitness();
 
@@ -33,30 +37,32 @@ public abstract class EvolutionResult<T extends Comparable<T>> {
 		Validate.isTrue(population.length > 0);
 
 		switch (genotypeSpec().optimization()) {
-		case MAXIMZE:
-		case MINIMIZE:
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec().optimization());
+			case MAXIMZE:
+			case MINIMIZE:
+				break;
+			default:
+				throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec().optimization());
 		}
 
 		final Comparator<T> comparator = Optimization.MAXIMZE.equals(genotypeSpec().optimization())
 				? Comparator.naturalOrder()
 				: Comparator.reverseOrder();
 
-		Genotype bestCandidate = population[0];
-		T bestScore = fitness.get(0);
+		final Optional<Integer> bestIndexOpt = IntStream.range(0, fitness.size())
+				.boxed()
+				.max((a, b) -> comparator.compare(fitness.get(a), fitness.get(b)));
 
-		for (int i = 0; i < fitness.size(); i++) {
-			final T score = fitness.get(i);
+		final Integer bestIndex = bestIndexOpt.orElseThrow(
+				() -> new IllegalStateException("Couldn't find a best entry despite having a non-zero population"));
 
-			if (comparator.compare(bestScore, score) < 0) {
-				bestScore = score;
-				bestCandidate = population[i];
-			}
+		return GenotypeFitness.of(population[bestIndex], fitness.get(bestIndex));
+	}
 
-		}
+	public Genotype bestGenotype() {
+		return bestIndividual().genotype();
+	}
 
-		return bestCandidate;
+	public T bestFitness() {
+		return bestIndividual().fitness();
 	}
 }

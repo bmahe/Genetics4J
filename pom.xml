@@ -34,7 +34,7 @@
 	<developers>
 		<developer>
 			<name>Bruno Mahé</name>
-			<email>bruno@bmahe.net</email>
+			<email>bmahe@apache.org</email>
 		</developer>
 	</developers>
 
@@ -83,7 +83,7 @@
 		<apache.commons.io.version>2.6</apache.commons.io.version>
 		<apache.commons.lang.version>3.9</apache.commons.lang.version>
 		<apache.commons.math.version>3.6.1</apache.commons.math.version>
-		<apache.log4j.version>2.13.1</apache.log4j.version>
+		<apache.log4j.version>2.13.2</apache.log4j.version>
 		<dl4j.version>1.0.0-beta3</dl4j.version>
 		<immutables.version>2.8.0</immutables.version>
 		<jackson.version>2.9.7</jackson.version>

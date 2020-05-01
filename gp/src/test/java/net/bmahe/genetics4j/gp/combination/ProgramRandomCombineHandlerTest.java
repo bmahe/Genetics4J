@@ -13,7 +13,7 @@ import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryP
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorResolver;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
@@ -44,29 +44,37 @@ public class ProgramRandomCombineHandlerTest {
 		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<?> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+				.standard();
 		geneticSystemDescriptorBuilder.populationSize(500);
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
-		geneticSystemDescriptorBuilder.addChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		geneticSystemDescriptorBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
 		chromosomeFactoryProviderBuilder.random(random);
-		chromosomeFactoryProviderBuilder.addChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
+		chromosomeFactoryProviderBuilder.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
 		final GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 
@@ -78,14 +86,14 @@ public class ProgramRandomCombineHandlerTest {
 
 		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
 
-		assertTrue(programRandomCombineHandler.canHandle(chromosomeCombinatorResolver, programRandomCombine,
-				programTreeChromosomeSpec));
-		assertFalse(programRandomCombineHandler.canHandle(chromosomeCombinatorResolver, programRandomCombine,
-				IntChromosomeSpec.of(10, 0, 100)));
-		assertFalse(programRandomCombineHandler.canHandle(chromosomeCombinatorResolver, MultiPointCrossover.of(10),
-				programTreeChromosomeSpec));
-		assertFalse(programRandomCombineHandler.canHandle(chromosomeCombinatorResolver, MultiPointCrossover.of(10),
-				IntChromosomeSpec.of(10, 0, 100)));
+		assertTrue(programRandomCombineHandler
+				.canHandle(chromosomeCombinatorResolver, programRandomCombine, programTreeChromosomeSpec));
+		assertFalse(programRandomCombineHandler
+				.canHandle(chromosomeCombinatorResolver, programRandomCombine, IntChromosomeSpec.of(10, 0, 100)));
+		assertFalse(programRandomCombineHandler
+				.canHandle(chromosomeCombinatorResolver, MultiPointCrossover.of(10), programTreeChromosomeSpec));
+		assertFalse(programRandomCombineHandler
+				.canHandle(chromosomeCombinatorResolver, MultiPointCrossover.of(10), IntChromosomeSpec.of(10, 0, 100)));
 	}
 
 	@Test
@@ -95,29 +103,37 @@ public class ProgramRandomCombineHandlerTest {
 		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<?> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+				.standard();
 		geneticSystemDescriptorBuilder.populationSize(500);
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
-		geneticSystemDescriptorBuilder.addChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		geneticSystemDescriptorBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
 		chromosomeFactoryProviderBuilder.random(random);
-		chromosomeFactoryProviderBuilder.addChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
+		chromosomeFactoryProviderBuilder.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
 		final GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 
@@ -153,8 +169,8 @@ public class ProgramRandomCombineHandlerTest {
 
 		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
 
-		final ChromosomeCombinator chromosomeCombinator = programRandomCombineHandler.resolve(null,
-				programRandomCombine, programTreeChromosomeSpec);
+		final ChromosomeCombinator chromosomeCombinator = programRandomCombineHandler
+				.resolve(null, programRandomCombine, programTreeChromosomeSpec);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -171,20 +187,20 @@ public class ProgramRandomCombineHandlerTest {
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<?> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+				.standard();
 		geneticSystemDescriptorBuilder.populationSize(500);
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
-		geneticSystemDescriptorBuilder.addChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		geneticSystemDescriptorBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
 		chromosomeFactoryProviderBuilder.random(random);
-		chromosomeFactoryProviderBuilder.addChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
+		chromosomeFactoryProviderBuilder.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
 		final GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 
@@ -205,20 +221,20 @@ public class ProgramRandomCombineHandlerTest {
 		final ProgramHelper programHelper = new ProgramHelper(random);
 		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<?> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+				.standard();
 		geneticSystemDescriptorBuilder.populationSize(500);
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
 		geneticSystemDescriptorBuilder
-				.addMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
-		geneticSystemDescriptorBuilder.addChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		geneticSystemDescriptorBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
 		chromosomeFactoryProviderBuilder.random(random);
-		chromosomeFactoryProviderBuilder.addChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
+		chromosomeFactoryProviderBuilder.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
 		final GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 

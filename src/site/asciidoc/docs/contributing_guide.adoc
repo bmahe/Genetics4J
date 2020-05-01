@@ -1,0 +1,27 @@
+= Contributing Guide
+:stem:
+:toc:
+:docinfo:
+:sourcedir: ../../../samples/src/main/java
+:icons: font
+
+== Introduction
+
+Genetics4j is a fairly standard Free Software using standard tools.
+
+
+== License
+
+Everything in this repository is licensed under the Apache License v2.0
+
+
+== Developpement
+
+
+=== Environment
+
+In order to build it, you will need:
+
+* Java >= 10
+* Apache Maven 3
+

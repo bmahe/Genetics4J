@@ -14,12 +14,12 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
-import net.bmahe.genetics4j.core.Terminations;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
+import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
 import net.bmahe.genetics4j.gp.InputSpec;
 import net.bmahe.genetics4j.gp.Operation;

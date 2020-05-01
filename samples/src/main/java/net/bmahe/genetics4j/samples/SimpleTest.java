@@ -9,12 +9,11 @@ import org.apache.logging.log4j.Logger;
 import net.bmahe.genetics4j.core.GeneticSystem;
 import net.bmahe.genetics4j.core.GeneticSystemFactory;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
-import net.bmahe.genetics4j.core.selection.RouletteWheelSelectionPolicyHandler;
-import net.bmahe.genetics4j.core.selection.TournamentSelectionPolicyHandler;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
+import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder;
-import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
@@ -52,17 +51,13 @@ public class SimpleTest {
 				});
 		final GenotypeSpec<Double> genotypeSpec = genotypeSpecBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Double> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
-		geneticSystemDescriptorBuilder.populationSize(100);
-		geneticSystemDescriptorBuilder.random(random);
-		geneticSystemDescriptorBuilder.addSelectionPolicyHandlers(new RouletteWheelSelectionPolicyHandler<>(random),
-				new TournamentSelectionPolicyHandler<>(random));
+		final GeneticSystemDescriptor<Double> geneticSystemDescriptor = GeneticSystemDescriptors
+				.<Double>forScalarFitness()
+				.populationSize(100)
+				.random(random)
+				.build();
 
-		final ImmutableGeneticSystemDescriptor<Double> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
-
-		final GeneticSystemFactory geneticSystemFactory = new GeneticSystemFactory();
-		final GeneticSystem<Double> geneticSystem = geneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
+		final GeneticSystem<Double> geneticSystem = GeneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
 
 		final EvolutionResult<Double> evolutionResult = geneticSystem.evolve();
 		logger.info("Best genotype: " + evolutionResult.bestGenotype());
