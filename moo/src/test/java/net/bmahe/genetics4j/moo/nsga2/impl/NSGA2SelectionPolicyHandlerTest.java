@@ -8,14 +8,15 @@ import java.util.Comparator;
 
 import org.junit.Test;
 
-import net.bmahe.genetics4j.core.Terminations;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
+import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
-import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
+import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.moo.nsga2.spec.ImmutableNSGA2Selection;
 import net.bmahe.genetics4j.moo.nsga2.spec.ImmutableNSGA2Selection.Builder;
 import net.bmahe.genetics4j.moo.nsga2.spec.NSGA2Selection;
@@ -63,12 +64,11 @@ public class NSGA2SelectionPolicyHandlerTest {
 		builder.objectiveComparator((m) -> Comparator.naturalOrder());
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+				.standard();
 		geneticSystemDescriptorBuilder.populationSize(100);
 
-		final ImmutableGeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder
-				.build();
+		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 
@@ -87,12 +87,10 @@ public class NSGA2SelectionPolicyHandlerTest {
 		builder.objectiveComparator((m) -> Comparator.naturalOrder());
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+				.standard();
 		geneticSystemDescriptorBuilder.populationSize(100);
-
-		final ImmutableGeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder
-				.build();
+		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 
@@ -111,12 +109,11 @@ public class NSGA2SelectionPolicyHandlerTest {
 		builder.objectiveComparator((m) -> Comparator.naturalOrder());
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+				.standard();
 		geneticSystemDescriptorBuilder.populationSize(100);
+		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 
-		final ImmutableGeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder
-				.build();
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 
@@ -135,12 +132,10 @@ public class NSGA2SelectionPolicyHandlerTest {
 		builder.objectiveComparator((m) -> Comparator.naturalOrder());
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+				.standard();
 		geneticSystemDescriptorBuilder.populationSize(100);
-
-		final ImmutableGeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder
-				.build();
+		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 
 		final Selector<Integer> selector = selectionPolicyHandler
 				.resolve(geneticSystemDescriptor, SIMPLE_MAXIMIZING_GENOTYPE_SPEC, null, nsga2Selection);
@@ -150,12 +145,11 @@ public class NSGA2SelectionPolicyHandlerTest {
 	public void resolveWrongSelectionSpec() {
 		final NSGA2SelectionPolicyHandler<Integer> selectionPolicyHandler = new NSGA2SelectionPolicyHandler<>();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+				.standard();
 		geneticSystemDescriptorBuilder.populationSize(100);
+		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 
-		final ImmutableGeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder
-				.build();
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 
@@ -176,12 +170,11 @@ public class NSGA2SelectionPolicyHandlerTest {
 		builder.objectiveComparator((m) -> Comparator.naturalOrder());
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
+		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+				.standard();
 		geneticSystemDescriptorBuilder.populationSize(100);
+		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
 
-		final ImmutableGeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder
-				.build();
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 

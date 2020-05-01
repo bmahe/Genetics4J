@@ -1,9 +1,11 @@
-package net.bmahe.genetics4j.core;
+package net.bmahe.genetics4j.core.evolutionlisteners;
 
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import net.bmahe.genetics4j.core.Genotype;
 
 public class SimpleEvolutionListener<T extends Number> implements EvolutionListener<T> {
 	final static public Logger logger = LogManager.getLogger(SimpleEvolutionListener.class);

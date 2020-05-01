@@ -28,8 +28,7 @@
 		<menu ref="parent"  inherit="top"/>
 		<menu ref="modules" inherit="top"/>
 		<menu name="Documentation">
-			<item name="Quick Start" href="docs/quickstart.html" />
-			<item name="Contributing Guilde" href="docs/contributing_guide.html" />
+			<item name="Introduction" href="docs/introduction.html" />
 		</menu>
 		<menu ref="reports" inherit="top"/>
 		<footer />

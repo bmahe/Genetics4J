@@ -82,7 +82,9 @@ public class ProgramRulesApplicatorPolicyHandlerTest {
 		final GenotypeSpec mockGenotypeSpec = mock(GenotypeSpec.class);
 
 		final Mutator mutator = programRulesApplicatorPolicyHandler.createMutator(mockGeneticSystemDescriptor,
-				mockGenotypeSpec, mockMutationPolicyHandlerResolver, mutationPolicy);
+				mockGenotypeSpec,
+				mockMutationPolicyHandlerResolver,
+				mutationPolicy);
 		assertNotNull(mutator);
 		assertTrue(mutator instanceof ProgramRulesApplicatorMutator);
 	}

@@ -16,15 +16,16 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
-import net.bmahe.genetics4j.core.Terminations;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
+import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
-import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
+import net.bmahe.genetics4j.core.termination.Terminations;
 
 public class RandomSelectionPolicyHandlerTest {
 	private final GenotypeSpec<Double> SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder<Double>()
@@ -83,17 +84,18 @@ public class RandomSelectionPolicyHandlerTest {
 			fitnessScore.add((double) i);
 		}
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Double> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
-		geneticSystemDescriptorBuilder.populationSize(100);
-
-		final ImmutableGeneticSystemDescriptor<Double> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final GeneticSystemDescriptor<Double> geneticSystemDescriptor = GeneticSystemDescriptors
+				.<Double>forScalarFitness()
+				.populationSize(100)
+				.build();
 		final SelectionPolicyHandlerResolver<Double> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
 
 		final RandomSelectionPolicyHandler<Double> selectionPolicyHandler = new RandomSelectionPolicyHandler<>(random);
 		final Selector<Double> selector = selectionPolicyHandler.resolve(geneticSystemDescriptor,
-				SIMPLE_MAXIMIZING_GENOTYPE_SPEC, selectionPolicyHandlerResolver, RandomSelectionPolicy.build());
+				SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
+				selectionPolicyHandlerResolver,
+				RandomSelectionPolicy.build());
 		final List<Genotype> selected = selector.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, 100, population, fitnessScore);
 
 		assertNotNull(selected);

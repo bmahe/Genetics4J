@@ -1,0 +1,147 @@
+= Quick Start
+:stem:
+:toc:
+:docinfo:
+:sourcedir: ../../../samples/src/main/java
+:outdir: ../../../target/site
+:icons: font
+
+== Introduction
+
+Let's assume we are trying to solve a problem where we want to generate _N_ integers where their values are equal to their index.
+
+For instance, for _N = 5_, we would want to generate the following list of integers:
+-------------
+[0, 1, 2, 3, 4]
+-------------
+
+We will solve this problem by generating an entire population of random lists of integers and evolving them towards our expected solution.
+
+So let's start by defining the constraints of our problem:
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/QuickStart.java[tags=quickstart_variables]
+----
+
+<1> This represent the size _N_ of our list of Integers
+<2> Minimum value an integer can take
+<3> Maximum value an integer can take
+
+
+
+== Dependencies
+
+Let's add the repository:
+
+[source,xml,indent=0]
+----
+<repositories>
+    <repository>
+        <id>gitlab-maven</id>
+        <url>https://gitlab.com/api/v4/projects/13863766/packages/maven</url>
+    </repository>
+</repositories>
+----
+
+
+Then the dependency on the _core_ module:
+[source,xml,indent=0,subs="verbatim,attributes"]
+----
+<dependency>
+    <groupId>net.bmahe.genetics4j</groupId>
+    <artifactId>core</artifactId>
+    <version>{project-recommended-version}</version>
+</dependency>
+----
+
+
+== Problem definition
+
+And now, let's define what we want to solve. One of the features of *Genetics4j* is that it cleanly separates _What_ we want to achieve from the _How_ we will solve it. It enables us to tweak the operators' implementation or explore different contexts, which facilitate benchmarks and exploration.
+
+The definition of the problem is done through a fluent set of classes:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/QuickStart.java[tags=quickstart_genotype_spec]
+----
+
+== Execution specification
+
+We can next focus on the execution method through the configuration of the Genetic System Descriptor, which includes elements such as:
+
+* Population size
+* The different handlers for selection, mutation and combination
+* The different handlers for chromosome generation
+* Definition of some listeners
+* Configuration of the instance of _java.util.Random_ to be used throughout the system
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/QuickStart.java[tags=quickstart_genetic_system_descriptor]
+----
+
+== Evolution
+
+As we have defined _What_ we want to achieve as well as _How_ we want to do it, we can instantiate a Genetic System which will be in charge of doing the actual evolution:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/QuickStart.java[tags=quickstart_genetic_system]
+----
+
+
+Finally, we can run and observe the evolution of our system and what is the best solution it finds:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/QuickStart.java[tags=quickstart_evolve]
+----
+
+And here is an example of the output of such execution:
+-------
+7:14:08.299 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 0
+17:14:08.319 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[8, 1, 11, 3, 7, 9, 15, 11, 14, 12]]]] -> Fitness: 2
+17:14:08.320 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[2, 19, 14, 3, 2, 5, 19, 19, 2, 16]]]] -> Fitness: 2
+17:14:08.320 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 16, 10, 6, 15, 12, 13, 12, 7, 9]]]] -> Fitness: 2
+17:14:08.344 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 1
+17:14:08.344 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[8, 1, 11, 3, 13, 1, 5, 7, 5, 9]]]] -> Fitness: 4
+17:14:08.345 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 14, 3, 15, 10, 15, 0, 6, 11]]]] -> Fitness: 3
+17:14:08.345 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[5, 1, 14, 3, 8, 14, 6, 0, 15, 18]]]] -> Fitness: 3
+17:14:08.353 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 2
+17:14:08.354 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 17, 2, 3, 8, 14, 6, 0, 15, 9]]]] -> Fitness: 4
+17:14:08.354 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 11, 3, 11, 2, 11, 2, 8, 9]]]] -> Fitness: 4
+17:14:08.354 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[15, 1, 15, 1, 4, 12, 10, 10, 8, 9]]]] -> Fitness: 4
+17:14:08.361 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 3
+17:14:08.362 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[5, 1, 14, 3, 15, 5, 15, 7, 8, 9]]]] -> Fitness: 6
+17:14:08.362 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 14, 3, 2, 1, 5, 7, 8, 9]]]] -> Fitness: 5
+17:14:08.362 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 14, 4, 2, 11, 2, 8, 9]]]] -> Fitness: 5
+17:14:08.368 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 4
+17:14:08.369 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[5, 1, 2, 3, 8, 5, 15, 7, 8, 9]]]] -> Fitness: 7
+17:14:08.369 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 14, 4, 2, 11, 7, 8, 9]]]] -> Fitness: 6
+17:14:08.369 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 14, 3, 4, 5, 11, 11, 8, 9]]]] -> Fitness: 6
+17:14:08.374 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 5
+17:14:08.374 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[5, 1, 2, 3, 8, 5, 15, 7, 8, 9]]]] -> Fitness: 7
+17:14:08.374 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[11, 1, 14, 3, 4, 5, 5, 7, 8, 9]]]] -> Fitness: 7
+17:14:08.374 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 14, 3, 8, 5, 15, 7, 8, 9]]]] -> Fitness: 6
+17:14:08.379 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 6
+17:14:08.379 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 14, 4, 2, 6, 7, 8, 9]]]] -> Fitness: 7
+17:14:08.379 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 3, 8, 5, 15, 7, 8, 9]]]] -> Fitness: 7
+17:14:08.379 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[5, 1, 2, 3, 8, 5, 15, 7, 8, 9]]]] -> Fitness: 7
+17:14:08.383 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 7
+17:14:08.384 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 3, 4, 5, 5, 7, 8, 9]]]] -> Fitness: 8
+17:14:08.384 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 3, 4, 5, 5, 7, 8, 9]]]] -> Fitness: 8
+17:14:08.384 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[15, 1, 2, 3, 8, 5, 6, 7, 8, 9]]]] -> Fitness: 8
+17:14:08.389 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 8
+17:14:08.389 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]]] -> Fitness: 10
+17:14:08.390 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 3, 4, 5, 6, 7, 8, 9]]]] -> Fitness: 9
+17:14:08.390 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 3, 8, 5, 6, 7, 8, 9]]]] -> Fitness: 8
+17:14:08.394 INFO  n.b.g.s.QuickStart - Best genotype: Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]]]
+17:14:08.394 INFO  n.b.g.s.QuickStart -   with fitness: 10
+17:14:08.394 INFO  n.b.g.s.QuickStart -   at generation: 8
+-------
+
+We can observe the top evolution of the top 3 solutions at each generation and how their fitnesses progressively increased, until a solution was found at the 8th generation.
+
+
+

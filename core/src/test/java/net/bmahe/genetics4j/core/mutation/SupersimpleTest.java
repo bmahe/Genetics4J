@@ -8,9 +8,9 @@ import net.bmahe.genetics4j.core.GeneticSystem;
 import net.bmahe.genetics4j.core.GeneticSystemFactory;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder;
-import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
 import net.bmahe.genetics4j.core.spec.chromosome.BitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
@@ -35,11 +35,11 @@ public class SupersimpleTest {
 
 		final GenotypeSpec<Double> genotypeSpec = genotypeSpecBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Double> geneticSystemDescriptorBuilder = ImmutableGeneticSystemDescriptor
-				.builder();
-		GeneticSystemDescriptor<Double> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final GeneticSystemDescriptor<Double> geneticSystemDescriptor = GeneticSystemDescriptors
+				.<Double>forScalarFitness()
+				.populationSize(100)
+				.build();
 
-		final GeneticSystemFactory geneticSystemFactory = new GeneticSystemFactory();
-		final GeneticSystem<Double> geneticSystem = geneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
+		final GeneticSystem<Double> geneticSystem = GeneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
 	}
 }

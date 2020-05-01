@@ -18,12 +18,14 @@ import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactory;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
+import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
 import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.ImmutableEvolutionResult;
+import net.bmahe.genetics4j.core.termination.Termination;
 
 public class GeneticSystem<T extends Comparable<T>> {
 	final static public Logger logger = LogManager.getLogger(GeneticSystem.class);
@@ -143,8 +145,8 @@ public class GeneticSystem<T extends Comparable<T>> {
 			final int childrenNeeded = (int) (populationSize * offspringRatio);
 			final int parentsNeeded = (int) (childrenNeeded * 2);
 			logger.trace("Will select {} parents", parentsNeeded);
-			final List<Genotype> selectedParents = parentSelector.select(genotypeSpec, parentsNeeded, population,
-					fitnessScore);
+			final List<Genotype> selectedParents = parentSelector
+					.select(genotypeSpec, parentsNeeded, population, fitnessScore);
 			logger.trace("Selected parents: {}", selectedParents);
 
 			final List<Genotype> children = new ArrayList<>();
@@ -162,7 +164,9 @@ public class GeneticSystem<T extends Comparable<T>> {
 							.combine(firstChromosome, secondChromosome);
 //XXXX
 					chromosomes.add(combinedChromosomes);
-					logger.trace("Combining {} with {} ---> {}", firstChromosome, secondChromosome,
+					logger.trace("Combining {} with {} ---> {}",
+							firstChromosome,
+							secondChromosome,
 							combinedChromosomes);
 				}
 
@@ -197,16 +201,16 @@ public class GeneticSystem<T extends Comparable<T>> {
 			Genotype[] newPopulation = new Genotype[populationSize];
 			int populationIndex = 0;
 
-			logger.info("Number of children: {}", mutatedChildren.size());
+			logger.debug("Number of children: {}", mutatedChildren.size());
 			for (final Genotype mutatedChild : mutatedChildren) {
 
 				newPopulation[populationIndex] = mutatedChild;
 				populationIndex++;
 			}
 
-			final List<Genotype> survivors = survivorSelector.select(genotypeSpec, populationSize - childrenNeeded,
-					population, fitnessScore);
-			logger.info("Number of survivors: {}", survivors.size());
+			final List<Genotype> survivors = survivorSelector
+					.select(genotypeSpec, populationSize - childrenNeeded, population, fitnessScore);
+			logger.debug("Number of survivors: {}", survivors.size());
 			for (final Genotype genotype : survivors) {
 				newPopulation[populationIndex] = genotype;
 				populationIndex++;
@@ -215,7 +219,7 @@ public class GeneticSystem<T extends Comparable<T>> {
 			if (populationIndex < populationSize) {
 				final Genotype[] additionalIndividuals = generatePopulation(genotypeSpec,
 						populationSize - populationIndex);
-				logger.info("Number of generated individuals: {}", additionalIndividuals.length);
+				logger.debug("Number of generated individuals: {}", additionalIndividuals.length);
 
 				for (final Genotype genotype : additionalIndividuals) {
 					newPopulation[populationIndex] = genotype;
@@ -262,6 +266,12 @@ public class GeneticSystem<T extends Comparable<T>> {
 					throw new RuntimeException(e);
 				}
 			}
+		}
+
+		// isDone has returned true and we want to let the evolutionListeners run a last
+		// time
+		for (final EvolutionListener<T> evolutionListener : geneticSystemDescriptor.evolutionListeners()) {
+			evolutionListener.onEvolution(generation, population, fitnessScore);
 		}
 
 		return ImmutableEvolutionResult.of(genotypeSpec, generation, population, fitnessScore);

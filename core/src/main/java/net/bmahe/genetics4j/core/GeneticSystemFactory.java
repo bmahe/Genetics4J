@@ -22,13 +22,17 @@ import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
 public class GeneticSystemFactory {
-	public <T extends Comparable<T>> GeneticSystem<T> from(final GenotypeSpec<T> genotypeSpec,
+
+	private GeneticSystemFactory() {
+	}
+
+	public static <T extends Comparable<T>> GeneticSystem<T> from(final GenotypeSpec<T> genotypeSpec,
 			final GeneticSystemDescriptor<T> geneticSystemDescriptor) {
 		final ExecutorService executorService = ForkJoinPool.commonPool();
 		return from(genotypeSpec, geneticSystemDescriptor, executorService);
 	}
 
-	public <T extends Comparable<T>> GeneticSystem<T> from(final GenotypeSpec<T> genotypeSpec,
+	public static <T extends Comparable<T>> GeneticSystem<T> from(final GenotypeSpec<T> genotypeSpec,
 			final GeneticSystemDescriptor<T> geneticSystemDescriptor, final ExecutorService executorService) {
 		Validate.notNull(genotypeSpec);
 		Validate.notNull(geneticSystemDescriptor);
@@ -39,13 +43,17 @@ public class GeneticSystemFactory {
 
 		final SelectionPolicyHandler<T> parentSelectionPolicyHandler = selectionPolicyHandlerResolver
 				.resolve(genotypeSpec.parentSelectionPolicy());
-		final Selector<T> parentSelector = parentSelectionPolicyHandler.resolve(geneticSystemDescriptor, genotypeSpec,
-				selectionPolicyHandlerResolver, genotypeSpec.parentSelectionPolicy());
+		final Selector<T> parentSelector = parentSelectionPolicyHandler.resolve(geneticSystemDescriptor,
+				genotypeSpec,
+				selectionPolicyHandlerResolver,
+				genotypeSpec.parentSelectionPolicy());
 
 		final SelectionPolicyHandler<T> survivorSelectionPolicyHandler = selectionPolicyHandlerResolver
 				.resolve(genotypeSpec.survivorSelectionPolicy());
 		final Selector<T> survivorSelector = survivorSelectionPolicyHandler.resolve(geneticSystemDescriptor,
-				genotypeSpec, selectionPolicyHandlerResolver, genotypeSpec.survivorSelectionPolicy());
+				genotypeSpec,
+				selectionPolicyHandlerResolver,
+				genotypeSpec.survivorSelectionPolicy());
 
 		final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver = new MutationPolicyHandlerResolver<>(
 				geneticSystemDescriptor);
@@ -65,8 +73,10 @@ public class GeneticSystemFactory {
 			final MutationPolicy mutationPolicy = genotypeSpec.mutationPolicies().get(i);
 
 			final MutationPolicyHandler mutationPolicyHandler = mutationPolicyHandlerResolver.resolve(mutationPolicy);
-			final Mutator mutator = mutationPolicyHandler.createMutator(geneticSystemDescriptor, genotypeSpec,
-					mutationPolicyHandlerResolver, mutationPolicy);
+			final Mutator mutator = mutationPolicyHandler.createMutator(geneticSystemDescriptor,
+					genotypeSpec,
+					mutationPolicyHandlerResolver,
+					mutationPolicy);
 
 			mutators.add(mutator);
 

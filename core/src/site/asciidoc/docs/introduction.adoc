@@ -1,0 +1,134 @@
+= Introduction
+:stem:
+:toc:
+:docinfo:
+:sourcedir: ../../../samples/src/main/java
+:outdir: ../../../target/site/docs
+:icons: font
+
+== Introduction
+
+
+Genetics4j uses a standard version of Genetic Algorithms.
+
+Here is a diagram of the main flow:
+
+
+[ditaa]
+....
+                             Startint point
+                                   *
+                                   |
+                                   |
+                                   |
+                                   v
+                     /-----------------------------\
+                     | Generate initial population |
+                     \-----------------------------/
+                                   |
+                                   |
+                                   v
+                          /------------------\
+                          | Evaluate Fitness |
+                          \------------------/
+                                   |
+                                   v
+                           +---------------+
+                           |{c}            |  Yes
+   +---------------------->|  Is it done?  |-----------------------------> The End
+   |                       |               |                              
+   |                       +---------------+                              
+   |                               |
+   |                               | No
+   |                               |
+   |                 +-------------+-------------------+
+   |                 |                                 |
+   |                 |                                 |
+   |                 |                                 |
+   |                 |                                 |
+   |                 v                                 v
+   |         /----------------\              /------------------\
+   |         | Select Parents |              | Select Survivors |
+   |         \----------------/              \------------------/
+   |                 |                                 |
+   |                 |                                 |
+   |                 |                                 |
+   |                 |                                 |
+   |                 v                                 |
+   |        /-----------------\                        |
+   |        | Combine Parents |                        |
+   |        \-----------------/                        |
+   |                 |                                 |
+   |                 |                                 |
+   |                 |                                 |
+   |                 |                                 |
+   |                 v                                 |
+   |        /-----------------\                        |
+   |        | Mutate Children |                        |
+   |        \-----------------/                        |
+   |                 |                                 |
+   |                 |                                 |
+   |                 |                                 |
+   |                 +------------+--------------------+
+   |                              |
+   |                              |
+   |                              |
+   |                              v
+   |                    /------------------\
+   |                    | Evaluate Fitness |
+   |                    \------------------/
+   |                              |
+   |                              |
+   |                              |
+   +------------------------------+
+
+....
+
+
+
+## Concepts
+
+### Genotype
+
+An individual, which represent a solution, is called a link:https://en.wikipedia.org/wiki/Genotype[genotype]. A genotype can be composed of multiple chromosomes of different nature.
+A chromosome can encode data in different ways:
+
+* Binary representation
+* Integer values
+* Real values
+* Tree
+* Linear sequences (Genetic Programming)
+
+
+The genotype is defined through the link:../apidocs/net/bmahe/genetics4j/core/spec/GenotypeSpec.html[GenotypeSpec] class where one can defined the link:../apidocs/net/bmahe/genetics4j/core/spec/GenotypeSpec.html#chromosomeSpecs()[ChromosomeSpecs] class
+
+
+#### Chromosomes
+
+The _core_ module provides the following types of chromosomes out of the box:
+
+* Integers based chromosomes. See link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/BitChromosomeSpec.html[BitChromosomeSpec]
+* Bits based chromosomes. See  link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/IntChromosomeSpec.html[IntChromosomeSpec]
+
+
+### Fitness
+
+Fitness of an individual establish of good of a solution it is. It can be of any type as long as it extends _java.lang.Comparable_. Which means one could use a _Double_ for a single measure of the fitness as well as more complex data structures for cases such as *Multi-Object Optimizations*.
+
+The link:../apidocs/net/bmahe/genetics4j/core/Fitness.html[fitness] function is established in the link:../apidocs/net/bmahe/genetics4j/core/spec/GenotypeSpec.html#fitness()[GenotypeSpec] class
+
+
+### Population Generation
+
+
+
+### Selection
+
+
+### Combination
+
+
+### Mutation
+
+
+### Termination

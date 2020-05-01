@@ -1,6 +1,8 @@
-package net.bmahe.genetics4j.core;
+package net.bmahe.genetics4j.core.evolutionlisteners;
 
 import java.util.List;
+
+import net.bmahe.genetics4j.core.Genotype;
 
 @FunctionalInterface
 public interface EvolutionListener<T> {

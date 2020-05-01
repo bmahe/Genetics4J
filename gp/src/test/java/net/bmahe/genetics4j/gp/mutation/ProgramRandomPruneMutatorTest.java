@@ -25,7 +25,6 @@ import net.bmahe.genetics4j.gp.program.ImmutableProgram;
 import net.bmahe.genetics4j.gp.program.ImmutableProgram.Builder;
 import net.bmahe.genetics4j.gp.program.Program;
 import net.bmahe.genetics4j.gp.program.ProgramHelper;
-import net.bmahe.genetics4j.gp.program.StdProgramGenerator;
 
 public class ProgramRandomPruneMutatorTest {
 
@@ -65,10 +64,18 @@ public class ProgramRandomPruneMutatorTest {
 		final InputSpec inputSpec = ImmutableInputSpec.of(List.of(Double.class, String.class));
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(inputSpec);
 		programBuilder.maxDepth(4);

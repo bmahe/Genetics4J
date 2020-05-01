@@ -1,0 +1,46 @@
+= Genetics4j
+:stem:
+:toc:
+:docinfo:
+:sourcedir: ../../../samples/src/main/java
+:outdir: ../../../target/site
+:icons: font
+
+== Introduction
+
+Genetics4j is an open source library for Genetic Algorithm, Genetic Programming and more!
+
+=== Features
+
+* Genetic Algorithms
+* Strongly Typed Genetic Programming
+* Multi-Objective Optimization support with algorithms such as NSGA2
+* Configurable and user friendly
+* Multithreaded implementation for faster execution
+* Clear separation between the problem definition and its execution model
+* Enhanced test coverage with link:https://en.wikipedia.org/wiki/Mutation_testing[mutation testing] :)
+
+
+The project is located at https://gitlab.com/bmahe/genetics4j and is licensed under the Apache License v2.0.
+
+
+=== Modules
+
+Genetics4j encompass multiple aspects of the Genetics Algorithms family through different modules:
+
+* _core_: Contains the core features
+* _gp_: Contains features related to *Genetic Programming*
+* _moo_: Contains features related to *Multi-Objective Optimization*
+* _samples_: Contains different examples to highlight the different features and how to use them
+
+
+== Documentation
+
+There are various ways to learn more about _Genetics4j_:
+
+* There is a link:docs/quickstart.html[Quick Start] guide to help you get up and running in minutes!
+* Each module contains its own documentation
+* Javadocs are built for the link:apidocs/index.html[whole project] as well as for each individual modules. They can be found under _Project Reports_
+* Various additional reports are also published under _Project Reports_, including link:gitlog.html[changelogs] and tests results and coverage
+
+

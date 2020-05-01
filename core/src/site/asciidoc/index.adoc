@@ -1,0 +1,16 @@
+= Genetics4j
+:stem:
+:toc:
+:docinfo:
+:sourcedir: ../../../samples/src/main/java
+:outdir: ../../../target/site
+:icons: font
+
+== Introduction
+
+This is the core module which includes:
+
+* Base classes to support the definition and exeuction of Genetic Algorithms
+* Base operators to select individuals
+* Base operators to combine individuals
+* Base operators to mutate individuals

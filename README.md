@@ -1,9 +1,9 @@
-Genetics4J
+Genetics4j
 ==========
 
 [![pipeline status](https://gitlab.com/bmahe/genetics4j/badges/master/pipeline.svg)](https://gitlab.com/bmahe/genetics4j/-/commits/master)
 
-Genetics4J is an open source library for Genetic Algorithm, Genetic Programming and more!
+Genetics4j is an open source library for Genetic Algorithm, Genetic Programming and more!
 
 See website https://bmahe.gitlab.io/genetics4j/ for more information, quickstart and examples.
 

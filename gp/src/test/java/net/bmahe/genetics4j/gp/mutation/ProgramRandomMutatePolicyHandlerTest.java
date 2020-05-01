@@ -100,7 +100,9 @@ public class ProgramRandomMutatePolicyHandlerTest {
 		final GenotypeSpec mockGenotypeSpec = mock(GenotypeSpec.class);
 
 		final Mutator mutator = programRandomMutatePolicyHandler.createMutator(mockGeneticSystemDescriptor,
-				mockGenotypeSpec, mockMutationPolicyHandlerResolver, mutationPolicy);
+				mockGenotypeSpec,
+				mockMutationPolicyHandlerResolver,
+				mutationPolicy);
 		assertNotNull(mutator);
 		assertTrue(mutator instanceof ProgramRandomMutateMutator);
 	}
