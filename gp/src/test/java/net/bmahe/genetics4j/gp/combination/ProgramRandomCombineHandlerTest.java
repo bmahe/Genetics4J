@@ -12,8 +12,8 @@ import org.junit.Test;
 import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorResolver;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
@@ -61,25 +61,26 @@ public class ProgramRandomCombineHandlerTest {
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<?> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<?> eaExecutionContextBuilder = EAExecutionContexts
 				.standard();
-		geneticSystemDescriptorBuilder.populationSize(500);
-		geneticSystemDescriptorBuilder
+		eaExecutionContextBuilder.populationSize(500);
+		eaExecutionContextBuilder
 				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
-		geneticSystemDescriptorBuilder
+		eaExecutionContextBuilder
 				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
-		geneticSystemDescriptorBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
 		chromosomeFactoryProviderBuilder.random(random);
-		chromosomeFactoryProviderBuilder.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
-		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
-		final GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		chromosomeFactoryProviderBuilder
+				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
+		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
+		final EAExecutionContext eaExecutionContext = eaExecutionContextBuilder.build();
 
 		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
 		final ProgramRandomCombine programRandomCombine = ProgramRandomCombine.build();
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = ProgramTreeChromosomeSpec.of(program);
@@ -120,25 +121,26 @@ public class ProgramRandomCombineHandlerTest {
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<?> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<?> eaExecutionContextBuilder = EAExecutionContexts
 				.standard();
-		geneticSystemDescriptorBuilder.populationSize(500);
-		geneticSystemDescriptorBuilder
+		eaExecutionContextBuilder.populationSize(500);
+		eaExecutionContextBuilder
 				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
-		geneticSystemDescriptorBuilder
+		eaExecutionContextBuilder
 				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
-		geneticSystemDescriptorBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
 		chromosomeFactoryProviderBuilder.random(random);
-		chromosomeFactoryProviderBuilder.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
-		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
-		final GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		chromosomeFactoryProviderBuilder
+				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
+		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
+		final EAExecutionContext eaExecutionContext = eaExecutionContextBuilder.build();
 
 		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
 		final ProgramRandomCombine programRandomCombine = ProgramRandomCombine.build();
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = ProgramTreeChromosomeSpec.of(program);
@@ -187,25 +189,26 @@ public class ProgramRandomCombineHandlerTest {
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<?> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<?> eaExecutionContextBuilder = EAExecutionContexts
 				.standard();
-		geneticSystemDescriptorBuilder.populationSize(500);
-		geneticSystemDescriptorBuilder
+		eaExecutionContextBuilder.populationSize(500);
+		eaExecutionContextBuilder
 				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
-		geneticSystemDescriptorBuilder
+		eaExecutionContextBuilder
 				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
-		geneticSystemDescriptorBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
 		chromosomeFactoryProviderBuilder.random(random);
-		chromosomeFactoryProviderBuilder.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
-		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
-		final GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		chromosomeFactoryProviderBuilder
+				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
+		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
+		final EAExecutionContext eaExecutionContext = eaExecutionContextBuilder.build();
 
 		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = ProgramTreeChromosomeSpec.of(program);
 
@@ -221,25 +224,26 @@ public class ProgramRandomCombineHandlerTest {
 		final ProgramHelper programHelper = new ProgramHelper(random);
 		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<?> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<?> eaExecutionContextBuilder = EAExecutionContexts
 				.standard();
-		geneticSystemDescriptorBuilder.populationSize(500);
-		geneticSystemDescriptorBuilder
+		eaExecutionContextBuilder.populationSize(500);
+		eaExecutionContextBuilder
 				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
-		geneticSystemDescriptorBuilder
+		eaExecutionContextBuilder
 				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
 
-		geneticSystemDescriptorBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
 		chromosomeFactoryProviderBuilder.random(random);
-		chromosomeFactoryProviderBuilder.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
-		geneticSystemDescriptorBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
-		final GeneticSystemDescriptor geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		chromosomeFactoryProviderBuilder
+				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
+		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
+		final EAExecutionContext eaExecutionContext = eaExecutionContextBuilder.build();
 
 		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
 		final ProgramRandomCombine programRandomCombine = ProgramRandomCombine.build();
 

@@ -9,16 +9,16 @@ import java.util.stream.IntStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.bmahe.genetics4j.core.EASystem;
+import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.Fitness;
-import net.bmahe.genetics4j.core.GeneticSystem;
-import net.bmahe.genetics4j.core.GeneticSystemFactory;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
@@ -32,7 +32,7 @@ import net.bmahe.genetics4j.gp.program.Program;
 import net.bmahe.genetics4j.gp.program.ProgramGenerator;
 import net.bmahe.genetics4j.gp.program.ProgramHelper;
 import net.bmahe.genetics4j.gp.program.RampedHalfAndHalfProgramGenerator;
-import net.bmahe.genetics4j.gp.spec.GPGeneticSystemDescriptors;
+import net.bmahe.genetics4j.gp.spec.GPEAExecutionContexts;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
@@ -41,7 +41,7 @@ import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 import net.bmahe.genetics4j.gp.utils.ProgramUtils;
 import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 import net.bmahe.genetics4j.moo.FitnessVector;
-import net.bmahe.genetics4j.moo.MOOGeneticSystemDescriptors;
+import net.bmahe.genetics4j.moo.MOOEAExecutionContexts;
 import net.bmahe.genetics4j.moo.nsga2.spec.ImmutableNSGA2Selection;
 import net.bmahe.genetics4j.moo.nsga2.spec.ImmutableTournamentNSGA2Selection;
 
@@ -103,8 +103,8 @@ public class SymbolicRegressionWithMOO {
 					: new FitnessVector<Double>(Double.MAX_VALUE, Double.MAX_VALUE);
 		};
 
-		net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder<FitnessVector<Double>> genotypeSpecBuilder = new GenotypeSpec.Builder<>();
-		genotypeSpecBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
+		net.bmahe.genetics4j.core.spec.EAConfiguration.Builder<FitnessVector<Double>> eaConfigurationBuilder = new EAConfiguration.Builder<>();
+		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(ImmutableTournamentNSGA2Selection.<FitnessVector<Double>>of(2,
 						(a, b) -> b.compareTo(a), // reversed
 						(m) -> (a, b) -> Double.compare(b.get(m), a.get(m)), // reversed
@@ -124,15 +124,15 @@ public class SymbolicRegressionWithMOO {
 						(generation, population, fitness) -> fitness.stream()
 								.anyMatch(fv -> fv.get(0) <= Double.MIN_VALUE && fv.get(1) < 10)))
 				.fitness(computeFitness);
-		final GenotypeSpec<FitnessVector<Double>> genotypeSpec = genotypeSpecBuilder.build();
+		final EAConfiguration<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<FitnessVector<Double>> geneticSystemDescriptorBuilder = GPGeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<FitnessVector<Double>> eaExecutionContextBuilder = GPEAExecutionContexts
 				.forGP(random, programHelper, programGenerator);
-		MOOGeneticSystemDescriptors.enrichWithMOO(geneticSystemDescriptorBuilder);
-		geneticSystemDescriptorBuilder.populationSize(5000);
-		geneticSystemDescriptorBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 1));
+		MOOEAExecutionContexts.enrichWithMOO(eaExecutionContextBuilder);
+		eaExecutionContextBuilder.populationSize(5000);
+		eaExecutionContextBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 1));
 
-		geneticSystemDescriptorBuilder.addEvolutionListeners(EvolutionListeners.ofLogTopN(logger,
+		eaExecutionContextBuilder.addEvolutionListeners(EvolutionListeners.ofLogTopN(logger,
 				5,
 				Comparator.<FitnessVector<Double>, Double>comparing(fv -> fv.get(0)).reversed(),
 				(genotype) -> {
@@ -143,12 +143,10 @@ public class SymbolicRegressionWithMOO {
 					return TreeNodeUtils.toStringTreeNode(root);
 				}));
 
-		final GeneticSystemDescriptor<FitnessVector<Double>> geneticSystemDescriptor = geneticSystemDescriptorBuilder
-				.build();
-		final GeneticSystem<FitnessVector<Double>> geneticSystem = GeneticSystemFactory.from(genotypeSpec,
-				geneticSystemDescriptor);
+		final EAExecutionContext<FitnessVector<Double>> eaExecutionContext = eaExecutionContextBuilder.build();
+		final EASystem<FitnessVector<Double>> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
 
-		final EvolutionResult<FitnessVector<Double>> evolutionResult = geneticSystem.evolve();
+		final EvolutionResult<FitnessVector<Double>> evolutionResult = eaSystem.evolve();
 		final Genotype bestGenotype = evolutionResult.bestGenotype();
 		final TreeChromosome<Operation<?>> bestChromosome = (TreeChromosome<Operation<?>>) bestGenotype
 				.getChromosome(0);

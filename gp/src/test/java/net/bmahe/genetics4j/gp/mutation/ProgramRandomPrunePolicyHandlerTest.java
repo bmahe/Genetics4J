@@ -11,8 +11,8 @@ import org.junit.Test;
 
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
 import net.bmahe.genetics4j.gp.program.ProgramHelper;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
@@ -91,11 +91,11 @@ public class ProgramRandomPrunePolicyHandlerTest {
 
 		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(
 				MutationPolicyHandlerResolver.class);
-		final GeneticSystemDescriptor mockGeneticSystemDescriptor = mock(GeneticSystemDescriptor.class);
-		final GenotypeSpec mockGenotypeSpec = mock(GenotypeSpec.class);
+		final EAExecutionContext mockEaExecutionContext = mock(EAExecutionContext.class);
+		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
 
-		final Mutator mutator = programRandomPrunePolicyHandler.createMutator(mockGeneticSystemDescriptor,
-				mockGenotypeSpec,
+		final Mutator mutator = programRandomPrunePolicyHandler.createMutator(mockEaExecutionContext,
+				mockEaConfiguration,
 				mockMutationPolicyHandlerResolver,
 				mutationPolicy);
 		assertNotNull(mutator);

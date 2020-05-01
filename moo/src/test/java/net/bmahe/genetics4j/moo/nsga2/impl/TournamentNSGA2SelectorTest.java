@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.factory.BitChromosomeFactory;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.termination.Terminations;
@@ -28,7 +28,7 @@ public class TournamentNSGA2SelectorTest {
 					(a, b, m) -> b.get(m) - a.get(m),
 					3);
 
-	private final GenotypeSpec<FitnessVector<Integer>> SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder<FitnessVector<Integer>>()
+	private final EAConfiguration<FitnessVector<Integer>> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<FitnessVector<Integer>>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
 			.parentSelectionPolicy(SIMPLE_TOURNAMENT_NSGA2_SELECTION_SPEC)
 			.survivorSelectionPolicy(SIMPLE_TOURNAMENT_NSGA2_SELECTION_SPEC)
@@ -53,7 +53,7 @@ public class TournamentNSGA2SelectorTest {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void selectNullGenotypeSpec() {
+	public void selectNullEaConfiguration() {
 		final Random random = new Random();
 		final TournamentNSGA2Selection<Integer> nsga2Selection = mock(TournamentNSGA2Selection.class);
 
@@ -67,7 +67,7 @@ public class TournamentNSGA2SelectorTest {
 		final TournamentNSGA2Selection<Integer> nsga2Selection = mock(TournamentNSGA2Selection.class);
 
 		final TournamentNSGA2Selector<Integer> nsga2Selector = new TournamentNSGA2Selector<>(random, nsga2Selection);
-		nsga2Selector.select(mock(GenotypeSpec.class), 4, null, Collections.emptyList());
+		nsga2Selector.select(mock(EAConfiguration.class), 4, null, Collections.emptyList());
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -76,7 +76,7 @@ public class TournamentNSGA2SelectorTest {
 		final TournamentNSGA2Selection<Integer> nsga2Selection = mock(TournamentNSGA2Selection.class);
 
 		final TournamentNSGA2Selector<Integer> nsga2Selector = new TournamentNSGA2Selector<>(random, nsga2Selection);
-		nsga2Selector.select(mock(GenotypeSpec.class), 4, new Genotype[] {}, null);
+		nsga2Selector.select(mock(EAConfiguration.class), 4, new Genotype[] {}, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -85,7 +85,7 @@ public class TournamentNSGA2SelectorTest {
 		final TournamentNSGA2Selection<Integer> nsga2Selection = mock(TournamentNSGA2Selection.class);
 
 		final TournamentNSGA2Selector<Integer> nsga2Selector = new TournamentNSGA2Selector<>(random, nsga2Selection);
-		nsga2Selector.select(mock(GenotypeSpec.class), 0, new Genotype[] {}, Collections.emptyList());
+		nsga2Selector.select(mock(EAConfiguration.class), 0, new Genotype[] {}, Collections.emptyList());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -94,7 +94,7 @@ public class TournamentNSGA2SelectorTest {
 		final TournamentNSGA2Selection<Integer> nsga2Selection = mock(TournamentNSGA2Selection.class);
 
 		final TournamentNSGA2Selector<Integer> nsga2Selector = new TournamentNSGA2Selector<>(random, nsga2Selection);
-		nsga2Selector.select(mock(GenotypeSpec.class), 1, new Genotype[] {}, List.of(4));
+		nsga2Selector.select(mock(EAConfiguration.class), 1, new Genotype[] {}, List.of(4));
 	}
 
 	@Test
@@ -108,11 +108,11 @@ public class TournamentNSGA2SelectorTest {
 		final BitChromosomeFactory chromosomeFactory = new BitChromosomeFactory(random);
 
 		final Genotype[] population = {
-				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_GENOTYPE_SPEC.getChromosomeSpec(0))),
-				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_GENOTYPE_SPEC.getChromosomeSpec(0))),
-				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_GENOTYPE_SPEC.getChromosomeSpec(0))),
-				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_GENOTYPE_SPEC.getChromosomeSpec(0))),
-				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_GENOTYPE_SPEC.getChromosomeSpec(0))) };
+				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))),
+				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))),
+				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))),
+				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))),
+				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))) };
 		final List<FitnessVector<Integer>> fitnessScore = List.of(new FitnessVector<>(1, 2),
 				new FitnessVector<>(12, 12),
 				new FitnessVector<>(-5, -5),
@@ -120,11 +120,11 @@ public class TournamentNSGA2SelectorTest {
 				new FitnessVector<>(2, 1));
 
 		final List<Genotype> selectedTopOne = nsga2Selector
-				.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, 3, population, fitnessScore);
+				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 3, population, fitnessScore);
 		assertNotNull(selectedTopOne);
 		assertEquals(3, selectedTopOne.size());
 
-		final List<Genotype> selectedTopFromNotSoGreat = nsga2Selector.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
+		final List<Genotype> selectedTopFromNotSoGreat = nsga2Selector.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				2,
 				new Genotype[] { population[2], population[3] },
 				List.of(fitnessScore.get(2), fitnessScore.get(3)));

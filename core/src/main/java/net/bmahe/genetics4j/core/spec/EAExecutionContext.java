@@ -35,8 +35,15 @@ import net.bmahe.genetics4j.core.selection.RandomSelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.TournamentSelectionPolicyHandler;
 
+/**
+ * Evolutionary Algorithm - Execution Context
+ * <p>
+ * This defines how the Evolutionary Algorithm will be executed.
+ *
+ * @param <T> Type of the fitness measurement
+ */
 @Value.Immutable
-public abstract class GeneticSystemDescriptor<T extends Comparable<T>> {
+public abstract class EAExecutionContext<T extends Comparable<T>> {
 	public static final long DEFAULT_POPULATION_SIZE = 100;
 
 	@Value.Default
@@ -49,7 +56,7 @@ public abstract class GeneticSystemDescriptor<T extends Comparable<T>> {
 				new PickFirstParentHandler());
 	}
 
-	public abstract List<Function<GeneticSystemDescriptor<T>, ChromosomeCombinatorHandler>>
+	public abstract List<Function<EAExecutionContext<T>, ChromosomeCombinatorHandler>>
 			chromosomeCombinatorHandlerFactories();
 
 	@Value.Derived
@@ -78,8 +85,7 @@ public abstract class GeneticSystemDescriptor<T extends Comparable<T>> {
 				new MultiSelectionsPolicyHandler<T>());
 	}
 
-	public abstract List<Function<GeneticSystemDescriptor<T>, SelectionPolicyHandler<T>>>
-			selectionPolicyHandlerFactories();
+	public abstract List<Function<EAExecutionContext<T>, SelectionPolicyHandler<T>>> selectionPolicyHandlerFactories();
 
 	@Value.Derived
 	public List<SelectionPolicyHandler<T>> selectionPolicyHandlers() {
@@ -108,7 +114,7 @@ public abstract class GeneticSystemDescriptor<T extends Comparable<T>> {
 				new PartialMutationPolicyHandler());
 	}
 
-	public abstract List<Function<GeneticSystemDescriptor<T>, MutationPolicyHandler>> mutationPolicyHandlerFactories();
+	public abstract List<Function<EAExecutionContext<T>, MutationPolicyHandler>> mutationPolicyHandlerFactories();
 
 	@Value.Derived
 	public List<MutationPolicyHandler> mutationPolicyHandlers() {
@@ -137,7 +143,7 @@ public abstract class GeneticSystemDescriptor<T extends Comparable<T>> {
 				new IntChromosomeSwapMutationHandler(random()));
 	}
 
-	public abstract List<Function<GeneticSystemDescriptor<T>, ChromosomeMutationHandler<? extends Chromosome>>>
+	public abstract List<Function<EAExecutionContext<T>, ChromosomeMutationHandler<? extends Chromosome>>>
 			chromosomeMutationPolicyHandlerFactories();
 
 	public List<ChromosomeMutationHandler<? extends Chromosome>> chromosomeMutationPolicyHandlers() {
@@ -189,7 +195,7 @@ public abstract class GeneticSystemDescriptor<T extends Comparable<T>> {
 		return Collections.emptyList();
 	}
 
-	public static <U extends Comparable<U>> ImmutableGeneticSystemDescriptor.Builder<U> builder() {
-		return ImmutableGeneticSystemDescriptor.builder();
+	public static <U extends Comparable<U>> ImmutableEAExecutionContext.Builder<U> builder() {
+		return ImmutableEAExecutionContext.builder();
 	}
 }

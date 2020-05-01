@@ -5,8 +5,8 @@ import java.util.Random;
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider;
-import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder;
+import net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext;
+import net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder;
 import net.bmahe.genetics4j.gp.chromosomes.factory.ProgramTreeChromosomeFactory;
 import net.bmahe.genetics4j.gp.combination.ProgramRandomCombineHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomMutatePolicyHandler;
@@ -15,9 +15,9 @@ import net.bmahe.genetics4j.gp.mutation.ProgramRulesApplicatorPolicyHandler;
 import net.bmahe.genetics4j.gp.program.ProgramGenerator;
 import net.bmahe.genetics4j.gp.program.ProgramHelper;
 
-public class GPGeneticSystemDescriptors {
+public class GPEAExecutionContexts {
 
-	private GPGeneticSystemDescriptors() {
+	private GPEAExecutionContexts() {
 	}
 
 	public static <T extends Comparable<T>> Builder<T> forGP(final Random random, final ProgramHelper programHelper,
@@ -26,7 +26,7 @@ public class GPGeneticSystemDescriptors {
 		Validate.notNull(programHelper);
 		Validate.notNull(programGenerator);
 
-		final Builder<T> builder = ImmutableGeneticSystemDescriptor.<T>builder();
+		final Builder<T> builder = ImmutableEAExecutionContext.<T>builder();
 		builder.random(random);
 
 		builder.addMutationPolicyHandlerFactories(
@@ -39,7 +39,8 @@ public class GPGeneticSystemDescriptors {
 		final net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
 		chromosomeFactoryProviderBuilder.random(random);
-		chromosomeFactoryProviderBuilder.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
+		chromosomeFactoryProviderBuilder
+				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		builder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
 
 		return builder;

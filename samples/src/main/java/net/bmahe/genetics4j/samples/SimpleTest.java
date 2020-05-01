@@ -6,14 +6,14 @@ import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.bmahe.genetics4j.core.GeneticSystem;
-import net.bmahe.genetics4j.core.GeneticSystemFactory;
+import net.bmahe.genetics4j.core.EASystem;
+import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAConfiguration.Builder;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
@@ -29,8 +29,8 @@ public class SimpleTest {
 
 		final Random random = new Random();
 
-		final Builder<Double> genotypeSpecBuilder = new GenotypeSpec.Builder<>();
-		genotypeSpecBuilder.chromosomeSpecs(IntChromosomeSpec.of(10, 0, 10))
+		final Builder<Double> eaConfigurationBuilder = new EAConfiguration.Builder<>();
+		eaConfigurationBuilder.chromosomeSpecs(IntChromosomeSpec.of(10, 0, 10))
 				.parentSelectionPolicy(RouletteWheelSelection.build())
 				.survivorSelectionPolicy(TournamentSelection.build(30))
 				.offspringRatio(0.7d)
@@ -49,17 +49,16 @@ public class SimpleTest {
 				.termination((generation, population, fitness) -> {
 					return fitness.stream().min(Comparator.naturalOrder()).orElseThrow() < 0.0001;
 				});
-		final GenotypeSpec<Double> genotypeSpec = genotypeSpecBuilder.build();
+		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
 
-		final GeneticSystemDescriptor<Double> geneticSystemDescriptor = GeneticSystemDescriptors
-				.<Double>forScalarFitness()
+		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)
 				.random(random)
 				.build();
 
-		final GeneticSystem<Double> geneticSystem = GeneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
+		final EASystem<Double> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
 
-		final EvolutionResult<Double> evolutionResult = geneticSystem.evolve();
+		final EvolutionResult<Double> evolutionResult = eaSystem.evolve();
 		logger.info("Best genotype: " + evolutionResult.bestGenotype());
 
 		System.exit(0);

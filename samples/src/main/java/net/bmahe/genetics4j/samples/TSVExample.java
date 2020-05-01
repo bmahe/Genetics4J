@@ -5,16 +5,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import net.bmahe.genetics4j.core.GeneticSystem;
-import net.bmahe.genetics4j.core.GeneticSystemFactory;
+import net.bmahe.genetics4j.core.EASystem;
+import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAConfiguration.Builder;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.EdgeRecombinationCrossover;
@@ -54,8 +54,8 @@ public class TSVExample {
 		final int numCities = cities.size();
 
 		// @formatter:off
-		final Builder<Double> genotypeSpecBuilder = new GenotypeSpec.Builder<Double>();
-		genotypeSpecBuilder.chromosomeSpecs(IntChromosomeSpec.of(numCities, 0, numCities))
+		final Builder<Double> eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
+		eaConfigurationBuilder.chromosomeSpecs(IntChromosomeSpec.of(numCities, 0, numCities))
 				.parentSelectionPolicy(
 						MultiSelections.of(RouletteWheelSelection.build(), TournamentSelection.build(15)))
 				.survivorSelectionPolicy(
@@ -89,16 +89,15 @@ public class TSVExample {
 					return new Genotype(chromosome);
 				});
 		// @formatter:on
-		final GenotypeSpec<Double> genotypeSpec = genotypeSpecBuilder.build();
+		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
 
-		final GeneticSystemDescriptor<Double> geneticSystemDescriptor = GeneticSystemDescriptors
-				.<Double>forScalarFitness()
+		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)
 				.build();
 
-		final GeneticSystem<Double> geneticSystem = GeneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
+		final EASystem<Double> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
 
-		final EvolutionResult<Double> evolutionResult = geneticSystem.evolve();
+		final EvolutionResult<Double> evolutionResult = eaSystem.evolve();
 		System.out.println("Best genotype: " + evolutionResult.bestGenotype());
 	}
 }

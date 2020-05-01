@@ -7,8 +7,8 @@ import java.util.Random;
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
@@ -29,7 +29,7 @@ public class RandomSelectionPolicyHandler<T extends Comparable<T>> implements Se
 	}
 
 	@Override
-	public Selector<T> resolve(GeneticSystemDescriptor<T> geneticSystemDescriptor, GenotypeSpec<T> genotypeSpec,
+	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, EAConfiguration<T> eaConfiguration,
 			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(RandomSelectionPolicy.class, selectionPolicy);
@@ -37,9 +37,9 @@ public class RandomSelectionPolicyHandler<T extends Comparable<T>> implements Se
 		return new Selector<T>() {
 
 			@Override
-			public List<Genotype> select(GenotypeSpec<T> genotypeSpec, int numIndividuals, Genotype[] population,
+			public List<Genotype> select(EAConfiguration<T> eaConfiguration, int numIndividuals, Genotype[] population,
 					List<T> fitnessScore) {
-				Validate.notNull(genotypeSpec);
+				Validate.notNull(eaConfiguration);
 				Validate.notNull(population);
 				Validate.notNull(fitnessScore);
 				Validate.isTrue(numIndividuals > 0);

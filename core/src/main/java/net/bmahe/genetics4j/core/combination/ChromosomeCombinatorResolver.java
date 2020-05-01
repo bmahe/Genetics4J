@@ -4,20 +4,20 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 
 public class ChromosomeCombinatorResolver {
 
-	final GeneticSystemDescriptor geneticSystemDescriptor;
+	final EAExecutionContext eaExecutionContext;
 	private List<ChromosomeCombinatorHandler> chromosomeCombinatorHandlers;
 
-	public ChromosomeCombinatorResolver(final GeneticSystemDescriptor _geneticSystemDescriptor) {
-		Validate.notNull(_geneticSystemDescriptor);
+	public ChromosomeCombinatorResolver(final EAExecutionContext _eaExecutionContext) {
+		Validate.notNull(_eaExecutionContext);
 
-		this.geneticSystemDescriptor = _geneticSystemDescriptor;
-		this.chromosomeCombinatorHandlers = geneticSystemDescriptor.chromosomeCombinatorHandlers();
+		this.eaExecutionContext = _eaExecutionContext;
+		this.chromosomeCombinatorHandlers = eaExecutionContext.chromosomeCombinatorHandlers();
 	}
 
 	public boolean canHandle(final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {

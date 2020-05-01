@@ -21,18 +21,18 @@ import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
 import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
 import net.bmahe.genetics4j.core.spec.ImmutableEvolutionResult;
 import net.bmahe.genetics4j.core.termination.Termination;
 
-public class GeneticSystem<T extends Comparable<T>> {
-	final static public Logger logger = LogManager.getLogger(GeneticSystem.class);
+public class EASystem<T extends Comparable<T>> {
+	final static public Logger logger = LogManager.getLogger(EASystem.class);
 
 	private final ExecutorService executorService;
-	private final GenotypeSpec<T> genotypeSpec;
-	private final GeneticSystemDescriptor<T> geneticSystemDescriptor;
+	private final EAConfiguration<T> eaConfiguration;
+	private final EAExecutionContext<T> eaExecutionContext;
 	private final int populationSize;
 
 	private final List<ChromosomeCombinator> chromosomeCombinators;
@@ -45,36 +45,36 @@ public class GeneticSystem<T extends Comparable<T>> {
 	private Selector<T> parentSelector;
 	private Selector<T> survivorSelector;
 
-	public GeneticSystem(final GenotypeSpec<T> _genotypeSpec, final long _populationSize,
+	public EASystem(final EAConfiguration<T> _eaConfiguration, final long _populationSize,
 			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
 			final Selector<T> _parentSelectionPolicyHandler, final Selector<T> _survivorSelector,
-			final List<Mutator> _mutators, final GeneticSystemDescriptor<T> _geneticSystemDescriptor,
+			final List<Mutator> _mutators, final EAExecutionContext<T> _eaExecutionContext,
 			final ExecutorService _executorService) {
-		Validate.notNull(_genotypeSpec);
+		Validate.notNull(_eaConfiguration);
 		Validate.isTrue(_populationSize > 0);
 		Validate.notNull(_chromosomeCombinators);
-		Validate.isTrue(_chromosomeCombinators.size() == _genotypeSpec.numChromosomes());
+		Validate.isTrue(_chromosomeCombinators.size() == _eaConfiguration.numChromosomes());
 		Validate.inclusiveBetween(0.0, 1.0, _offspringRatio);
 		Validate.notNull(_parentSelectionPolicyHandler);
 		Validate.notNull(_survivorSelector);
-		Validate.notNull(_geneticSystemDescriptor);
+		Validate.notNull(_eaExecutionContext);
 		Validate.notNull(_executorService);
 
 		this.executorService = _executorService;
-		this.genotypeSpec = _genotypeSpec;
-		this.geneticSystemDescriptor = _geneticSystemDescriptor;
+		this.eaConfiguration = _eaConfiguration;
+		this.eaExecutionContext = _eaExecutionContext;
 		this.populationSize = (int) _populationSize;
 		this.chromosomeCombinators = _chromosomeCombinators;
 		this.offspringRatio = _offspringRatio;
 		this.mutators = _mutators;
-		this.chromosomeFactoryProvider = _geneticSystemDescriptor.chromosomeFactoryProvider();
+		this.chromosomeFactoryProvider = _eaExecutionContext.chromosomeFactoryProvider();
 
 		parentSelector = _parentSelectionPolicyHandler;
 		survivorSelector = _survivorSelector;
 	}
 
-	public GenotypeSpec<T> getGenotypeSpec() {
-		return genotypeSpec;
+	public EAConfiguration<T> geteaConfiguration() {
+		return eaConfiguration;
 	}
 
 	public long getPopulationSize() {
@@ -82,14 +82,14 @@ public class GeneticSystem<T extends Comparable<T>> {
 	}
 
 	public Fitness<T> getFitness() {
-		return genotypeSpec.fitness();
+		return eaConfiguration.fitness();
 	}
 
-	private Genotype[] generatePopulation(final GenotypeSpec<T> genotypeSpec, final int numPopulation) {
-		Validate.notNull(genotypeSpec);
+	private Genotype[] generatePopulation(final EAConfiguration<T> eaConfiguration, final int numPopulation) {
+		Validate.notNull(eaConfiguration);
 		Validate.isTrue(numPopulation > 0);
 
-		final Optional<Supplier<Genotype>> populationGenerator = genotypeSpec.populationGenerator();
+		final Optional<Supplier<Genotype>> populationGenerator = eaConfiguration.populationGenerator();
 
 		final Genotype[] population = new Genotype[numPopulation];
 
@@ -103,18 +103,18 @@ public class GeneticSystem<T extends Comparable<T>> {
 
 		} else {
 
-			final int numChromosomes = genotypeSpec.numChromosomes();
+			final int numChromosomes = eaConfiguration.numChromosomes();
 			final ChromosomeFactory<? extends Chromosome>[] chromosomeFactories = new ChromosomeFactory<?>[numChromosomes];
 			for (int i = 0; i < numChromosomes; i++) {
 				chromosomeFactories[i] = chromosomeFactoryProvider
-						.provideChromosomeFactory(genotypeSpec.getChromosomeSpec(i));
+						.provideChromosomeFactory(eaConfiguration.getChromosomeSpec(i));
 			}
 
 			for (int i = 0; i < numPopulation; i++) {
 
 				final Chromosome[] chromosomes = new Chromosome[numChromosomes];
 				for (int j = 0; j < numChromosomes; j++) {
-					chromosomes[j] = chromosomeFactories[j].generate(genotypeSpec.getChromosomeSpec(j));
+					chromosomes[j] = chromosomeFactories[j].generate(eaConfiguration.getChromosomeSpec(j));
 				}
 
 				population[i] = new Genotype(chromosomes);
@@ -124,12 +124,12 @@ public class GeneticSystem<T extends Comparable<T>> {
 	}
 
 	public EvolutionResult<T> evolve() {
-		final Termination<T> termination = genotypeSpec.termination();
+		final Termination<T> termination = eaConfiguration.termination();
 
-		final Fitness<T> fitness = genotypeSpec.fitness();
+		final Fitness<T> fitness = eaConfiguration.fitness();
 
 		long generation = 0;
-		Genotype[] population = generatePopulation(genotypeSpec, populationSize);
+		Genotype[] population = generatePopulation(eaConfiguration, populationSize);
 
 		final ArrayList<T> fitnessScore = new ArrayList<>(populationSize);
 		for (int i = 0; i < populationSize; i++) {
@@ -138,7 +138,7 @@ public class GeneticSystem<T extends Comparable<T>> {
 
 		while (termination.isDone(generation, population, fitnessScore) == false) {
 
-			for (final EvolutionListener<T> evolutionListener : geneticSystemDescriptor.evolutionListeners()) {
+			for (final EvolutionListener<T> evolutionListener : eaExecutionContext.evolutionListeners()) {
 				evolutionListener.onEvolution(generation, population, fitnessScore);
 			}
 
@@ -146,7 +146,7 @@ public class GeneticSystem<T extends Comparable<T>> {
 			final int parentsNeeded = (int) (childrenNeeded * 2);
 			logger.trace("Will select {} parents", parentsNeeded);
 			final List<Genotype> selectedParents = parentSelector
-					.select(genotypeSpec, parentsNeeded, population, fitnessScore);
+					.select(eaConfiguration, parentsNeeded, population, fitnessScore);
 			logger.trace("Selected parents: {}", selectedParents);
 
 			final List<Genotype> children = new ArrayList<>();
@@ -155,7 +155,7 @@ public class GeneticSystem<T extends Comparable<T>> {
 				final Genotype secondParent = selectedParents.remove(0);
 
 				final List<List<Chromosome>> chromosomes = new ArrayList<>();
-				for (int chromosomeIndex = 0; chromosomeIndex < genotypeSpec.numChromosomes(); chromosomeIndex++) {
+				for (int chromosomeIndex = 0; chromosomeIndex < eaConfiguration.numChromosomes(); chromosomeIndex++) {
 
 					final Chromosome firstChromosome = firstParent.getChromosome(chromosomeIndex);
 					final Chromosome secondChromosome = secondParent.getChromosome(chromosomeIndex);
@@ -170,8 +170,8 @@ public class GeneticSystem<T extends Comparable<T>> {
 							combinedChromosomes);
 				}
 
-				final GenotypeCombinator genotypeCombinator = genotypeSpec.genotypeCombinator();
-				final List<Genotype> offsprings = genotypeCombinator.combine(genotypeSpec, chromosomes);
+				final GenotypeCombinator genotypeCombinator = eaConfiguration.genotypeCombinator();
+				final List<Genotype> offsprings = genotypeCombinator.combine(eaConfiguration, chromosomes);
 
 				children.addAll(offsprings);
 
@@ -179,7 +179,7 @@ public class GeneticSystem<T extends Comparable<T>> {
 
 			final List<Genotype> selectedChildren = children.size() <= childrenNeeded
 					? children.stream().limit(childrenNeeded).collect(Collectors.toList())
-					: geneticSystemDescriptor.random()
+					: eaExecutionContext.random()
 							.ints(0, children.size())
 							.distinct()
 							.limit(childrenNeeded)
@@ -209,7 +209,7 @@ public class GeneticSystem<T extends Comparable<T>> {
 			}
 
 			final List<Genotype> survivors = survivorSelector
-					.select(genotypeSpec, populationSize - childrenNeeded, population, fitnessScore);
+					.select(eaConfiguration, populationSize - childrenNeeded, population, fitnessScore);
 			logger.debug("Number of survivors: {}", survivors.size());
 			for (final Genotype genotype : survivors) {
 				newPopulation[populationIndex] = genotype;
@@ -217,7 +217,7 @@ public class GeneticSystem<T extends Comparable<T>> {
 			}
 
 			if (populationIndex < populationSize) {
-				final Genotype[] additionalIndividuals = generatePopulation(genotypeSpec,
+				final Genotype[] additionalIndividuals = generatePopulation(eaConfiguration,
 						populationSize - populationIndex);
 				logger.debug("Number of generated individuals: {}", additionalIndividuals.length);
 
@@ -231,7 +231,7 @@ public class GeneticSystem<T extends Comparable<T>> {
 			population = newPopulation;
 			generation++;
 
-			final int numPartitions = geneticSystemDescriptor.numberOfPartitions();
+			final int numPartitions = eaExecutionContext.numberOfPartitions();
 			final int partitionSize = (int) Math.ceil(populationSize / numPartitions);
 			final List<CompletableFuture<TaskResult<T>>> tasks = new ArrayList<>();
 			for (int i = 0; i < populationSize;) {
@@ -270,11 +270,11 @@ public class GeneticSystem<T extends Comparable<T>> {
 
 		// isDone has returned true and we want to let the evolutionListeners run a last
 		// time
-		for (final EvolutionListener<T> evolutionListener : geneticSystemDescriptor.evolutionListeners()) {
+		for (final EvolutionListener<T> evolutionListener : eaExecutionContext.evolutionListeners()) {
 			evolutionListener.onEvolution(generation, population, fitnessScore);
 		}
 
-		return ImmutableEvolutionResult.of(genotypeSpec, generation, population, fitnessScore);
+		return ImmutableEvolutionResult.of(eaConfiguration, generation, population, fitnessScore);
 	}
 
 	private static class TaskResult<T> {

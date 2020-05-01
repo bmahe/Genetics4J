@@ -7,8 +7,8 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
 import net.bmahe.genetics4j.core.util.ChromosomeResolverUtils;
@@ -32,10 +32,10 @@ public class SwapMutationPolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public Mutator createMutator(GeneticSystemDescriptor geneticSystemDescriptor, GenotypeSpec genotypeSpec,
+	public Mutator createMutator(EAExecutionContext eaExecutionContext, EAConfiguration eaConfiguration,
 			MutationPolicyHandlerResolver mutationPolicyHandlerResolver, MutationPolicy mutationPolicy) {
-		Validate.notNull(geneticSystemDescriptor);
-		Validate.notNull(genotypeSpec);
+		Validate.notNull(eaExecutionContext);
+		Validate.notNull(eaConfiguration);
 		Validate.notNull(mutationPolicyHandlerResolver);
 		Validate.notNull(mutationPolicy);
 		Validate.isInstanceOf(SwapMutation.class, mutationPolicy);
@@ -45,7 +45,7 @@ public class SwapMutationPolicyHandler implements MutationPolicyHandler {
 
 		@SuppressWarnings("rawtypes")
 		final ChromosomeMutationHandler[] chromosomeMutationHandlers = ChromosomeResolverUtils
-				.resolveChromosomeMutationHandlers(geneticSystemDescriptor, genotypeSpec, mutationPolicy);
+				.resolveChromosomeMutationHandlers(eaExecutionContext, eaConfiguration, mutationPolicy);
 
 		return new Mutator() {
 
@@ -60,7 +60,8 @@ public class SwapMutationPolicyHandler implements MutationPolicyHandler {
 
 					for (int i = 0; i < chromosomes.length; i++) {
 						final Chromosome chromosome = chromosomes[i];
-						final Chromosome mutatedChromosome = chromosomeMutationHandlers[i].mutate(mutationPolicy, chromosome);
+						final Chromosome mutatedChromosome = chromosomeMutationHandlers[i].mutate(mutationPolicy,
+								chromosome);
 
 						newChromosomes[i] = mutatedChromosome;
 					}

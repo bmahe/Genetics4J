@@ -10,7 +10,7 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.mutation.Mutator;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.program.Program;
@@ -21,19 +21,19 @@ public class ProgramRandomMutateMutator implements Mutator {
 
 	private final ProgramGenerator programGenerator;
 	private final Random random;
-	private final GenotypeSpec genotypeSpec;
+	private final EAConfiguration eaConfiguration;
 	private final double populationMutationProbability;
 
 	public ProgramRandomMutateMutator(final ProgramGenerator _programGenerator, final Random _random,
-			final GenotypeSpec _genotypeSpec, final double _populationMutationProbability) {
+			final EAConfiguration _eaConfiguration, final double _populationMutationProbability) {
 		Validate.notNull(_programGenerator);
 		Validate.notNull(_random);
-		Validate.notNull(_genotypeSpec);
+		Validate.notNull(_eaConfiguration);
 		Validate.inclusiveBetween(0.0, 1.0, _populationMutationProbability);
 
 		this.programGenerator = _programGenerator;
 		this.random = _random;
-		this.genotypeSpec = _genotypeSpec;
+		this.eaConfiguration = _eaConfiguration;
 		this.populationMutationProbability = _populationMutationProbability;
 	}
 
@@ -83,7 +83,7 @@ public class ProgramRandomMutateMutator implements Mutator {
 		final Chromosome[] newChromosomes = new Chromosome[originalGenotype.getSize()];
 		final Chromosome[] chromosomes = originalGenotype.getChromosomes();
 		for (int chromosomeIndex = 0; chromosomeIndex < chromosomes.length; chromosomeIndex++) {
-			final ChromosomeSpec chromosomeSpec = genotypeSpec.getChromosomeSpec(chromosomeIndex);
+			final ChromosomeSpec chromosomeSpec = eaConfiguration.getChromosomeSpec(chromosomeIndex);
 			final Chromosome chromosome = chromosomes[chromosomeIndex];
 
 			if (chromosomeSpec instanceof ProgramTreeChromosomeSpec == false) {
@@ -92,8 +92,7 @@ public class ProgramRandomMutateMutator implements Mutator {
 
 			if (chromosome instanceof TreeChromosome<?> == false) {
 				throw new IllegalArgumentException(
-						"This mutator does not support chromosome of type " + chromosome.getClass()
-								.getSimpleName());
+						"This mutator does not support chromosome of type " + chromosome.getClass().getSimpleName());
 			}
 
 			final ProgramTreeChromosomeSpec programTreeChromosomeSpec = (ProgramTreeChromosomeSpec) chromosomeSpec;
@@ -110,9 +109,8 @@ public class ProgramRandomMutateMutator implements Mutator {
 				final TreeChromosome<Operation<?>> newTreeChromosome = new TreeChromosome<>(newRoot);
 				newChromosomes[chromosomeIndex] = newTreeChromosome;
 			} else {
-				final TreeNode<Operation<Object>> newRoot = programGenerator.generate(programTreeChromosomeSpec.program(),
-						programTreeChromosomeSpec.program()
-								.maxDepth());
+				final TreeNode<Operation<Object>> newRoot = programGenerator
+						.generate(programTreeChromosomeSpec.program(), programTreeChromosomeSpec.program().maxDepth());
 				final TreeChromosome<Operation<Object>> newTreeChromosome = new TreeChromosome<>(newRoot);
 
 				newChromosomes[chromosomeIndex] = newTreeChromosome;

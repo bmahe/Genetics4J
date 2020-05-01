@@ -18,9 +18,9 @@ import org.junit.Test;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
@@ -28,7 +28,7 @@ import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 import net.bmahe.genetics4j.core.termination.Terminations;
 
 public class RandomSelectionPolicyHandlerTest {
-	private final GenotypeSpec<Double> SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder<Double>()
+	private final EAConfiguration<Double> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<Double>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
 			.parentSelectionPolicy(RandomSelectionPolicy.build())
 			.survivorSelectionPolicy(RandomSelectionPolicy.build())
@@ -84,19 +84,19 @@ public class RandomSelectionPolicyHandlerTest {
 			fitnessScore.add((double) i);
 		}
 
-		final GeneticSystemDescriptor<Double> geneticSystemDescriptor = GeneticSystemDescriptors
-				.<Double>forScalarFitness()
+		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)
 				.build();
 		final SelectionPolicyHandlerResolver<Double> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
 		final RandomSelectionPolicyHandler<Double> selectionPolicyHandler = new RandomSelectionPolicyHandler<>(random);
-		final Selector<Double> selector = selectionPolicyHandler.resolve(geneticSystemDescriptor,
-				SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
+		final Selector<Double> selector = selectionPolicyHandler.resolve(eaExecutionContext,
+				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				selectionPolicyHandlerResolver,
 				RandomSelectionPolicy.build());
-		final List<Genotype> selected = selector.select(SIMPLE_MAXIMIZING_GENOTYPE_SPEC, 100, population, fitnessScore);
+		final List<Genotype> selected = selector
+				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 100, population, fitnessScore);
 
 		assertNotNull(selected);
 		assertEquals(100, selected.size());

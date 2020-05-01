@@ -11,7 +11,7 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.mutation.Mutator;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.program.Program;
@@ -22,15 +22,15 @@ import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 public class ProgramRulesApplicatorMutator implements Mutator {
 
 	private final List<Rule> rules;
-	private final GenotypeSpec genotypeSpec;
+	private final EAConfiguration eaConfiguration;
 
-	public ProgramRulesApplicatorMutator(final List<Rule> _rules, final GenotypeSpec _genotypeSpec) {
+	public ProgramRulesApplicatorMutator(final List<Rule> _rules, final EAConfiguration _eaConfiguration) {
 		Validate.notNull(_rules);
 		Validate.isTrue(_rules.isEmpty() == false);
-		Validate.notNull(_genotypeSpec);
+		Validate.notNull(_eaConfiguration);
 
 		this.rules = _rules;
-		this.genotypeSpec = _genotypeSpec;
+		this.eaConfiguration = _eaConfiguration;
 	}
 
 	protected TreeNode<Operation<?>> duplicateAndApplyRule(final Program program, final TreeNode<Operation<?>> root) {
@@ -77,7 +77,7 @@ public class ProgramRulesApplicatorMutator implements Mutator {
 		final Chromosome[] newChromosomes = new Chromosome[original.getSize()];
 		final Chromosome[] chromosomes = original.getChromosomes();
 		for (int chromosomeIndex = 0; chromosomeIndex < chromosomes.length; chromosomeIndex++) {
-			final ChromosomeSpec chromosomeSpec = genotypeSpec.getChromosomeSpec(chromosomeIndex);
+			final ChromosomeSpec chromosomeSpec = eaConfiguration.getChromosomeSpec(chromosomeIndex);
 			final Chromosome chromosome = chromosomes[chromosomeIndex];
 
 			if (chromosomeSpec instanceof ProgramTreeChromosomeSpec == false) {

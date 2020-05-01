@@ -15,7 +15,7 @@ import org.junit.Test;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
 import net.bmahe.genetics4j.gp.InputSpec;
 import net.bmahe.genetics4j.gp.Operation;
@@ -47,11 +47,11 @@ public class ProgramRandomMutateMutatorTest {
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
-		final GenotypeSpec mockGenotypeSpec = mock(GenotypeSpec.class);
+		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
 
 		// 0% chance of mutation
 		final ProgramRandomMutateMutator programRandomMutateMutator = new ProgramRandomMutateMutator(programGenerator,
-				random, mockGenotypeSpec, 0.0);
+				random, mockEaConfiguration, 0.0);
 
 		final Genotype genotype = new Genotype(new TreeChromosome<Operation<?>>(root));
 		final Genotype notMutatedGenotype = programRandomMutateMutator.mutate(genotype);
@@ -67,10 +67,18 @@ public class ProgramRandomMutateMutatorTest {
 		final InputSpec inputSpec = ImmutableInputSpec.of(List.of(Double.class, String.class));
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(inputSpec);
 		programBuilder.maxDepth(4);
@@ -87,13 +95,13 @@ public class ProgramRandomMutateMutatorTest {
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
-		final GenotypeSpec mockGenotypeSpec = mock(GenotypeSpec.class);
+		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
 
 		final ProgramRandomMutateMutator programRandomMutateMutator = new ProgramRandomMutateMutator(programGenerator,
-				random, mockGenotypeSpec, 1.0);
+				random, mockEaConfiguration, 1.0);
 
-		final TreeNode<Operation<?>> duplicateAndMutate = programRandomMutateMutator.duplicateAndMutate(program, root,
-				2, 0, 0);
+		final TreeNode<Operation<?>> duplicateAndMutate = programRandomMutateMutator
+				.duplicateAndMutate(program, root, 2, 0, 0);
 		assertNotNull(duplicateAndMutate);
 		assertEquals(2, duplicateAndMutate.getChildren().size());
 		assertEquals(PINode.getData(), duplicateAndMutate.getChild(0).getData());

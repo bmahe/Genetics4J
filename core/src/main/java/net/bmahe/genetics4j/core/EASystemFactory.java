@@ -16,52 +16,52 @@ import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
-public class GeneticSystemFactory {
+public class EASystemFactory {
 
-	private GeneticSystemFactory() {
+	private EASystemFactory() {
 	}
 
-	public static <T extends Comparable<T>> GeneticSystem<T> from(final GenotypeSpec<T> genotypeSpec,
-			final GeneticSystemDescriptor<T> geneticSystemDescriptor) {
+	public static <T extends Comparable<T>> EASystem<T> from(final EAConfiguration<T> eaConfiguration,
+			final EAExecutionContext<T> eaExecutionContext) {
 		final ExecutorService executorService = ForkJoinPool.commonPool();
-		return from(genotypeSpec, geneticSystemDescriptor, executorService);
+		return from(eaConfiguration, eaExecutionContext, executorService);
 	}
 
-	public static <T extends Comparable<T>> GeneticSystem<T> from(final GenotypeSpec<T> genotypeSpec,
-			final GeneticSystemDescriptor<T> geneticSystemDescriptor, final ExecutorService executorService) {
-		Validate.notNull(genotypeSpec);
-		Validate.notNull(geneticSystemDescriptor);
+	public static <T extends Comparable<T>> EASystem<T> from(final EAConfiguration<T> eaConfiguration,
+			final EAExecutionContext<T> eaExecutionContext, final ExecutorService executorService) {
+		Validate.notNull(eaConfiguration);
+		Validate.notNull(eaExecutionContext);
 		Validate.notNull(executorService);
 
 		final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
 		final SelectionPolicyHandler<T> parentSelectionPolicyHandler = selectionPolicyHandlerResolver
-				.resolve(genotypeSpec.parentSelectionPolicy());
-		final Selector<T> parentSelector = parentSelectionPolicyHandler.resolve(geneticSystemDescriptor,
-				genotypeSpec,
+				.resolve(eaConfiguration.parentSelectionPolicy());
+		final Selector<T> parentSelector = parentSelectionPolicyHandler.resolve(eaExecutionContext,
+				eaConfiguration,
 				selectionPolicyHandlerResolver,
-				genotypeSpec.parentSelectionPolicy());
+				eaConfiguration.parentSelectionPolicy());
 
 		final SelectionPolicyHandler<T> survivorSelectionPolicyHandler = selectionPolicyHandlerResolver
-				.resolve(genotypeSpec.survivorSelectionPolicy());
-		final Selector<T> survivorSelector = survivorSelectionPolicyHandler.resolve(geneticSystemDescriptor,
-				genotypeSpec,
+				.resolve(eaConfiguration.survivorSelectionPolicy());
+		final Selector<T> survivorSelector = survivorSelectionPolicyHandler.resolve(eaExecutionContext,
+				eaConfiguration,
 				selectionPolicyHandlerResolver,
-				genotypeSpec.survivorSelectionPolicy());
+				eaConfiguration.survivorSelectionPolicy());
 
 		final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver = new MutationPolicyHandlerResolver<>(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
 		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
-				geneticSystemDescriptor);
-		final CombinationPolicy combinationPolicy = genotypeSpec.combinationPolicy();
-		final List<ChromosomeCombinator> chromosomeCombinators = genotypeSpec.chromosomeSpecs()
+				eaExecutionContext);
+		final CombinationPolicy combinationPolicy = eaConfiguration.combinationPolicy();
+		final List<ChromosomeCombinator> chromosomeCombinators = eaConfiguration.chromosomeSpecs()
 				.stream()
 				.map((chromosome) -> {
 					return chromosomeCombinatorResolver.resolve(combinationPolicy, chromosome);
@@ -69,22 +69,20 @@ public class GeneticSystemFactory {
 				.collect(Collectors.toList());
 
 		final List<Mutator> mutators = new ArrayList<Mutator>();
-		for (int i = 0; i < genotypeSpec.mutationPolicies().size(); i++) {
-			final MutationPolicy mutationPolicy = genotypeSpec.mutationPolicies().get(i);
+		for (int i = 0; i < eaConfiguration.mutationPolicies().size(); i++) {
+			final MutationPolicy mutationPolicy = eaConfiguration.mutationPolicies().get(i);
 
 			final MutationPolicyHandler mutationPolicyHandler = mutationPolicyHandlerResolver.resolve(mutationPolicy);
-			final Mutator mutator = mutationPolicyHandler.createMutator(geneticSystemDescriptor,
-					genotypeSpec,
-					mutationPolicyHandlerResolver,
-					mutationPolicy);
+			final Mutator mutator = mutationPolicyHandler
+					.createMutator(eaExecutionContext, eaConfiguration, mutationPolicyHandlerResolver, mutationPolicy);
 
 			mutators.add(mutator);
 
 		}
 
-		final long populationSize = geneticSystemDescriptor.populationSize();
+		final long populationSize = eaExecutionContext.populationSize();
 
-		return new GeneticSystem<>(genotypeSpec, populationSize, chromosomeCombinators, genotypeSpec.offspringRatio(),
-				parentSelector, survivorSelector, mutators, geneticSystemDescriptor, executorService);
+		return new EASystem<>(eaConfiguration, populationSize, chromosomeCombinators, eaConfiguration.offspringRatio(),
+				parentSelector, survivorSelector, mutators, eaExecutionContext, executorService);
 	}
 }

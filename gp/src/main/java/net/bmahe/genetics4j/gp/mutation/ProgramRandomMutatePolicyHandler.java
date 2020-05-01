@@ -9,8 +9,8 @@ import org.apache.logging.log4j.Logger;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.gp.program.ProgramGenerator;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
@@ -39,10 +39,10 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public Mutator createMutator(final GeneticSystemDescriptor geneticSystemDescriptor, final GenotypeSpec genotypeSpec,
+	public Mutator createMutator(final EAExecutionContext eaExecutionContext, final EAConfiguration eaConfiguration,
 			final MutationPolicyHandlerResolver mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
-		Validate.notNull(geneticSystemDescriptor);
-		Validate.notNull(genotypeSpec);
+		Validate.notNull(eaExecutionContext);
+		Validate.notNull(eaConfiguration);
 		Validate.notNull(mutationPolicyHandlerResolver);
 		Validate.notNull(mutationPolicy);
 		Validate.isInstanceOf(ProgramRandomMutate.class, mutationPolicy);
@@ -50,6 +50,6 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 		final ProgramRandomMutate programRandomMutate = (ProgramRandomMutate) mutationPolicy;
 		final double populationMutationProbability = programRandomMutate.populationMutationProbability();
 
-		return new ProgramRandomMutateMutator(programGenerator, random, genotypeSpec, populationMutationProbability);
+		return new ProgramRandomMutateMutator(programGenerator, random, eaConfiguration, populationMutationProbability);
 	}
 }

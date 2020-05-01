@@ -4,19 +4,19 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
 public class MutationPolicyHandlerResolver<T extends Comparable<T>> {
 
-	private final GeneticSystemDescriptor<T> geneticSystemDescriptor;
+	private final EAExecutionContext<T> eaExecutionContext;
 	private final List<MutationPolicyHandler> mutationPolicyHandlers;
 
-	public MutationPolicyHandlerResolver(final GeneticSystemDescriptor<T> _geneticSystemDescriptor) {
-		Validate.notNull(_geneticSystemDescriptor);
+	public MutationPolicyHandlerResolver(final EAExecutionContext<T> _eaExecutionContext) {
+		Validate.notNull(_eaExecutionContext);
 
-		this.geneticSystemDescriptor = _geneticSystemDescriptor;
-		mutationPolicyHandlers = geneticSystemDescriptor.mutationPolicyHandlers();
+		this.eaExecutionContext = _eaExecutionContext;
+		mutationPolicyHandlers = eaExecutionContext.mutationPolicyHandlers();
 	}
 
 	public boolean canHandle(final MutationPolicy mutationPolicy) {

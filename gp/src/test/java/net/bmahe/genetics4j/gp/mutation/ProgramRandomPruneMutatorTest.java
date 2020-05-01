@@ -15,7 +15,7 @@ import org.junit.Test;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
 import net.bmahe.genetics4j.gp.InputSpec;
 import net.bmahe.genetics4j.gp.Operation;
@@ -45,11 +45,11 @@ public class ProgramRandomPruneMutatorTest {
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
-		final GenotypeSpec mockGenotypeSpec = mock(GenotypeSpec.class);
+		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
 
 		// 0% chance of mutation
 		final ProgramRandomPruneMutator programRandomPruneMutator = new ProgramRandomPruneMutator(programHelper, random,
-				mockGenotypeSpec, 0.0);
+				mockEaConfiguration, 0.0);
 
 		final Genotype genotype = new Genotype(new TreeChromosome<Operation<?>>(root));
 		final Genotype notMutatedGenotype = programRandomPruneMutator.mutate(genotype);
@@ -92,10 +92,10 @@ public class ProgramRandomPruneMutatorTest {
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
-		final GenotypeSpec mockGenotypeSpec = mock(GenotypeSpec.class);
+		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
 
 		final ProgramRandomPruneMutator programRandomPruneMutator = new ProgramRandomPruneMutator(programHelper, random,
-				mockGenotypeSpec, 1.0);
+				mockEaConfiguration, 1.0);
 
 		final TreeNode<Operation<?>> duplicateAndCut = programRandomPruneMutator.duplicateAndCut(program, root, 2, 0);
 		assertNotNull(duplicateAndCut);

@@ -3,15 +3,15 @@ package net.bmahe.genetics4j.core.spec;
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.selection.RouletteWheelSelectionPolicyHandler;
-import net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder;
+import net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder;
 
-public class GeneticSystemDescriptors {
+public class EAExecutionContexts {
 
-	private GeneticSystemDescriptors() {
+	private EAExecutionContexts() {
 	}
 
 	public static <T extends Comparable<T>> Builder<T> standard() {
-		return ImmutableGeneticSystemDescriptor.<T>builder();
+		return ImmutableEAExecutionContext.<T>builder();
 	}
 
 	public static <T extends Number & Comparable<T>> Builder<T> enrichForScalarFitness(final Builder<T> builder) {
@@ -23,7 +23,7 @@ public class GeneticSystemDescriptors {
 
 	public static <T extends Number & Comparable<T>> Builder<T> forScalarFitness() {
 
-		final Builder<T> builder = ImmutableGeneticSystemDescriptor.<T>builder();
+		final Builder<T> builder = ImmutableEAExecutionContext.<T>builder();
 		return enrichForScalarFitness(builder);
 	}
 

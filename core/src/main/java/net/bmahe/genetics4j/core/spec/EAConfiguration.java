@@ -18,8 +18,13 @@ import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.core.termination.Termination;
 
+/**
+ * Evolutionary Algorithm Configuration.
+ *
+ * @param <T> Type of the fitness measurement
+ */
 @Value.Immutable
-public abstract class GenotypeSpec<T extends Comparable<T>> {
+public abstract class EAConfiguration<T extends Comparable<T>> {
 	public static final double DEFAULT_OFFSPRING_RATIO = 0.7;
 	public static final Optimization DEFAULT_OPTIMIZATION = Optimization.MAXIMZE;
 
@@ -71,13 +76,13 @@ public abstract class GenotypeSpec<T extends Comparable<T>> {
 		return chromosomeSpecs().size();
 	}
 
-	public static class Builder<T extends Comparable<T>> extends ImmutableGenotypeSpec.Builder<T> {
+	public static class Builder<T extends Comparable<T>> extends ImmutableEAConfiguration.Builder<T> {
 
-		public final GenotypeSpec.Builder<T> chromosomeSpecs(final ChromosomeSpec... elements) {
+		public final EAConfiguration.Builder<T> chromosomeSpecs(final ChromosomeSpec... elements) {
 			return this.chromosomeSpecs(Arrays.asList(elements));
 		}
 
-		public final GenotypeSpec.Builder<T> mutationPolicies(final MutationPolicy... elements) {
+		public final EAConfiguration.Builder<T> mutationPolicies(final MutationPolicy... elements) {
 			return this.mutationPolicies(Arrays.asList(elements));
 		}
 	}

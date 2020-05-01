@@ -7,8 +7,8 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.moo.nsga2.spec.TournamentNSGA2Selection;
 
@@ -29,11 +29,11 @@ public class TournamentNSGA2SelectionPolicyHandler<T extends Comparable<T>> impl
 	}
 
 	@Override
-	public Selector<T> resolve(final GeneticSystemDescriptor<T> geneticSystemDescriptor,
-			final GenotypeSpec<T> genotypeSpec, final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
+	public Selector<T> resolve(final EAExecutionContext<T> EASystemDescriptor, final EAConfiguration<T> eaConfiguration,
+			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
 			final SelectionPolicy selectionPolicy) {
-		Validate.notNull(geneticSystemDescriptor);
-		Validate.notNull(genotypeSpec);
+		Validate.notNull(EASystemDescriptor);
+		Validate.notNull(eaConfiguration);
 		Validate.notNull(selectionPolicyHandlerResolver);
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(TournamentNSGA2Selection.class, selectionPolicy);

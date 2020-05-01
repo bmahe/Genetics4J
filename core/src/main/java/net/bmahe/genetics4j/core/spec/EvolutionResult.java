@@ -14,7 +14,7 @@ import net.bmahe.genetics4j.core.Genotype;
 public abstract class EvolutionResult<T extends Comparable<T>> {
 
 	@Value.Parameter
-	public abstract GenotypeSpec<T> genotypeSpec();
+	public abstract EAConfiguration<T> eaConfiguration();
 
 	@Value.Parameter
 	public abstract long generation();
@@ -36,15 +36,15 @@ public abstract class EvolutionResult<T extends Comparable<T>> {
 		Validate.isTrue(population.length == fitness.size());
 		Validate.isTrue(population.length > 0);
 
-		switch (genotypeSpec().optimization()) {
+		switch (eaConfiguration().optimization()) {
 			case MAXIMZE:
 			case MINIMIZE:
 				break;
 			default:
-				throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec().optimization());
+				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration().optimization());
 		}
 
-		final Comparator<T> comparator = Optimization.MAXIMZE.equals(genotypeSpec().optimization())
+		final Comparator<T> comparator = Optimization.MAXIMZE.equals(eaConfiguration().optimization())
 				? Comparator.naturalOrder()
 				: Comparator.reverseOrder();
 

@@ -8,8 +8,8 @@ import java.util.Random;
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
@@ -30,7 +30,7 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 	}
 
 	@Override
-	public Selector<T> resolve(GeneticSystemDescriptor<T> geneticSystemDescriptor, GenotypeSpec<T> genotypeSpec,
+	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, EAConfiguration<T> eaConfiguration,
 			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(TournamentSelection.class, selectionPolicy);
@@ -38,25 +38,26 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 		return new Selector<T>() {
 
 			@Override
-			public List<Genotype> select(GenotypeSpec<T> genotypeSpec, int numIndividuals, Genotype[] population,
+			public List<Genotype> select(EAConfiguration<T> eaConfiguration, int numIndividuals, Genotype[] population,
 					List<T> fitnessScore) {
-				Validate.notNull(genotypeSpec);
+				Validate.notNull(eaConfiguration);
 				Validate.notNull(population);
 				Validate.notNull(fitnessScore);
 				Validate.isTrue(numIndividuals > 0);
 				Validate.isTrue(population.length == fitnessScore.size());
 
-				switch (genotypeSpec.optimization()) {
-				case MAXIMZE:
-				case MINIMIZE:
-					break;
-				default:
-					throw new IllegalArgumentException("Unsupported optimization " + genotypeSpec.optimization());
+				switch (eaConfiguration.optimization()) {
+					case MAXIMZE:
+					case MINIMIZE:
+						break;
+					default:
+						throw new IllegalArgumentException(
+								"Unsupported optimization " + eaConfiguration.optimization());
 				}
 
 				final List<Genotype> selected = new ArrayList<>(numIndividuals);
 
-				final Comparator<T> comparator = Optimization.MAXIMZE.equals(genotypeSpec.optimization())
+				final Comparator<T> comparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
 						? Comparator.naturalOrder()
 						: Comparator.reverseOrder();
 

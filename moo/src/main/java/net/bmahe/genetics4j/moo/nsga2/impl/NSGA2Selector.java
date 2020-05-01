@@ -12,7 +12,7 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.moo.nsga2.spec.NSGA2Selection;
 import net.bmahe.genetics4j.moo.nsga2.spec.ObjectiveDistance;
 
@@ -27,9 +27,9 @@ public class NSGA2Selector<T extends Comparable<T>> implements Selector<T> {
 	}
 
 	@Override
-	public List<Genotype> select(final GenotypeSpec<T> genotypeSpec, final int numIndividuals,
+	public List<Genotype> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
 			final Genotype[] population, final List<T> fitnessScore) {
-		Validate.notNull(genotypeSpec);
+		Validate.notNull(eaConfiguration);
 		Validate.notNull(population);
 		Validate.notNull(fitnessScore);
 		Validate.isTrue(numIndividuals > 0);

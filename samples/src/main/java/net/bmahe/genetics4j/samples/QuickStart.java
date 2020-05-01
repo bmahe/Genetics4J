@@ -3,15 +3,15 @@ package net.bmahe.genetics4j.samples;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.bmahe.genetics4j.core.GeneticSystem;
-import net.bmahe.genetics4j.core.GeneticSystemFactory;
+import net.bmahe.genetics4j.core.EASystem;
+import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAConfiguration.Builder;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
 import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
@@ -32,8 +32,8 @@ public class QuickStart {
 		// end::quickstart_variables[]
 
 		// tag::quickstart_genotype_spec[]
-		final Builder<Integer> genotypeSpecBuilder = new GenotypeSpec.Builder<>();
-		genotypeSpecBuilder.chromosomeSpecs(IntChromosomeSpec.of(numEntries, minValue, maxValue))
+		final Builder<Integer> eaConfigurationBuilder = new EAConfiguration.Builder<>();
+		eaConfigurationBuilder.chromosomeSpecs(IntChromosomeSpec.of(numEntries, minValue, maxValue))
 				.parentSelectionPolicy(TournamentSelection.build(5))
 				.survivorSelectionPolicy(RouletteWheelSelection.build())
 				.offspringRatio(0.9d)
@@ -52,23 +52,22 @@ public class QuickStart {
 				})
 				.termination(
 						Terminations.or(Terminations.ofFitnessAtLeast(numEntries), Terminations.ofMaxGeneration(50)));
-		final GenotypeSpec<Integer> genotypeSpec = genotypeSpecBuilder.build();
+		final EAConfiguration<Integer> eaConfiguration = eaConfigurationBuilder.build();
 		// end::quickstart_genotype_spec[]
 
 		// tag::quickstart_genetic_system_descriptor[]
-		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = GeneticSystemDescriptors
-				.<Integer>forScalarFitness()
+		final EAExecutionContext<Integer> eaExecutionContext = EAExecutionContexts.<Integer>forScalarFitness()
 				.populationSize(100)
 				.addEvolutionListeners(EvolutionListeners.ofLogTopN(logger, 3))
 				.build();
 		// end::quickstart_genetic_system_descriptor[]
 
 		// tag::quickstart_genetic_system[]
-		final GeneticSystem<Integer> geneticSystem = GeneticSystemFactory.from(genotypeSpec, geneticSystemDescriptor);
+		final EASystem<Integer> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
 		// end::quickstart_genetic_system[]
 
 		// tag::quickstart_evolve[]
-		final EvolutionResult<Integer> evolutionResult = geneticSystem.evolve();
+		final EvolutionResult<Integer> evolutionResult = eaSystem.evolve();
 		logger.info("Best genotype: " + evolutionResult.bestGenotype());
 		logger.info("  with fitness: {}", evolutionResult.bestFitness());
 		logger.info("  at generation: {}", evolutionResult.generation());

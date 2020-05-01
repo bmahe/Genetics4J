@@ -4,19 +4,19 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
 public class SelectionPolicyHandlerResolver<T extends Comparable<T>> {
-	private final GeneticSystemDescriptor<T> geneticSystemDescriptor;
+	private final EAExecutionContext<T> eaExecutionContext;
 
 	private final List<SelectionPolicyHandler<T>> selectionPolicyHandlers;
 
-	public SelectionPolicyHandlerResolver(final GeneticSystemDescriptor<T> _geneticSystemDescriptor) {
-		Validate.notNull(_geneticSystemDescriptor);
+	public SelectionPolicyHandlerResolver(final EAExecutionContext<T> _eaExecutionContext) {
+		Validate.notNull(_eaExecutionContext);
 
-		this.geneticSystemDescriptor = _geneticSystemDescriptor;
-		this.selectionPolicyHandlers = geneticSystemDescriptor.selectionPolicyHandlers();
+		this.eaExecutionContext = _eaExecutionContext;
+		this.selectionPolicyHandlers = eaExecutionContext.selectionPolicyHandlers();
 	}
 
 	public SelectionPolicyHandler<T> resolve(final SelectionPolicy selectionPolicy) {

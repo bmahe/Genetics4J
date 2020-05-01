@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.util.MultiIntCounter;
 
 /**
@@ -20,11 +20,10 @@ import net.bmahe.genetics4j.core.util.MultiIntCounter;
 public class AllCasesGenotypeCombinator implements GenotypeCombinator {
 
 	@Override
-	public List<Genotype> combine(final GenotypeSpec genotypeSpec, final List<List<Chromosome>> chromosomes) {
-		Validate.notNull(genotypeSpec);
+	public List<Genotype> combine(final EAConfiguration eaConfiguration, final List<List<Chromosome>> chromosomes) {
+		Validate.notNull(eaConfiguration);
 		Validate.notNull(chromosomes);
-		Validate.isTrue(genotypeSpec.chromosomeSpecs()
-				.size() == chromosomes.size());
+		Validate.isTrue(eaConfiguration.chromosomeSpecs().size() == chromosomes.size());
 
 		boolean hasChild = true;
 		for (int i = 0; i < chromosomes.size() && hasChild; i++) {
@@ -38,9 +37,7 @@ public class AllCasesGenotypeCombinator implements GenotypeCombinator {
 			return Collections.emptyList();
 		}
 
-		final int[] maxIndices = chromosomes.stream()
-				.mapToInt(List::size)
-				.toArray();
+		final int[] maxIndices = chromosomes.stream().mapToInt(List::size).toArray();
 
 		final MultiIntCounter multiIntCounter = new MultiIntCounter(maxIndices);
 
@@ -52,8 +49,7 @@ public class AllCasesGenotypeCombinator implements GenotypeCombinator {
 
 			for (int i = 0; i < chromosomes.size(); i++) {
 				final int index = multiIntCounter.getIndex(i);
-				currentGenotype.add(chromosomes.get(i)
-						.get(index));
+				currentGenotype.add(chromosomes.get(i).get(index));
 			}
 			combined.add(new Genotype(currentGenotype));
 

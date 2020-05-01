@@ -10,9 +10,9 @@ import org.junit.Test;
 
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptor;
-import net.bmahe.genetics4j.core.spec.GeneticSystemDescriptors;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
@@ -23,7 +23,7 @@ import net.bmahe.genetics4j.moo.nsga2.spec.NSGA2Selection;
 
 public class NSGA2SelectionPolicyHandlerTest {
 
-	private final GenotypeSpec<Integer> SIMPLE_MAXIMIZING_GENOTYPE_SPEC = new GenotypeSpec.Builder<Integer>()
+	private final EAConfiguration<Integer> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<Integer>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
 			.parentSelectionPolicy(RandomSelectionPolicy.build())
 			.survivorSelectionPolicy(RandomSelectionPolicy.build())
@@ -64,16 +64,16 @@ public class NSGA2SelectionPolicyHandlerTest {
 		builder.objectiveComparator((m) -> Comparator.naturalOrder());
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<Integer> eaExecutionContextBuilder = EAExecutionContexts
 				.standard();
-		geneticSystemDescriptorBuilder.populationSize(100);
+		eaExecutionContextBuilder.populationSize(100);
 
-		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
 		final Selector<Integer> selector = selectionPolicyHandler
-				.resolve(null, SIMPLE_MAXIMIZING_GENOTYPE_SPEC, selectionPolicyHandlerResolver, nsga2Selection);
+				.resolve(null, SIMPLE_MAXIMIZING_EA_CONFIGURATION, selectionPolicyHandlerResolver, nsga2Selection);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -87,15 +87,15 @@ public class NSGA2SelectionPolicyHandlerTest {
 		builder.objectiveComparator((m) -> Comparator.naturalOrder());
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<Integer> eaExecutionContextBuilder = EAExecutionContexts
 				.standard();
-		geneticSystemDescriptorBuilder.populationSize(100);
-		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		eaExecutionContextBuilder.populationSize(100);
+		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
 		final Selector<Integer> selector = selectionPolicyHandler
-				.resolve(geneticSystemDescriptor, null, selectionPolicyHandlerResolver, nsga2Selection);
+				.resolve(eaExecutionContext, null, selectionPolicyHandlerResolver, nsga2Selection);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -109,16 +109,16 @@ public class NSGA2SelectionPolicyHandlerTest {
 		builder.objectiveComparator((m) -> Comparator.naturalOrder());
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<Integer> eaExecutionContextBuilder = EAExecutionContexts
 				.standard();
-		geneticSystemDescriptorBuilder.populationSize(100);
-		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		eaExecutionContextBuilder.populationSize(100);
+		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
 		final Selector<Integer> selector = selectionPolicyHandler
-				.resolve(geneticSystemDescriptor, SIMPLE_MAXIMIZING_GENOTYPE_SPEC, null, nsga2Selection);
+				.resolve(eaExecutionContext, SIMPLE_MAXIMIZING_EA_CONFIGURATION, null, nsga2Selection);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -132,29 +132,29 @@ public class NSGA2SelectionPolicyHandlerTest {
 		builder.objectiveComparator((m) -> Comparator.naturalOrder());
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<Integer> eaExecutionContextBuilder = EAExecutionContexts
 				.standard();
-		geneticSystemDescriptorBuilder.populationSize(100);
-		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		eaExecutionContextBuilder.populationSize(100);
+		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 
 		final Selector<Integer> selector = selectionPolicyHandler
-				.resolve(geneticSystemDescriptor, SIMPLE_MAXIMIZING_GENOTYPE_SPEC, null, nsga2Selection);
+				.resolve(eaExecutionContext, SIMPLE_MAXIMIZING_EA_CONFIGURATION, null, nsga2Selection);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void resolveWrongSelectionSpec() {
 		final NSGA2SelectionPolicyHandler<Integer> selectionPolicyHandler = new NSGA2SelectionPolicyHandler<>();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<Integer> eaExecutionContextBuilder = EAExecutionContexts
 				.standard();
-		geneticSystemDescriptorBuilder.populationSize(100);
-		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		eaExecutionContextBuilder.populationSize(100);
+		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
-		final Selector<Integer> selector = selectionPolicyHandler.resolve(geneticSystemDescriptor,
-				SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
+		final Selector<Integer> selector = selectionPolicyHandler.resolve(eaExecutionContext,
+				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				selectionPolicyHandlerResolver,
 				RandomSelectionPolicy.build());
 	}
@@ -170,16 +170,16 @@ public class NSGA2SelectionPolicyHandlerTest {
 		builder.objectiveComparator((m) -> Comparator.naturalOrder());
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableGeneticSystemDescriptor.Builder<Integer> geneticSystemDescriptorBuilder = GeneticSystemDescriptors
+		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<Integer> eaExecutionContextBuilder = EAExecutionContexts
 				.standard();
-		geneticSystemDescriptorBuilder.populationSize(100);
-		final GeneticSystemDescriptor<Integer> geneticSystemDescriptor = geneticSystemDescriptorBuilder.build();
+		eaExecutionContextBuilder.populationSize(100);
+		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
-				geneticSystemDescriptor);
+				eaExecutionContext);
 
-		final Selector<Integer> selector = selectionPolicyHandler.resolve(geneticSystemDescriptor,
-				SIMPLE_MAXIMIZING_GENOTYPE_SPEC,
+		final Selector<Integer> selector = selectionPolicyHandler.resolve(eaExecutionContext,
+				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				selectionPolicyHandlerResolver,
 				nsga2Selection);
 

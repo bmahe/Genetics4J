@@ -16,7 +16,7 @@ import org.junit.Test;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
-import net.bmahe.genetics4j.core.spec.GenotypeSpec;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 import net.bmahe.genetics4j.core.termination.Terminations;
@@ -42,15 +42,15 @@ public class ProgramRulesApplicatorMutatorTest {
 
 	@Test(expected = NullPointerException.class)
 	public void ctorNoRules() {
-		final GenotypeSpec genotypeSpec = mock(GenotypeSpec.class);
-		new ProgramRulesApplicatorMutator(null, genotypeSpec);
+		final EAConfiguration eaConfiguration = mock(EAConfiguration.class);
+		new ProgramRulesApplicatorMutator(null, eaConfiguration);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ctorEmptyRules() {
-		final GenotypeSpec genotypeSpec = mock(GenotypeSpec.class);
+		final EAConfiguration eaConfiguration = mock(EAConfiguration.class);
 		final List<Rule> rules = Collections.emptyList();
-		new ProgramRulesApplicatorMutator(rules, genotypeSpec);
+		new ProgramRulesApplicatorMutator(rules, eaConfiguration);
 	}
 
 	@Test
@@ -61,10 +61,18 @@ public class ProgramRulesApplicatorMutatorTest {
 		final InputSpec inputSpec = ImmutableInputSpec.of(List.of(Double.class, String.class));
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(inputSpec);
 		programBuilder.maxDepth(4);
@@ -81,12 +89,12 @@ public class ProgramRulesApplicatorMutatorTest {
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
-		final GenotypeSpec mockGenotypeSpec = mock(GenotypeSpec.class);
+		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
 
 		final List<Rule> rules = List
 				.of(ImmutableRule.of((node) -> false, (p, n) -> new TreeNode<>(Terminals.E.build(inputSpec))));
 		final ProgramRulesApplicatorMutator programRulesApplicatorMutator = new ProgramRulesApplicatorMutator(rules,
-				mockGenotypeSpec);
+				mockEaConfiguration);
 
 		final TreeNode<Operation<?>> outputRule = programRulesApplicatorMutator.duplicateAndApplyRule(program, root);
 		assertNotNull(outputRule);
@@ -102,10 +110,18 @@ public class ProgramRulesApplicatorMutatorTest {
 		final InputSpec inputSpec = ImmutableInputSpec.of(List.of(Double.class, String.class));
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(inputSpec);
 		programBuilder.maxDepth(4);
@@ -122,13 +138,13 @@ public class ProgramRulesApplicatorMutatorTest {
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
-		final GenotypeSpec mockGenotypeSpec = mock(GenotypeSpec.class);
+		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
 		final TreeNode<Operation<?>> replacement = new TreeNode<>(Terminals.E.build(inputSpec));
 
 		final List<Rule> rules = List.of(ImmutableRule
 				.of((node) -> Functions.NAME_STR_TO_DOUBLE.equals(node.getData().getName()), (p, n) -> replacement));
 		final ProgramRulesApplicatorMutator programRulesApplicatorMutator = new ProgramRulesApplicatorMutator(rules,
-				mockGenotypeSpec);
+				mockEaConfiguration);
 
 		final TreeNode<Operation<?>> outputRule = programRulesApplicatorMutator.duplicateAndApplyRule(program, root);
 		assertNotNull(outputRule);
@@ -147,10 +163,18 @@ public class ProgramRulesApplicatorMutatorTest {
 		final InputSpec inputSpec = ImmutableInputSpec.of(List.of(Double.class, String.class));
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(inputSpec);
 		programBuilder.maxDepth(4);
@@ -170,8 +194,8 @@ public class ProgramRulesApplicatorMutatorTest {
 		final List<Rule> rules = List
 				.of(ImmutableRule.of((node) -> false, (p, n) -> new TreeNode<>(Terminals.E.build(inputSpec))));
 
-		final net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder genotypeSpecBuilder = new GenotypeSpec.Builder();
-		genotypeSpecBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
+		final net.bmahe.genetics4j.core.spec.EAConfiguration.Builder eaConfigurationBuilder = new EAConfiguration.Builder();
+		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(TournamentSelection.build(3))
 				.survivorSelectionPolicy(TournamentSelection.build(3))
 				.offspringRatio(0.90d)
@@ -182,10 +206,10 @@ public class ProgramRulesApplicatorMutatorTest {
 				.fitness((genoType) -> {
 					return 0.0d;
 				});
-		final GenotypeSpec genotypeSpec = genotypeSpecBuilder.build();
+		final EAConfiguration eaConfiguration = eaConfigurationBuilder.build();
 
 		final ProgramRulesApplicatorMutator programRulesApplicatorMutator = new ProgramRulesApplicatorMutator(rules,
-				genotypeSpec);
+				eaConfiguration);
 
 		final Genotype genotype = new Genotype(new TreeChromosome<Operation<?>>(root));
 		final Genotype mutated = programRulesApplicatorMutator.mutate(genotype);
@@ -206,10 +230,18 @@ public class ProgramRulesApplicatorMutatorTest {
 		final InputSpec inputSpec = ImmutableInputSpec.of(List.of(Double.class, String.class));
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(inputSpec);
 		programBuilder.maxDepth(4);
@@ -230,8 +262,8 @@ public class ProgramRulesApplicatorMutatorTest {
 
 		final List<Rule> rules = List.of(ImmutableRule
 				.of((node) -> Functions.NAME_STR_TO_DOUBLE.equals(node.getData().getName()), (p, n) -> replacement));
-		final net.bmahe.genetics4j.core.spec.GenotypeSpec.Builder genotypeSpecBuilder = new GenotypeSpec.Builder();
-		genotypeSpecBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
+		final net.bmahe.genetics4j.core.spec.EAConfiguration.Builder eaConfigurationBuilder = new EAConfiguration.Builder();
+		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(TournamentSelection.build(3))
 				.survivorSelectionPolicy(TournamentSelection.build(3))
 				.offspringRatio(0.90d)
@@ -242,10 +274,10 @@ public class ProgramRulesApplicatorMutatorTest {
 				.fitness((genoType) -> {
 					return 0.0d;
 				});
-		final GenotypeSpec genotypeSpec = genotypeSpecBuilder.build();
+		final EAConfiguration eaConfiguration = eaConfigurationBuilder.build();
 
 		final ProgramRulesApplicatorMutator programRulesApplicatorMutator = new ProgramRulesApplicatorMutator(rules,
-				genotypeSpec);
+				eaConfiguration);
 
 		final Genotype genotype = new Genotype(new TreeChromosome<Operation<?>>(root));
 		final Genotype mutated = programRulesApplicatorMutator.mutate(genotype);
