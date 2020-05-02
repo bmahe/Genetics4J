@@ -10,7 +10,7 @@
 
 This is the core module which includes:
 
-* Base classes to support the definition and exeuction of Genetic Algorithms
+* Base classes to support the definition and execution of Evolutionary Algorithms, supporting Genetic Algorithms
 * Base operators to select individuals
 * Base operators to combine individuals
 * Base operators to mutate individuals

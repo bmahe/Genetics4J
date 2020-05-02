@@ -68,7 +68,7 @@ include::{sourcedir}/net/bmahe/genetics4j/samples/QuickStart.java[tags=quickstar
 
 == Execution specification
 
-We can next focus on the execution method through the configuration of the Genetic System Descriptor, which includes elements such as:
+We can next focus on the execution method through the configuration of the link:../apidocs/net/bmahe/genetics4j/core/spec/EAExecutionContext.html[Evolutionary Algorithm Execution Context], which includes elements such as:
 
 * Population size
 * The different handlers for selection, mutation and combination
@@ -81,9 +81,12 @@ We can next focus on the execution method through the configuration of the Genet
 include::{sourcedir}/net/bmahe/genetics4j/samples/QuickStart.java[tags=quickstart_genetic_system_descriptor]
 ----
 
+_Note:_ We have a set of factory methods to generate a _EAExecutionContext_. These factory methods are quite helpful as they will take care of some extra configuration. For instance, knowing the fitness value will be a scalar number enables the factory method to pre-configure some additional operators and simplify our code. See link:../apidocs/net/bmahe/genetics4j/core/spec/EAExecutionContexts.html[EAExecutionContexts] API documentation.
+
+
 == Evolution
 
-As we have defined _What_ we want to achieve as well as _How_ we want to do it, we can instantiate a Genetic System which will be in charge of doing the actual evolution:
+As we have defined _What_ we want to achieve as well as _How_ we want to do it, we can instantiate a link:../apidocs/net/bmahe/genetics4j/core/EASystem.html[Evolutionary Algorithm System] which will be in charge of doing the actual evolution:
 
 [source,java,indent=0]
 ----

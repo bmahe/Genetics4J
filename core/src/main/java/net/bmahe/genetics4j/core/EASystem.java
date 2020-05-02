@@ -125,7 +125,7 @@ public class EASystem<T extends Comparable<T>> {
 
 	public EvolutionResult<T> evolve() {
 		final Termination<T> termination = eaConfiguration.termination();
-
+		final GenotypeCombinator genotypeCombinator = eaConfiguration.genotypeCombinator();
 		final Fitness<T> fitness = eaConfiguration.fitness();
 
 		long generation = 0;
@@ -170,7 +170,6 @@ public class EASystem<T extends Comparable<T>> {
 							combinedChromosomes);
 				}
 
-				final GenotypeCombinator genotypeCombinator = eaConfiguration.genotypeCombinator();
 				final List<Genotype> offsprings = genotypeCombinator.combine(eaConfiguration, chromosomes);
 
 				children.addAll(offsprings);

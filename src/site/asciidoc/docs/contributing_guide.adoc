@@ -22,6 +22,11 @@ Everything in this repository is licensed under the Apache License v2.0
 
 In order to build it, you will need:
 
-* Java >= 10
+* Java >= 11
 * Apache Maven 3
 
+=== Coordination
+
+All the development is done over at https://gitlab.com/bmahe/genetics4j
+
+Feel free to create tickets or ask questions!

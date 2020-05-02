@@ -4,6 +4,11 @@ import org.immutables.value.Value;
 
 import net.bmahe.genetics4j.core.Genotype;
 
+/**
+ * Pair of Genotype to its associated fitness
+ *
+ * @param <T> Type of the fitness measurement
+ */
 @Value.Immutable
 public interface GenotypeFitness<T> {
 

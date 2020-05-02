@@ -8,7 +8,7 @@
 
 == Introduction
 
-Genetics4j is an open source library for Genetic Algorithm, Genetic Programming and more!
+Genetics4j is an open source library for Evolutionary Algorithms. This includes Genetic Algorithm, Genetic Programming and more!
 
 === Features
 
@@ -26,9 +26,9 @@ The project is located at https://gitlab.com/bmahe/genetics4j and is licensed un
 
 === Modules
 
-Genetics4j encompass multiple aspects of the Genetics Algorithms family through different modules:
+Genetics4j encompass multiple aspects of the Evolutionary Algorithms family through different modules:
 
-* _core_: Contains the core features
+* _core_: Contains the core features for *Genetic Algorithms*
 * _gp_: Contains features related to *Genetic Programming*
 * _moo_: Contains features related to *Multi-Objective Optimization*
 * _samples_: Contains different examples to highlight the different features and how to use them

@@ -100,7 +100,7 @@ A chromosome can encode data in different ways:
 * Linear sequences (Genetic Programming)
 
 
-The genotype is defined through the link:../apidocs/net/bmahe/genetics4j/core/spec/GenotypeSpec.html[GenotypeSpec] class where one can defined the link:../apidocs/net/bmahe/genetics4j/core/spec/GenotypeSpec.html#chromosomeSpecs()[ChromosomeSpecs] class
+The genotype is defined through the link:../apidocs/net/bmahe/genetics4j/core/spec/EAConfiguration.html[Evolutionary Algorithm Configuration] class where one can define the link:../apidocs/net/bmahe/genetics4j/core/spec/GenotypeSpec.html#chromosomeSpecs()[ChromosomeSpecs] class
 
 
 #### Chromosomes
