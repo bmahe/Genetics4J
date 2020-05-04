@@ -5,6 +5,10 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.selection.RouletteWheelSelectionPolicyHandler;
 import net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder;
 
+/**
+ * Defines multiple factory and helper methods to create and manage
+ * EAExecutionContexts
+ */
 public class EAExecutionContexts {
 
 	private EAExecutionContexts() {
@@ -14,6 +18,17 @@ public class EAExecutionContexts {
 		return ImmutableEAExecutionContext.<T>builder();
 	}
 
+	/**
+	 * Enrich an EAExecutionContext builder based on the knowledge of the fitness
+	 * function returning a scalar value.
+	 * <p>
+	 * This will enrich it with additional implementations for selecting, combining
+	 * and mutating individuals.
+	 * 
+	 * @param <T>     Type of the fitness measurement
+	 * @param builder
+	 * @return Enriched EAExecutionContext builder
+	 */
 	public static <T extends Number & Comparable<T>> Builder<T> enrichForScalarFitness(final Builder<T> builder) {
 		Validate.notNull(builder);
 
@@ -21,10 +36,19 @@ public class EAExecutionContexts {
 		return builder;
 	}
 
+	/**
+	 * Create an EAExecutionContext builder based on the knowledge of the fitness
+	 * function returning a scalar value.
+	 * <p>
+	 * This will enrich it with additional implementations for selecting, combining
+	 * and mutating individuals.
+	 * 
+	 * @param <T>
+	 * @return
+	 */
 	public static <T extends Number & Comparable<T>> Builder<T> forScalarFitness() {
 
 		final Builder<T> builder = ImmutableEAExecutionContext.<T>builder();
 		return enrichForScalarFitness(builder);
 	}
-
 }

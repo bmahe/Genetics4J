@@ -84,7 +84,7 @@ Here is a diagram of the main flow:
 
 ....
 
-
+This is a standard flow for a genetic algorithm with elitism.
 
 ## Concepts
 
@@ -115,12 +115,17 @@ The _core_ module provides the following types of chromosomes out of the box:
 
 Fitness of an individual establish of good of a solution it is. It can be of any type as long as it extends _java.lang.Comparable_. Which means one could use a _Double_ for a single measure of the fitness as well as more complex data structures for cases such as *Multi-Object Optimizations*.
 
-The link:../apidocs/net/bmahe/genetics4j/core/Fitness.html[fitness] function is established in the link:../apidocs/net/bmahe/genetics4j/core/spec/GenotypeSpec.html#fitness()[GenotypeSpec] class
+The link:../apidocs/net/bmahe/genetics4j/core/Fitness.html[fitness] function is established in the link:../apidocs/net/bmahe/genetics4j/core/spec/EAConfiguration.html#fitness()[EAConfiguration] class
 
 
 ### Population Generation
 
+Individuals are generated based on their chromosomes' definitions. Each chromosome ships with a default factory. Chromosome factories are defined as link:../apidocs/net/bmahe/genetics4j/core/chromosomes/factory/ChromosomeFactory.html[ChromosomeFactory], which are configured in the link:../apidocs/net/bmahe/genetics4j/core/chromosomes/factory/ChromosomeFactoryProvider.html[ChromosomeFactoryProvider], which itself is configured in the method link:../apidocs/net/bmahe/genetics4j/core/spec/EAExecutionContext.html#chromosomeFactoryProvider[chromosomeFactoryProvider()] of link:../apidocs/net/bmahe/genetics4j/core/spec/EAExecutionContext.html[EAExecutionContext]
 
+One could override the way Individuals are generated through either:
+
+* Specify a generation method in link:../apidocs/net/bmahe/genetics4j/core/spec/EAConfiguration.html#populationGenerator()[populationGenerator()]
+* Provide their own link:../apidocs/net/bmahe/genetics4j/core/chromosomes/factory/ChromosomeFactoryProvider.html[ChromosomeFactoryProvider] in link:../apidocs/net/bmahe/genetics4j/core/spec/EAExecutionContext.html#chromosomeFactoryProvider[EAExecutionContext]
 
 ### Selection
 
