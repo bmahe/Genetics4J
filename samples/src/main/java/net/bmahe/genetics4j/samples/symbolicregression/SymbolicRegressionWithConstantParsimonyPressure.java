@@ -28,9 +28,6 @@ import net.bmahe.genetics4j.gp.math.Terminals;
 import net.bmahe.genetics4j.gp.program.ImmutableProgram;
 import net.bmahe.genetics4j.gp.program.ImmutableProgram.Builder;
 import net.bmahe.genetics4j.gp.program.Program;
-import net.bmahe.genetics4j.gp.program.ProgramGenerator;
-import net.bmahe.genetics4j.gp.program.ProgramHelper;
-import net.bmahe.genetics4j.gp.program.RampedHalfAndHalfProgramGenerator;
 import net.bmahe.genetics4j.gp.spec.GPEAExecutionContexts;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
@@ -46,8 +43,6 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 	@SuppressWarnings("unchecked")
 	public void run() {
 		final Random random = new Random();
-		final ProgramHelper programHelper = new ProgramHelper(random);
-		final ProgramGenerator programGenerator = new RampedHalfAndHalfProgramGenerator(random, programHelper);
 
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder.addFunctions(Functions.ADD,
@@ -95,7 +90,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 			return Double.isFinite(mse) ? Math.sqrt(mse) + 1.5 * chromosome.getSize() : Double.MAX_VALUE;
 		};
 
-		net.bmahe.genetics4j.core.spec.EAConfiguration.Builder<Double> eaConfigurationBuilder = new EAConfiguration.Builder<>();
+		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(TournamentSelection.build(3))
 				.survivorSelectionPolicy(TournamentSelection.build(3))
@@ -109,8 +104,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 				.fitness(computeFitness);
 		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<Double> eaExecutionContextBuilder = GPEAExecutionContexts
-				.<Double>forGP(random, programHelper, programGenerator);
+		final var eaExecutionContextBuilder = GPEAExecutionContexts.<Double>forGP(random);
 		EAExecutionContexts.enrichForScalarFitness(eaExecutionContextBuilder);
 
 		eaExecutionContextBuilder.populationSize(5000);
@@ -136,7 +130,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 
 	public static int main(String[] args) {
 
-		final SymbolicRegressionWithConstantParsimonyPressure symbolicRegression = new SymbolicRegressionWithConstantParsimonyPressure();
+		final var symbolicRegression = new SymbolicRegressionWithConstantParsimonyPressure();
 		symbolicRegression.run();
 
 		return 0;
