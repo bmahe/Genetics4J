@@ -29,9 +29,6 @@ import net.bmahe.genetics4j.gp.math.Terminals;
 import net.bmahe.genetics4j.gp.program.ImmutableProgram;
 import net.bmahe.genetics4j.gp.program.ImmutableProgram.Builder;
 import net.bmahe.genetics4j.gp.program.Program;
-import net.bmahe.genetics4j.gp.program.ProgramGenerator;
-import net.bmahe.genetics4j.gp.program.ProgramHelper;
-import net.bmahe.genetics4j.gp.program.RampedHalfAndHalfProgramGenerator;
 import net.bmahe.genetics4j.gp.spec.GPEAExecutionContexts;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
@@ -51,8 +48,6 @@ public class SymbolicRegressionWithMOO {
 	@SuppressWarnings("unchecked")
 	public void run() {
 		final Random random = new Random();
-		final ProgramHelper programHelper = new ProgramHelper(random);
-		final ProgramGenerator programGenerator = new RampedHalfAndHalfProgramGenerator(random, programHelper);
 
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder.addFunctions(Functions.ADD,
@@ -103,7 +98,7 @@ public class SymbolicRegressionWithMOO {
 					: new FitnessVector<Double>(Double.MAX_VALUE, Double.MAX_VALUE);
 		};
 
-		net.bmahe.genetics4j.core.spec.EAConfiguration.Builder<FitnessVector<Double>> eaConfigurationBuilder = new EAConfiguration.Builder<>();
+		final var eaConfigurationBuilder = new EAConfiguration.Builder<FitnessVector<Double>>();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(ImmutableTournamentNSGA2Selection.<FitnessVector<Double>>of(2,
 						(a, b) -> b.compareTo(a), // reversed
@@ -126,8 +121,7 @@ public class SymbolicRegressionWithMOO {
 				.fitness(computeFitness);
 		final EAConfiguration<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<FitnessVector<Double>> eaExecutionContextBuilder = GPEAExecutionContexts
-				.forGP(random, programHelper, programGenerator);
+		final var eaExecutionContextBuilder = GPEAExecutionContexts.<FitnessVector<Double>>forGP(random);
 		MOOEAExecutionContexts.enrichWithMOO(eaExecutionContextBuilder);
 		eaExecutionContextBuilder.populationSize(5000);
 		eaExecutionContextBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 1));
