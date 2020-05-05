@@ -57,10 +57,7 @@ public class TSVExample {
 		final Builder<Double> eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
 		eaConfigurationBuilder.chromosomeSpecs(IntChromosomeSpec.of(numCities, 0, numCities))
 				.parentSelectionPolicy(
-						MultiSelections.of(RouletteWheelSelection.build(), TournamentSelection.build(15)))
-				.survivorSelectionPolicy(
-						MultiSelections.of(RouletteWheelSelection.build(), TournamentSelection.build(15)))
-				.offspringRatio(0.9d)
+						MultiSelections.of(RouletteWheelSelection.build(), TournamentSelection.of(15)))
 				.combinationPolicy(MultiCombinations.of(OrderCrossover.build(), EdgeRecombinationCrossover.build()))
 				.mutationPolicies(MultiMutations.of(SwapMutation.of(0.05, 80, false)))
 				.optimization(Optimization.MINIMIZE)
@@ -82,7 +79,7 @@ public class TSVExample {
 					return cost;
 				})
 				.termination(Terminations.ofMaxGeneration(200_000))
-				.populationGenerator(() -> {
+				.genotypeGenerator(() -> {
 					final int[] values = random.ints(0, numCities).distinct().limit(numCities).toArray();
 
 					final Chromosome chromosome = new IntChromosome(numCities, 0, numCities, values);

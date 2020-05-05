@@ -15,11 +15,12 @@ import java.util.Random;
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
@@ -33,7 +34,6 @@ public class TournamentSelectionPolicyHandlerTest {
 	private final EAConfiguration<Double> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<Double>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
 			.parentSelectionPolicy(RandomSelectionPolicy.build())
-			.survivorSelectionPolicy(RandomSelectionPolicy.build())
 			.combinationPolicy(SinglePointCrossover.build())
 			.fitness((genoType) -> genoType.hashCode() / Double.MAX_VALUE * 10.0)
 			.termination(Terminations.ofMaxGeneration(100))
@@ -57,7 +57,7 @@ public class TournamentSelectionPolicyHandlerTest {
 		final TournamentSelectionPolicyHandler<Double> selectionPolicyHandler = new TournamentSelectionPolicyHandler<>(
 				new Random());
 
-		assertTrue(selectionPolicyHandler.canHandle(TournamentSelection.build(2)));
+		assertTrue(selectionPolicyHandler.canHandle(TournamentSelection.of(2)));
 		assertFalse(selectionPolicyHandler.canHandle(RandomSelectionPolicy.build()));
 		assertFalse(selectionPolicyHandler.canHandle(RouletteWheelSelection.build()));
 	}
@@ -71,14 +71,14 @@ public class TournamentSelectionPolicyHandlerTest {
 																	// candidates
 
 		final int populationSize = 5;
-		final Genotype[] population = new Genotype[populationSize];
+		final List<Genotype> population = new ArrayList<Genotype>(populationSize);
 		final List<Double> fitnessScore = new ArrayList<>(populationSize);
 
 		for (int i = 0; i < populationSize; i++) {
 			final IntChromosome intChromosome = new IntChromosome(4, 0, 10, new int[] { i, i + 1, i + 2, i + 3 });
 			final Genotype genotype = new Genotype(new Chromosome[] { intChromosome });
 
-			population[i] = genotype;
+			population.add(genotype);
 			fitnessScore.add((double) i * 10);
 		}
 
@@ -94,14 +94,14 @@ public class TournamentSelectionPolicyHandlerTest {
 		final Selector<Double> selector = selectionPolicyHandler.resolve(eaExecutionContext,
 				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				selectionPolicyHandlerResolver,
-				TournamentSelection.build(2));
-		final List<Genotype> selected = selector
+				TournamentSelection.of(2));
+		final Population<Double> selected = selector
 				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 2, population, fitnessScore);
 
 		assertNotNull(selected);
 		assertEquals(2, selected.size());
-		assertEquals(population[2], selected.get(0));
-		assertEquals(population[3], selected.get(1));
+		assertEquals(population.get(2), selected.getGenotype(0));
+		assertEquals(population.get(3), selected.getGenotype(1));
 	}
 
 	@Test
@@ -113,14 +113,14 @@ public class TournamentSelectionPolicyHandlerTest {
 																	// candidates
 
 		final int populationSize = 5;
-		final Genotype[] population = new Genotype[populationSize];
+		final List<Genotype> population = new ArrayList<Genotype>(populationSize);
 		final List<Double> fitnessScore = new ArrayList<>(populationSize);
 
 		for (int i = 0; i < populationSize; i++) {
 			final IntChromosome intChromosome = new IntChromosome(4, 0, 10, new int[] { i, i + 1, i + 2, i + 3 });
 			final Genotype genotype = new Genotype(new Chromosome[] { intChromosome });
 
-			population[i] = genotype;
+			population.add(genotype);
 			fitnessScore.add((double) i * 10);
 		}
 
@@ -141,12 +141,12 @@ public class TournamentSelectionPolicyHandlerTest {
 		final Selector<Double> selector = selectionPolicyHandler.resolve(eaExecutionContext,
 				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				selectionPolicyHandlerResolver,
-				TournamentSelection.build(2));
-		final List<Genotype> selected = selector.select(eaConfiguration, 2, population, fitnessScore);
+				TournamentSelection.of(2));
+		final Population<Double> selected = selector.select(eaConfiguration, 2, population, fitnessScore);
 
 		assertNotNull(selected);
 		assertEquals(2, selected.size());
-		assertEquals(population[1], selected.get(0));
-		assertEquals(population[0], selected.get(1));
+		assertEquals(population.get(1), selected.getGenotype(0));
+		assertEquals(population.get(0), selected.getGenotype(1));
 	}
 }

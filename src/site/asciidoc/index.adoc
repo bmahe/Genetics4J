@@ -15,6 +15,7 @@ Genetics4j is an open source library for Evolutionary Algorithms. This includes 
 * Genetic Algorithms
 * Strongly Typed Genetic Programming
 * Multi-Objective Optimization support with algorithms such as NSGA2
+* Supports multiple evolutionary strategies. Also called replacement strategies
 * Configurable and user friendly
 * Multithreaded implementation for faster execution
 * Clear separation between the problem definition and its execution model

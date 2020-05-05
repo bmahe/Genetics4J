@@ -25,14 +25,12 @@ public class NSGA2SelectorTest {
 
 	private final NSGA2Selection<FitnessVector<Integer>> SIMPLE_NSGA2_SELECTION_SPEC = ImmutableNSGA2Selection
 			.<FitnessVector<Integer>>of(2,
-					(a, b) -> a.compareTo(b),
 					(m) -> (a, b) -> Double.compare(a.get(m), b.get(m)),
 					(a, b, m) -> b.get(m) - a.get(m));
 
 	private final EAConfiguration<FitnessVector<Integer>> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<FitnessVector<Integer>>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
 			.parentSelectionPolicy(SIMPLE_NSGA2_SELECTION_SPEC)
-			.survivorSelectionPolicy(SIMPLE_NSGA2_SELECTION_SPEC)
 			.combinationPolicy(SinglePointCrossover.build())
 			.fitness((genoType) -> new FitnessVector<>(1, genoType.hashCode() / Integer.MAX_VALUE * 10))
 			.termination(Terminations.ofMaxGeneration(100))
@@ -49,7 +47,7 @@ public class NSGA2SelectorTest {
 		final NSGA2Selection<Integer> nsga2Selection = mock(NSGA2Selection.class);
 
 		final NSGA2Selector<Integer> nsga2Selector = new NSGA2Selector<>(nsga2Selection);
-		nsga2Selector.select(null, 4, new Genotype[] {}, Collections.emptyList());
+		nsga2Selector.select(null, 4, Collections.emptyList(), Collections.emptyList());
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -67,7 +65,7 @@ public class NSGA2SelectorTest {
 		final NSGA2Selection<Integer> nsga2Selection = mock(NSGA2Selection.class);
 
 		final NSGA2Selector<Integer> nsga2Selector = new NSGA2Selector<>(nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 4, new Genotype[] {}, null);
+		nsga2Selector.select(mock(EAConfiguration.class), 4, Collections.emptyList(), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -76,7 +74,7 @@ public class NSGA2SelectorTest {
 		final NSGA2Selection<Integer> nsga2Selection = mock(NSGA2Selection.class);
 
 		final NSGA2Selector<Integer> nsga2Selector = new NSGA2Selector<>(nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 0, new Genotype[] {}, Collections.emptyList());
+		nsga2Selector.select(mock(EAConfiguration.class), 0, Collections.emptyList(), Collections.emptyList());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -85,7 +83,7 @@ public class NSGA2SelectorTest {
 		final NSGA2Selection<Integer> nsga2Selection = mock(NSGA2Selection.class);
 
 		final NSGA2Selector<Integer> nsga2Selector = new NSGA2Selector<>(nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 1, new Genotype[] {}, List.of(4));
+		nsga2Selector.select(mock(EAConfiguration.class), 1, Collections.emptyList(), List.of(4));
 	}
 
 	@Test
@@ -96,32 +94,34 @@ public class NSGA2SelectorTest {
 
 		final BitChromosomeFactory chromosomeFactory = new BitChromosomeFactory(random);
 
-		final Genotype[] population = {
+		final List<Genotype> population = List.of(
 				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))),
 				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))),
 				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))),
 				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))),
-				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))) };
+				new Genotype(chromosomeFactory.generate(SIMPLE_MAXIMIZING_EA_CONFIGURATION.getChromosomeSpec(0))));
 		final List<FitnessVector<Integer>> fitnessScore = List.of(new FitnessVector<>(1, 2),
 				new FitnessVector<>(12, 12),
 				new FitnessVector<>(-5, -5),
 				new FitnessVector<>(-10, -10),
 				new FitnessVector<>(2, 1));
 
-		final List<Genotype> selectedTopOne = nsga2Selector
+		final var selectedTopOne = nsga2Selector
 				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 1, population, fitnessScore);
 		assertNotNull(selectedTopOne);
 		assertEquals(1, selectedTopOne.size());
-		assertEquals(population[1], selectedTopOne.get(0));
+		assertEquals(population.get(1), selectedTopOne.getGenotype(0));
 
-		final List<Genotype> selectedTopThree = nsga2Selector
+		final var selectedTopThree = nsga2Selector
 				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 3, population, fitnessScore);
 		assertNotNull(selectedTopThree);
 		assertEquals(3, selectedTopThree.size());
-		assertEquals(population[1], selectedTopThree.get(0));
+		assertEquals(population.get(1), selectedTopThree.getGenotype(0));
 
 		// Cannot garantee the order
-		assertTrue(population[0].equals(selectedTopThree.get(1)) || population[0].equals(selectedTopThree.get(2)));
-		assertTrue(population[4].equals(selectedTopThree.get(1)) || population[4].equals(selectedTopThree.get(2)));
+		assertTrue(population.get(0).equals(selectedTopThree.getGenotype(1))
+				|| population.get(0).equals(selectedTopThree.getGenotype(2)));
+		assertTrue(population.get(4).equals(selectedTopThree.getGenotype(1))
+				|| population.get(4).equals(selectedTopThree.getGenotype(2)));
 	}
 }

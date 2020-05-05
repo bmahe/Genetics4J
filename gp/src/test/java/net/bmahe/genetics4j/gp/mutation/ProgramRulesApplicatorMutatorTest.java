@@ -196,9 +196,8 @@ public class ProgramRulesApplicatorMutatorTest {
 
 		final net.bmahe.genetics4j.core.spec.EAConfiguration.Builder eaConfigurationBuilder = new EAConfiguration.Builder();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
-				.parentSelectionPolicy(TournamentSelection.build(3))
-				.survivorSelectionPolicy(TournamentSelection.build(3))
-				.offspringRatio(0.90d)
+				.parentSelectionPolicy(TournamentSelection.of(3))
+				.offspringGeneratedRatio(0.90d)
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(ProgramApplyRules.of(rules))
 				.optimization(Optimization.MINIMIZE)
@@ -264,9 +263,8 @@ public class ProgramRulesApplicatorMutatorTest {
 				.of((node) -> Functions.NAME_STR_TO_DOUBLE.equals(node.getData().getName()), (p, n) -> replacement));
 		final net.bmahe.genetics4j.core.spec.EAConfiguration.Builder eaConfigurationBuilder = new EAConfiguration.Builder();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
-				.parentSelectionPolicy(TournamentSelection.build(3))
-				.survivorSelectionPolicy(TournamentSelection.build(3))
-				.offspringRatio(0.90d)
+				.parentSelectionPolicy(TournamentSelection.of(3))
+				.offspringGeneratedRatio(0.90d)
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(ProgramApplyRules.of(rules))
 				.optimization(Optimization.MINIMIZE)

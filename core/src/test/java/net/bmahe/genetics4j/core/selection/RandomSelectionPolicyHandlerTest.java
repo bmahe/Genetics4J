@@ -16,11 +16,12 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
@@ -31,7 +32,6 @@ public class RandomSelectionPolicyHandlerTest {
 	private final EAConfiguration<Double> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<Double>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
 			.parentSelectionPolicy(RandomSelectionPolicy.build())
-			.survivorSelectionPolicy(RandomSelectionPolicy.build())
 			.combinationPolicy(SinglePointCrossover.build())
 			.fitness((genoType) -> genoType.hashCode() / Double.MAX_VALUE * 10.0)
 			.termination(Terminations.ofMaxGeneration(100))
@@ -56,7 +56,7 @@ public class RandomSelectionPolicyHandlerTest {
 				new Random());
 
 		assertTrue(selectionPolicyHandler.canHandle(RandomSelectionPolicy.build()));
-		assertFalse(selectionPolicyHandler.canHandle(TournamentSelection.build(2)));
+		assertFalse(selectionPolicyHandler.canHandle(TournamentSelection.of(2)));
 	}
 
 	@Test
@@ -74,13 +74,13 @@ public class RandomSelectionPolicyHandlerTest {
 						.toArray((s) -> new Integer[s]));
 
 		final int populationSize = 5;
-		final Genotype[] population = new Genotype[populationSize];
+		final List<Genotype> population = new ArrayList<Genotype>(populationSize);
 		final List<Double> fitnessScore = new ArrayList<>(populationSize);
 		for (int i = 0; i < populationSize; i++) {
 			final IntChromosome intChromosome = new IntChromosome(4, 0, 10, new int[] { i, i + 1, i + 2, i + 3 });
 			final Genotype genotype = new Genotype(new Chromosome[] { intChromosome });
 
-			population[i] = genotype;
+			population.add(genotype);
 			fitnessScore.add((double) i);
 		}
 
@@ -95,14 +95,14 @@ public class RandomSelectionPolicyHandlerTest {
 				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				selectionPolicyHandlerResolver,
 				RandomSelectionPolicy.build());
-		final List<Genotype> selected = selector
+		final Population<Double> selected = selector
 				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 100, population, fitnessScore);
 
 		assertNotNull(selected);
 		assertEquals(100, selected.size());
 		for (int i = 0; i < selected.size(); i++) {
 			final int expectedIndex = i % 2 == 0 ? evenIndex : oddIndex; // See values returned by the mocked random
-			assertEquals(population[expectedIndex], selected.get(i));
+			assertEquals(population.get(expectedIndex), selected.getGenotype(i));
 		}
 	}
 

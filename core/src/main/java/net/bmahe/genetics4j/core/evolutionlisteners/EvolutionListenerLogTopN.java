@@ -36,7 +36,7 @@ public class EvolutionListenerLogTopN<T extends Comparable<T>> implements Evolut
 	}
 
 	@Override
-	public void onEvolution(final long generation, final Genotype[] population, final List<T> fitness) {
+	public void onEvolution(final long generation, final List<Genotype> population, final List<T> fitness) {
 		if (skipN > 0 && generation % skipN != 0) {
 			return;
 		}
@@ -46,8 +46,9 @@ public class EvolutionListenerLogTopN<T extends Comparable<T>> implements Evolut
 				.boxed()
 				.sorted((a, b) -> comparator.reversed().compare(fitness.get(a), fitness.get(b)))
 				.limit(topN)
-				.forEach((index) -> logger
-						.info("  Fitness: {} -> {}", fitness.get(index), this.prettyPrinter.apply(population[index])));
+				.forEach((index) -> logger.info("  Fitness: {} -> {}",
+						fitness.get(index),
+						this.prettyPrinter.apply(population.get(index))));
 
 	}
 }

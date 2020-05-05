@@ -26,7 +26,6 @@ public class NSGA2SelectionPolicyHandlerTest {
 	private final EAConfiguration<Integer> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<Integer>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
 			.parentSelectionPolicy(RandomSelectionPolicy.build())
-			.survivorSelectionPolicy(RandomSelectionPolicy.build())
 			.combinationPolicy(SinglePointCrossover.build())
 			.fitness((genoType) -> genoType.hashCode() / Integer.MAX_VALUE * 10)
 			.termination(Terminations.ofMaxGeneration(100))

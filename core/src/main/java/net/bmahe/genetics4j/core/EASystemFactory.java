@@ -2,6 +2,7 @@ package net.bmahe.genetics4j.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
@@ -10,6 +11,8 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorResolver;
+import net.bmahe.genetics4j.core.evolutionstrategy.EvolutionStrategyHandler;
+import net.bmahe.genetics4j.core.evolutionstrategy.EvolutionStrategyImplementor;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
@@ -19,6 +22,7 @@ import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
+import net.bmahe.genetics4j.core.spec.evolutionstrategy.EvolutionStrategy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
 public class EASystemFactory {
@@ -48,13 +52,6 @@ public class EASystemFactory {
 				selectionPolicyHandlerResolver,
 				eaConfiguration.parentSelectionPolicy());
 
-		final SelectionPolicyHandler<T> survivorSelectionPolicyHandler = selectionPolicyHandlerResolver
-				.resolve(eaConfiguration.survivorSelectionPolicy());
-		final Selector<T> survivorSelector = survivorSelectionPolicyHandler.resolve(eaExecutionContext,
-				eaConfiguration,
-				selectionPolicyHandlerResolver,
-				eaConfiguration.survivorSelectionPolicy());
-
 		final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver = new MutationPolicyHandlerResolver<>(
 				eaExecutionContext);
 
@@ -80,9 +77,22 @@ public class EASystemFactory {
 
 		}
 
+		final List<EvolutionStrategyHandler<T>> evolutionStrategyHandlers = eaExecutionContext
+				.evolutionStrategyHandlers();
+		final EvolutionStrategy evolutionStrategy = eaConfiguration.evolutionStrategy();
+		final Optional<EvolutionStrategyHandler<T>> evolutionStrategyHandlerOpt = evolutionStrategyHandlers.stream()
+				.filter(evolutionStrategyHandler -> evolutionStrategyHandler.canHandle(evolutionStrategy))
+				.findFirst();
+		final EvolutionStrategyHandler<T> evolutionStrategyHandler = evolutionStrategyHandlerOpt
+				.orElseThrow(() -> new IllegalStateException(
+						"Could not find an implementation to handle the evolution strategy " + evolutionStrategy));
+		final EvolutionStrategyImplementor<T> evolutionStrategyImplementor = evolutionStrategyHandler
+				.resolve(eaExecutionContext, eaConfiguration, selectionPolicyHandlerResolver, evolutionStrategy);
+
 		final long populationSize = eaExecutionContext.populationSize();
 
-		return new EASystem<>(eaConfiguration, populationSize, chromosomeCombinators, eaConfiguration.offspringRatio(),
-				parentSelector, survivorSelector, mutators, eaExecutionContext, executorService);
+		return new EASystem<>(eaConfiguration, populationSize, chromosomeCombinators, eaConfiguration.offspringGeneratedRatio(),
+				parentSelector, mutators, evolutionStrategyImplementor, eaExecutionContext,
+				executorService);
 	}
 }

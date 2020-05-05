@@ -6,5 +6,5 @@ import net.bmahe.genetics4j.core.Genotype;
 
 @FunctionalInterface
 public interface Termination<T> {
-	boolean isDone(final long generation, final Genotype[] population, final List<T> fitness);
+	boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness);
 }

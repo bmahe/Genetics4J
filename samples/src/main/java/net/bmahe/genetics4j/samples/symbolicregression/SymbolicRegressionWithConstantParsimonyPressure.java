@@ -92,9 +92,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
-				.parentSelectionPolicy(TournamentSelection.build(3))
-				.survivorSelectionPolicy(TournamentSelection.build(3))
-				.offspringRatio(0.90d)
+				.parentSelectionPolicy(TournamentSelection.of(3))
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(ProgramRandomMutate.of(0.10),
 						ProgramRandomPrune.of(0.12),
