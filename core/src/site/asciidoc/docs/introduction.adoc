@@ -9,7 +9,7 @@
 == Introduction
 
 
-Genetics4j uses a standard version of Genetic Algorithms.
+Genetics4j uses a standard version of Genetic Algorithms. However many steps are highly configurable.
 
 Here is a diagram of the main flow:
 
@@ -41,42 +41,41 @@ Here is a diagram of the main flow:
    |                               |
    |                               | No
    |                               |
-   |                 +-------------+-------------------+
-   |                 |                                 |
-   |                 |                                 |
-   |                 |                                 |
-   |                 |                                 |
-   |                 v                                 v
-   |         /----------------\              /------------------\
-   |         | Select Parents |              | Select Survivors |
-   |         \----------------/              \------------------/
-   |                 |                                 |
-   |                 |                                 |
-   |                 |                                 |
-   |                 |                                 |
-   |                 v                                 |
-   |        /-----------------\                        |
-   |        | Combine Parents |                        |
-   |        \-----------------/                        |
-   |                 |                                 |
-   |                 |                                 |
-   |                 |                                 |
-   |                 |                                 |
-   |                 v                                 |
-   |        /-----------------\                        |
-   |        | Mutate Children |                        |
-   |        \-----------------/                        |
-   |                 |                                 |
-   |                 |                                 |
-   |                 |                                 |
-   |                 +------------+--------------------+
-   |                              |
+   |                 +-------------+---------------+
+   |                 |                             |
+   |                 |                             |
+   |                 v                             |
+   |         /----------------\                    |
+   |         | Select Parents |                    |
+   |         \----------------/                    |
+   |                 |                             |
+   |                 |                             |
+   |                 v                             |
+   |        /-----------------\                    |
+   |        | Combine Parents |                    |
+   |        \-----------------/                    |
+   |                 |                             |
+   |                 |                             |
+   |                 v                             |
+   |        /-----------------\                    |
+   |        | Mutate Children |                    |
+   |        \-----------------/                    |
+   |                 |                             |
+   |                 |                             |
+   |                 v                             |
+   |        /------------------\          /--------------------\
+   |        | Evaluate Fitness |          | Current population |
+   |        \------------------/          \--------------------/
+   |                 |                             |
+   |                 |                             |
+   |                 +------------+----------------+
    |                              |
    |                              |
    |                              v
-   |                    /------------------\
-   |                    | Evaluate Fitness |
-   |                    \------------------/
+   |                 /--------------------------\
+   |                 |    Evolution Strategy    |
+   |                 | Generate Next Population |
+   |                 \--------------------------/
    |                              |
    |                              |
    |                              |
@@ -84,7 +83,7 @@ Here is a diagram of the main flow:
 
 ....
 
-This is a standard flow for a genetic algorithm with elitism.
+This is a standard flow for a genetic algorithm. At each generation, we will select some parents who will then generate some offsprings that will be mutated. And finally, a new generation will be created as defined by the _evolution strategy_ from both offsprings and previous generation. The process will stop as soon as the termination conditions are met.
 
 ## Concepts
 
@@ -137,3 +136,6 @@ One could override the way Individuals are generated through either:
 
 
 ### Termination
+
+
+### Evolution Strategy

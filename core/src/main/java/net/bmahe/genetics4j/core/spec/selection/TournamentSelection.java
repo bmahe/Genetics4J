@@ -8,7 +8,7 @@ public abstract class TournamentSelection implements SelectionPolicy {
 
 	public abstract int numCandidates();
 
-	public static TournamentSelection build(final int numCandidates) {
+	public static TournamentSelection of(final int numCandidates) {
 		Validate.isTrue(numCandidates > 0);
 
 		return new TournamentSelection() {

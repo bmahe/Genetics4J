@@ -20,6 +20,9 @@ import net.bmahe.genetics4j.core.combination.multipointcrossover.MultiPointCross
 import net.bmahe.genetics4j.core.combination.ordercrossover.IntOrderCrossoverHandler;
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.SinglePointCrossoverHandler;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
+import net.bmahe.genetics4j.core.evolutionstrategy.ElitismEvolutionStrategyHandler;
+import net.bmahe.genetics4j.core.evolutionstrategy.EvolutionStrategyHandler;
+import net.bmahe.genetics4j.core.evolutionstrategy.GenerationalReplacementEvolutionStrategyHandler;
 import net.bmahe.genetics4j.core.mutation.MultiMutationsPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.PartialMutationPolicyHandler;
@@ -44,7 +47,7 @@ import net.bmahe.genetics4j.core.selection.TournamentSelectionPolicyHandler;
  */
 @Value.Immutable
 public abstract class EAExecutionContext<T extends Comparable<T>> {
-	public static final long DEFAULT_POPULATION_SIZE = 100;
+	public static final int DEFAULT_POPULATION_SIZE = 100;
 
 	@Value.Default
 	public List<ChromosomeCombinatorHandler> defaultChromosomeCombinatorHandlers() {
@@ -146,6 +149,7 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 	public abstract List<Function<EAExecutionContext<T>, ChromosomeMutationHandler<? extends Chromosome>>>
 			chromosomeMutationPolicyHandlerFactories();
 
+	@Value.Derived
 	public List<ChromosomeMutationHandler<? extends Chromosome>> chromosomeMutationPolicyHandlers() {
 
 		final List<ChromosomeMutationHandler<? extends Chromosome>> chromosomeMutationPolicyHandlers = new ArrayList<>();
@@ -165,12 +169,39 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 	/////////////////////////////////////////
 
 	@Value.Default
+	public List<EvolutionStrategyHandler<T>> defaultEvolutionStrategyHandlers() {
+		return List.of(new ElitismEvolutionStrategyHandler<>(),
+				new GenerationalReplacementEvolutionStrategyHandler<>());
+	}
+
+	public abstract List<Function<EAExecutionContext<T>, EvolutionStrategyHandler<T>>>
+			evolutionStrategyHandlerFactories();
+
+	@Value.Derived
+	public List<EvolutionStrategyHandler<T>> evolutionStrategyHandlers() {
+		final List<EvolutionStrategyHandler<T>> evolutionStrategyHandlers = new ArrayList<>();
+
+		final List<EvolutionStrategyHandler<T>> defaultEvolutionStrategyHandlers = defaultEvolutionStrategyHandlers();
+		if (defaultEvolutionStrategyHandlers.isEmpty() == false) {
+			evolutionStrategyHandlers.addAll(defaultEvolutionStrategyHandlers);
+		}
+
+		evolutionStrategyHandlerFactories().stream()
+				.map(factory -> factory.apply(this))
+				.forEach(esh -> evolutionStrategyHandlers.add(esh));
+
+		return Collections.unmodifiableList(evolutionStrategyHandlers);
+	}
+
+	/////////////////////////////////////////
+
+	@Value.Default
 	public Random random() {
 		return new Random();
 	}
 
 	@Value.Default
-	public long populationSize() {
+	public int populationSize() {
 		return DEFAULT_POPULATION_SIZE;
 	}
 

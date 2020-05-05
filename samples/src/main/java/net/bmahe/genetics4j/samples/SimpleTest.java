@@ -9,18 +9,18 @@ import org.apache.logging.log4j.Logger;
 import net.bmahe.genetics4j.core.EASystem;
 import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
-import net.bmahe.genetics4j.core.spec.EvolutionResult;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
-import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
+import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAConfiguration.Builder;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
+import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
 import net.bmahe.genetics4j.core.spec.mutation.PartialMutation;
 import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
-import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 
 public class SimpleTest {
 	final static public Logger logger = LogManager.getLogger(SimpleTest.class);
@@ -32,8 +32,6 @@ public class SimpleTest {
 		final Builder<Double> eaConfigurationBuilder = new EAConfiguration.Builder<>();
 		eaConfigurationBuilder.chromosomeSpecs(IntChromosomeSpec.of(10, 0, 10))
 				.parentSelectionPolicy(RouletteWheelSelection.build())
-				.survivorSelectionPolicy(TournamentSelection.build(30))
-				.offspringRatio(0.7d)
 				.combinationPolicy(MultiPointCrossover.of(2))
 				.mutationPolicies(RandomMutation.of(0.15), PartialMutation.of(0, RandomMutation.of(0.05)))
 				.optimization(Optimization.MINIMIZE)
@@ -54,6 +52,7 @@ public class SimpleTest {
 		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)
 				.random(random)
+				.addEvolutionListeners(EvolutionListeners.ofLogTopN(logger, 3, Comparator.<Double>reverseOrder()))
 				.build();
 
 		final EASystem<Double> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);

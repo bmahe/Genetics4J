@@ -1,12 +1,12 @@
 package net.bmahe.genetics4j.core.selection;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.selection.MultiSelections;
@@ -43,11 +43,11 @@ public class MultiSelectionsPolicyHandler<T extends Comparable<T>> implements Se
 		return new Selector<T>() {
 
 			@Override
-			public List<Genotype> select(EAConfiguration<T> eaConfiguration, int numIndividuals, Genotype[] population,
-					List<T> fitnessScore) {
+			public Population<T> select(EAConfiguration<T> eaConfiguration, int numIndividuals,
+					List<Genotype> population, List<T> fitnessScore) {
 				final int incrementSelection = numIndividuals / selectors.size();
 
-				final List<Genotype> selectedIndividuals = new ArrayList<Genotype>();
+				final Population<T> selectedIndividuals = new Population<>();
 				for (final Selector<T> selector : selectors) {
 					selectedIndividuals
 							.addAll(selector.select(eaConfiguration, incrementSelection, population, fitnessScore));

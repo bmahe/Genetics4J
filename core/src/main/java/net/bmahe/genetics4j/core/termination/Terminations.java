@@ -17,7 +17,7 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final long generation, final Genotype[] population, final List<T> fitness) {
+			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
 				return generation >= maxGeneration;
@@ -34,7 +34,7 @@ public class Terminations {
 			private Long startTime = null;
 
 			@Override
-			public boolean isDone(final long generation, final Genotype[] population, final List<T> fitness) {
+			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
 				final long nowNanos = System.nanoTime();
@@ -56,7 +56,7 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final long generation, final Genotype[] population, final List<T> fitness) {
+			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
 				return Arrays.stream(terminations)
 						.anyMatch((termination) -> termination.isDone(generation, population, fitness));
 			}
@@ -69,7 +69,7 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final long generation, final Genotype[] population, final List<T> fitness) {
+			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
 				return fitness.stream().anyMatch((fitnessValue) -> threshold.compareTo(fitnessValue) <= 0);
@@ -82,7 +82,7 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final long generation, final Genotype[] population, final List<T> fitness) {
+			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
 				return fitness.stream().anyMatch((fitnessValue) -> threshold.compareTo(fitnessValue) >= 0);

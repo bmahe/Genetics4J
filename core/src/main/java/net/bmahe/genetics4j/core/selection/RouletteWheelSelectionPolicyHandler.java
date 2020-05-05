@@ -1,13 +1,13 @@
 package net.bmahe.genetics4j.core.selection;
 
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.Optimization;
@@ -40,13 +40,13 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 		return new Selector<T>() {
 
 			@Override
-			public List<Genotype> select(EAConfiguration<T> eaConfiguration, int numIndividuals, Genotype[] population,
-					List<T> fitnessScore) {
+			public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+					final List<Genotype> population, final List<T> fitnessScore) {
 				Validate.notNull(eaConfiguration);
 				Validate.notNull(population);
 				Validate.notNull(fitnessScore);
 				Validate.isTrue(numIndividuals > 0);
-				Validate.isTrue(population.length == fitnessScore.size());
+				Validate.isTrue(population.size() == fitnessScore.size());
 
 				switch (eaConfiguration.optimization()) {
 					case MAXIMZE:
@@ -57,7 +57,7 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 								"Unsupported optimization " + eaConfiguration.optimization());
 				}
 
-				final List<Genotype> selectedParents = new LinkedList<>();
+				final Population<T> selectedIndividuals = new Population<>();
 
 				final double minFitness = fitnessScore.stream()
 						.map(Number::doubleValue)
@@ -70,9 +70,9 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 				final double reversedBase = minFitness + maxFitness; // Used as a base when minimizing
 
 				double sumFitness = 0.0;
-				final double[] probabilities = new double[population.length];
+				final double[] probabilities = new double[population.size()];
 
-				for (int i = 0; i < population.length; i++) {
+				for (int i = 0; i < population.size(); i++) {
 					if (eaConfiguration.optimization().equals(Optimization.MAXIMZE)) {
 						sumFitness += fitnessScore.get(i).doubleValue();
 					} else {
@@ -89,10 +89,10 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 						index++;
 					}
 
-					selectedParents.add(population[index]);
+					selectedIndividuals.add(population.get(index), fitnessScore.get(index));
 				}
 
-				return selectedParents;
+				return selectedIndividuals;
 			}
 		};
 	}

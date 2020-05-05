@@ -1,6 +1,5 @@
 package net.bmahe.genetics4j.core.selection;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -8,6 +7,7 @@ import java.util.Random;
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.Optimization;
@@ -38,13 +38,13 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 		return new Selector<T>() {
 
 			@Override
-			public List<Genotype> select(EAConfiguration<T> eaConfiguration, int numIndividuals, Genotype[] population,
-					List<T> fitnessScore) {
+			public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+					final List<Genotype> population, final List<T> fitnessScore) {
 				Validate.notNull(eaConfiguration);
 				Validate.notNull(population);
 				Validate.notNull(fitnessScore);
 				Validate.isTrue(numIndividuals > 0);
-				Validate.isTrue(population.length == fitnessScore.size());
+				Validate.isTrue(population.size() == fitnessScore.size());
 
 				switch (eaConfiguration.optimization()) {
 					case MAXIMZE:
@@ -55,7 +55,7 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 								"Unsupported optimization " + eaConfiguration.optimization());
 				}
 
-				final List<Genotype> selected = new ArrayList<>(numIndividuals);
+				final Population<T> selectedIndividuals = new Population<>();
 
 				final Comparator<T> comparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
 						? Comparator.naturalOrder()
@@ -63,7 +63,7 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 
 				final TournamentSelection tournamentSelection = (TournamentSelection) selectionPolicy;
 
-				while (selected.size() < numIndividuals) {
+				while (selectedIndividuals.size() < numIndividuals) {
 
 					Genotype bestCandidate = null;
 					T bestFitness = null;
@@ -74,14 +74,14 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 						if (bestCandidate == null
 								|| comparator.compare(bestFitness, fitnessScore.get(candidateIndex)) < 0) {
 							bestFitness = fitnessScore.get(candidateIndex);
-							bestCandidate = population[candidateIndex];
+							bestCandidate = population.get(candidateIndex);
 						}
 					}
 
-					selected.add(bestCandidate);
+					selectedIndividuals.add(bestCandidate, bestFitness);
 				}
 
-				return selected;
+				return selectedIndividuals;
 			}
 		};
 	}

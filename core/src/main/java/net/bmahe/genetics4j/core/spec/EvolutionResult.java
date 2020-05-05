@@ -20,7 +20,7 @@ public abstract class EvolutionResult<T extends Comparable<T>> {
 	public abstract long generation();
 
 	@Value.Parameter
-	public abstract Genotype[] population();
+	public abstract List<Genotype> population();
 
 	@Value.Parameter
 	public abstract List<T> fitness();
@@ -28,13 +28,13 @@ public abstract class EvolutionResult<T extends Comparable<T>> {
 	@Value.Derived
 	public GenotypeFitness<T> bestIndividual() {
 
-		final Genotype[] population = population();
+		final List<Genotype> population = population();
 		final List<T> fitness = fitness();
 
 		Validate.notNull(population);
 		Validate.notNull(fitness);
-		Validate.isTrue(population.length == fitness.size());
-		Validate.isTrue(population.length > 0);
+		Validate.isTrue(population.size() == fitness.size());
+		Validate.isTrue(population.size() > 0);
 
 		switch (eaConfiguration().optimization()) {
 			case MAXIMZE:
@@ -55,7 +55,7 @@ public abstract class EvolutionResult<T extends Comparable<T>> {
 		final Integer bestIndex = bestIndexOpt.orElseThrow(
 				() -> new IllegalStateException("Couldn't find a best entry despite having a non-zero population"));
 
-		return GenotypeFitness.of(population[bestIndex], fitness.get(bestIndex));
+		return GenotypeFitness.of(population.get(bestIndex), fitness.get(bestIndex));
 	}
 
 	public Genotype bestGenotype() {

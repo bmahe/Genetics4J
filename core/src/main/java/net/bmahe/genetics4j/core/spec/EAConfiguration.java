@@ -14,8 +14,11 @@ import net.bmahe.genetics4j.core.combination.AllCasesGenotypeCombinator;
 import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
+import net.bmahe.genetics4j.core.spec.evolutionstrategy.Elitism;
+import net.bmahe.genetics4j.core.spec.evolutionstrategy.EvolutionStrategy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
+import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 import net.bmahe.genetics4j.core.termination.Termination;
 
 /**
@@ -33,7 +36,7 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 	/**
 	 * Default offspring ratio
 	 */
-	public static final double DEFAULT_OFFSPRING_RATIO = 0.9;
+	public static final double DEFAULT_OFFSPRING_RATIO = 1.0;
 
 	/**
 	 * Default optimization strategy
@@ -55,8 +58,6 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 	 */
 	public abstract SelectionPolicy parentSelectionPolicy();
 
-	public abstract SelectionPolicy survivorSelectionPolicy();
-
 	/**
 	 * Defines the policy to generate new offsprings from two parents
 	 * 
@@ -70,6 +71,29 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 	 * @return
 	 */
 	public abstract List<MutationPolicy> mutationPolicies();
+
+	/**
+	 * Defines the evolution strategy
+	 * <p>
+	 * The evolution strategy is what will determine the next population based on
+	 * the generated and mutated offsprings along with the current population
+	 * <p>
+	 * If not specified, the default evolution strategy will be to use Elitism with
+	 * tournament selection of 3 individuals for both offsprings and survivors. The
+	 * default offspring ratio is {@link Elitism#DEFAULT_OFFSPRING_RATIO}
+	 * 
+	 * @return
+	 */
+	@Value.Default
+	public EvolutionStrategy evolutionStrategy() {
+		final var evolutionStrategyBuilder = Elitism.builder();
+
+		evolutionStrategyBuilder.offspringRatio(Elitism.DEFAULT_OFFSPRING_RATIO)
+				.offspringSelectionPolicy(TournamentSelection.of(3))
+				.survivorSelectionPolicy(TournamentSelection.of(3));
+
+		return evolutionStrategyBuilder.build();
+	}
 
 	/**
 	 * Defines how should individuals' fitness be assessed
@@ -92,7 +116,7 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 	 * 
 	 * @return
 	 */
-	public abstract Optional<Supplier<Genotype>> populationGenerator();
+	public abstract Optional<Supplier<Genotype>> genotypeGenerator();
 
 	/**
 	 * Defines how to combine the offspring chromosomes generated
@@ -119,7 +143,7 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 	 * @return
 	 */
 	@Value.Default
-	public double offspringRatio() {
+	public double offspringGeneratedRatio() {
 		return DEFAULT_OFFSPRING_RATIO;
 	}
 
@@ -140,7 +164,7 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 	@Value.Check
 	protected void check() {
 		Validate.isTrue(chromosomeSpecs().size() > 0, "No chromosomes were specified");
-		Validate.inclusiveBetween(0.0d, 1.0d, offspringRatio());
+		Validate.inclusiveBetween(0.0d, 1.0d, offspringGeneratedRatio());
 	}
 
 	/**

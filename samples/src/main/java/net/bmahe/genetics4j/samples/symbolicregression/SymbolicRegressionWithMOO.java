@@ -20,6 +20,7 @@ import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.Optimization;
+import net.bmahe.genetics4j.core.spec.evolutionstrategy.Elitism;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
 import net.bmahe.genetics4j.gp.Operation;
@@ -39,8 +40,8 @@ import net.bmahe.genetics4j.gp.utils.ProgramUtils;
 import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 import net.bmahe.genetics4j.moo.FitnessVector;
 import net.bmahe.genetics4j.moo.MOOEAExecutionContexts;
-import net.bmahe.genetics4j.moo.nsga2.spec.ImmutableNSGA2Selection;
-import net.bmahe.genetics4j.moo.nsga2.spec.ImmutableTournamentNSGA2Selection;
+import net.bmahe.genetics4j.moo.nsga2.spec.NSGA2Selection;
+import net.bmahe.genetics4j.moo.nsga2.spec.TournamentNSGA2Selection;
 
 public class SymbolicRegressionWithMOO {
 	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithMOO.class);
@@ -100,16 +101,12 @@ public class SymbolicRegressionWithMOO {
 
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<FitnessVector<Double>>();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
-				.parentSelectionPolicy(ImmutableTournamentNSGA2Selection.<FitnessVector<Double>>of(2,
-						(a, b) -> b.compareTo(a), // reversed
-						(m) -> (a, b) -> Double.compare(b.get(m), a.get(m)), // reversed
-						(a, b, m) -> b.get(m) - a.get(m),
-						10))
-				.survivorSelectionPolicy(ImmutableNSGA2Selection.<FitnessVector<Double>>of(2,
-						(a, b) -> b.compareTo(a), // reversed
-						(m) -> (a, b) -> Double.compare(b.get(m), a.get(m)), // reversed
-						(a, b, m) -> b.get(m) - a.get(m)))
-				.offspringRatio(0.90d)
+				.parentSelectionPolicy(TournamentNSGA2Selection.ofFitnessVector(2, 3))
+				.evolutionStrategy(Elitism.builder()
+						.offspringRatio(0.95)
+						.offspringSelectionPolicy(TournamentNSGA2Selection.ofFitnessVector(2, 3))
+						.survivorSelectionPolicy(NSGA2Selection.ofFitnessVector(2))
+						.build())
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(ProgramRandomMutate.of(0.10),
 						ProgramRandomPrune.of(0.05),
@@ -159,7 +156,9 @@ public class SymbolicRegressionWithMOO {
 
 			optIdx.stream().forEach((idx) -> {
 				final TreeChromosome<Operation<?>> treeChromosome = (TreeChromosome<Operation<?>>) evolutionResult
-						.population()[idx].getChromosome(0);
+						.population()
+						.get(idx)
+						.getChromosome(0);
 
 				logger.info("Best genotype for depth {} - score {} -> {}",
 						depth,
