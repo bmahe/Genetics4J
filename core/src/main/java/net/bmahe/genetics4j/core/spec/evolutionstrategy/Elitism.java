@@ -1,5 +1,6 @@
 package net.bmahe.genetics4j.core.spec.evolutionstrategy;
 
+import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
@@ -12,10 +13,20 @@ import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
  */
 @Value.Immutable
 public interface Elitism extends EvolutionStrategy {
-	public static final double DEFAULT_OFFSPRING_RATIO = 0.95;
+	static final double DEFAULT_OFFSPRING_RATIO = 0.95;
 
+	/**
+	 * Describe which offsprings to select for the next generation
+	 * 
+	 * @return
+	 */
 	public abstract SelectionPolicy offspringSelectionPolicy();
 
+	/**
+	 * Describe which survivors to select for the next generation
+	 * 
+	 * @return
+	 */
 	public abstract SelectionPolicy survivorSelectionPolicy();
 
 	/**
@@ -27,6 +38,11 @@ public interface Elitism extends EvolutionStrategy {
 	@Value.Default
 	default double offspringRatio() {
 		return DEFAULT_OFFSPRING_RATIO;
+	}
+
+	@Value.Check
+	default void check() {
+		Validate.inclusiveBetween(0.0, 1.0, offspringRatio());
 	}
 
 	class Builder extends ImmutableElitism.Builder {
