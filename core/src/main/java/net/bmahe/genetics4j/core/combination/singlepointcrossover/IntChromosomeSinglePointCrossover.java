@@ -33,18 +33,24 @@ public class IntChromosomeSinglePointCrossover implements ChromosomeCombinator {
 		final IntChromosome intChromosome2 = (IntChromosome) chromosome2;
 
 		final int numAlleles = chromosome1.getNumAlleles();
-		final int[] newValues = new int[numAlleles];
+		final int[] firstChildValues = new int[numAlleles];
+		final int[] secondChildValues = new int[numAlleles];
 
 		for (int i = 0; i < numAlleles; i++) {
 
 			if (i < alleleSplit) {
-				newValues[i] = intChromosome1.getAllele(i);
+				firstChildValues[i] = intChromosome1.getAllele(i);
+				secondChildValues[i] = intChromosome2.getAllele(i);
 			} else {
-				newValues[i] = intChromosome2.getAllele(i);
+				firstChildValues[i] = intChromosome2.getAllele(i);
+				secondChildValues[i] = intChromosome1.getAllele(i);
 			}
 		}
 
-		return List
-				.of(new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome1.getMaxValue(), newValues));
+		return List.of(
+				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome1.getMaxValue(),
+						firstChildValues),
+				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome1.getMaxValue(),
+						secondChildValues));
 	}
 }

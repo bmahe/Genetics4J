@@ -35,16 +35,26 @@ public class BitChromosomeSinglePointCrossoverTest {
 		final BitChromosome chromosome1 = new BitChromosome(4, BitSet.valueOf(new byte[] { 5 })); // 0101
 		final BitChromosome chromosome2 = new BitChromosome(4, BitSet.valueOf(new byte[] { 10 })); // 1010
 
-		final List<Chromosome> combinedChromosomes = bitChromosomeSinglePointCrossover.combine(chromosome1, chromosome2);
-		final BitChromosome combinedChromosome = (BitChromosome) combinedChromosomes.get(0);
-		assertNotNull(combinedChromosome);
-		assertEquals(4, combinedChromosome.getNumAlleles());
+		final List<Chromosome> combinedChromosomes = bitChromosomeSinglePointCrossover.combine(chromosome1,
+				chromosome2);
+		assertNotNull(combinedChromosomes);
+		assertEquals(2, combinedChromosomes.size());
 
-		for (int i = 0; i < combinedChromosome.getNumAlleles(); i++) {
+		final BitChromosome firstCombinedChromosome = (BitChromosome) combinedChromosomes.get(0);
+		assertNotNull(firstCombinedChromosome);
+		assertEquals(4, firstCombinedChromosome.getNumAlleles());
+
+		final BitChromosome secondCombinedChromosome = (BitChromosome) combinedChromosomes.get(1);
+		assertNotNull(secondCombinedChromosome);
+		assertEquals(4, secondCombinedChromosome.getNumAlleles());
+
+		for (int i = 0; i < firstCombinedChromosome.getNumAlleles(); i++) {
 			if (i < splitIndex) {
-				assertEquals(chromosome1.getBit(i), combinedChromosome.getBit(i));
+				assertEquals(chromosome1.getBit(i), firstCombinedChromosome.getBit(i));
+				assertEquals(chromosome2.getBit(i), secondCombinedChromosome.getBit(i));
 			} else {
-				assertEquals(chromosome2.getBit(i), combinedChromosome.getBit(i));
+				assertEquals(chromosome2.getBit(i), firstCombinedChromosome.getBit(i));
+				assertEquals(chromosome1.getBit(i), secondCombinedChromosome.getBit(i));
 			}
 		}
 	}

@@ -34,16 +34,19 @@ public class BitChromosomeSinglePointCrossover implements ChromosomeCombinator {
 		final BitChromosome bitChromosome2 = (BitChromosome) chromosome2;
 
 		final int numAlleles = chromosome1.getNumAlleles();
-		final BitSet bitSet = new BitSet(numAlleles);
+		final BitSet firstChildBitSet = new BitSet(numAlleles);
+		final BitSet secondChildBitSet = new BitSet(numAlleles);
 
 		for (int i = 0; i < alleleSplit; i++) {
-			bitSet.set(i, bitChromosome1.getBit(i));
+			firstChildBitSet.set(i, bitChromosome1.getBit(i));
+			secondChildBitSet.set(i, bitChromosome2.getBit(i));
 		}
 		for (int i = alleleSplit; i < numAlleles; i++) {
-			bitSet.set(i, bitChromosome2.getBit(i));
+			firstChildBitSet.set(i, bitChromosome2.getBit(i));
+			secondChildBitSet.set(i, bitChromosome1.getBit(i));
 		}
 
-		return List.of(new BitChromosome(numAlleles, bitSet));
+		return List.of(new BitChromosome(numAlleles, firstChildBitSet),
+				new BitChromosome(numAlleles, secondChildBitSet));
 	}
-
 }

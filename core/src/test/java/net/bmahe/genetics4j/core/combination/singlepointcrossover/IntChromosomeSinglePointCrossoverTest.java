@@ -34,17 +34,27 @@ public class IntChromosomeSinglePointCrossoverTest {
 		final IntChromosome chromosome1 = new IntChromosome(4, 0, 10, new int[] { 0, 1, 2, 3 });
 		final IntChromosome chromosome2 = new IntChromosome(4, 0, 10, new int[] { 3, 2, 1, 0 });
 
-		final List<Chromosome> combinedChromosomes = intChromosomeSinglePointCrossover.combine(chromosome1, chromosome2);
-		final IntChromosome combinedChromosome = (IntChromosome) combinedChromosomes.get(0);
-		assertNotNull(combinedChromosome);
-		assertEquals(4, combinedChromosome.getNumAlleles());
-		assertEquals(combinedChromosome.getSize(), combinedChromosome.getNumAlleles());
+		final List<Chromosome> combinedChromosomes = intChromosomeSinglePointCrossover.combine(chromosome1,
+				chromosome2);
+		assertNotNull(combinedChromosomes);
+		assertEquals(2, combinedChromosomes.size());
+		final IntChromosome combinedFirstChromosome = (IntChromosome) combinedChromosomes.get(0);
+		assertNotNull(combinedFirstChromosome);
+		assertEquals(4, combinedFirstChromosome.getNumAlleles());
+		assertEquals(combinedFirstChromosome.getSize(), combinedFirstChromosome.getNumAlleles());
 
-		for (int i = 0; i < combinedChromosome.getNumAlleles(); i++) {
+		final IntChromosome combinedSecondChromosome = (IntChromosome) combinedChromosomes.get(1);
+		assertNotNull(combinedSecondChromosome);
+		assertEquals(4, combinedSecondChromosome.getNumAlleles());
+		assertEquals(combinedSecondChromosome.getSize(), combinedSecondChromosome.getNumAlleles());
+
+		for (int i = 0; i < combinedFirstChromosome.getNumAlleles(); i++) {
 			if (i < splitIndex) {
-				assertEquals(chromosome1.getAllele(i), combinedChromosome.getAllele(i));
+				assertEquals(chromosome1.getAllele(i), combinedFirstChromosome.getAllele(i));
+				assertEquals(chromosome2.getAllele(i), combinedSecondChromosome.getAllele(i));
 			} else {
-				assertEquals(chromosome2.getAllele(i), combinedChromosome.getAllele(i));
+				assertEquals(chromosome2.getAllele(i), combinedFirstChromosome.getAllele(i));
+				assertEquals(chromosome1.getAllele(i), combinedSecondChromosome.getAllele(i));
 			}
 		}
 	}
