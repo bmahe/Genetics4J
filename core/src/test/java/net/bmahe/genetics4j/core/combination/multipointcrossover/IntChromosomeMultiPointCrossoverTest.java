@@ -36,14 +36,27 @@ public class IntChromosomeMultiPointCrossoverTest {
 		final IntChromosome chromosome2 = new IntChromosome(5, 0, 100, new int[] { 20, 21, 22, 23, 24 });
 
 		final List<Chromosome> combinedChromosomes = intChromosomeMultiPointCrossover.combine(chromosome1, chromosome2);
-		final IntChromosome combinedChromosome = (IntChromosome) combinedChromosomes.get(0);
-		assertNotNull(combinedChromosome);
-		assertEquals(5, combinedChromosome.getNumAlleles());
+		assertNotNull(combinedChromosomes);
+		assertEquals(2, combinedChromosomes.size());
 
-		assertEquals(chromosome1.getAllele(0), combinedChromosome.getAllele(0));
-		assertEquals(chromosome2.getAllele(1), combinedChromosome.getAllele(1));
-		assertEquals(chromosome2.getAllele(2), combinedChromosome.getAllele(2));
-		assertEquals(chromosome1.getAllele(3), combinedChromosome.getAllele(3));
-		assertEquals(chromosome2.getAllele(4), combinedChromosome.getAllele(4));
+		final IntChromosome firstCombinedChromosome = (IntChromosome) combinedChromosomes.get(0);
+		assertNotNull(firstCombinedChromosome);
+		assertEquals(5, firstCombinedChromosome.getNumAlleles());
+
+		assertEquals(chromosome1.getAllele(0), firstCombinedChromosome.getAllele(0));
+		assertEquals(chromosome2.getAllele(1), firstCombinedChromosome.getAllele(1));
+		assertEquals(chromosome2.getAllele(2), firstCombinedChromosome.getAllele(2));
+		assertEquals(chromosome1.getAllele(3), firstCombinedChromosome.getAllele(3));
+		assertEquals(chromosome2.getAllele(4), firstCombinedChromosome.getAllele(4));
+
+		final IntChromosome secondCombinedChromosome = (IntChromosome) combinedChromosomes.get(1);
+		assertNotNull(secondCombinedChromosome);
+		assertEquals(5, secondCombinedChromosome.getNumAlleles());
+
+		assertEquals(chromosome2.getAllele(0), secondCombinedChromosome.getAllele(0));
+		assertEquals(chromosome1.getAllele(1), secondCombinedChromosome.getAllele(1));
+		assertEquals(chromosome1.getAllele(2), secondCombinedChromosome.getAllele(2));
+		assertEquals(chromosome2.getAllele(3), secondCombinedChromosome.getAllele(3));
+		assertEquals(chromosome1.getAllele(4), secondCombinedChromosome.getAllele(4));
 	}
 }

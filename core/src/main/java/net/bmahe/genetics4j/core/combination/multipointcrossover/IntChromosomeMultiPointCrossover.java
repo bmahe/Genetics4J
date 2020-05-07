@@ -17,7 +17,8 @@ public class IntChromosomeMultiPointCrossover implements ChromosomeCombinator {
 
 	private final MultiPointCrossover multiPointCrossoverPolicy;
 
-	public IntChromosomeMultiPointCrossover(final Random _random, final MultiPointCrossover _multiPointCrossoverPolicy) {
+	public IntChromosomeMultiPointCrossover(final Random _random,
+			final MultiPointCrossover _multiPointCrossoverPolicy) {
 		Validate.notNull(_random);
 		Validate.notNull(_multiPointCrossoverPolicy);
 
@@ -46,7 +47,8 @@ public class IntChromosomeMultiPointCrossover implements ChromosomeCombinator {
 		final IntChromosome intChromosome2 = (IntChromosome) chromosome2;
 
 		final int numAlleles = chromosome1.getNumAlleles();
-		final int[] newValues = new int[numAlleles];
+		final int[] firstChildValues = new int[numAlleles];
+		final int[] secondChildValues = new int[numAlleles];
 
 		boolean useChromosome1 = true;
 		int splitIndex = 0;
@@ -58,13 +60,18 @@ public class IntChromosomeMultiPointCrossover implements ChromosomeCombinator {
 			}
 
 			if (useChromosome1) {
-				newValues[i] = intChromosome1.getAllele(i);
+				firstChildValues[i] = intChromosome1.getAllele(i);
+				secondChildValues[i] = intChromosome2.getAllele(i);
 			} else {
-				newValues[i] = intChromosome2.getAllele(i);
+				firstChildValues[i] = intChromosome2.getAllele(i);
+				secondChildValues[i] = intChromosome1.getAllele(i);
 			}
 		}
 
-		return List
-				.of(new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome2.getMaxValue(), newValues));
+		return List.of(
+				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome2.getMaxValue(),
+						firstChildValues),
+				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome2.getMaxValue(),
+						secondChildValues));
 	}
 }

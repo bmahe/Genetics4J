@@ -46,14 +46,27 @@ public class BitChromosomeMultiPointCrossoverTest {
 		final BitChromosome chromosome2 = new BitChromosome(5, bitSet2);
 
 		final List<Chromosome> combinedChromosomes = bitChromosomeMultiPointCrossover.combine(chromosome1, chromosome2);
-		final BitChromosome combinedChromosome = (BitChromosome) combinedChromosomes.get(0);
-		assertNotNull(combinedChromosome);
-		assertEquals(5, combinedChromosome.getNumAlleles());
+		assertNotNull(combinedChromosomes);
+		assertEquals(2, combinedChromosomes.size());
 
-		assertEquals(chromosome1.getBit(0), combinedChromosome.getBit(0));
-		assertEquals(chromosome2.getBit(1), combinedChromosome.getBit(1));
-		assertEquals(chromosome2.getBit(2), combinedChromosome.getBit(2));
-		assertEquals(chromosome1.getBit(3), combinedChromosome.getBit(3));
-		assertEquals(chromosome2.getBit(4), combinedChromosome.getBit(4));
+		final BitChromosome firstCombinedChromosome = (BitChromosome) combinedChromosomes.get(0);
+		assertNotNull(firstCombinedChromosome);
+		assertEquals(5, firstCombinedChromosome.getNumAlleles());
+
+		assertEquals(chromosome1.getBit(0), firstCombinedChromosome.getBit(0));
+		assertEquals(chromosome2.getBit(1), firstCombinedChromosome.getBit(1));
+		assertEquals(chromosome2.getBit(2), firstCombinedChromosome.getBit(2));
+		assertEquals(chromosome1.getBit(3), firstCombinedChromosome.getBit(3));
+		assertEquals(chromosome2.getBit(4), firstCombinedChromosome.getBit(4));
+
+		final BitChromosome secondCombinedChromosome = (BitChromosome) combinedChromosomes.get(1);
+		assertNotNull(secondCombinedChromosome);
+		assertEquals(5, secondCombinedChromosome.getNumAlleles());
+
+		assertEquals(chromosome2.getBit(0), secondCombinedChromosome.getBit(0));
+		assertEquals(chromosome1.getBit(1), secondCombinedChromosome.getBit(1));
+		assertEquals(chromosome1.getBit(2), secondCombinedChromosome.getBit(2));
+		assertEquals(chromosome2.getBit(3), secondCombinedChromosome.getBit(3));
+		assertEquals(chromosome1.getBit(4), secondCombinedChromosome.getBit(4));
 	}
 }

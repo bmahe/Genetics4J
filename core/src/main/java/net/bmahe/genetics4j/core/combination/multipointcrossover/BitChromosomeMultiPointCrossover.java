@@ -18,7 +18,8 @@ public class BitChromosomeMultiPointCrossover implements ChromosomeCombinator {
 
 	private final MultiPointCrossover multiPointCrossoverPolicy;
 
-	public BitChromosomeMultiPointCrossover(final Random _random, final MultiPointCrossover _multiPointCrossoverPolicy) {
+	public BitChromosomeMultiPointCrossover(final Random _random,
+			final MultiPointCrossover _multiPointCrossoverPolicy) {
 		Validate.notNull(_random);
 		Validate.notNull(_multiPointCrossoverPolicy);
 
@@ -47,7 +48,8 @@ public class BitChromosomeMultiPointCrossover implements ChromosomeCombinator {
 		final BitChromosome bitChromosome2 = (BitChromosome) chromosome2;
 
 		final int numAlleles = chromosome1.getNumAlleles();
-		final BitSet bitSet = new BitSet(numAlleles);
+		final BitSet firstChildBitSet = new BitSet(numAlleles);
+		final BitSet secondChildBitSet = new BitSet(numAlleles);
 
 		boolean useChromosome1 = true;
 		int splitIndex = 0;
@@ -59,13 +61,15 @@ public class BitChromosomeMultiPointCrossover implements ChromosomeCombinator {
 			}
 
 			if (useChromosome1) {
-				bitSet.set(i, bitChromosome1.getBit(i));
+				firstChildBitSet.set(i, bitChromosome1.getBit(i));
+				secondChildBitSet.set(i, bitChromosome2.getBit(i));
 			} else {
-				bitSet.set(i, bitChromosome2.getBit(i));
+				firstChildBitSet.set(i, bitChromosome2.getBit(i));
+				secondChildBitSet.set(i, bitChromosome1.getBit(i));
 			}
 		}
 
-		return List.of(new BitChromosome(numAlleles, bitSet));
+		return List.of(new BitChromosome(numAlleles, firstChildBitSet),
+				new BitChromosome(numAlleles, secondChildBitSet));
 	}
-
 }
