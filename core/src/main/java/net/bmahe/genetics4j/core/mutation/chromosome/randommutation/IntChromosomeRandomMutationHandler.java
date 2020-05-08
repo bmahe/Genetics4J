@@ -15,8 +15,6 @@ import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 
 public class IntChromosomeRandomMutationHandler implements ChromosomeMutationHandler<IntChromosome> {
 
-	private final static int MAX_RETRY_FLIP = 100;
-
 	private final Random random;
 
 	public IntChromosomeRandomMutationHandler(final Random _random) {
@@ -41,24 +39,12 @@ public class IntChromosomeRandomMutationHandler implements ChromosomeMutationHan
 		Validate.isInstanceOf(IntChromosome.class, chromosome);
 
 		final IntChromosome intChromosome = (IntChromosome) chromosome;
-		final int[] originalValues = intChromosome.getValues();
 
-		int[] newValues = Arrays.copyOf(intChromosome.getValues(), intChromosome.getNumAlleles());
+		final int[] newValues = Arrays.copyOf(intChromosome.getValues(), intChromosome.getNumAlleles());
 
-		int retryCount = 0;
-		do {
-
-			if (retryCount > MAX_RETRY_FLIP) {
-				throw new IllegalStateException("Could not mutate chromosome " + chromosome + " after " + MAX_RETRY_FLIP
-						+ " attempts. Check configuration");
-			}
-
-			final int alleleFlipIndex = random.nextInt(intChromosome.getNumAlleles());
-			newValues[alleleFlipIndex] = random.nextInt(intChromosome.getMaxValue() - intChromosome.getMinValue())
-					+ intChromosome.getMinValue();
-
-			retryCount++;
-		} while (Arrays.equals(originalValues, newValues));
+		final int alleleFlipIndex = random.nextInt(intChromosome.getNumAlleles());
+		newValues[alleleFlipIndex] = random.nextInt(intChromosome.getMaxValue() - intChromosome.getMinValue())
+				+ intChromosome.getMinValue();
 
 		return new IntChromosome(intChromosome.getSize(), intChromosome.getMinValue(), intChromosome.getMaxValue(),
 				newValues);

@@ -63,8 +63,7 @@ public class IntChromosomeRandomMutationHandlerTest {
 		final IntChromosomeRandomMutationHandler randomMutationHandler = new IntChromosomeRandomMutationHandler(random);
 
 		final int numInts = 5;
-		final IntChromosome intChromosome = new IntChromosome(numInts, 0, 100, IntStream.range(0, numInts)
-				.toArray());
+		final IntChromosome intChromosome = new IntChromosome(numInts, 0, 100, IntStream.range(0, numInts).toArray());
 		final IntChromosome mutatedIntChromosome = randomMutationHandler.mutate(ImmutableRandomMutation.of(0.1),
 				intChromosome);
 
@@ -73,22 +72,5 @@ public class IntChromosomeRandomMutationHandlerTest {
 			final int expectedValue = i == flippedIntIndex ? flippedValue : i;
 			assertEquals(expectedValue, mutatedIntChromosome.getValues()[i]);
 		}
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void mutateCannotMutate() {
-
-		final Random random = mock(Random.class);
-		when(random.nextInt(anyInt())).thenReturn(0);
-
-		final IntChromosomeRandomMutationHandler randomMutationHandler = new IntChromosomeRandomMutationHandler(random);
-
-		final int numInts = 5;
-		final IntChromosome intChromosome = new IntChromosome(numInts, 0, 100, IntStream.range(0, numInts)
-				.toArray());
-
-		// Should throw an exception as it always try to mutate the first int to 0 and
-		// therefore never get a different chromosome
-		randomMutationHandler.mutate(ImmutableRandomMutation.of(0.1), intChromosome);
 	}
 }
