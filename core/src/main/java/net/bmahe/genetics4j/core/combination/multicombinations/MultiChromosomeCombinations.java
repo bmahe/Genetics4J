@@ -13,7 +13,7 @@ public class MultiChromosomeCombinations implements ChromosomeCombinator {
 	private final Random random;
 	private final List<ChromosomeCombinator> chromosomeCombinators;
 
-	public MultiChromosomeCombinations(final Random _random, List<ChromosomeCombinator> _chromosomeCombinators) {
+	public MultiChromosomeCombinations(final Random _random, final List<ChromosomeCombinator> _chromosomeCombinators) {
 		Validate.notNull(_random);
 		Validate.notNull(_chromosomeCombinators);
 

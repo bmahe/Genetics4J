@@ -135,13 +135,9 @@ public class IntEdgeRecombinationCrossover implements ChromosomeCombinator {
 			} else {
 				final Set<Integer> citiesSet = edgeMap.keySet();
 				if (citiesSet.size() == 1) {
-					currentCity = citiesSet.iterator()
-							.next();
+					currentCity = citiesSet.iterator().next();
 				} else if (citiesSet.size() > 0) {
-					currentCity = citiesSet.stream()
-							.skip(random.nextInt(citiesSet.size() - 1))
-							.findFirst()
-							.get();
+					currentCity = citiesSet.stream().skip(random.nextInt(citiesSet.size() - 1)).findFirst().get();
 				}
 			}
 		}
@@ -164,5 +160,4 @@ public class IntEdgeRecombinationCrossover implements ChromosomeCombinator {
 		return List.of(new IntChromosome(chromosome1.getNumAlleles(), intChromosome1.getMinValue(),
 				intChromosome1.getMaxValue(), chromosome));
 	}
-
 }

@@ -63,11 +63,12 @@ Here is a diagram of the main flow:
    |                 |                             |
    |                 |                             |
    |                 v                             |
-   |        /------------------\          /--------------------\
-   |        | Evaluate Fitness |          | Current population |
-   |        \------------------/          \--------------------/
+   |        /------------------\                   |
+   |        | Evaluate Fitness |                   |
+   |        \------------------/                   |
    |                 |                             |
    |                 |                             |
+   |      Offsprings |                             | Current Population
    |                 +------------+----------------+
    |                              |
    |                              |
@@ -82,6 +83,8 @@ Here is a diagram of the main flow:
    +------------------------------+
 
 ....
+
+
 
 This is a standard flow for a genetic algorithm. At each generation, we will select some parents who will then generate some offsprings that will be mutated. And finally, a new generation will be created as defined by the _evolution strategy_ from both offsprings and previous generation. The process will stop as soon as the termination conditions are met.
 
@@ -106,8 +109,8 @@ The genotype is defined through the link:../apidocs/net/bmahe/genetics4j/core/sp
 
 The _core_ module provides the following types of chromosomes out of the box:
 
-* Integers based chromosomes. See link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/BitChromosomeSpec.html[BitChromosomeSpec]
-* Bits based chromosomes. See  link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/IntChromosomeSpec.html[IntChromosomeSpec]
+* Bits based chromosomes. See link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/BitChromosomeSpec.html[BitChromosomeSpec]
+* Integer based chromosomes. See link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/IntChromosomeSpec.html[IntChromosomeSpec]
 
 
 ### Fitness
@@ -126,16 +129,51 @@ One could override the way Individuals are generated through either:
 * Specify a generation method in link:../apidocs/net/bmahe/genetics4j/core/spec/EAConfiguration.html#populationGenerator()[populationGenerator()]
 * Provide their own link:../apidocs/net/bmahe/genetics4j/core/chromosomes/factory/ChromosomeFactoryProvider.html[ChromosomeFactoryProvider] in link:../apidocs/net/bmahe/genetics4j/core/spec/EAExecutionContext.html#chromosomeFactoryProvider[EAExecutionContext]
 
-### Selection
+### Selection Policy
+
+The goal of a link:../apidocs/net/bmahe/genetics4j/core/spec/selection/SelectionPolicy.html[SelectionPolicy] is to select a set of individuals. It is an important piece of an Evolutionary Algorithm as it helps apply pressure towards the desired goal.
+
+The current set of available selection policies are:
+
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/RandomSelectionPolicy.html[RandomSelectionPolicy] - Randomly select individuals with a uniform distribution
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/RouletteWheelSelection.html[RouletteWheelSelection] - Also called _Fitness Proportionate Selection_ where the probability of selection of an individual is proportionate to its fitness
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/TournamentSelection.html[TournamentSelection] - It implements _k-tournament_ selection where _k_ invidivuals are picked from the population and the fittest one is selected. Selection pressure will vary bases on the value of _k_
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/MultiSelections.html[MultiSelections] - This is a wrapper for combining multiple selection policies. The set of individuals to select will be equally spread across each selection policy
 
 
-### Combination
+### Combination Policy
+
+The goal of a link:../apidocs/net/bmahe/genetics4j/core/spec/combination/CombinationPolicy.html[CombinationPolicy] is to combine two individuals and create zero, one or more offsprings.
+
+The current set of available combination policies are:
+
+* link:../apidocs/net/bmahe/genetics4j/core/spec/combination/SinglePointCrossover.html[SinglePointCrossover] - A random cut is made, separating each parent in half. Offsprings are created by combining each halves
+* link:../apidocs/net/bmahe/genetics4j/core/spec/combination/MultiPointCrossover.html[MultiPointCrossover] - This is an extension of the Single Point Crossover where _n_ cuts are made and the offsprings are created by combining each sections
+* link:../apidocs/net/bmahe/genetics4j/core/spec/combination/OrderCrossover.html[OrderCrossover] (OX) - This operator assumes a path representation in the chromosome and construct an offspring by selecting a subtour in one parent and preserving the relative order of the other parent. This is only available for chromosomes of type link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/IntChromosomeSpec.html[IntChromosomeSpec]
+* link:../apidocs/net/bmahe/genetics4j/core/spec/combination/PickFirstParent.html[PickFirstParent] - The first parent is always chosen as the offspring
+* link:../apidocs/net/bmahe/genetics4j/core/spec/combination/EdgeRecombinationCrossover.html[EdgeRecombinationCrossover] (ERX) - This operator assumes a path representation in the chromosome and construct an offspring with the aim of preserving the edges from the parents as much as possible. This is only available for chromosomes of type link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/IntChromosomeSpec.html[IntChromosomeSpec]
+* link:../apidocs/net/bmahe/genetics4j/core/spec/combination/MultiCombinations.html[MultiCombinations]- This is a wrapper for combining multiple combination policies. It will select a combination policy randomly with a uniform distribution
 
 
 ### Mutation
 
+The goal of a link:../apidocs/net/bmahe/genetics4j/core/spec/mutation/MutationPolicy.html[MutationPolicy] is to maintain diversity and allow undirected jumps to slightly different areas of the search space.
+
+The current set of available mutation policies are:
+
+* link:../apidocs/net/bmahe/genetics4j/core/spec/mutation/RandomMutation.html[RandomMutation] - Randomly change a value of the chromosomes. It might be flipping bits in the case of bit chromosomes or changing to a different value for int chromosomes
+* link:../apidocs/net/bmahe/genetics4j/core/spec/mutation/SwapMutation.html[SwapMutation] - Randomly change two values of the chromosomes
+* link:../apidocs/net/bmahe/genetics4j/core/spec/mutation/PartialMutation.html[PartialMutation] - Apply a link:../apidocs/net/bmahe/genetics4j/core/spec/mutation/MutationPolicy.html[MutationPolicy] for a very specific chromosome of the genotype
+* link:../apidocs/net/bmahe/genetics4j/core/spec/mutation/MultiMutation.html[MultiMutation] - This is a wrapper for combining multiple mutation policies. It will select a mutation policy randomly with a uniform distribution
+
 
 ### Termination
+
+link:../apidocs/net/bmahe/genetics4j/core/spec/termination/Termination.html[Termination] responsibility is determine whether or not the evolution process should continue or not.
+Termination conditions could be based on any criteria, be it computation time, diversity in the population, reaching a specific fitness value or a combination of those.
+
+
+link:../apidocs/net/bmahe/genetics4j/core/spec/termination/Terminations.html[Terminations] is a helper class which provides a few out of the box helpful termination conditions.
 
 
 ### Evolution Strategy
