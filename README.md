@@ -12,7 +12,7 @@ See website https://bmahe.gitlab.io/genetics4j/ for more information, quickstart
 * Genetic Algorithms
 * Strongly Typed Genetic Programming
 * Multi-Objective Optimization support with algorithms such as NSGA2
-* Supports multiple evolutionary strategies. Also called replacement strategies
+* Supports multiple replacement strategies
 * Configurable and user friendly
 * Multithreaded implementation for faster execution
 * Clear separation between the problem definition and its execution model

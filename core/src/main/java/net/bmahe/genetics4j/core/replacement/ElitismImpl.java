@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.evolutionstrategy;
+package net.bmahe.genetics4j.core.replacement;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.evolutionstrategy.Elitism;
+import net.bmahe.genetics4j.core.spec.replacement.Elitism;
 
-public class ElitismImpl<T extends Comparable<T>> implements EvolutionStrategyImplementor<T> {
+public class ElitismImpl<T extends Comparable<T>> implements ReplacementStrategyImplementor<T> {
 
 	private final Elitism elitismSpec;
 	private final Selector<T> offspringSelector;

@@ -1,18 +1,19 @@
-package net.bmahe.genetics4j.core.spec.evolutionstrategy;
+package net.bmahe.genetics4j.core.spec.replacement;
 
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 
+import net.bmahe.genetics4j.core.spec.replacement.ImmutableElitism;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
 /**
- * Specify an elitism based evolution strategy
+ * Specify an elitism based replacement strategy
  * <p>
  * Elitism will retain the best individuals of both offsprings and survivors of
  * the previous generation.
  */
 @Value.Immutable
-public interface Elitism extends EvolutionStrategy {
+public interface Elitism extends ReplacementStrategy {
 	static final double DEFAULT_OFFSPRING_RATIO = 0.95;
 
 	/**

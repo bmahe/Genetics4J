@@ -1,10 +1,11 @@
-package net.bmahe.genetics4j.core.evolutionstrategy;
+package net.bmahe.genetics4j.core.replacement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Random;
@@ -20,7 +21,7 @@ import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
-import net.bmahe.genetics4j.core.spec.evolutionstrategy.DeleteNLast;
+import net.bmahe.genetics4j.core.spec.replacement.DeleteNLast;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
 
 public class DeleteNLastImplTest {

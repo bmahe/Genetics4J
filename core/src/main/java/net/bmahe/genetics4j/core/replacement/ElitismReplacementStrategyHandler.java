@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.evolutionstrategy;
+package net.bmahe.genetics4j.core.replacement;
 
 import org.apache.commons.lang3.Validate;
 
@@ -7,31 +7,31 @@ import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
-import net.bmahe.genetics4j.core.spec.evolutionstrategy.Elitism;
-import net.bmahe.genetics4j.core.spec.evolutionstrategy.EvolutionStrategy;
+import net.bmahe.genetics4j.core.spec.replacement.Elitism;
+import net.bmahe.genetics4j.core.spec.replacement.ReplacementStrategy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
-public class ElitismEvolutionStrategyHandler<T extends Comparable<T>> implements EvolutionStrategyHandler<T> {
+public class ElitismReplacementStrategyHandler<T extends Comparable<T>> implements ReplacementStrategyHandler<T> {
 
 	@Override
-	public boolean canHandle(final EvolutionStrategy evolutionStrategy) {
-		Validate.notNull(evolutionStrategy);
+	public boolean canHandle(final ReplacementStrategy replacementStrategy) {
+		Validate.notNull(replacementStrategy);
 
-		return evolutionStrategy instanceof Elitism;
+		return replacementStrategy instanceof Elitism;
 	}
 
 	@Override
-	public EvolutionStrategyImplementor<T> resolve(final EAExecutionContext<T> eaExecutionContext,
+	public ReplacementStrategyImplementor<T> resolve(final EAExecutionContext<T> eaExecutionContext,
 			final EAConfiguration<T> eaConfiguration,
 			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
-			final EvolutionStrategy evolutionStrategy) {
+			final ReplacementStrategy replacementStrategy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(selectionPolicyHandlerResolver);
-		Validate.notNull(evolutionStrategy);
-		Validate.isInstanceOf(Elitism.class, evolutionStrategy);
+		Validate.notNull(replacementStrategy);
+		Validate.isInstanceOf(Elitism.class, replacementStrategy);
 
-		final Elitism elitism = (Elitism) evolutionStrategy;
+		final Elitism elitism = (Elitism) replacementStrategy;
 
 		final SelectionPolicy offspringSelectionPolicy = elitism.offspringSelectionPolicy();
 		final SelectionPolicyHandler<T> offspringSelectionPolicyHandler = selectionPolicyHandlerResolver
@@ -47,5 +47,4 @@ public class ElitismEvolutionStrategyHandler<T extends Comparable<T>> implements
 
 		return new ElitismImpl<T>(elitism, offspringSelector, survivorSelector);
 	}
-
 }

@@ -74,7 +74,7 @@ Here is a diagram of the main flow:
    |                              |
    |                              v
    |                 /--------------------------\
-   |                 |    Evolution Strategy    |
+   |                 |   Replacement Strategy   |
    |                 | Generate Next Population |
    |                 \--------------------------/
    |                              |
@@ -86,7 +86,7 @@ Here is a diagram of the main flow:
 
 
 
-This is a standard flow for a genetic algorithm. At each generation, we will select some parents who will then generate some offsprings that will be mutated. And finally, a new generation will be created as defined by the _evolution strategy_ from both offsprings and previous generation. The process will stop as soon as the termination conditions are met.
+This is a standard flow for a genetic algorithm. At each generation, we will select some parents who will then generate some offsprings that will be mutated. And finally, a new generation will be created as defined by the _replacement strategy_ from both offsprings and previous generation. The process will stop as soon as the termination conditions are met.
 
 ## Concepts
 
@@ -176,4 +176,14 @@ Termination conditions could be based on any criteria, be it computation time, d
 link:../apidocs/net/bmahe/genetics4j/core/spec/termination/Terminations.html[Terminations] is a helper class which provides a few out of the box helpful termination conditions.
 
 
-### Evolution Strategy
+### Replacement Strategy
+
+The link:../apidocs/net/bmahe/genetics4j/core/spec/replacement/ReplacementStrategy.html[replacement strategy] is crucial for driving the process as it specifies how to generate the next generation based on the current population and the offsprings.
+
+The current set of available replacement strategies are:
+
+* link:../apidocs/net/bmahe/genetics4j/core/spec/replacement/Elitism.html[Elitism] - The best individuals of respectively, the current generation and the mutated offsprings, are retained for the next generation.
+* link:../apidocs/net/bmahe/genetics4j/core/spec/replacement/GenerationalReplacement.html[GenerationalReplacement] - The best individuals of the mutated offsprings are retained for the next generation and the current population is discarded.
+* link:../apidocs/net/bmahe/genetics4j/core/spec/replacement/DeleteNLast.html[DeleteNLast] - The _N_ weakest invidivuals of the current population are discarded and replaced by the best offsprings.
+
+

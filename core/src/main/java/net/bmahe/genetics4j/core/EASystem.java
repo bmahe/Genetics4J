@@ -21,8 +21,8 @@ import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
-import net.bmahe.genetics4j.core.evolutionstrategy.EvolutionStrategyImplementor;
 import net.bmahe.genetics4j.core.mutation.Mutator;
+import net.bmahe.genetics4j.core.replacement.ReplacementStrategyImplementor;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
@@ -41,7 +41,7 @@ public class EASystem<T extends Comparable<T>> {
 	private final List<ChromosomeCombinator> chromosomeCombinators;
 	private final ChromosomeFactoryProvider chromosomeFactoryProvider;
 
-	private final EvolutionStrategyImplementor<T> evolutionStrategyImplementor;
+	private final ReplacementStrategyImplementor<T> replacementStrategyImplementor;
 
 	private final List<Mutator> mutators;
 
@@ -52,7 +52,7 @@ public class EASystem<T extends Comparable<T>> {
 	public EASystem(final EAConfiguration<T> _eaConfiguration, final long _populationSize,
 			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
 			final Selector<T> _parentSelectionPolicyHandler, final List<Mutator> _mutators,
-			final EvolutionStrategyImplementor<T> _evolutionStrategyImplementor,
+			final ReplacementStrategyImplementor<T> _replacementStrategyImplementor,
 			final EAExecutionContext<T> _eaExecutionContext, final ExecutorService _executorService) {
 		Validate.notNull(_eaConfiguration);
 		Validate.isTrue(_populationSize > 0);
@@ -60,7 +60,7 @@ public class EASystem<T extends Comparable<T>> {
 		Validate.isTrue(_chromosomeCombinators.size() == _eaConfiguration.numChromosomes());
 		Validate.inclusiveBetween(0.0, 1.0, _offspringRatio);
 		Validate.notNull(_parentSelectionPolicyHandler);
-		Validate.notNull(_evolutionStrategyImplementor);
+		Validate.notNull(_replacementStrategyImplementor);
 		Validate.notNull(_eaExecutionContext);
 		Validate.notNull(_executorService);
 
@@ -75,7 +75,7 @@ public class EASystem<T extends Comparable<T>> {
 
 		parentSelector = _parentSelectionPolicyHandler;
 
-		this.evolutionStrategyImplementor = _evolutionStrategyImplementor;
+		this.replacementStrategyImplementor = _replacementStrategyImplementor;
 	}
 
 	public EAConfiguration<T> geteaConfiguration() {
@@ -236,7 +236,7 @@ public class EASystem<T extends Comparable<T>> {
 			final List<T> offspringScores = evaluateGenotypes(mutatedChildren);
 
 			final int nextGenerationPopulationSize = eaExecutionContext.populationSize();
-			final Population<T> newPopulation = evolutionStrategyImplementor.select(eaConfiguration,
+			final Population<T> newPopulation = replacementStrategyImplementor.select(eaConfiguration,
 					nextGenerationPopulationSize,
 					population.getAllGenotypes(),
 					population.getAllFitnesses(),

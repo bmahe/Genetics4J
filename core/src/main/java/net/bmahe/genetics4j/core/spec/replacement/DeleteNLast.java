@@ -1,19 +1,20 @@
-package net.bmahe.genetics4j.core.spec.evolutionstrategy;
+package net.bmahe.genetics4j.core.spec.replacement;
 
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 
+import net.bmahe.genetics4j.core.spec.replacement.ImmutableDeleteNLast;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
 /**
  * Delete N Last
  * <p>
- * This evolution strategy deletes the N weakest individuals and replace them
+ * This replacement strategy deletes the N weakest individuals and replace them
  * with the best offsprings
  * 
  */
 @Value.Immutable
-public interface DeleteNLast extends EvolutionStrategy {
+public interface DeleteNLast extends ReplacementStrategy {
 
 	static final double DEFAULT_WEAK_RATIO = 0.05;
 

@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.evolutionstrategy;
+package net.bmahe.genetics4j.core.replacement;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.evolutionstrategy.GenerationalReplacement;
+import net.bmahe.genetics4j.core.spec.replacement.GenerationalReplacement;
 
-public class GenerationalReplacementImpl<T extends Comparable<T>> implements EvolutionStrategyImplementor<T> {
+public class GenerationalReplacementImpl<T extends Comparable<T>> implements ReplacementStrategyImplementor<T> {
 
 	private final GenerationalReplacement generationalReplacementSpec;
 	private final Selector<T> offspringSelector;

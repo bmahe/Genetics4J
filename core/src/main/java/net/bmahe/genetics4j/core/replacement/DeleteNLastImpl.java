@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.evolutionstrategy;
+package net.bmahe.genetics4j.core.replacement;
 
 import java.util.Comparator;
 import java.util.List;
@@ -11,9 +11,9 @@ import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
-import net.bmahe.genetics4j.core.spec.evolutionstrategy.DeleteNLast;
+import net.bmahe.genetics4j.core.spec.replacement.DeleteNLast;
 
-public class DeleteNLastImpl<T extends Comparable<T>> implements EvolutionStrategyImplementor<T> {
+public class DeleteNLastImpl<T extends Comparable<T>> implements ReplacementStrategyImplementor<T> {
 
 	private final DeleteNLast deleteNLastSpec;
 	private final Selector<T> offspringSelector;

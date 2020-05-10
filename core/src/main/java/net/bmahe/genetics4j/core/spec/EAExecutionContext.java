@@ -20,9 +20,6 @@ import net.bmahe.genetics4j.core.combination.multipointcrossover.MultiPointCross
 import net.bmahe.genetics4j.core.combination.ordercrossover.IntOrderCrossoverHandler;
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.SinglePointCrossoverHandler;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
-import net.bmahe.genetics4j.core.evolutionstrategy.ElitismEvolutionStrategyHandler;
-import net.bmahe.genetics4j.core.evolutionstrategy.EvolutionStrategyHandler;
-import net.bmahe.genetics4j.core.evolutionstrategy.GenerationalReplacementEvolutionStrategyHandler;
 import net.bmahe.genetics4j.core.mutation.MultiMutationsPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.PartialMutationPolicyHandler;
@@ -33,6 +30,9 @@ import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.BitChromosom
 import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.IntChromosomeRandomMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.BitChromosomeSwapMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.IntChromosomeSwapMutationHandler;
+import net.bmahe.genetics4j.core.replacement.ElitismReplacementStrategyHandler;
+import net.bmahe.genetics4j.core.replacement.ReplacementStrategyHandler;
+import net.bmahe.genetics4j.core.replacement.GenerationalReplacementStrategyHandler;
 import net.bmahe.genetics4j.core.selection.MultiSelectionsPolicyHandler;
 import net.bmahe.genetics4j.core.selection.RandomSelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
@@ -169,28 +169,28 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 	/////////////////////////////////////////
 
 	@Value.Default
-	public List<EvolutionStrategyHandler<T>> defaultEvolutionStrategyHandlers() {
-		return List.of(new ElitismEvolutionStrategyHandler<>(),
-				new GenerationalReplacementEvolutionStrategyHandler<>());
+	public List<ReplacementStrategyHandler<T>> defaultReplacementStrategyHandlers() {
+		return List.of(new ElitismReplacementStrategyHandler<>(),
+				new GenerationalReplacementStrategyHandler<>());
 	}
 
-	public abstract List<Function<EAExecutionContext<T>, EvolutionStrategyHandler<T>>>
-			evolutionStrategyHandlerFactories();
+	public abstract List<Function<EAExecutionContext<T>, ReplacementStrategyHandler<T>>>
+			replacementStrategyHandlerFactories();
 
 	@Value.Derived
-	public List<EvolutionStrategyHandler<T>> evolutionStrategyHandlers() {
-		final List<EvolutionStrategyHandler<T>> evolutionStrategyHandlers = new ArrayList<>();
+	public List<ReplacementStrategyHandler<T>> replacementStrategyHandlers() {
+		final List<ReplacementStrategyHandler<T>> replacementStrategyHandlers = new ArrayList<>();
 
-		final List<EvolutionStrategyHandler<T>> defaultEvolutionStrategyHandlers = defaultEvolutionStrategyHandlers();
-		if (defaultEvolutionStrategyHandlers.isEmpty() == false) {
-			evolutionStrategyHandlers.addAll(defaultEvolutionStrategyHandlers);
+		final List<ReplacementStrategyHandler<T>> defaultReplacementStrategyHandlers = defaultReplacementStrategyHandlers();
+		if (defaultReplacementStrategyHandlers.isEmpty() == false) {
+			replacementStrategyHandlers.addAll(defaultReplacementStrategyHandlers);
 		}
 
-		evolutionStrategyHandlerFactories().stream()
+		replacementStrategyHandlerFactories().stream()
 				.map(factory -> factory.apply(this))
-				.forEach(esh -> evolutionStrategyHandlers.add(esh));
+				.forEach(esh -> replacementStrategyHandlers.add(esh));
 
-		return Collections.unmodifiableList(evolutionStrategyHandlers);
+		return Collections.unmodifiableList(replacementStrategyHandlers);
 	}
 
 	/////////////////////////////////////////

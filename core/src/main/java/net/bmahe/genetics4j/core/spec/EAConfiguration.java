@@ -14,9 +14,9 @@ import net.bmahe.genetics4j.core.combination.AllCasesGenotypeCombinator;
 import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
-import net.bmahe.genetics4j.core.spec.evolutionstrategy.Elitism;
-import net.bmahe.genetics4j.core.spec.evolutionstrategy.EvolutionStrategy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
+import net.bmahe.genetics4j.core.spec.replacement.Elitism;
+import net.bmahe.genetics4j.core.spec.replacement.ReplacementStrategy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
 import net.bmahe.genetics4j.core.termination.Termination;
@@ -73,26 +73,26 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 	public abstract List<MutationPolicy> mutationPolicies();
 
 	/**
-	 * Defines the evolution strategy
+	 * Defines the replacement strategy
 	 * <p>
-	 * The evolution strategy is what will determine the next population based on
+	 * The replacement strategy is what will determine the next population based on
 	 * the generated and mutated offsprings along with the current population
 	 * <p>
-	 * If not specified, the default evolution strategy will be to use Elitism with
-	 * tournament selection of 3 individuals for both offsprings and survivors. The
-	 * default offspring ratio is {@link Elitism#DEFAULT_OFFSPRING_RATIO}
+	 * If not specified, the default replacement strategy will be to use Elitism
+	 * with tournament selection of 3 individuals for both offsprings and survivors.
+	 * The default offspring ratio is {@link Elitism#DEFAULT_OFFSPRING_RATIO}
 	 * 
 	 * @return
 	 */
 	@Value.Default
-	public EvolutionStrategy evolutionStrategy() {
-		final var evolutionStrategyBuilder = Elitism.builder();
+	public ReplacementStrategy replacementStrategy() {
+		final var replacementStrategyBuilder = Elitism.builder();
 
-		evolutionStrategyBuilder.offspringRatio(Elitism.DEFAULT_OFFSPRING_RATIO)
+		replacementStrategyBuilder.offspringRatio(Elitism.DEFAULT_OFFSPRING_RATIO)
 				.offspringSelectionPolicy(TournamentSelection.of(3))
 				.survivorSelectionPolicy(TournamentSelection.of(3));
 
-		return evolutionStrategyBuilder.build();
+		return replacementStrategyBuilder.build();
 	}
 
 	/**

@@ -20,7 +20,7 @@ import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.Optimization;
-import net.bmahe.genetics4j.core.spec.evolutionstrategy.Elitism;
+import net.bmahe.genetics4j.core.spec.replacement.Elitism;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
 import net.bmahe.genetics4j.gp.Operation;
@@ -102,7 +102,7 @@ public class SymbolicRegressionWithMOO {
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<FitnessVector<Double>>();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(TournamentNSGA2Selection.ofFitnessVector(2, 3))
-				.evolutionStrategy(Elitism.builder()
+				.replacementStrategy(Elitism.builder()
 						.offspringRatio(0.95)
 						.offspringSelectionPolicy(TournamentNSGA2Selection.ofFitnessVector(2, 3))
 						.survivorSelectionPolicy(NSGA2Selection.ofFitnessVector(2))

@@ -11,19 +11,19 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorResolver;
-import net.bmahe.genetics4j.core.evolutionstrategy.EvolutionStrategyHandler;
-import net.bmahe.genetics4j.core.evolutionstrategy.EvolutionStrategyImplementor;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
+import net.bmahe.genetics4j.core.replacement.ReplacementStrategyHandler;
+import net.bmahe.genetics4j.core.replacement.ReplacementStrategyImplementor;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
-import net.bmahe.genetics4j.core.spec.evolutionstrategy.EvolutionStrategy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
+import net.bmahe.genetics4j.core.spec.replacement.ReplacementStrategy;
 
 public class EASystemFactory {
 
@@ -77,22 +77,23 @@ public class EASystemFactory {
 
 		}
 
-		final List<EvolutionStrategyHandler<T>> evolutionStrategyHandlers = eaExecutionContext
-				.evolutionStrategyHandlers();
-		final EvolutionStrategy evolutionStrategy = eaConfiguration.evolutionStrategy();
-		final Optional<EvolutionStrategyHandler<T>> evolutionStrategyHandlerOpt = evolutionStrategyHandlers.stream()
-				.filter(evolutionStrategyHandler -> evolutionStrategyHandler.canHandle(evolutionStrategy))
+		final List<ReplacementStrategyHandler<T>> replacementStrategyHandlers = eaExecutionContext
+				.replacementStrategyHandlers();
+		final ReplacementStrategy replacementStrategy = eaConfiguration.replacementStrategy();
+		final Optional<ReplacementStrategyHandler<T>> replacementStrategyHandlerOpt = replacementStrategyHandlers
+				.stream()
+				.filter(replacementStrategyHandler -> replacementStrategyHandler.canHandle(replacementStrategy))
 				.findFirst();
-		final EvolutionStrategyHandler<T> evolutionStrategyHandler = evolutionStrategyHandlerOpt
+		final ReplacementStrategyHandler<T> replacementStrategyHandler = replacementStrategyHandlerOpt
 				.orElseThrow(() -> new IllegalStateException(
-						"Could not find an implementation to handle the evolution strategy " + evolutionStrategy));
-		final EvolutionStrategyImplementor<T> evolutionStrategyImplementor = evolutionStrategyHandler
-				.resolve(eaExecutionContext, eaConfiguration, selectionPolicyHandlerResolver, evolutionStrategy);
+						"Could not find an implementation to handle the replacement strategy " + replacementStrategy));
+		final ReplacementStrategyImplementor<T> replacementStrategyImplementor = replacementStrategyHandler
+				.resolve(eaExecutionContext, eaConfiguration, selectionPolicyHandlerResolver, replacementStrategy);
 
 		final long populationSize = eaExecutionContext.populationSize();
 
-		return new EASystem<>(eaConfiguration, populationSize, chromosomeCombinators, eaConfiguration.offspringGeneratedRatio(),
-				parentSelector, mutators, evolutionStrategyImplementor, eaExecutionContext,
-				executorService);
+		return new EASystem<>(eaConfiguration, populationSize, chromosomeCombinators,
+				eaConfiguration.offspringGeneratedRatio(), parentSelector, mutators, replacementStrategyImplementor,
+				eaExecutionContext, executorService);
 	}
 }
