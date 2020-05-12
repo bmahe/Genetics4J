@@ -146,7 +146,7 @@ public class SymbolicRegressionWithMOO {
 								ColumnExtractor.of("complexity", evolutionStep -> evolutionStep.fitness().get(1)),
 								ColumnExtractor.of("rank", evolutionStep -> {
 
-									final List<Set<Integer>> rankedPopulation = evolutionStep.context();
+									final List<Set<Integer>> rankedPopulation = evolutionStep.context().get();
 									Integer rank = null;
 									for (int i = 0; i < 5 && i < rankedPopulation.size() && rank == null; i++) {
 

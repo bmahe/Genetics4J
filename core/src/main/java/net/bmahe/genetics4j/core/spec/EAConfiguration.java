@@ -3,6 +3,7 @@ package net.bmahe.genetics4j.core.spec;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang3.Validate;
@@ -10,6 +11,7 @@ import org.immutables.value.Value;
 
 import net.bmahe.genetics4j.core.Fitness;
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.combination.AllCasesGenotypeCombinator;
 import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
@@ -101,6 +103,15 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 	 * @return
 	 */
 	public abstract Fitness<T> fitness();
+
+	/**
+	 * Post-processing of a population after it got evaluated
+	 * <p>
+	 * This gives the opportunity to filter out, repair or rescore individuals
+	 * 
+	 * @return Population to be used by the remaining evolution process
+	 */
+	public abstract Optional<Function<Population<T>, Population<T>>> postEvaluationProcessor();
 
 	/**
 	 * Defines termination condition

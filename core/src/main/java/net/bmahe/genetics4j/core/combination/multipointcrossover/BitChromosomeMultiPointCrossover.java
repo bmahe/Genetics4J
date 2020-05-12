@@ -1,6 +1,5 @@
 package net.bmahe.genetics4j.core.combination.multipointcrossover;
 
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
@@ -41,8 +40,8 @@ public class BitChromosomeMultiPointCrossover implements ChromosomeCombinator {
 		final int[] alleleSplits = random.ints(0, chromosome1.getNumAlleles())
 				.distinct()
 				.limit(multiPointCrossoverPolicy.numCrossovers())
+				.sorted()
 				.toArray();
-		Arrays.sort(alleleSplits);
 
 		final BitChromosome bitChromosome1 = (BitChromosome) chromosome1;
 		final BitChromosome bitChromosome2 = (BitChromosome) chromosome2;
@@ -55,7 +54,7 @@ public class BitChromosomeMultiPointCrossover implements ChromosomeCombinator {
 		int splitIndex = 0;
 		for (int i = 0; i < bitChromosome1.getNumAlleles(); i++) {
 
-			if (i == alleleSplits[splitIndex]) {
+			if (splitIndex < alleleSplits.length && i == alleleSplits[splitIndex]) {
 				splitIndex++;
 				useChromosome1 = !useChromosome1;
 			}

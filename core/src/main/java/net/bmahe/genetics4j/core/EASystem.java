@@ -182,7 +182,9 @@ public class EASystem<T extends Comparable<T>> {
 		List<Genotype> genotypes = generateGenotype(eaConfiguration, eaExecutionContext.populationSize());
 		final List<T> fitnessScore = evaluateGenotypes(genotypes);
 
-		Population<T> population = Population.of(genotypes, fitnessScore);
+		Population<T> population = eaConfiguration.postEvaluationProcessor()
+				.map(pep -> pep.apply(Population.of(genotypes, fitnessScore)))
+				.orElseGet(() -> Population.of(genotypes, fitnessScore));
 
 		while (termination.isDone(generation, population.getAllGenotypes(), population.getAllFitnesses()) == false) {
 
@@ -236,13 +238,17 @@ public class EASystem<T extends Comparable<T>> {
 			}).collect(Collectors.toList());
 			final List<T> offspringScores = evaluateGenotypes(mutatedChildren);
 
+			final Population<T> childrenPopulation = eaConfiguration.postEvaluationProcessor()
+					.map(pep -> pep.apply(Population.of(mutatedChildren, offspringScores)))
+					.orElseGet(() -> Population.of(mutatedChildren, offspringScores));
+
 			final int nextGenerationPopulationSize = eaExecutionContext.populationSize();
 			final Population<T> newPopulation = replacementStrategyImplementor.select(eaConfiguration,
 					nextGenerationPopulationSize,
 					population.getAllGenotypes(),
 					population.getAllFitnesses(),
-					mutatedChildren,
-					offspringScores);
+					childrenPopulation.getAllGenotypes(),
+					childrenPopulation.getAllFitnesses());
 
 			if (newPopulation.size() < nextGenerationPopulationSize) {
 				final List<Genotype> additionalIndividuals = generateGenotype(eaConfiguration,
