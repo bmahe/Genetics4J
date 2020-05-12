@@ -45,5 +45,4 @@ public class EvolutionListeners {
 			final int skipN, final Comparator<U> comparator, final Function<Genotype, String> prettyPrinter) {
 		return new EvolutionListenerLogTopN<U>(logger, topN, skipN, comparator, prettyPrinter);
 	}
-
 }

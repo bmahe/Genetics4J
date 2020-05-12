@@ -2,8 +2,10 @@ package net.bmahe.genetics4j.samples.symbolicregression;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +24,8 @@ import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.replacement.Elitism;
 import net.bmahe.genetics4j.core.termination.Terminations;
+import net.bmahe.genetics4j.extras.evolutionlisteners.CSVEvolutionListener;
+import net.bmahe.genetics4j.extras.evolutionlisteners.ColumnExtractor;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
 import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.math.Functions;
@@ -40,6 +44,7 @@ import net.bmahe.genetics4j.gp.utils.ProgramUtils;
 import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 import net.bmahe.genetics4j.moo.FitnessVector;
 import net.bmahe.genetics4j.moo.MOOEAExecutionContexts;
+import net.bmahe.genetics4j.moo.nsga2.impl.NSGA2Utils;
 import net.bmahe.genetics4j.moo.nsga2.spec.NSGA2Selection;
 import net.bmahe.genetics4j.moo.nsga2.spec.TournamentNSGA2Selection;
 
@@ -121,7 +126,7 @@ public class SymbolicRegressionWithMOO {
 		final var eaExecutionContextBuilder = GPEAExecutionContexts.<FitnessVector<Double>>forGP(random);
 		MOOEAExecutionContexts.enrichWithMOO(eaExecutionContextBuilder);
 		eaExecutionContextBuilder.populationSize(5000);
-		eaExecutionContextBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 1));
+		eaExecutionContextBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 3));
 
 		eaExecutionContextBuilder.addEvolutionListeners(EvolutionListeners.ofLogTopN(logger,
 				5,
@@ -132,7 +137,27 @@ public class SymbolicRegressionWithMOO {
 					final TreeNode<Operation<?>> root = chromosome.getRoot();
 
 					return TreeNodeUtils.toStringTreeNode(root);
-				}));
+				}),
+				CSVEvolutionListener.<FitnessVector<Double>, List<Set<Integer>>>of("output.csv",
+						(generation, population, fitness, isDone) -> NSGA2Utils
+								.rankedPopulation(Comparator.reverseOrder(), fitness),
+						List.of(ColumnExtractor.of("generation", evolutionStep -> evolutionStep.generation()),
+								ColumnExtractor.of("score", evolutionStep -> evolutionStep.fitness().get(0)),
+								ColumnExtractor.of("complexity", evolutionStep -> evolutionStep.fitness().get(1)),
+								ColumnExtractor.of("rank", evolutionStep -> {
+
+									final List<Set<Integer>> rankedPopulation = evolutionStep.context();
+									Integer rank = null;
+									for (int i = 0; i < 5 && i < rankedPopulation.size() && rank == null; i++) {
+
+										if (rankedPopulation.get(i).contains(evolutionStep.individualIndex())) {
+											rank = i;
+										}
+									}
+
+									return rank != null ? rank : -1;
+								})),
+						5));
 
 		final EAExecutionContext<FitnessVector<Double>> eaExecutionContext = eaExecutionContextBuilder.build();
 		final EASystem<FitnessVector<Double>> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);

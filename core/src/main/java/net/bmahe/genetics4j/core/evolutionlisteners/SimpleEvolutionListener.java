@@ -11,7 +11,8 @@ public class SimpleEvolutionListener<T extends Number> implements EvolutionListe
 	final static public Logger logger = LogManager.getLogger(SimpleEvolutionListener.class);
 
 	@Override
-	public void onEvolution(final long generation, final List<Genotype> population, final List<T> fitness) {
+	public void onEvolution(final long generation, final List<Genotype> population, final List<T> fitness,
+			final boolean isDone) {
 
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;

@@ -79,7 +79,7 @@
 		<pitest.plugin.version>1.5.0</pitest.plugin.version>
 
 		<apache.commons.cli.version>1.4</apache.commons.cli.version>
-		<apache.commons.csv.version>1.6</apache.commons.csv.version>
+		<apache.commons.csv.version>1.8</apache.commons.csv.version>
 		<apache.commons.io.version>2.6</apache.commons.io.version>
 		<apache.commons.lang.version>3.9</apache.commons.lang.version>
 		<apache.commons.math.version>3.6.1</apache.commons.math.version>
@@ -96,6 +96,7 @@
 		<module>gp</module>
 		<module>moo</module>
 		<module>samples</module>
+		<module>extras</module>
 	</modules>
 
 	<dependencyManagement>
@@ -115,6 +116,12 @@
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>moo</artifactId>
+				<version>1.4-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.bmahe.genetics4j</groupId>
+				<artifactId>extras</artifactId>
 				<version>1.4-SNAPSHOT</version>
 			</dependency>
 

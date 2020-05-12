@@ -36,7 +36,8 @@ public class EvolutionListenerLogTopN<T extends Comparable<T>> implements Evolut
 	}
 
 	@Override
-	public void onEvolution(final long generation, final List<Genotype> population, final List<T> fitness) {
+	public void onEvolution(final long generation, final List<Genotype> population, final List<T> fitness,
+			final boolean isDone) {
 		if (skipN > 0 && generation % skipN != 0) {
 			return;
 		}

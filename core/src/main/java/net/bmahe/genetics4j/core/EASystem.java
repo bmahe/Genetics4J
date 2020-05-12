@@ -187,7 +187,8 @@ public class EASystem<T extends Comparable<T>> {
 		while (termination.isDone(generation, population.getAllGenotypes(), population.getAllFitnesses()) == false) {
 
 			for (final EvolutionListener<T> evolutionListener : eaExecutionContext.evolutionListeners()) {
-				evolutionListener.onEvolution(generation, population.getAllGenotypes(), population.getAllFitnesses());
+				evolutionListener
+						.onEvolution(generation, population.getAllGenotypes(), population.getAllFitnesses(), false);
 			}
 
 			final int childrenNeeded = (int) (populationSize * offspringRatio);
@@ -260,7 +261,7 @@ public class EASystem<T extends Comparable<T>> {
 		// isDone has returned true and we want to let the evolutionListeners run a last
 		// time
 		for (final EvolutionListener<T> evolutionListener : eaExecutionContext.evolutionListeners()) {
-			evolutionListener.onEvolution(generation, population.getAllGenotypes(), population.getAllFitnesses());
+			evolutionListener.onEvolution(generation, population.getAllGenotypes(), population.getAllFitnesses(), true);
 		}
 
 		return ImmutableEvolutionResult
