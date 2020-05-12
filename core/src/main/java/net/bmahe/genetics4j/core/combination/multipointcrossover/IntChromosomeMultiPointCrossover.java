@@ -1,6 +1,5 @@
 package net.bmahe.genetics4j.core.combination.multipointcrossover;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -40,8 +39,8 @@ public class IntChromosomeMultiPointCrossover implements ChromosomeCombinator {
 		final int[] alleleSplits = random.ints(0, chromosome1.getNumAlleles())
 				.distinct()
 				.limit(multiPointCrossoverPolicy.numCrossovers())
+				.sorted()
 				.toArray();
-		Arrays.sort(alleleSplits);
 
 		final IntChromosome intChromosome1 = (IntChromosome) chromosome1;
 		final IntChromosome intChromosome2 = (IntChromosome) chromosome2;
