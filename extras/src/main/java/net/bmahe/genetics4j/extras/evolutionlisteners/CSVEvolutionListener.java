@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
@@ -79,7 +80,8 @@ public abstract class CSVEvolutionListener<T extends Comparable<T>, U> implement
 			csvPrinter = openPrinter();
 		}
 
-		final U context = evolutionContextSupplier().apply(generation, population, fitness, isDone);
+		final Optional<U> context = Optional
+				.ofNullable(evolutionContextSupplier().apply(generation, population, fitness, isDone));
 
 		for (int individualIndex = 0; individualIndex < population.size(); individualIndex++) {
 			final int individualIndexFinal = individualIndex;
