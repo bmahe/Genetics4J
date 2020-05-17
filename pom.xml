@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.bmahe.genetics4j</groupId>
@@ -146,6 +147,18 @@
 			</dependency>
 
 			<dependency>
+				<groupId>commons-cli</groupId>
+				<artifactId>commons-cli</artifactId>
+				<version>${apache.commons.cli.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${apache.commons.io.version}</version>
+			</dependency>
+
+			<dependency>
 				<groupId>org.immutables</groupId>
 				<artifactId>value</artifactId>
 				<version>${immutables.version}</version>
@@ -262,6 +275,7 @@
 								<stem />
 								<source-highlighter>coderay</source-highlighter>
 								<coderay-css>style</coderay-css>
+								<icons>font</icons>
 								<project-recommended-version>${project.recommended.version}</project-recommended-version>
 							</attributes>
 							<requires>

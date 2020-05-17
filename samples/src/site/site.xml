@@ -1,0 +1,64 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/DECORATION/1.6.0"
+	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0
+	http://maven.apache.org/xsd/decoration-1.6.0.xsd">
+	<bannerLeft>
+		<name>${project.name}</name>
+		<href>${this.url}</href>
+	</bannerLeft>
+
+	<publishDate position="right" format="MMMM dd, yyyy" />
+	<version />
+	<poweredBy>
+		<logo img="#" alt="" />
+	</poweredBy>
+
+	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-fluido-skin</artifactId>
+		<version>1.8</version>
+	</skin>
+
+	<custom>
+		<fluidoSkin>
+		</fluidoSkin>
+	</custom>
+
+	<body>
+
+	<!-- TODO: Fix admonition icons. See https://github.com/asciidoctor/asciidoctor-maven-examples/issues/67 for admonition icons -->
+	<head>
+		<![CDATA[
+			<link rel="stylesheet" href="https://raw.githubusercontent.com/asciidoctor/asciidoctor/master/data/stylesheets/asciidoctor-default.css">
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+			<script type="text/x-mathjax-config">
+				MathJax.Hub.Config({
+					messageStyle: "none",
+					tex2jax: {
+						inlineMath: [["\\(", "\\)"]],
+						displayMath: [["\\[", "\\]"]],
+						ignoreClass: "nostem|nolatexmath"
+					},
+					asciimath2jax: {
+						delimiters: [["\\$", "\\$"]],
+						ignoreClass: "nostem|noasciimath"
+					},
+					TeX: { equationNumbers: { autoNumber: "none" } }
+				});
+			</script>
+		]]>
+	</head>
+
+
+
+		<menu ref="parent"  inherit="top"/>
+		<menu ref="modules" inherit="top"/>
+		<menu name="Documentation">
+			<item name="Fitness Sharing" href="docs/fitness_sharing.html" />
+		</menu>
+		<menu ref="reports" inherit="top"/>
+		<footer />
+	</body>
+</project>
