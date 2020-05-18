@@ -1,0 +1,101 @@
+= Fitness Sharing
+:stem:
+:toc:
+:docinfo:
+:sourcedir: ../../../src/main/java
+:outdir: ../../target/site
+:icons: font
+
+== Introduction
+
+A potential issue with meta-heuristic optimizations such as _Genetic Algorithms_ is to be stuck optimizing a local optimum.
+There are various ways to deal with it and one of them is called _Fitness Sharing_.
+
+_Fitness Sharing_ improves the situation by adjusting the fitness of each individual falling within some specified distance using a power law distribution. The adjusted fitness can be described as:
+
+stem:[F'(i) = {F(i)} / {\sum_{j}^n"sharing"(d(i,j))}]
+
+Where:
+
+* stem:[F(i)] represents the original fitness
+* stem:[d(i,j)] represents the distance between two solutions in either the _genotype_ or _phenotype_ space. _Phenotypes_ comparisons are usually preferred
+* stem:["sharing"(d)] represents the sharing function. Most common implementation is represented as stem:[{(1 - (d / sigma_{share})^alpha if d <= sigma_{share}),("0 otherwise"):}]
+
+In effect, _Fitness Sharing_ adds a penalty to genotypes being too similar and encourages those being a bit further.
+
+== Context
+
+To illustrate _Fitness Sharing_, we will attempt to find the value of _x_ which maximizes the function stem:[f(x) = abs(30 * sin(x/10))] where stem:[ 0 <= x <= 100]
+
+We will compare the solutions we get without and with _fitness sharing_.
+
+== Without Fitness Sharing
+
+Let's start by defining our _EAConfiguration_:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/FitnessSharingExample.java[tags=eaConfigurationBuilder]
+----
+
+This is a standard configuration with a binary representation for our _x_ value and:
+
+* a tournament with two participants at each round to select parents
+* a 2 multipoints crossover
+* a random mutation on the offsprings with 5% chances
+
+We will also let it run for 5 generations.
+
+Then let's define an execution context with a population of 50 individuals and some standard loggers, including a CSV logger so we can plot some graphs:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/FitnessSharingExample.java[tags=eaExecutionContext]
+----
+
+Finally, let's execute it!
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/FitnessSharingExample.java[tags=eaSystem]
+----
+
+Now that it has executed, we can plot the results and observe how do the proposed solutions fit in after 5 generations:
+
+image::FitnessSharingExample_without_fitness_sharing.png[Without Fitness Sharing]
+
+We can already observe some great solutions after 5 generations, but they all gather around a single peak.
+
+== With Fitness Sharing
+
+_Genetics4j_ provides some utilities to implement _Fitness Sharing_ in the class aptly named link:../../apidocs/net/bmahe/genetics4j/core/postevaluationprocess/FitnessSharing.html[FitnessSharing]. It is used as a post evaluation processor which is run after the fitnesses are evaluated.
+
+In order to ensure that both of our cases run with the same configuration (except for the fitness sharing) and to minimize code duplication, we will instantiate an EAConfiguration from the previous case and tweak it to add our fitness sharing:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/FitnessSharingExample.java[tags=eaConfigurationWithFS]
+----
+
+In this configuration, we do use the hamming distance in the genotype space as a distance measure and set stem:[sigma_{share} = 5].
+
+
+Next is the creation of an eaExecutionContext with the same configuration, except for the filename of the generated csv file:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/FitnessSharingExample.java[tags=eaExecutionContextWithFS]
+----
+
+And finally the EASystem and its execution:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/FitnessSharingExample.java[tags=eaSystemWithFS]
+----
+
+We can now plot the results with fitness sharing:
+
+image::FitnessSharingExample_with_fitness_sharing.png[With Fitness Sharing]
+
+Contrary to our previous run, we can clearly see that the solutions are spread across the different peaks, signaling higher diversity.
