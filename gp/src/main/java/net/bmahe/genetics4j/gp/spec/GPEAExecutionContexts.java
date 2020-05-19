@@ -9,6 +9,7 @@ import net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder;
 import net.bmahe.genetics4j.gp.chromosomes.factory.ProgramTreeChromosomeFactory;
 import net.bmahe.genetics4j.gp.combination.ProgramRandomCombineHandler;
+import net.bmahe.genetics4j.gp.mutation.NodeReplacementPolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomMutatePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomPrunePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRulesApplicatorPolicyHandler;
@@ -50,6 +51,7 @@ public class GPEAExecutionContexts {
 		builder.addMutationPolicyHandlerFactories(
 				gsd -> new ProgramRandomPrunePolicyHandler(gsd.random(), programHelper),
 				gsd -> new ProgramRandomMutatePolicyHandler(gsd.random(), programGenerator),
+				gsd -> new NodeReplacementPolicyHandler(random, programHelper),
 				gsd -> new ProgramRulesApplicatorPolicyHandler());
 
 		builder.addChromosomeCombinatorHandlerFactories(gsd -> new ProgramRandomCombineHandler(gsd.random()));
