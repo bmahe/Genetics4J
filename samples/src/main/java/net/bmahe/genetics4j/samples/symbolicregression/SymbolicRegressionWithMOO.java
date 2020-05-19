@@ -37,6 +37,7 @@ import net.bmahe.genetics4j.gp.program.Program;
 import net.bmahe.genetics4j.gp.spec.GPEAExecutionContexts;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
+import net.bmahe.genetics4j.gp.spec.mutation.NodeReplacement;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
@@ -115,6 +116,7 @@ public class SymbolicRegressionWithMOO {
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(ProgramRandomMutate.of(0.10),
 						ProgramRandomPrune.of(0.05),
+						NodeReplacement.of(0.05),
 						ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
 				.optimization(Optimization.MINIMIZE)
 				.termination(Terminations.or(Terminations.<FitnessVector<Double>>ofMaxGeneration(40),

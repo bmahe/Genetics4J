@@ -31,6 +31,7 @@ import net.bmahe.genetics4j.gp.program.Program;
 import net.bmahe.genetics4j.gp.spec.GPEAExecutionContexts;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
+import net.bmahe.genetics4j.gp.spec.mutation.NodeReplacement;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
@@ -96,6 +97,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(ProgramRandomMutate.of(0.10),
 						ProgramRandomPrune.of(0.12),
+						NodeReplacement.of(0.05),
 						ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
 				.optimization(Optimization.MINIMIZE)
 				.termination(Terminations.ofMaxGeneration(100))
