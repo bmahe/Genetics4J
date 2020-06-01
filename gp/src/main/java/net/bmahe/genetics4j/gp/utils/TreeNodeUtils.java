@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 
+import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.gp.Operation;
 
@@ -49,6 +51,24 @@ public class TreeNodeUtils {
 		return isSame;
 	}
 
+	public static boolean areSame(final Genotype genotypeA, final Genotype genotypeB, final int chromosomeIndex) {
+		Validate.notNull(genotypeA);
+		Validate.notNull(genotypeB);
+		Validate.isTrue(chromosomeIndex >= 0);
+		Validate.isTrue(chromosomeIndex < genotypeA.getSize());
+		Validate.isTrue(chromosomeIndex < genotypeB.getSize());
+
+		@SuppressWarnings("unchecked")
+		final var chromosomeA = (TreeChromosome<Operation<?>>) genotypeA.getChromosome(chromosomeIndex);
+		final TreeNode<Operation<?>> rootNodeA = chromosomeA.getRoot();
+
+		@SuppressWarnings("unchecked")
+		final var chromosomeB = (TreeChromosome<Operation<?>>) genotypeB.getChromosome(chromosomeIndex);
+		final TreeNode<Operation<?>> rootNodeB = chromosomeB.getRoot();
+
+		return areSame(rootNodeA, rootNodeB);
+	}
+
 	public static String toStringTreeNode(final TreeNode<Operation<?>> node) {
 		Validate.notNull(node);
 
@@ -77,4 +97,15 @@ public class TreeNodeUtils {
 		return stringBuilder.toString();
 	}
 
+	public static String toStringTreeNode(final Genotype genotype, final int chromosomeIndex) {
+		Validate.notNull(genotype);
+		Validate.isTrue(chromosomeIndex >= 0);
+		Validate.isTrue(chromosomeIndex < genotype.getSize());
+
+		@SuppressWarnings("unchecked")
+		final var chromosome = (TreeChromosome<Operation<?>>) genotype.getChromosome(chromosomeIndex);
+		final TreeNode<Operation<?>> rootNode = chromosome.getRoot();
+
+		return TreeNodeUtils.toStringTreeNode(rootNode);
+	}
 }

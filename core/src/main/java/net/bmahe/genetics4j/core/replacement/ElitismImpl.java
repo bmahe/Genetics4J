@@ -3,6 +3,8 @@ package net.bmahe.genetics4j.core.replacement;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
@@ -11,6 +13,7 @@ import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.replacement.Elitism;
 
 public class ElitismImpl<T extends Comparable<T>> implements ReplacementStrategyImplementor<T> {
+	final static public Logger logger = LogManager.getLogger(ElitismImpl.class);
 
 	private final Elitism elitismSpec;
 	private final Selector<T> offspringSelector;
@@ -41,12 +44,18 @@ public class ElitismImpl<T extends Comparable<T>> implements ReplacementStrategy
 		final int offspringNeeded = (int) (elitismSpec.offspringRatio() * numIndividuals);
 		final int survivorNeeded = numIndividuals - offspringNeeded;
 
+		logger.debug("We have {} individuals requested and an offspring ratio of {}",
+				numIndividuals,
+				elitismSpec.offspringRatio());
+
 		final Population<T> selected = new Population<>();
 
+		logger.info("Selecting {} offsprings", offspringNeeded);
 		final Population<T> selectedOffspring = offspringSelector
 				.select(eaConfiguration, offspringNeeded, offsprings, offspringScores);
 		selected.addAll(selectedOffspring);
 
+		logger.info("Selecting {} survivors", survivorNeeded);
 		final Population<T> selectedSurvivors = survivorSelector
 				.select(eaConfiguration, survivorNeeded, population, populationScores);
 		selected.addAll(selectedSurvivors);

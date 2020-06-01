@@ -16,9 +16,12 @@ public class Terminals {
 	public final static String TYPE_COEFFICIENT = "Coefficient";
 	public final static String TYPE_INPUT = "Input";
 
-	public static OperationFactory PI = OperationFactories.ofTerminal("PI", Double.class, () -> Math.PI);
+	public final static String NAME_PI = "PI";
+	public final static String NAME_E = "E";
 
-	public static OperationFactory E = OperationFactories.ofTerminal("E", Double.class, () -> Math.E);
+	public static OperationFactory PI = OperationFactories.ofTerminal(NAME_PI, Double.class, () -> Math.PI);
+
+	public static OperationFactory E = OperationFactories.ofTerminal(NAME_E, Double.class, () -> Math.E);
 
 	public static OperationFactory Coefficient(final Random random, final double min, final double max) {
 		return OperationFactories.ofOperationSupplier(new Class[] {}, Double.class, () -> {
@@ -59,8 +62,7 @@ public class Terminals {
 		return OperationFactories.of(new Class[] {}, clazz, (inputSpec) -> {
 			final List<Class> types = inputSpec.types();
 			final List<Integer> candidates = IntStream.range(0, types.size())
-					.filter((i) -> types.get(i)
-							.isAssignableFrom(clazz))
+					.filter((i) -> types.get(i).isAssignableFrom(clazz))
 					.boxed()
 					.collect(Collectors.toList());
 

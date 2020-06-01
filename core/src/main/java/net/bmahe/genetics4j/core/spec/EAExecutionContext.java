@@ -31,10 +31,11 @@ import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.IntChromosom
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.BitChromosomeSwapMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.IntChromosomeSwapMutationHandler;
 import net.bmahe.genetics4j.core.replacement.ElitismReplacementStrategyHandler;
-import net.bmahe.genetics4j.core.replacement.ReplacementStrategyHandler;
 import net.bmahe.genetics4j.core.replacement.GenerationalReplacementStrategyHandler;
+import net.bmahe.genetics4j.core.replacement.ReplacementStrategyHandler;
 import net.bmahe.genetics4j.core.selection.MultiSelectionsPolicyHandler;
 import net.bmahe.genetics4j.core.selection.RandomSelectionPolicyHandler;
+import net.bmahe.genetics4j.core.selection.SelectAllPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.TournamentSelectionPolicyHandler;
 
@@ -85,7 +86,8 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 	public List<SelectionPolicyHandler<T>> defaultSelectionPolicyHandlers() {
 		return Arrays.asList(new RandomSelectionPolicyHandler<T>(random()),
 				new TournamentSelectionPolicyHandler<T>(random()),
-				new MultiSelectionsPolicyHandler<T>());
+				new MultiSelectionsPolicyHandler<T>(),
+				new SelectAllPolicyHandler<T>());
 	}
 
 	public abstract List<Function<EAExecutionContext<T>, SelectionPolicyHandler<T>>> selectionPolicyHandlerFactories();
@@ -170,8 +172,7 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 
 	@Value.Default
 	public List<ReplacementStrategyHandler<T>> defaultReplacementStrategyHandlers() {
-		return List.of(new ElitismReplacementStrategyHandler<>(),
-				new GenerationalReplacementStrategyHandler<>());
+		return List.of(new ElitismReplacementStrategyHandler<>(), new GenerationalReplacementStrategyHandler<>());
 	}
 
 	public abstract List<Function<EAExecutionContext<T>, ReplacementStrategyHandler<T>>>

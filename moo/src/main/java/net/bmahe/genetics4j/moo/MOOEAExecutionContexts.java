@@ -5,6 +5,7 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder;
 import net.bmahe.genetics4j.moo.nsga2.impl.NSGA2SelectionPolicyHandler;
 import net.bmahe.genetics4j.moo.nsga2.impl.TournamentNSGA2SelectionPolicyHandler;
+import net.bmahe.genetics4j.moo.spea2.replacement.SPEA2ReplacementStrategyHandler;
 
 public class MOOEAExecutionContexts {
 
@@ -16,6 +17,8 @@ public class MOOEAExecutionContexts {
 
 		builder.addSelectionPolicyHandlerFactories((gsd) -> new NSGA2SelectionPolicyHandler<T>(),
 				gsd -> new TournamentNSGA2SelectionPolicyHandler<T>(gsd.random()));
+
+		builder.addReplacementStrategyHandlerFactories((gsd) -> new SPEA2ReplacementStrategyHandler<T>());
 		return builder;
 	}
 

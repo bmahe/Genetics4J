@@ -149,7 +149,7 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 
 	/**
 	 * Defines how many children will be generated at each iteration. Value must be
-	 * between 0 and 1 (inclusive)
+	 * between 0 and 1 (inclusive) and represents a fraction of the population size
 	 * 
 	 * @return
 	 */

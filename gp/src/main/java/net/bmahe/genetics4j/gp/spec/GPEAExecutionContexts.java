@@ -13,6 +13,7 @@ import net.bmahe.genetics4j.gp.mutation.NodeReplacementPolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomMutatePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRandomPrunePolicyHandler;
 import net.bmahe.genetics4j.gp.mutation.ProgramRulesApplicatorPolicyHandler;
+import net.bmahe.genetics4j.gp.mutation.TrimTreePolicyHandler;
 import net.bmahe.genetics4j.gp.program.ProgramGenerator;
 import net.bmahe.genetics4j.gp.program.ProgramHelper;
 import net.bmahe.genetics4j.gp.program.RampedHalfAndHalfProgramGenerator;
@@ -52,7 +53,8 @@ public class GPEAExecutionContexts {
 				gsd -> new ProgramRandomPrunePolicyHandler(gsd.random(), programHelper),
 				gsd -> new ProgramRandomMutatePolicyHandler(gsd.random(), programGenerator),
 				gsd -> new NodeReplacementPolicyHandler(random, programHelper),
-				gsd -> new ProgramRulesApplicatorPolicyHandler());
+				gsd -> new ProgramRulesApplicatorPolicyHandler(),
+				gsd -> new TrimTreePolicyHandler(random, programGenerator));
 
 		builder.addChromosomeCombinatorHandlerFactories(gsd -> new ProgramRandomCombineHandler(gsd.random()));
 

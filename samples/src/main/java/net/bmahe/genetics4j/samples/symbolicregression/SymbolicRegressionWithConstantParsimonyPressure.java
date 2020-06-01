@@ -88,7 +88,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 					}
 				}
 			}
-			return Double.isFinite(mse) ? Math.sqrt(mse) + 1.5 * chromosome.getSize() : Double.MAX_VALUE;
+			return Double.isFinite(mse) ? mse / 100.0 + 1.5 * chromosome.getSize() : Double.MAX_VALUE;
 		};
 
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
