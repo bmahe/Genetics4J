@@ -89,20 +89,25 @@ public class FitnessVector<T extends Comparable<T>> implements Comparable<Fitnes
 
 	@Override
 	public int compareTo(final FitnessVector<T> o) {
-		Validate.notNull(o);
+		return compare(this, o);
+	}
 
-		if (this.dimensions() != o.dimensions()) {
+	public static <U extends Comparable<U>> int compare(final FitnessVector<U> fv1, final FitnessVector<U> fv2) {
+		Validate.notNull(fv1);
+		Validate.notNull(fv2);
+
+		if (fv1.dimensions() != fv2.dimensions()) {
 			throw new IllegalArgumentException("Can't compare FitnessVector with different dimensions");
 		}
 
 		int greater = 0;
 		int lesser = 0;
 
-		for (int i = 0; i < this.dimensions(); i++) {
-			final T d1 = this.get(i);
-			final T d2 = o.get(i);
+		for (int i = 0; i < fv1.dimensions(); i++) {
+			final U d1 = fv1.get(i);
+			final U d2 = fv2.get(i);
 
-			final int compared = comparators.get(i).compare(d1, d2);
+			final int compared = fv1.comparators.get(i).compare(d1, d2);
 
 			if (compared < 0) {
 				lesser++;

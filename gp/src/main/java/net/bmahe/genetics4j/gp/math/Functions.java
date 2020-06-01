@@ -12,6 +12,7 @@ public final class Functions {
 	public static final String NAME_COS = "Cos";
 	public static final String NAME_SIN = "Sin";
 	public static final String NAME_EXP = "Exp";
+	public static final String NAME_POW = "Pow";
 	public static final String NAME_STR_TO_DOUBLE = "StrToDouble";
 
 	public static final OperationFactory COS = OperationFactories
@@ -35,4 +36,8 @@ public final class Functions {
 
 	public static final OperationFactory DIV = OperationFactories
 			.ofBinary(NAME_DIV, Double.class, Double.class, Double.class, (a, b) -> a / b);
+
+	public static final OperationFactory POW = OperationFactories
+			.ofBinary(NAME_POW, Double.class, Double.class, Double.class, (a, b) -> Math.pow(a, b));
+
 }

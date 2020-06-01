@@ -33,6 +33,8 @@ public interface Elitism extends ReplacementStrategy {
 	/**
 	 * Defines how many children will be generated at each iteration. Value must be
 	 * between 0 and 1 (inclusive)
+	 * <p>
+	 * The number of survivor will be the complement of it, or 1 - offspringRatio()
 	 * 
 	 * @return
 	 */

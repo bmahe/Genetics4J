@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,13 +17,13 @@ import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.Fitness;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
+import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
-import net.bmahe.genetics4j.core.spec.replacement.Elitism;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.extras.evolutionlisteners.CSVEvolutionListener;
 import net.bmahe.genetics4j.extras.evolutionlisteners.ColumnExtractor;
@@ -46,11 +47,11 @@ import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 import net.bmahe.genetics4j.moo.FitnessVector;
 import net.bmahe.genetics4j.moo.MOOEAExecutionContexts;
 import net.bmahe.genetics4j.moo.ParetoUtils;
-import net.bmahe.genetics4j.moo.nsga2.spec.NSGA2Selection;
 import net.bmahe.genetics4j.moo.nsga2.spec.TournamentNSGA2Selection;
+import net.bmahe.genetics4j.moo.spea2.spec.replacement.SPEA2Replacement;
 
-public class SymbolicRegressionWithMOO {
-	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithMOO.class);
+public class SymbolicRegressionWithMOOSPEA2 {
+	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithMOOSPEA2.class);
 
 	@SuppressWarnings("unchecked")
 	public void run() {
@@ -105,11 +106,7 @@ public class SymbolicRegressionWithMOO {
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<FitnessVector<Double>>();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(TournamentNSGA2Selection.ofFitnessVector(2, 3, deduplicator))
-				.replacementStrategy(Elitism.builder()
-						.offspringRatio(0.995)
-						.offspringSelectionPolicy(TournamentNSGA2Selection.ofFitnessVector(2, 3, deduplicator))
-						.survivorSelectionPolicy(NSGA2Selection.ofFitnessVector(2, deduplicator))
-						.build())
+				.replacementStrategy(SPEA2Replacement.ofFitnessVector(deduplicator))
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(MultiMutations.of(ProgramRandomMutate.of(0.15 * 3),
 						ProgramRandomPrune.of(0.15 * 3),
@@ -117,7 +114,7 @@ public class SymbolicRegressionWithMOO {
 				.optimization(Optimization.MINIMIZE)
 				.termination(Terminations.or(Terminations.<FitnessVector<Double>>ofMaxGeneration(400),
 						(generation, population, fitness) -> fitness.stream()
-								.anyMatch(fv -> fv.get(0) <= 0.000001 && fv.get(1) <= 10)))
+								.anyMatch(fv -> fv.get(0) <= 0.00001 && fv.get(1) <= 10)))
 				.fitness(computeFitness);
 		final EAConfiguration<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();
 
@@ -153,8 +150,36 @@ public class SymbolicRegressionWithMOO {
 								ColumnExtractor.of("expression",
 										evolutionStep -> TreeNodeUtils.toStringTreeNode(evolutionStep.individual(),
 												0))),
+						5),
+				new EvolutionListener<FitnessVector<Double>>() {
 
-						5));
+					long startTime = -1;
+					long previousTime = -1;
+
+					@Override
+					public void onEvolution(final long generation, final List<Genotype> population,
+							final List<FitnessVector<Double>> fitness, final boolean isDone) {
+						final long now = System.currentTimeMillis();
+
+						if (startTime < 0) {
+							startTime = now;
+						}
+
+						if (previousTime < 0) {
+							previousTime = now;
+						}
+
+						if (generation > 1) {
+							logger.info("Execution time:");
+							logger.info("\tCurrent generation duration: {}",
+									DurationFormatUtils.formatDurationHMS(now - previousTime));
+							logger.info("\tAverage duration: {}",
+									DurationFormatUtils.formatDurationHMS((now - startTime) / (generation - 1)));
+						}
+
+						previousTime = now;
+					}
+				});
 
 		final EAExecutionContext<FitnessVector<Double>> eaExecutionContext = eaExecutionContextBuilder.build();
 		final EASystem<FitnessVector<Double>> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
@@ -192,7 +217,7 @@ public class SymbolicRegressionWithMOO {
 
 	public static void main(String[] args) {
 
-		final SymbolicRegressionWithMOO symbolicRegression = new SymbolicRegressionWithMOO();
+		final SymbolicRegressionWithMOOSPEA2 symbolicRegression = new SymbolicRegressionWithMOOSPEA2();
 		symbolicRegression.run();
 	}
 }

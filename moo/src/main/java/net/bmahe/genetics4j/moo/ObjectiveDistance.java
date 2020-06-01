@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.moo.nsga2.spec;
+package net.bmahe.genetics4j.moo;
 
 /**
  * Provide a method to compute distances between to fitness scores along one

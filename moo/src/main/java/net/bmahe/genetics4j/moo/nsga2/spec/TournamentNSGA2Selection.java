@@ -1,12 +1,15 @@
 package net.bmahe.genetics4j.moo.nsga2.spec;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.immutables.value.Value;
 
+import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.moo.FitnessVector;
+import net.bmahe.genetics4j.moo.ObjectiveDistance;
 
 /**
  * Tournament based NSGA2 selection
@@ -29,13 +32,28 @@ public abstract class TournamentNSGA2Selection<T extends Comparable<T>> implemen
 	public abstract int numberObjectives();
 
 	/**
-	 * Comparator for dominance
+	 * Override the dominance operator.
+	 * <p>
+	 * If not specified, it assumes the default comparator conforms to the Pareto
+	 * dominance relation
 	 * 
-	 * @return Comparator for dominance
+	 * @return
 	 */
 	@Value.Default
 	public Comparator<T> dominance() {
 		return (a, b) -> a.compareTo(b);
+	}
+
+	/**
+	 * Comparator used for deduplication of solution prior to processing
+	 * <p>
+	 * If not specified, it defaults to not do any deduplication
+	 * 
+	 * @return
+	 */
+	@Value.Default
+	public Optional<Comparator<Genotype>> deduplicate() {
+		return Optional.empty();
 	}
 
 	/**
@@ -77,18 +95,38 @@ public abstract class TournamentNSGA2Selection<T extends Comparable<T>> implemen
 	 * @param numberObjectives Number of objectives and dimensions of the
 	 *                         FitnessVector
 	 * @param numberCandidates Number of candidates in each tournament
+	 * @param deduplicate      Deduplicator comparator. Null value with disable
+	 *                         deduplication
 	 * @return A new instance of TournamentNSGA2Selection
 	 */
-	public static <U extends Number & Comparable<U>> TournamentNSGA2Selection<FitnessVector<U>>
-			ofFitnessVector(final int numberObjectives, final int numberCandidates) {
+	public static <U extends Number & Comparable<U>> TournamentNSGA2Selection<FitnessVector<U>> ofFitnessVector(
+			final int numberObjectives, final int numberCandidates, final Comparator<Genotype> deduplicate) {
 
 		final var builder = new Builder<FitnessVector<U>>();
 
 		builder.objectiveComparator((m) -> (a, b) -> Double.compare(a.get(m).doubleValue(), b.get(m).doubleValue()))
 				.distance((a, b, m) -> b.get(m).doubleValue() - a.get(m).doubleValue())
 				.numberObjectives(numberObjectives)
-				.numCandidates(numberCandidates);
+				.numCandidates(numberCandidates)
+				.deduplicate(Optional.ofNullable(deduplicate));
 
 		return builder.build();
 	}
+
+	/**
+	 * Factory method to instantiate a Tournament based NSGA2 selection when fitness
+	 * is defined as a FitnessVector of a Number
+	 * 
+	 * @param <U>              Type of the fitness measurement
+	 * @param numberObjectives Number of objectives and dimensions of the
+	 *                         FitnessVector
+	 * @param numberCandidates Number of candidates in each tournament
+	 * @return A new instance of TournamentNSGA2Selection
+	 */
+	public static <U extends Number & Comparable<U>> TournamentNSGA2Selection<FitnessVector<U>>
+			ofFitnessVector(final int numberObjectives, final int numberCandidates) {
+
+		return ofFitnessVector(numberObjectives, numberCandidates, null);
+	}
+
 }

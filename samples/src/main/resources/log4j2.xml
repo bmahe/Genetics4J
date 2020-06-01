@@ -2,13 +2,18 @@
 <Configuration status="WARN">
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout
-				pattern="%highlight{%d{HH:mm:ss.SSS} %-5level %logger{1.} - %msg%n}" />
+			<PatternLayout pattern="%highlight{%d{HH:mm:ss.SSS} %-5level %logger{1.} - %msg%n}{TRACE=magenta}" />
 		</Console>
 	</Appenders>
 	<Loggers>
 		<Root level="INFO">
 			<AppenderRef ref="Console" />
 		</Root>
+
+		<Logger name="net.bmahe.genetics4j.core" level="INFO" />
+		<Logger name="net.bmahe.genetics4j.gp" level="DEBUG" />
+		<Logger name="net.bmahe.genetics4j.gp.mutation.ProgramRulesApplicatorMutator" level="DEBUG" />
+		<Logger name="net.bmahe.genetics4j.moo.nsga2" level="DEBUG" />
+		<Logger name="net.bmahe.genetics4j.moo.spea2" level="DEBUG" />
 	</Loggers>
 </Configuration>

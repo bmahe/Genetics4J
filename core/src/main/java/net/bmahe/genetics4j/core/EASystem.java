@@ -94,6 +94,8 @@ public class EASystem<T extends Comparable<T>> {
 		Validate.notNull(eaConfiguration);
 		Validate.isTrue(numPopulation > 0);
 
+		logger.info("Generating {} individuals", numPopulation);
+
 		final Optional<Supplier<Genotype>> populationGenerator = eaConfiguration.genotypeGenerator();
 
 		final List<Genotype> population = new ArrayList<>();
@@ -131,6 +133,8 @@ public class EASystem<T extends Comparable<T>> {
 	private List<T> evaluateGenotypes(final List<Genotype> population) {
 		Validate.notNull(population);
 		Validate.isTrue(population.size() > 0);
+
+		logger.debug("Evaluating population of size {}", population.size());
 
 		final Fitness<T> fitness = eaConfiguration.fitness();
 		final int numPartitions = eaExecutionContext.numberOfPartitions();
@@ -171,6 +175,8 @@ public class EASystem<T extends Comparable<T>> {
 			fitnessScores.addAll(taskResult.fitness);
 		});
 
+		logger.debug("Done evaluating population of size {}", population.size());
+
 		return fitnessScores;
 	}
 
@@ -178,8 +184,15 @@ public class EASystem<T extends Comparable<T>> {
 		final Termination<T> termination = eaConfiguration.termination();
 		final GenotypeCombinator genotypeCombinator = eaConfiguration.genotypeCombinator();
 
+		logger.info("Starting evolution");
+
+		final int initialPopulationSize = eaExecutionContext.populationSize();
+		logger.info("Generating initial population of {} individuals", initialPopulationSize);
+
 		long generation = 0;
-		List<Genotype> genotypes = generateGenotype(eaConfiguration, eaExecutionContext.populationSize());
+		List<Genotype> genotypes = generateGenotype(eaConfiguration, initialPopulationSize);
+
+		logger.info("Evaluating initial population");
 		final List<T> fitnessScore = evaluateGenotypes(genotypes);
 
 		Population<T> population = eaConfiguration.postEvaluationProcessor()
@@ -187,6 +200,7 @@ public class EASystem<T extends Comparable<T>> {
 				.orElseGet(() -> Population.of(genotypes, fitnessScore));
 
 		while (termination.isDone(generation, population.getAllGenotypes(), population.getAllFitnesses()) == false) {
+			logger.info("Going through evolution of generation {}", generation);
 
 			for (final EvolutionListener<T> evolutionListener : eaExecutionContext.evolutionListeners()) {
 				evolutionListener
@@ -195,12 +209,13 @@ public class EASystem<T extends Comparable<T>> {
 
 			final int childrenNeeded = (int) (populationSize * offspringRatio);
 			final int parentsNeeded = (int) (childrenNeeded * 2);
-			logger.trace("Will select {} parents", parentsNeeded);
+			logger.info("Selecting {} parents as we expect to generate {} children", parentsNeeded, childrenNeeded);
 			final List<Genotype> selectedParents = parentSelector
 					.select(eaConfiguration, parentsNeeded, population.getAllGenotypes(), population.getAllFitnesses())
 					.getAllGenotypes();
 			logger.trace("Selected parents: {}", selectedParents);
 
+			logger.info("Combining parents into offsprings");
 			final List<Genotype> children = new ArrayList<>();
 			while (selectedParents.isEmpty() == false) {
 				final Genotype firstParent = selectedParents.remove(0);
@@ -226,7 +241,9 @@ public class EASystem<T extends Comparable<T>> {
 
 				children.addAll(offsprings);
 			}
+			logger.info("Generated {} offsprings", children.size());
 
+			logger.info("Mutating children");
 			final List<Genotype> mutatedChildren = children.stream().map(child -> {
 				Genotype mutatedChild = child;
 
@@ -236,12 +253,15 @@ public class EASystem<T extends Comparable<T>> {
 
 				return mutatedChild;
 			}).collect(Collectors.toList());
+
+			logger.info("Evaluating offsprings");
 			final List<T> offspringScores = evaluateGenotypes(mutatedChildren);
 
 			final Population<T> childrenPopulation = eaConfiguration.postEvaluationProcessor()
 					.map(pep -> pep.apply(Population.of(mutatedChildren, offspringScores)))
 					.orElseGet(() -> Population.of(mutatedChildren, offspringScores));
 
+			logger.info("Executing replacement strategy");
 			final int nextGenerationPopulationSize = eaExecutionContext.populationSize();
 			final Population<T> newPopulation = replacementStrategyImplementor.select(eaConfiguration,
 					nextGenerationPopulationSize,
@@ -251,18 +271,24 @@ public class EASystem<T extends Comparable<T>> {
 					childrenPopulation.getAllFitnesses());
 
 			if (newPopulation.size() < nextGenerationPopulationSize) {
+				logger.info("New population only has {} members. Generating more individuals", newPopulation.size());
 				final List<Genotype> additionalIndividuals = generateGenotype(eaConfiguration,
 						nextGenerationPopulationSize - newPopulation.size());
 				logger.debug("Number of generated individuals: {}", additionalIndividuals.size());
-				final List<T> additionalFitness = evaluateGenotypes(additionalIndividuals);
 
-				newPopulation.addAll(Population.of(additionalIndividuals, additionalFitness));
+				if (additionalIndividuals.size() > 0) {
+
+					final List<T> additionalFitness = evaluateGenotypes(additionalIndividuals);
+					newPopulation.addAll(Population.of(additionalIndividuals, additionalFitness));
+				}
 			}
 
 			logger.trace("[Generation {}] New population: {}", generation, Arrays.asList(newPopulation));
 			population = newPopulation;
 			generation++;
 		}
+
+		logger.info("Evolution has terminated");
 
 		// isDone has returned true and we want to let the evolutionListeners run a last
 		// time
