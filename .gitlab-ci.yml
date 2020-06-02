@@ -16,6 +16,10 @@ include:
   - template: License-Scanning.gitlab-ci.yml
   - template: SAST.gitlab-ci.yml
 
+spotbugs-sast:
+  variables:
+    SAST_JAVA_VERSION: 11
+
 stages:
   - build
   - test
