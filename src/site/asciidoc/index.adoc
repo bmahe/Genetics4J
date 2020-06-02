@@ -33,6 +33,7 @@ Genetics4j encompass multiple aspects of the Evolutionary Algorithms family thro
 * _gp_: Contains features related to *Genetic Programming*
 * _moo_: Contains features related to *Multi-Objective Optimization*
 * _samples_: Contains different examples to highlight the different features and how to use them
+* _extras_: Extra set of classes which can be useful but do not necessarily fit in other modules. Example: There is a CSV Evolution listener to record population over time along with any extra configurable attributes
 
 
 == Documentation
