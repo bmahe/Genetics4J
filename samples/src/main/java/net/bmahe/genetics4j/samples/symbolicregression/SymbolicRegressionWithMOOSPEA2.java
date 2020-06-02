@@ -65,14 +65,7 @@ public class SymbolicRegressionWithMOOSPEA2 {
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		final Comparator<Genotype> deduplicator = (a, b) -> {
-
-			if (TreeNodeUtils.areSame(a, b, 0) == true) {
-				return 0;
-			}
-
-			return String.CASE_INSENSITIVE_ORDER.compare(a.toString(), b.toString());
-		};
+		final Comparator<Genotype> deduplicator = (a, b) -> TreeNodeUtils.compare(a, b, 0);
 
 		final Fitness<FitnessVector<Double>> computeFitness = (genoType) -> {
 			final TreeChromosome<Operation<?>> chromosome = (TreeChromosome<Operation<?>>) genoType.getChromosome(0);
