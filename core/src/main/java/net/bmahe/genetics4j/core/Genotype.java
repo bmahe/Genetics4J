@@ -13,6 +13,7 @@ public class Genotype {
 
 	public Genotype(final Chromosome... _chromosomes) {
 		Validate.notNull(_chromosomes);
+		Validate.isTrue(_chromosomes.length > 0);
 
 		this.chromosomes = _chromosomes;
 	}

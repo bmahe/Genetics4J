@@ -24,6 +24,10 @@ public abstract class FitnessSharing implements Function<Population<Double>, Pop
 	public Population<Double> apply(final Population<Double> population) {
 		Validate.notNull(population);
 
+		if (population.isEmpty()) {
+			return population;
+		}
+
 		final List<Double> newFitness = new ArrayList<>();
 		for (int i = 0; i < population.getAllGenotypes().size(); i++) {
 			final Genotype genotypeI = population.getGenotype(i);

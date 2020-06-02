@@ -22,6 +22,8 @@ public class ElitismImpl<T extends Comparable<T>> implements ReplacementStrategy
 	public ElitismImpl(final Elitism _elistismSpec, final Selector<T> _offspringSelector,
 			final Selector<T> _survivorSelector) {
 		Validate.notNull(_elistismSpec);
+		Validate.notNull(_offspringSelector);
+		Validate.notNull(_survivorSelector);
 
 		this.elitismSpec = _elistismSpec;
 		this.offspringSelector = _offspringSelector;

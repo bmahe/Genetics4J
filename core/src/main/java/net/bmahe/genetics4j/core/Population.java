@@ -64,6 +64,10 @@ public class Population<T extends Comparable<T>> {
 		return genotypes.size();
 	}
 
+	public boolean isEmpty() {
+		return size() == 0;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
