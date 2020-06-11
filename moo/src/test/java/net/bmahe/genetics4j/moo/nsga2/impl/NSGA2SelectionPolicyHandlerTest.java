@@ -15,7 +15,7 @@ import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
-import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
+import net.bmahe.genetics4j.core.spec.selection.RandomSelection;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.moo.nsga2.spec.ImmutableNSGA2Selection;
 import net.bmahe.genetics4j.moo.nsga2.spec.ImmutableNSGA2Selection.Builder;
@@ -25,7 +25,7 @@ public class NSGA2SelectionPolicyHandlerTest {
 
 	private final EAConfiguration<Integer> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<Integer>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
-			.parentSelectionPolicy(RandomSelectionPolicy.build())
+			.parentSelectionPolicy(RandomSelection.build())
 			.combinationPolicy(SinglePointCrossover.build())
 			.fitness((genoType) -> genoType.hashCode() / Integer.MAX_VALUE * 10)
 			.termination(Terminations.ofMaxGeneration(100))
@@ -49,7 +49,7 @@ public class NSGA2SelectionPolicyHandlerTest {
 		final NSGA2Selection<Integer> nsga2Selection = builder.build();
 
 		assertTrue(selectionPolicyHandler.canHandle(nsga2Selection));
-		assertFalse(selectionPolicyHandler.canHandle(RandomSelectionPolicy.build()));
+		assertFalse(selectionPolicyHandler.canHandle(RandomSelection.build()));
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -155,7 +155,7 @@ public class NSGA2SelectionPolicyHandlerTest {
 		final Selector<Integer> selector = selectionPolicyHandler.resolve(eaExecutionContext,
 				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				selectionPolicyHandlerResolver,
-				RandomSelectionPolicy.build());
+				RandomSelection.build());
 	}
 
 	@Test

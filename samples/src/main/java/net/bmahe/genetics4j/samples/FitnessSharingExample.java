@@ -30,7 +30,7 @@ import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.chromosome.BitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
 import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
-import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
+import net.bmahe.genetics4j.core.spec.selection.Tournament;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.core.util.BitChromosomeUtils;
 import net.bmahe.genetics4j.extras.evolutionlisteners.CSVEvolutionListener;
@@ -122,7 +122,7 @@ public class FitnessSharingExample {
 		// tag::eaConfigurationBuilder[]
 		final Builder<Double> eaConfigurationBuilder = new EAConfiguration.Builder<>();
 		eaConfigurationBuilder.chromosomeSpecs(BitChromosomeSpec.of(7))
-				.parentSelectionPolicy(TournamentSelection.of(2))
+				.parentSelectionPolicy(Tournament.of(2))
 				.combinationPolicy(MultiPointCrossover.of(2))
 				.mutationPolicies(RandomMutation.of(0.05))
 				.fitness((genotype) -> {

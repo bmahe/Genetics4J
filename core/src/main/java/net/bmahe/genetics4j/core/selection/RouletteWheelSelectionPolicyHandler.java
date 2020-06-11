@@ -11,7 +11,7 @@ import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.Optimization;
-import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
+import net.bmahe.genetics4j.core.spec.selection.RouletteWheel;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
 public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T>>
@@ -28,14 +28,14 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 	@Override
 	public boolean canHandle(final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
-		return selectionPolicy instanceof RouletteWheelSelection;
+		return selectionPolicy instanceof RouletteWheel;
 	}
 
 	@Override
 	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, EAConfiguration<T> eaConfiguration,
 			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
-		Validate.isInstanceOf(RouletteWheelSelection.class, selectionPolicy);
+		Validate.isInstanceOf(RouletteWheel.class, selectionPolicy);
 
 		return new Selector<T>() {
 

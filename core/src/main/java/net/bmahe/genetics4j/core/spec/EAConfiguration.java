@@ -20,7 +20,7 @@ import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.replacement.Elitism;
 import net.bmahe.genetics4j.core.spec.replacement.ReplacementStrategy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
-import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
+import net.bmahe.genetics4j.core.spec.selection.Tournament;
 import net.bmahe.genetics4j.core.termination.Termination;
 
 /**
@@ -91,8 +91,8 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 		final var replacementStrategyBuilder = Elitism.builder();
 
 		replacementStrategyBuilder.offspringRatio(Elitism.DEFAULT_OFFSPRING_RATIO)
-				.offspringSelectionPolicy(TournamentSelection.of(3))
-				.survivorSelectionPolicy(TournamentSelection.of(3));
+				.offspringSelectionPolicy(Tournament.of(3))
+				.survivorSelectionPolicy(Tournament.of(3));
 
 		return replacementStrategyBuilder.build();
 	}

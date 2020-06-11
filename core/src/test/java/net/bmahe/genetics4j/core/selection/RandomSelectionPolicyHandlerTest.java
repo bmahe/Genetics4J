@@ -24,14 +24,14 @@ import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
-import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
-import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
+import net.bmahe.genetics4j.core.spec.selection.RandomSelection;
+import net.bmahe.genetics4j.core.spec.selection.Tournament;
 import net.bmahe.genetics4j.core.termination.Terminations;
 
 public class RandomSelectionPolicyHandlerTest {
 	private final EAConfiguration<Double> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<Double>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
-			.parentSelectionPolicy(RandomSelectionPolicy.build())
+			.parentSelectionPolicy(RandomSelection.build())
 			.combinationPolicy(SinglePointCrossover.build())
 			.fitness((genoType) -> genoType.hashCode() / Double.MAX_VALUE * 10.0)
 			.termination(Terminations.ofMaxGeneration(100))
@@ -55,8 +55,8 @@ public class RandomSelectionPolicyHandlerTest {
 		final RandomSelectionPolicyHandler<Double> selectionPolicyHandler = new RandomSelectionPolicyHandler<>(
 				new Random());
 
-		assertTrue(selectionPolicyHandler.canHandle(RandomSelectionPolicy.build()));
-		assertFalse(selectionPolicyHandler.canHandle(TournamentSelection.of(2)));
+		assertTrue(selectionPolicyHandler.canHandle(RandomSelection.build()));
+		assertFalse(selectionPolicyHandler.canHandle(Tournament.of(2)));
 	}
 
 	@Test
@@ -94,7 +94,7 @@ public class RandomSelectionPolicyHandlerTest {
 		final Selector<Double> selector = selectionPolicyHandler.resolve(eaExecutionContext,
 				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				selectionPolicyHandlerResolver,
-				RandomSelectionPolicy.build());
+				RandomSelection.build());
 		final Population<Double> selected = selector
 				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 100, population, fitnessScore);
 

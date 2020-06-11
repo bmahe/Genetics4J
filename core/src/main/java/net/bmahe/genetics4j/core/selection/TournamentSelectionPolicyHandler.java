@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
@@ -12,9 +14,11 @@ import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
-import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
+import net.bmahe.genetics4j.core.spec.selection.Tournament;
 
 public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implements SelectionPolicyHandler<T> {
+	final static public Logger logger = LogManager.getLogger(TournamentSelectionPolicyHandler.class);
+
 	private final Random random;
 
 	public TournamentSelectionPolicyHandler(final Random _random) {
@@ -24,16 +28,18 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 	}
 
 	@Override
-	public boolean canHandle(SelectionPolicy selectionPolicy) {
+	public boolean canHandle(final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
-		return selectionPolicy instanceof TournamentSelection;
+
+		return selectionPolicy instanceof Tournament;
 	}
 
 	@Override
-	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, EAConfiguration<T> eaConfiguration,
-			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
+	public Selector<T> resolve(final EAExecutionContext<T> eaExecutionContext, final EAConfiguration<T> eaConfiguration,
+			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
+			final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
-		Validate.isInstanceOf(TournamentSelection.class, selectionPolicy);
+		Validate.isInstanceOf(Tournament.class, selectionPolicy);
 
 		return new Selector<T>() {
 
@@ -46,6 +52,9 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 				Validate.isTrue(numIndividuals > 0);
 				Validate.isTrue(population.size() == fitnessScore.size());
 
+				@SuppressWarnings("unchecked")
+				final Tournament<T> tournamentSelection = (Tournament<T>) selectionPolicy;
+
 				switch (eaConfiguration.optimization()) {
 					case MAXIMZE:
 					case MINIMIZE:
@@ -55,14 +64,14 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 								"Unsupported optimization " + eaConfiguration.optimization());
 				}
 
-				final Population<T> selectedIndividuals = new Population<>();
-
+				final Comparator<T> baseComparator = tournamentSelection.comparator();
 				final Comparator<T> comparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
-						? Comparator.naturalOrder()
-						: Comparator.reverseOrder();
+						? baseComparator
+						: baseComparator.reversed();
 
-				final TournamentSelection tournamentSelection = (TournamentSelection) selectionPolicy;
+				logger.debug("Selecting {} individuals", numIndividuals);
 
+				final Population<T> selectedIndividuals = new Population<>();
 				while (selectedIndividuals.size() < numIndividuals) {
 
 					Genotype bestCandidate = null;

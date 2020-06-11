@@ -33,7 +33,10 @@ import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.IntChromosomeS
 import net.bmahe.genetics4j.core.replacement.ElitismReplacementStrategyHandler;
 import net.bmahe.genetics4j.core.replacement.GenerationalReplacementStrategyHandler;
 import net.bmahe.genetics4j.core.replacement.ReplacementStrategyHandler;
+import net.bmahe.genetics4j.core.selection.DoubleTournamentSelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.MultiSelectionsPolicyHandler;
+import net.bmahe.genetics4j.core.selection.MultiTournamentsSelectionPolicyHandler;
+import net.bmahe.genetics4j.core.selection.ProportionalTournamentSelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.RandomSelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectAllPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
@@ -86,6 +89,9 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 	public List<SelectionPolicyHandler<T>> defaultSelectionPolicyHandlers() {
 		return Arrays.asList(new RandomSelectionPolicyHandler<T>(random()),
 				new TournamentSelectionPolicyHandler<T>(random()),
+				new DoubleTournamentSelectionPolicyHandler<T>(random()),
+				new ProportionalTournamentSelectionPolicyHandler<T>(random()),
+				new MultiTournamentsSelectionPolicyHandler<T>(random()),
 				new MultiSelectionsPolicyHandler<T>(),
 				new SelectAllPolicyHandler<T>());
 	}

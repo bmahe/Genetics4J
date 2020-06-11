@@ -17,7 +17,7 @@ import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
 import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
-import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
+import net.bmahe.genetics4j.core.spec.selection.Tournament;
 import net.bmahe.genetics4j.core.termination.Terminations;
 
 public class QuickStart {
@@ -35,7 +35,7 @@ public class QuickStart {
 		// tag::quickstart_genotype_spec[]
 		final Builder<Integer> eaConfigurationBuilder = new EAConfiguration.Builder<>();
 		eaConfigurationBuilder.chromosomeSpecs(IntChromosomeSpec.of(numEntries, minValue, maxValue))
-				.parentSelectionPolicy(TournamentSelection.of(5))
+				.parentSelectionPolicy(Tournament.of(5))
 				.combinationPolicy(MultiPointCrossover.of(2))
 				.mutationPolicies(RandomMutation.of(0.15))
 				.fitness((genoType) -> {

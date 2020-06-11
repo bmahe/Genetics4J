@@ -22,7 +22,7 @@ import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.replacement.Elitism;
-import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
+import net.bmahe.genetics4j.core.spec.selection.RandomSelection;
 import net.bmahe.genetics4j.core.spec.selection.SelectAll;
 import net.bmahe.genetics4j.core.termination.Terminations;
 
@@ -31,7 +31,7 @@ public class ElitismImplTest {
 
 	private final EAConfiguration<Double> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<Double>()
 			.addChromosomeSpecs(ImmutableBitChromosomeSpec.of(3))
-			.parentSelectionPolicy(RandomSelectionPolicy.build())
+			.parentSelectionPolicy(RandomSelection.build())
 			.combinationPolicy(SinglePointCrossover.build())
 			.fitness((genoType) -> genoType.hashCode() / Double.MAX_VALUE * 10.0)
 			.termination(Terminations.ofMaxGeneration(100))

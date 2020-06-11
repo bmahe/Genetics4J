@@ -135,10 +135,14 @@ The goal of a link:../apidocs/net/bmahe/genetics4j/core/spec/selection/Selection
 
 The current set of available selection policies are:
 
-* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/RandomSelectionPolicy.html[RandomSelectionPolicy] - Randomly select individuals with a uniform distribution
-* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/RouletteWheelSelection.html[RouletteWheelSelection] - Also called _Fitness Proportionate Selection_ where the probability of selection of an individual is proportionate to its fitness
-* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/TournamentSelection.html[TournamentSelection] - It implements _k-tournament_ selection where _k_ invidivuals are picked from the population and the fittest one is selected. Selection pressure will vary bases on the value of _k_
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/DoubleTournament.html[DoubleTournament] - It implements a double tournament as specified in the paper _Fighting Bloat With Nonparametric Parsimony Pressure_ <<fbwnpp>>. It is used in _Genetic Programming_ to control bloat by combining tournaments based on fitness with tournaments based on parsimony.
 * link:../apidocs/net/bmahe/genetics4j/core/spec/selection/MultiSelections.html[MultiSelections] - This is a wrapper for combining multiple selection policies. The set of individuals to select will be equally spread across each selection policy
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/MultiTournaments.html[MultiTournaments] - This operator enables to chain multiple link:../apidocs/net/bmahe/genetics4j/core/spec/selection/Tournament.html[Tournament]s
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/ProportionalTournament.html[ProportionalTournament] - It implements a proportional tournament as specified in the paper _Fighting Bloat With Nonparametric Parsimony Pressure_ <<fbwnpp>>. It is used in _Genetic Programming_ to control bloat by combining tournaments based on fitness with tournaments based on parsimony.
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/RandomSelection.html[RandomSelection] - Randomly select individuals with a uniform distribution
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/RouletteWheel.html[RouletteWheel] - Also called _Fitness Proportionate Selection_ where the probability of selection of an individual is proportionate to its fitness
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/SelectAll.html[SelectAll] - Pass through and will select whatever individuals it can fit in
+* link:../apidocs/net/bmahe/genetics4j/core/spec/selection/Tournament.html[Tournament] - It implements _k-tournament_ selection where _k_ invidivuals are picked from the population and the fittest one is selected. Selection pressure will vary bases on the value of _k_
 
 
 ### Combination Policy
@@ -187,3 +191,10 @@ The current set of available replacement strategies are:
 * link:../apidocs/net/bmahe/genetics4j/core/spec/replacement/DeleteNLast.html[DeleteNLast] - The _N_ weakest invidivuals of the current population are discarded and replaced by the best offsprings.
 
 
+
+
+
+[bibliography]
+== References
+
+- [[[fbwnpp]]] Sean Luke, Liviu Panait. Fighting Bloat With Nonparametric Parsimony Pressure

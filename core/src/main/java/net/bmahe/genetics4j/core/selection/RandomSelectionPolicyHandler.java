@@ -9,7 +9,7 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
-import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
+import net.bmahe.genetics4j.core.spec.selection.RandomSelection;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
 public class RandomSelectionPolicyHandler<T extends Comparable<T>> implements SelectionPolicyHandler<T> {
@@ -25,14 +25,14 @@ public class RandomSelectionPolicyHandler<T extends Comparable<T>> implements Se
 	@Override
 	public boolean canHandle(final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
-		return selectionPolicy instanceof RandomSelectionPolicy;
+		return selectionPolicy instanceof RandomSelection;
 	}
 
 	@Override
 	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, EAConfiguration<T> eaConfiguration,
 			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
-		Validate.isInstanceOf(RandomSelectionPolicy.class, selectionPolicy);
+		Validate.isInstanceOf(RandomSelection.class, selectionPolicy);
 
 		return new Selector<T>() {
 
