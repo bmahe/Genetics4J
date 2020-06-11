@@ -18,7 +18,7 @@ import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
-import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
+import net.bmahe.genetics4j.core.spec.selection.Tournament;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
 import net.bmahe.genetics4j.gp.InputSpec;
@@ -196,7 +196,7 @@ public class ProgramRulesApplicatorMutatorTest {
 
 		final net.bmahe.genetics4j.core.spec.EAConfiguration.Builder eaConfigurationBuilder = new EAConfiguration.Builder();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
-				.parentSelectionPolicy(TournamentSelection.of(3))
+				.parentSelectionPolicy(Tournament.of(3))
 				.offspringGeneratedRatio(0.90d)
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(ProgramApplyRules.of(rules))
@@ -263,7 +263,7 @@ public class ProgramRulesApplicatorMutatorTest {
 				.of((node) -> Functions.NAME_STR_TO_DOUBLE.equals(node.getData().getName()), (p, n) -> replacement));
 		final net.bmahe.genetics4j.core.spec.EAConfiguration.Builder eaConfigurationBuilder = new EAConfiguration.Builder();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
-				.parentSelectionPolicy(TournamentSelection.of(3))
+				.parentSelectionPolicy(Tournament.of(3))
 				.offspringGeneratedRatio(0.90d)
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(ProgramApplyRules.of(rules))

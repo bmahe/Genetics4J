@@ -22,7 +22,7 @@ import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.replacement.DeleteNLast;
-import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
+import net.bmahe.genetics4j.core.spec.selection.RandomSelection;
 
 public class DeleteNLastImplTest {
 	final static public Logger logger = LogManager.getLogger(DeleteNLastImplTest.class);
@@ -40,14 +40,14 @@ public class DeleteNLastImplTest {
 
 	@Test(expected = NullPointerException.class)
 	public void ctorNullSelector() {
-		final DeleteNLast deleteNLast = DeleteNLast.of(0.2, RandomSelectionPolicy.build());
+		final DeleteNLast deleteNLast = DeleteNLast.of(0.2, RandomSelection.build());
 		new DeleteNLastImpl<>(deleteNLast, null);
 	}
 
 	@Test
 	public void select() {
 		final Random random = new Random();
-		final DeleteNLast deleteNLast = DeleteNLast.of(0.2, RandomSelectionPolicy.build());
+		final DeleteNLast deleteNLast = DeleteNLast.of(0.2, RandomSelection.build());
 
 		final DeleteNLastImpl<Integer> deleteNLastImpl = new DeleteNLastImpl<>(deleteNLast, new Selector<Integer>() {
 

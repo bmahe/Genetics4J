@@ -103,45 +103,122 @@ include::{sourcedir}/net/bmahe/genetics4j/samples/QuickStart.java[tags=quickstar
 
 And here is an example of the output of such execution:
 -------
-7:14:08.299 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 0
-17:14:08.319 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[8, 1, 11, 3, 7, 9, 15, 11, 14, 12]]]] -> Fitness: 2
-17:14:08.320 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[2, 19, 14, 3, 2, 5, 19, 19, 2, 16]]]] -> Fitness: 2
-17:14:08.320 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 16, 10, 6, 15, 12, 13, 12, 7, 9]]]] -> Fitness: 2
-17:14:08.344 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 1
-17:14:08.344 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[8, 1, 11, 3, 13, 1, 5, 7, 5, 9]]]] -> Fitness: 4
-17:14:08.345 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 14, 3, 15, 10, 15, 0, 6, 11]]]] -> Fitness: 3
-17:14:08.345 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[5, 1, 14, 3, 8, 14, 6, 0, 15, 18]]]] -> Fitness: 3
-17:14:08.353 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 2
-17:14:08.354 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 17, 2, 3, 8, 14, 6, 0, 15, 9]]]] -> Fitness: 4
-17:14:08.354 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 11, 3, 11, 2, 11, 2, 8, 9]]]] -> Fitness: 4
-17:14:08.354 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[15, 1, 15, 1, 4, 12, 10, 10, 8, 9]]]] -> Fitness: 4
-17:14:08.361 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 3
-17:14:08.362 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[5, 1, 14, 3, 15, 5, 15, 7, 8, 9]]]] -> Fitness: 6
-17:14:08.362 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 14, 3, 2, 1, 5, 7, 8, 9]]]] -> Fitness: 5
-17:14:08.362 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 14, 4, 2, 11, 2, 8, 9]]]] -> Fitness: 5
-17:14:08.368 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 4
-17:14:08.369 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[5, 1, 2, 3, 8, 5, 15, 7, 8, 9]]]] -> Fitness: 7
-17:14:08.369 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 14, 4, 2, 11, 7, 8, 9]]]] -> Fitness: 6
-17:14:08.369 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 14, 3, 4, 5, 11, 11, 8, 9]]]] -> Fitness: 6
-17:14:08.374 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 5
-17:14:08.374 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[5, 1, 2, 3, 8, 5, 15, 7, 8, 9]]]] -> Fitness: 7
-17:14:08.374 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[11, 1, 14, 3, 4, 5, 5, 7, 8, 9]]]] -> Fitness: 7
-17:14:08.374 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 14, 3, 8, 5, 15, 7, 8, 9]]]] -> Fitness: 6
-17:14:08.379 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 6
-17:14:08.379 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 14, 4, 2, 6, 7, 8, 9]]]] -> Fitness: 7
-17:14:08.379 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 3, 8, 5, 15, 7, 8, 9]]]] -> Fitness: 7
-17:14:08.379 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[5, 1, 2, 3, 8, 5, 15, 7, 8, 9]]]] -> Fitness: 7
-17:14:08.383 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 7
-17:14:08.384 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 3, 4, 5, 5, 7, 8, 9]]]] -> Fitness: 8
-17:14:08.384 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 3, 4, 5, 5, 7, 8, 9]]]] -> Fitness: 8
-17:14:08.384 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[15, 1, 2, 3, 8, 5, 6, 7, 8, 9]]]] -> Fitness: 8
-17:14:08.389 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 8
-17:14:08.389 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]]] -> Fitness: 10
-17:14:08.390 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 3, 4, 5, 6, 7, 8, 9]]]] -> Fitness: 9
-17:14:08.390 INFO  n.b.g.s.QuickStart -   Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[17, 1, 2, 3, 8, 5, 6, 7, 8, 9]]]] -> Fitness: 8
-17:14:08.394 INFO  n.b.g.s.QuickStart - Best genotype: Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]]]
-17:14:08.394 INFO  n.b.g.s.QuickStart -   with fitness: 10
-17:14:08.394 INFO  n.b.g.s.QuickStart -   at generation: 8
+20:59:24.015 INFO  n.b.g.c.EASystem - Starting evolution
+20:59:24.020 INFO  n.b.g.c.EASystem - Generating initial population of 100 individuals
+20:59:24.022 INFO  n.b.g.c.EASystem - Generating 100 individuals
+20:59:24.025 INFO  n.b.g.c.EASystem - Evaluating initial population
+20:59:24.032 INFO  n.b.g.c.EASystem - Going through evolution of generation 0
+20:59:24.032 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 0
+20:59:24.045 INFO  n.b.g.s.QuickStart -   Fitness: 3 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 4, 15, 3, 13, 5, 15, 0, 10, 3]]]]
+20:59:24.045 INFO  n.b.g.s.QuickStart -   Fitness: 3 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[12, 4, 2, 12, 9, 9, 6, 4, 15, 9]]]]
+20:59:24.045 INFO  n.b.g.s.QuickStart -   Fitness: 3 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 12, 4, 15, 14, 1, 6, 1, 8, 2]]]]
+20:59:24.045 INFO  n.b.g.c.EASystem - Selecting 200 parents as we expect to generate 100 children
+20:59:24.046 INFO  n.b.g.c.EASystem - Combining parents into offsprings
+20:59:24.057 INFO  n.b.g.c.EASystem - Generated 200 offsprings
+20:59:24.057 INFO  n.b.g.c.EASystem - Mutating children
+20:59:24.058 INFO  n.b.g.c.EASystem - Evaluating offsprings
+20:59:24.059 INFO  n.b.g.c.EASystem - Executing replacement strategy
+20:59:24.060 INFO  n.b.g.c.r.ElitismImpl - Selecting 95 offsprings
+20:59:24.060 INFO  n.b.g.c.r.ElitismImpl - Selecting 5 survivors
+20:59:24.060 INFO  n.b.g.c.EASystem - Going through evolution of generation 1
+20:59:24.060 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 1
+20:59:24.061 INFO  n.b.g.s.QuickStart -   Fitness: 4 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 4, 2, 12, 9, 9, 6, 4, 15, 9]]]]
+20:59:24.061 INFO  n.b.g.s.QuickStart -   Fitness: 4 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 4, 15, 3, 13, 5, 15, 0, 12, 9]]]]
+20:59:24.061 INFO  n.b.g.s.QuickStart -   Fitness: 4 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 4, 2, 12, 9, 9, 6, 4, 15, 9]]]]
+20:59:24.061 INFO  n.b.g.c.EASystem - Selecting 200 parents as we expect to generate 100 children
+20:59:24.062 INFO  n.b.g.c.EASystem - Combining parents into offsprings
+20:59:24.067 INFO  n.b.g.c.EASystem - Generated 200 offsprings
+20:59:24.067 INFO  n.b.g.c.EASystem - Mutating children
+20:59:24.068 INFO  n.b.g.c.EASystem - Evaluating offsprings
+20:59:24.068 INFO  n.b.g.c.EASystem - Executing replacement strategy
+20:59:24.068 INFO  n.b.g.c.r.ElitismImpl - Selecting 95 offsprings
+20:59:24.068 INFO  n.b.g.c.r.ElitismImpl - Selecting 5 survivors
+20:59:24.068 INFO  n.b.g.c.EASystem - Going through evolution of generation 2
+20:59:24.068 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 2
+20:59:24.069 INFO  n.b.g.s.QuickStart -   Fitness: 5 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 4, 15, 3, 13, 5, 6, 0, 12, 9]]]]
+20:59:24.069 INFO  n.b.g.s.QuickStart -   Fitness: 5 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 4, 15, 3, 13, 5, 6, 4, 15, 9]]]]
+20:59:24.069 INFO  n.b.g.s.QuickStart -   Fitness: 5 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 4, 15, 3, 13, 5, 6, 4, 15, 9]]]]
+20:59:24.069 INFO  n.b.g.c.EASystem - Selecting 200 parents as we expect to generate 100 children
+20:59:24.069 INFO  n.b.g.c.EASystem - Combining parents into offsprings
+20:59:24.073 INFO  n.b.g.c.EASystem - Generated 200 offsprings
+20:59:24.073 INFO  n.b.g.c.EASystem - Mutating children
+20:59:24.073 INFO  n.b.g.c.EASystem - Evaluating offsprings
+20:59:24.074 INFO  n.b.g.c.EASystem - Executing replacement strategy
+20:59:24.074 INFO  n.b.g.c.r.ElitismImpl - Selecting 95 offsprings
+20:59:24.074 INFO  n.b.g.c.r.ElitismImpl - Selecting 5 survivors
+20:59:24.074 INFO  n.b.g.c.EASystem - Going through evolution of generation 3
+20:59:24.074 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 3
+20:59:24.074 INFO  n.b.g.s.QuickStart -   Fitness: 7 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 8, 3, 4, 10, 6, 1, 8, 9]]]]
+20:59:24.075 INFO  n.b.g.s.QuickStart -   Fitness: 6 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 4, 2, 3, 13, 5, 6, 0, 12, 9]]]]
+20:59:24.075 INFO  n.b.g.s.QuickStart -   Fitness: 6 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 4, 2, 3, 13, 5, 6, 0, 12, 9]]]]
+20:59:24.075 INFO  n.b.g.c.EASystem - Selecting 200 parents as we expect to generate 100 children
+20:59:24.075 INFO  n.b.g.c.EASystem - Combining parents into offsprings
+20:59:24.078 INFO  n.b.g.c.EASystem - Generated 200 offsprings
+20:59:24.078 INFO  n.b.g.c.EASystem - Mutating children
+20:59:24.079 INFO  n.b.g.c.EASystem - Evaluating offsprings
+20:59:24.079 INFO  n.b.g.c.EASystem - Executing replacement strategy
+20:59:24.079 INFO  n.b.g.c.r.ElitismImpl - Selecting 95 offsprings
+20:59:24.079 INFO  n.b.g.c.r.ElitismImpl - Selecting 5 survivors
+20:59:24.080 INFO  n.b.g.c.EASystem - Going through evolution of generation 4
+20:59:24.080 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 4
+20:59:24.080 INFO  n.b.g.s.QuickStart -   Fitness: 8 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 8, 3, 4, 5, 6, 1, 8, 9]]]]
+20:59:24.080 INFO  n.b.g.s.QuickStart -   Fitness: 8 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 8, 3, 4, 5, 6, 1, 8, 9]]]]
+20:59:24.080 INFO  n.b.g.s.QuickStart -   Fitness: 7 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 19, 2, 3, 4, 5, 6, 4, 15, 9]]]]
+20:59:24.080 INFO  n.b.g.c.EASystem - Selecting 200 parents as we expect to generate 100 children
+20:59:24.080 INFO  n.b.g.c.EASystem - Combining parents into offsprings
+20:59:24.083 INFO  n.b.g.c.EASystem - Generated 200 offsprings
+20:59:24.083 INFO  n.b.g.c.EASystem - Mutating children
+20:59:24.083 INFO  n.b.g.c.EASystem - Evaluating offsprings
+20:59:24.084 INFO  n.b.g.c.EASystem - Executing replacement strategy
+20:59:24.084 INFO  n.b.g.c.r.ElitismImpl - Selecting 95 offsprings
+20:59:24.084 INFO  n.b.g.c.r.ElitismImpl - Selecting 5 survivors
+20:59:24.084 INFO  n.b.g.c.EASystem - Going through evolution of generation 5
+20:59:24.084 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 5
+20:59:24.084 INFO  n.b.g.s.QuickStart -   Fitness: 9 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 1, 8, 9]]]]
+20:59:24.085 INFO  n.b.g.s.QuickStart -   Fitness: 8 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 9, 3, 4, 5, 6, 1, 8, 9]]]]
+20:59:24.085 INFO  n.b.g.s.QuickStart -   Fitness: 8 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 4, 6, 1, 8, 9]]]]
+20:59:24.085 INFO  n.b.g.c.EASystem - Selecting 200 parents as we expect to generate 100 children
+20:59:24.086 INFO  n.b.g.c.EASystem - Combining parents into offsprings
+20:59:24.090 INFO  n.b.g.c.EASystem - Generated 200 offsprings
+20:59:24.090 INFO  n.b.g.c.EASystem - Mutating children
+20:59:24.091 INFO  n.b.g.c.EASystem - Evaluating offsprings
+20:59:24.091 INFO  n.b.g.c.EASystem - Executing replacement strategy
+20:59:24.091 INFO  n.b.g.c.r.ElitismImpl - Selecting 95 offsprings
+20:59:24.091 INFO  n.b.g.c.r.ElitismImpl - Selecting 5 survivors
+20:59:24.091 INFO  n.b.g.c.EASystem - Going through evolution of generation 6
+20:59:24.092 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 6
+20:59:24.092 INFO  n.b.g.s.QuickStart -   Fitness: 9 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 4, 8, 9]]]]
+20:59:24.092 INFO  n.b.g.s.QuickStart -   Fitness: 9 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 1, 8, 9]]]]
+20:59:24.092 INFO  n.b.g.s.QuickStart -   Fitness: 9 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 1, 8, 9]]]]
+20:59:24.092 INFO  n.b.g.c.EASystem - Selecting 200 parents as we expect to generate 100 children
+20:59:24.092 INFO  n.b.g.c.EASystem - Combining parents into offsprings
+20:59:24.095 INFO  n.b.g.c.EASystem - Generated 200 offsprings
+20:59:24.095 INFO  n.b.g.c.EASystem - Mutating children
+20:59:24.095 INFO  n.b.g.c.EASystem - Evaluating offsprings
+20:59:24.096 INFO  n.b.g.c.EASystem - Executing replacement strategy
+20:59:24.096 INFO  n.b.g.c.r.ElitismImpl - Selecting 95 offsprings
+20:59:24.096 INFO  n.b.g.c.r.ElitismImpl - Selecting 5 survivors
+20:59:24.096 INFO  n.b.g.c.EASystem - Going through evolution of generation 7
+20:59:24.096 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 7
+20:59:24.096 INFO  n.b.g.s.QuickStart -   Fitness: 9 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 1, 8, 9]]]]
+20:59:24.096 INFO  n.b.g.s.QuickStart -   Fitness: 9 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 4, 8, 9]]]]
+20:59:24.097 INFO  n.b.g.s.QuickStart -   Fitness: 9 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 4, 8, 9]]]]
+20:59:24.097 INFO  n.b.g.c.EASystem - Selecting 200 parents as we expect to generate 100 children
+20:59:24.097 INFO  n.b.g.c.EASystem - Combining parents into offsprings
+20:59:24.099 INFO  n.b.g.c.EASystem - Generated 200 offsprings
+20:59:24.099 INFO  n.b.g.c.EASystem - Mutating children
+20:59:24.099 INFO  n.b.g.c.EASystem - Evaluating offsprings
+20:59:24.099 INFO  n.b.g.c.EASystem - Executing replacement strategy
+20:59:24.099 INFO  n.b.g.c.r.ElitismImpl - Selecting 95 offsprings
+20:59:24.100 INFO  n.b.g.c.r.ElitismImpl - Selecting 5 survivors
+20:59:24.100 INFO  n.b.g.c.EASystem - Evolution has terminated
+20:59:24.100 INFO  n.b.g.s.QuickStart - Top 3 individuals at generation 8
+20:59:24.100 INFO  n.b.g.s.QuickStart -   Fitness: 10 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]]]
+20:59:24.100 INFO  n.b.g.s.QuickStart -   Fitness: 10 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]]]
+20:59:24.100 INFO  n.b.g.s.QuickStart -   Fitness: 10 -> Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]]]
+20:59:24.103 INFO  n.b.g.s.QuickStart - Best genotype: Genotype [chromosomes=[IntChromosome [size=10, minValue=0, maxValue=20, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]]]
+20:59:24.104 INFO  n.b.g.s.QuickStart -   with fitness: 10
+20:59:24.104 INFO  n.b.g.s.QuickStart -   at generation: 8
 -------
 
 We can observe the top evolution of the top 3 solutions at each generation and how their fitnesses progressively increased, until a solution was found at the 8th generation.

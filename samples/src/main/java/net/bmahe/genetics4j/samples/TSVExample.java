@@ -23,8 +23,8 @@ import net.bmahe.genetics4j.core.spec.combination.OrderCrossover;
 import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
 import net.bmahe.genetics4j.core.spec.selection.MultiSelections;
-import net.bmahe.genetics4j.core.spec.selection.RouletteWheelSelection;
-import net.bmahe.genetics4j.core.spec.selection.TournamentSelection;
+import net.bmahe.genetics4j.core.spec.selection.RouletteWheel;
+import net.bmahe.genetics4j.core.spec.selection.Tournament;
 import net.bmahe.genetics4j.core.termination.Terminations;
 
 public class TSVExample {
@@ -57,7 +57,7 @@ public class TSVExample {
 		final Builder<Double> eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
 		eaConfigurationBuilder.chromosomeSpecs(IntChromosomeSpec.of(numCities, 0, numCities))
 				.parentSelectionPolicy(
-						MultiSelections.of(RouletteWheelSelection.build(), TournamentSelection.of(15)))
+						MultiSelections.of(RouletteWheel.build(), Tournament.of(15)))
 				.combinationPolicy(MultiCombinations.of(OrderCrossover.build(), EdgeRecombinationCrossover.build()))
 				.mutationPolicies(MultiMutations.of(SwapMutation.of(0.05, 80, false)))
 				.optimization(Optimization.MINIMIZE)

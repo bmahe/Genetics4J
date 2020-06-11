@@ -17,7 +17,7 @@ import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
 import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
-import net.bmahe.genetics4j.core.spec.selection.RandomSelectionPolicy;
+import net.bmahe.genetics4j.core.spec.selection.RandomSelection;
 
 public class SupersimpleTest {
 
@@ -28,7 +28,7 @@ public class SupersimpleTest {
 		eaConfigurationBuilder.chromosomeSpecs(BitChromosomeSpec.of(5), IntChromosomeSpec.of(6, 10, 100))
 				.fitness((genotype) -> 1.0)
 				.termination((long generation, List<Genotype> population, List<Double> fitness) -> true)
-				.parentSelectionPolicy(RandomSelectionPolicy.build())
+				.parentSelectionPolicy(RandomSelection.build())
 				.combinationPolicy(SinglePointCrossover.build())
 				.addMutationPolicies(MultiMutations.of(RandomMutation.of(0.15), SwapMutation.of(0.05, 2, true)));
 
