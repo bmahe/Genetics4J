@@ -56,7 +56,7 @@ public class SymbolicRegressionWithDoubleTournament {
 			for (final Double[] input : inputs) {
 
 				final double x = input[0];
-				final double expected = (6.0 * x * x) - x;
+				final double expected = SymbolicRegressionUtils.evaluate(x);
 				final Object result = ProgramUtils.execute(chromosome, input);
 
 				if (Double.isFinite(expected)) {
@@ -76,13 +76,13 @@ public class SymbolicRegressionWithDoubleTournament {
 		};
 
 		final DoubleTournament<Double> doubleTournament = DoubleTournament
-				.of(Tournament.of(3), parsimonyComparator, 1.4d);
+				.of(Tournament.of(5), parsimonyComparator, 1.5d);
 
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(doubleTournament)
 				.replacementStrategy(Elitism.builder()
-						.offspringRatio(0.98)
+						.offspringRatio(0.99)
 						.offspringSelectionPolicy(doubleTournament)
 						.survivorSelectionPolicy(doubleTournament)
 						.build())
@@ -109,7 +109,12 @@ public class SymbolicRegressionWithDoubleTournament {
 					final TreeNode<Operation<?>> root = chromosome.getRoot();
 
 					return TreeNodeUtils.toStringTreeNode(root);
-				}));
+				}),
+				SymbolicRegressionUtils.csvLogger("symbolicregression-output-double-tournament.csv",
+						evolutionStep -> evolutionStep.fitness(),
+						evolutionStep -> (double) evolutionStep.individual()
+								.getChromosome(0, TreeChromosome.class)
+								.getSize()));
 
 		final EAExecutionContext<Double> eaExecutionContext = eaExecutionContextBuilder.build();
 		final EASystem<Double> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);

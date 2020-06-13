@@ -65,7 +65,7 @@ public class SymbolicRegressionWithMOO {
 			for (final Double[] input : inputs) {
 
 				final double x = input[0];
-				final double expected = (2.0 * x * x) - x + 8;
+				final double expected = SymbolicRegressionUtils.evaluate(x);
 				final Object result = ProgramUtils.execute(chromosome, input);
 
 				if (Double.isFinite(expected)) {
@@ -98,7 +98,7 @@ public class SymbolicRegressionWithMOO {
 				.optimization(Optimization.MINIMIZE)
 				.termination(Terminations.or(Terminations.<FitnessVector<Double>>ofMaxGeneration(400),
 						(generation, population, fitness) -> fitness.stream()
-								.anyMatch(fv -> fv.get(0) <= 0.000001 && fv.get(1) <= 10)))
+								.anyMatch(fv -> fv.get(0) <= 0.000001 && fv.get(1) <= 15)))
 				.fitness(computeFitness);
 		final EAConfiguration<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();
 
@@ -112,30 +112,9 @@ public class SymbolicRegressionWithMOO {
 						5,
 						Comparator.<FitnessVector<Double>, Double>comparing(fv -> fv.get(0)).reversed(),
 						(genotype) -> TreeNodeUtils.toStringTreeNode(genotype, 0)),
-				CSVEvolutionListener.<FitnessVector<Double>, List<Set<Integer>>>of("output-NSGA2.csv",
-						(generation, population, fitness, isDone) -> ParetoUtils
-								.rankedPopulation(Comparator.reverseOrder(), fitness),
-						List.of(ColumnExtractor.of("generation", evolutionStep -> evolutionStep.generation()),
-								ColumnExtractor.of("score", evolutionStep -> evolutionStep.fitness().get(0)),
-								ColumnExtractor.of("complexity", evolutionStep -> evolutionStep.fitness().get(1)),
-								ColumnExtractor.of("rank", evolutionStep -> {
-
-									final List<Set<Integer>> rankedPopulation = evolutionStep.context().get();
-									Integer rank = null;
-									for (int i = 0; i < 5 && i < rankedPopulation.size() && rank == null; i++) {
-
-										if (rankedPopulation.get(i).contains(evolutionStep.individualIndex())) {
-											rank = i;
-										}
-									}
-
-									return rank != null ? rank : -1;
-								}),
-								ColumnExtractor.of("expression",
-										evolutionStep -> TreeNodeUtils.toStringTreeNode(evolutionStep.individual(),
-												0))),
-
-						2));
+				SymbolicRegressionUtils.csvLogger("symbolicregression-output-moo-nsga2.csv",
+						evolutionStep -> evolutionStep.fitness().get(0),
+						evolutionStep -> evolutionStep.fitness().get(1)));
 
 		final EAExecutionContext<FitnessVector<Double>> eaExecutionContext = eaExecutionContextBuilder.build();
 		final EASystem<FitnessVector<Double>> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);

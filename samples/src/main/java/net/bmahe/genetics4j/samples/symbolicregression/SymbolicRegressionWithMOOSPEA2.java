@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -24,8 +23,6 @@ import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
 import net.bmahe.genetics4j.core.termination.Terminations;
-import net.bmahe.genetics4j.extras.evolutionlisteners.CSVEvolutionListener;
-import net.bmahe.genetics4j.extras.evolutionlisteners.ColumnExtractor;
 import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.math.SimplificationRules;
 import net.bmahe.genetics4j.gp.program.Program;
@@ -40,7 +37,6 @@ import net.bmahe.genetics4j.gp.utils.ProgramUtils;
 import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 import net.bmahe.genetics4j.moo.FitnessVector;
 import net.bmahe.genetics4j.moo.MOOEAExecutionContexts;
-import net.bmahe.genetics4j.moo.ParetoUtils;
 import net.bmahe.genetics4j.moo.nsga2.spec.TournamentNSGA2Selection;
 import net.bmahe.genetics4j.moo.spea2.spec.replacement.SPEA2Replacement;
 
@@ -66,7 +62,7 @@ public class SymbolicRegressionWithMOOSPEA2 {
 			for (final Double[] input : inputs) {
 
 				final double x = input[0];
-				final double expected = (2.0 * x * x) - x + 8;
+				final double expected = SymbolicRegressionUtils.evaluate(x);
 				final Object result = ProgramUtils.execute(chromosome, input);
 
 				if (Double.isFinite(expected)) {
@@ -95,7 +91,7 @@ public class SymbolicRegressionWithMOOSPEA2 {
 				.optimization(Optimization.MINIMIZE)
 				.termination(Terminations.or(Terminations.<FitnessVector<Double>>ofMaxGeneration(400),
 						(generation, population, fitness) -> fitness.stream()
-								.anyMatch(fv -> fv.get(0) <= 0.00001 && fv.get(1) <= 10)))
+								.anyMatch(fv -> fv.get(0) <= 0.00001 && fv.get(1) <= 15)))
 				.fitness(computeFitness);
 		final EAConfiguration<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();
 
@@ -109,29 +105,9 @@ public class SymbolicRegressionWithMOOSPEA2 {
 						5,
 						Comparator.<FitnessVector<Double>, Double>comparing(fv -> fv.get(0)).reversed(),
 						(genotype) -> TreeNodeUtils.toStringTreeNode(genotype, 0)),
-				CSVEvolutionListener.<FitnessVector<Double>, List<Set<Integer>>>of("output-SPEA2.csv",
-						(generation, population, fitness, isDone) -> ParetoUtils
-								.rankedPopulation(Comparator.reverseOrder(), fitness),
-						List.of(ColumnExtractor.of("generation", evolutionStep -> evolutionStep.generation()),
-								ColumnExtractor.of("score", evolutionStep -> evolutionStep.fitness().get(0)),
-								ColumnExtractor.of("complexity", evolutionStep -> evolutionStep.fitness().get(1)),
-								ColumnExtractor.of("rank", evolutionStep -> {
-
-									final List<Set<Integer>> rankedPopulation = evolutionStep.context().get();
-									Integer rank = null;
-									for (int i = 0; i < 5 && i < rankedPopulation.size() && rank == null; i++) {
-
-										if (rankedPopulation.get(i).contains(evolutionStep.individualIndex())) {
-											rank = i;
-										}
-									}
-
-									return rank != null ? rank : -1;
-								}),
-								ColumnExtractor.of("expression",
-										evolutionStep -> TreeNodeUtils.toStringTreeNode(evolutionStep.individual(),
-												0))),
-						2),
+				SymbolicRegressionUtils.csvLogger("symbolicregression-output-moo-spea2.csv",
+						evolutionStep -> evolutionStep.fitness().get(0),
+						evolutionStep -> evolutionStep.fitness().get(1)),
 				new EvolutionListener<FitnessVector<Double>>() {
 
 					long startTime = -1;

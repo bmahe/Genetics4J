@@ -30,11 +30,12 @@ import net.bmahe.genetics4j.gp.spec.mutation.NodeReplacement;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
+import net.bmahe.genetics4j.gp.spec.mutation.TrimTree;
 import net.bmahe.genetics4j.gp.utils.ProgramUtils;
 import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 
-public class SymbolicRegressionWithConstantParsimonyPressure {
-	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithConstantParsimonyPressure.class);
+public class SymbolicRegressionWithEnforcedMaxDepth {
+	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithEnforcedMaxDepth.class);
 
 	@SuppressWarnings("unchecked")
 	public void run() {
@@ -67,7 +68,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 					}
 				}
 			}
-			return Double.isFinite(mse) ? mse / 100.0 + 1.5 * chromosome.getSize() : Double.MAX_VALUE;
+			return Double.isFinite(mse) ? mse / 100.0 : Double.MAX_VALUE;
 		};
 
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
@@ -77,9 +78,10 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 				.mutationPolicies(ProgramRandomMutate.of(0.10),
 						ProgramRandomPrune.of(0.12),
 						NodeReplacement.of(0.05),
+						TrimTree.build(),
 						ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
 				.optimization(Optimization.MINIMIZE)
-				.termination(Terminations.or(Terminations.ofMaxGeneration(100), Terminations.ofFitnessAtMost(15.0d)))
+				.termination(Terminations.or(Terminations.ofMaxGeneration(100), Terminations.ofFitnessAtMost(0.0001d)))
 				.fitness(computeFitness);
 		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
 
@@ -97,7 +99,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 
 					return TreeNodeUtils.toStringTreeNode(root);
 				}),
-				SymbolicRegressionUtils.csvLogger("symbolicregression-output-constant-parsimony-pressure.csv",
+				SymbolicRegressionUtils.csvLogger("symbolicregression-output-enforced-max-depth.csv",
 						evolutionStep -> evolutionStep.fitness(),
 						evolutionStep -> (double) evolutionStep.individual()
 								.getChromosome(0, TreeChromosome.class)
@@ -116,7 +118,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 
 	public static int main(String[] args) {
 
-		final var symbolicRegression = new SymbolicRegressionWithConstantParsimonyPressure();
+		final var symbolicRegression = new SymbolicRegressionWithEnforcedMaxDepth();
 		symbolicRegression.run();
 
 		return 0;
