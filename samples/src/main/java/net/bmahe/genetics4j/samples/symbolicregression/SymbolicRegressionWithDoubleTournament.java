@@ -10,6 +10,7 @@ import net.bmahe.genetics4j.core.EASystem;
 import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.Fitness;
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
@@ -18,6 +19,8 @@ import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.Optimization;
+import net.bmahe.genetics4j.core.spec.replacement.Elitism;
+import net.bmahe.genetics4j.core.spec.selection.DoubleTournament;
 import net.bmahe.genetics4j.core.spec.selection.Tournament;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.gp.Operation;
@@ -33,8 +36,8 @@ import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 import net.bmahe.genetics4j.gp.utils.ProgramUtils;
 import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 
-public class SymbolicRegressionWithConstantParsimonyPressure {
-	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithConstantParsimonyPressure.class);
+public class SymbolicRegressionWithDoubleTournament {
+	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithDoubleTournament.class);
 
 	@SuppressWarnings("unchecked")
 	public void run() {
@@ -57,29 +60,39 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 				final Object result = ProgramUtils.execute(chromosome, input);
 
 				if (Double.isFinite(expected)) {
-					if (result instanceof Double) {
-						final Double resultDouble = (Double) result;
-						mse += Double.isFinite(resultDouble) ? (expected - resultDouble) * (expected - resultDouble)
-								: 1_000_000_000;
-					} else {
-						logger.error("NOT A DOUBLE: {}", result);
-						mse += 1000;
-					}
+					final Double resultDouble = (Double) result;
+					mse += Double.isFinite(resultDouble) ? (expected - resultDouble) * (expected - resultDouble)
+							: 1_000_000_000;
 				}
 			}
-			return Double.isFinite(mse) ? mse / 100.0 + 1.5 * chromosome.getSize() : Double.MAX_VALUE;
+			return Double.isFinite(mse) ? mse / 100.0d : Double.MAX_VALUE;
 		};
+
+		final Comparator<Individual<Double>> parsimonyComparator = (a, b) -> {
+			final TreeChromosome<Operation<?>> treeChromosomeA = a.genotype().getChromosome(0, TreeChromosome.class);
+			final TreeChromosome<Operation<?>> treeChromosomeB = b.genotype().getChromosome(0, TreeChromosome.class);
+
+			return Integer.compare(treeChromosomeA.getSize(), treeChromosomeB.getSize());
+		};
+
+		final DoubleTournament<Double> doubleTournament = DoubleTournament
+				.of(Tournament.of(3), parsimonyComparator, 1.4d);
 
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
-				.parentSelectionPolicy(Tournament.of(3))
+				.parentSelectionPolicy(doubleTournament)
+				.replacementStrategy(Elitism.builder()
+						.offspringRatio(0.98)
+						.offspringSelectionPolicy(doubleTournament)
+						.survivorSelectionPolicy(doubleTournament)
+						.build())
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(ProgramRandomMutate.of(0.10),
 						ProgramRandomPrune.of(0.12),
 						NodeReplacement.of(0.05),
 						ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
 				.optimization(Optimization.MINIMIZE)
-				.termination(Terminations.or(Terminations.ofMaxGeneration(100), Terminations.ofFitnessAtMost(11.0d)))
+				.termination(Terminations.or(Terminations.ofMaxGeneration(100), Terminations.ofFitnessAtMost(0.00001)))
 				.fitness(computeFitness);
 		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
 
@@ -111,7 +124,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 
 	public static int main(String[] args) {
 
-		final var symbolicRegression = new SymbolicRegressionWithConstantParsimonyPressure();
+		final var symbolicRegression = new SymbolicRegressionWithDoubleTournament();
 		symbolicRegression.run();
 
 		return 0;
