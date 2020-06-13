@@ -61,7 +61,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 	}
 
 	protected Individual<T> parsimonyPick(final Comparator<Individual<T>> parsimonyComparator,
-			final float parsimonyTournamentSize, final Individual<T> first, final Individual<T> second) {
+			final double parsimonyTournamentSize, final Individual<T> first, final Individual<T> second) {
 		Validate.notNull(parsimonyComparator);
 		Validate.inclusiveBetween(0.0, 2.0, parsimonyTournamentSize);
 		Validate.notNull(first);
@@ -97,7 +97,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 		final boolean doFitnessFirst = doubleTournament.doFitnessFirst();
 		final Tournament<T> fitnessTournament = doubleTournament.fitnessTournament();
 		final Comparator<Individual<T>> parsimonyComparator = doubleTournament.parsimonyComparator();
-		final float parsimonyTournamentSize = doubleTournament.parsimonyTournamentSize();
+		final double parsimonyTournamentSize = doubleTournament.parsimonyTournamentSize();
 
 		Validate.isTrue((doFitnessFirst && parsimonyTournamentSize <= 2.0 && parsimonyTournamentSize >= 0.0)
 				|| doFitnessFirst == false);
