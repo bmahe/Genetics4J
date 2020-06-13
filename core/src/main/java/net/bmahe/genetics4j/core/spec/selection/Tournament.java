@@ -4,6 +4,8 @@ import java.util.Comparator;
 
 import org.immutables.value.Value;
 
+import net.bmahe.genetics4j.core.Individual;
+
 @Value.Style(overshadowImplementation = true)
 @Value.Immutable
 public abstract class Tournament<T extends Comparable<T>> implements SelectionPolicy {
@@ -12,8 +14,8 @@ public abstract class Tournament<T extends Comparable<T>> implements SelectionPo
 	public abstract int numCandidates();
 
 	@Value.Default
-	public Comparator<T> comparator() {
-		return Comparator.naturalOrder();
+	public Comparator<Individual<T>> comparator() {
+		return Comparator.comparing(Individual::fitness);
 	}
 
 	/*
@@ -33,7 +35,7 @@ public abstract class Tournament<T extends Comparable<T>> implements SelectionPo
 	}
 
 	public static <U extends Comparable<U>> Tournament<U> of(final int numCandidates,
-			final Comparator<U> comparator) {
+			final Comparator<Individual<U>> comparator) {
 		return new Builder<U>().numCandidates(numCandidates).comparator(comparator).build();
 	}
 
