@@ -55,17 +55,20 @@ public class ProportionalTournamentSelector<T extends Comparable<T>> implements 
 				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 		}
 
-		final Comparator<Individual<T>> baseComparator = random.nextDouble() < proportionFirst ? firstComparator
-				: secondComparator;
-		final Comparator<Individual<T>> comparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
-				? baseComparator
-				: baseComparator.reversed();
+		final Comparator<Individual<T>> firstComparatorOptimize = Optimization.MAXIMZE
+				.equals(eaConfiguration.optimization()) ? firstComparator : firstComparator.reversed();
+
+		final Comparator<Individual<T>> secondComparatorOptimize = Optimization.MAXIMZE
+				.equals(eaConfiguration.optimization()) ? secondComparator : secondComparator.reversed();
 
 		logger.debug("Selecting {} individuals", numIndividuals);
 
 		final Population<T> selectedIndividuals = new Population<>();
 
 		while (selectedIndividuals.size() < numIndividuals) {
+
+			final Comparator<Individual<T>> comparator = random.nextDouble() < proportionFirst ? firstComparatorOptimize
+					: secondComparatorOptimize;
 
 			final Individual<T> selected = random.ints(numCandidates, 0, population.size())
 					.boxed()

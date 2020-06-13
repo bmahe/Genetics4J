@@ -113,7 +113,7 @@ public class ProportionalTournamentSelectionPolicyHandlerTest {
 		assertNotNull(selected);
 		assertEquals(2, selected.size());
 		assertEquals(population.get(2), selected.getGenotype(0));
-		assertEquals(population.get(3), selected.getGenotype(1));
+		assertEquals(population.get(0), selected.getGenotype(1));
 
 		final Population<Double> selected2 = selector
 				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 2, population, fitnessScore);
