@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
@@ -64,8 +65,8 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 								"Unsupported optimization " + eaConfiguration.optimization());
 				}
 
-				final Comparator<T> baseComparator = tournamentSelection.comparator();
-				final Comparator<T> comparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
+				final Comparator<Individual<T>> baseComparator = tournamentSelection.comparator();
+				final Comparator<Individual<T>> comparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
 						? baseComparator
 						: baseComparator.reversed();
 
@@ -74,20 +75,19 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 				final Population<T> selectedIndividuals = new Population<>();
 				while (selectedIndividuals.size() < numIndividuals) {
 
-					Genotype bestCandidate = null;
-					T bestFitness = null;
+					Individual<T> bestIndividual = null;
 
 					for (int i = 0; i < tournamentSelection.numCandidates(); i++) {
 						final int candidateIndex = random.nextInt(fitnessScore.size());
+						final Individual<T> candidate = Individual.of(population.get(candidateIndex),
+								fitnessScore.get(candidateIndex));
 
-						if (bestCandidate == null
-								|| comparator.compare(bestFitness, fitnessScore.get(candidateIndex)) < 0) {
-							bestFitness = fitnessScore.get(candidateIndex);
-							bestCandidate = population.get(candidateIndex);
+						if (bestIndividual == null || comparator.compare(bestIndividual, candidate) < 0) {
+							bestIndividual = candidate;
 						}
 					}
 
-					selectedIndividuals.add(bestCandidate, bestFitness);
+					selectedIndividuals.add(bestIndividual);
 				}
 
 				return selectedIndividuals;

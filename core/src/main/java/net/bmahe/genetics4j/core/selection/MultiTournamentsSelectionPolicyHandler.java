@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
@@ -23,28 +24,34 @@ public class MultiTournamentsSelectionPolicyHandler<T extends Comparable<T>> imp
 
 	private final Random random;
 
-	private List<Integer> pickRandomCandidates(final Random random, final List<T> fitnessScore,
-			final int numCandidates) {
+	private List<Individual<T>> pickRandomCandidates(final Random random, final List<Genotype> population,
+			final List<T> fitnessScore, final int numCandidates) {
 		Validate.notNull(random);
+		Validate.notNull(population);
 		Validate.notNull(fitnessScore);
 		Validate.isTrue(fitnessScore.size() > 0);
 		Validate.isTrue(numCandidates > 0);
 
-		return random.ints(0, fitnessScore.size()).boxed().limit(numCandidates).collect(Collectors.toList());
+		return random.ints(0, fitnessScore.size())
+				.boxed()
+				.limit(numCandidates)
+				.map(i -> Individual.of(population.get(i), fitnessScore.get(i)))
+				.collect(Collectors.toList());
 	}
 
-	private int runTournament(final Tournament<T> tournament, final List<T> fitnessScore,
-			final List<Integer> candidates) {
+	private Individual<T> runTournament(final Tournament<T> tournament, final List<Genotype> population,
+			final List<T> fitnessScore, final List<Individual<T>> candidates) {
 		Validate.notNull(tournament);
 
-		final Comparator<T> comparator = tournament.comparator();
+		final Comparator<Individual<T>> comparator = tournament.comparator();
 
-		return candidates.stream().max((a, b) -> comparator.compare(fitnessScore.get(a), fitnessScore.get(b))).get();
+		return candidates.stream().max(comparator).get();
 	}
 
-	private int runTournament(final Random random, final List<Tournament<T>> tournaments, final List<T> fitnessScore,
-			final int tournamentIndex) {
+	private Individual<T> runTournament(final Random random, final List<Tournament<T>> tournaments,
+			final List<Genotype> population, final List<T> fitnessScore, final int tournamentIndex) {
 		Validate.notNull(tournaments);
+		Validate.notNull(population);
 		Validate.notNull(fitnessScore);
 		Validate.isTrue(tournamentIndex < tournaments.size());
 		Validate.isTrue(tournamentIndex >= 0);
@@ -52,19 +59,23 @@ public class MultiTournamentsSelectionPolicyHandler<T extends Comparable<T>> imp
 		final Tournament<T> tournament = tournaments.get(tournamentIndex);
 		final int numCandidates = tournament.numCandidates();
 
-		List<Integer> candidates;
+		List<Individual<T>> candidates;
 		if (tournamentIndex == 0) {
-			candidates = pickRandomCandidates(random, fitnessScore, numCandidates);
+			candidates = pickRandomCandidates(random, population, fitnessScore, numCandidates);
 		} else {
 			candidates = new ArrayList<>();
 
 			for (int i = 0; i < numCandidates; i++) {
-				final int candidate = runTournament(random, tournaments, fitnessScore, tournamentIndex - 1);
+				final Individual<T> candidate = runTournament(random,
+						tournaments,
+						population,
+						fitnessScore,
+						tournamentIndex - 1);
 				candidates.add(candidate);
 			}
 		}
 
-		return runTournament(tournament, fitnessScore, candidates);
+		return runTournament(tournament, population, fitnessScore, candidates);
 
 	}
 
@@ -105,8 +116,12 @@ public class MultiTournamentsSelectionPolicyHandler<T extends Comparable<T>> imp
 				logger.debug("Selecting {} individuals", numIndividuals);
 				final Population<T> selectedIndividuals = new Population<>();
 				while (selectedIndividuals.size() < numIndividuals) {
-					final int selectedIndex = runTournament(random, tournaments, fitnessScore, tournaments.size() - 1);
-					selectedIndividuals.add(population.get(selectedIndex), fitnessScore.get(selectedIndex));
+					final Individual<T> selectedIndividual = runTournament(random,
+							tournaments,
+							population,
+							fitnessScore,
+							tournaments.size() - 1);
+					selectedIndividuals.add(selectedIndividual);
 				}
 
 				return selectedIndividuals;

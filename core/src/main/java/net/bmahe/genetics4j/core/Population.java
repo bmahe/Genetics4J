@@ -33,6 +33,13 @@ public class Population<T extends Comparable<T>> {
 		fitnesses.add(fitness);
 	}
 
+	public void add(final Individual<T> individual) {
+		Validate.notNull(individual);
+
+		genotypes.add(individual.genotype());
+		fitnesses.add(individual.fitness());
+	}
+
 	public void addAll(final Population<T> population) {
 		Validate.notNull(population);
 
@@ -85,6 +92,8 @@ public class Population<T extends Comparable<T>> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+
+		@SuppressWarnings("rawtypes")
 		Population other = (Population) obj;
 		if (fitnesses == null) {
 			if (other.fitnesses != null)

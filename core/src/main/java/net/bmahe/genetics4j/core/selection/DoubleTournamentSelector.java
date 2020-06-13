@@ -46,7 +46,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 	}
 
 	protected Individual<T> selectForFitness(final EAConfiguration<T> eaConfiguration,
-			final Comparator<T> fitnessComparator, final int numCandidates, final List<Genotype> population,
+			final Comparator<Individual<T>> fitnessComparator, final int numCandidates, final List<Genotype> population,
 			final List<T> fitnessScore) {
 		Validate.notNull(population);
 		Validate.notNull(fitnessScore);
@@ -55,7 +55,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 		return IntStream.range(0, numCandidates)
 				.boxed()
 				.map(i -> randomIndividual(population, fitnessScore))
-				.max((a, b) -> fitnessComparator.compare(a.fitness(), b.fitness()))
+				.max((a, b) -> fitnessComparator.compare(a, b))
 				.get();
 
 	}
@@ -110,7 +110,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 		}
 
-		final Comparator<T> fitnessComparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
+		final Comparator<Individual<T>> fitnessComparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
 				? fitnessTournament.comparator()
 				: fitnessTournament.comparator().reversed();
 
@@ -156,7 +156,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 				}
 
 				final Individual<T> selected = candidatesFitness.stream()
-						.max((a, b) -> fitnessComparator.compare(a.fitness(), b.fitness()))
+						.max((a, b) -> fitnessComparator.compare(a, b))
 						.get();
 
 				selectedIndividuals.add(selected.genotype(), selected.fitness());

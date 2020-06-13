@@ -9,12 +9,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
 import org.junit.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
@@ -97,7 +99,8 @@ public class MultiTournamentsSelectionPolicyHandlerTest {
 		final Selector<Double> selector = selectionPolicyHandler.resolve(eaExecutionContext,
 				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				selectionPolicyHandlerResolver,
-				MultiTournaments.<Double>of(Tournament.of(2), Tournament.of(2, (a, b) -> -a.compareTo(b))));
+				MultiTournaments.<Double>of(Tournament.of(2),
+						Tournament.of(2, Comparator.comparing(Individual<Double>::fitness).reversed())));
 		final Population<Double> selected = selector
 				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 2, population, fitnessScore);
 
