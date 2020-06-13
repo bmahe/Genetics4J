@@ -17,7 +17,7 @@ public abstract class DoubleTournament<T extends Comparable<T>> implements Selec
 	public abstract Comparator<Individual<T>> parsimonyComparator();
 
 	@Value.Parameter
-	public abstract float parsimonyTournamentSize();
+	public abstract double parsimonyTournamentSize();
 
 	@Value.Default
 	public boolean doFitnessFirst() {
@@ -26,11 +26,11 @@ public abstract class DoubleTournament<T extends Comparable<T>> implements Selec
 
 	@Value.Check
 	public void check() {
-		Validate.inclusiveBetween(0.0, 2.0, parsimonyTournamentSize());
+		Validate.inclusiveBetween(0.0d, 2.0d, parsimonyTournamentSize());
 	}
 
 	public static <U extends Comparable<U>> DoubleTournament<U> of(final Tournament<U> fitnessTournament,
-			final Comparator<Individual<U>> parsimonyComparator, final float parsimonyTournamentSize) {
+			final Comparator<Individual<U>> parsimonyComparator, final double parsimonyTournamentSize) {
 		return ImmutableDoubleTournament.of(fitnessTournament, parsimonyComparator, parsimonyTournamentSize);
 	}
 }

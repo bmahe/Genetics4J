@@ -49,6 +49,22 @@ public class Terminations {
 	}
 
 	@SafeVarargs
+	public static <T extends Comparable<T>> Termination<T> and(final Termination<T>... terminations) {
+		Validate.notNull(terminations);
+		Validate.isTrue(terminations.length > 0);
+
+		return new Termination<T>() {
+
+			@Override
+			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
+				return Arrays.stream(terminations)
+						.allMatch((termination) -> termination.isDone(generation, population, fitness));
+			}
+
+		};
+	}
+
+	@SafeVarargs
 	public static <T extends Comparable<T>> Termination<T> or(final Termination<T>... terminations) {
 		Validate.notNull(terminations);
 		Validate.isTrue(terminations.length > 0);

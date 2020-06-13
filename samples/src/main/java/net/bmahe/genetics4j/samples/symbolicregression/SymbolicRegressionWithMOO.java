@@ -1,6 +1,5 @@
 package net.bmahe.genetics4j.samples.symbolicregression;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -26,13 +25,8 @@ import net.bmahe.genetics4j.core.spec.replacement.Elitism;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.extras.evolutionlisteners.CSVEvolutionListener;
 import net.bmahe.genetics4j.extras.evolutionlisteners.ColumnExtractor;
-import net.bmahe.genetics4j.gp.ImmutableInputSpec;
 import net.bmahe.genetics4j.gp.Operation;
-import net.bmahe.genetics4j.gp.math.Functions;
 import net.bmahe.genetics4j.gp.math.SimplificationRules;
-import net.bmahe.genetics4j.gp.math.Terminals;
-import net.bmahe.genetics4j.gp.program.ImmutableProgram;
-import net.bmahe.genetics4j.gp.program.ImmutableProgram.Builder;
 import net.bmahe.genetics4j.gp.program.Program;
 import net.bmahe.genetics4j.gp.spec.GPEAExecutionContexts;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
@@ -56,13 +50,7 @@ public class SymbolicRegressionWithMOO {
 	public void run() {
 		final Random random = new Random();
 
-		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.POW);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.CoefficientRounded(random, -10, 10));
-
-		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
-		programBuilder.maxDepth(4);
-		final Program program = programBuilder.build();
+		final Program program = SymbolicRegressionUtils.buildProgram(random);
 
 		final Comparator<Genotype> deduplicator = (a, b) -> TreeNodeUtils.compare(a, b, 0);
 
