@@ -109,7 +109,7 @@ public class SymbolicRegressionWithMOOSPEA2 {
 						5,
 						Comparator.<FitnessVector<Double>, Double>comparing(fv -> fv.get(0)).reversed(),
 						(genotype) -> TreeNodeUtils.toStringTreeNode(genotype, 0)),
-				CSVEvolutionListener.<FitnessVector<Double>, List<Set<Integer>>>of("output.csv",
+				CSVEvolutionListener.<FitnessVector<Double>, List<Set<Integer>>>of("output-SPEA2.csv",
 						(generation, population, fitness, isDone) -> ParetoUtils
 								.rankedPopulation(Comparator.reverseOrder(), fitness),
 						List.of(ColumnExtractor.of("generation", evolutionStep -> evolutionStep.generation()),
@@ -131,7 +131,7 @@ public class SymbolicRegressionWithMOOSPEA2 {
 								ColumnExtractor.of("expression",
 										evolutionStep -> TreeNodeUtils.toStringTreeNode(evolutionStep.individual(),
 												0))),
-						5),
+						2),
 				new EvolutionListener<FitnessVector<Double>>() {
 
 					long startTime = -1;

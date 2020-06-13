@@ -112,7 +112,7 @@ public class SymbolicRegressionWithMOO {
 						5,
 						Comparator.<FitnessVector<Double>, Double>comparing(fv -> fv.get(0)).reversed(),
 						(genotype) -> TreeNodeUtils.toStringTreeNode(genotype, 0)),
-				CSVEvolutionListener.<FitnessVector<Double>, List<Set<Integer>>>of("output.csv",
+				CSVEvolutionListener.<FitnessVector<Double>, List<Set<Integer>>>of("output-NSGA2.csv",
 						(generation, population, fitness, isDone) -> ParetoUtils
 								.rankedPopulation(Comparator.reverseOrder(), fitness),
 						List.of(ColumnExtractor.of("generation", evolutionStep -> evolutionStep.generation()),
@@ -135,7 +135,7 @@ public class SymbolicRegressionWithMOO {
 										evolutionStep -> TreeNodeUtils.toStringTreeNode(evolutionStep.individual(),
 												0))),
 
-						5));
+						2));
 
 		final EAExecutionContext<FitnessVector<Double>> eaExecutionContext = eaExecutionContextBuilder.build();
 		final EASystem<FitnessVector<Double>> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
