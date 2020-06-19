@@ -1,6 +1,5 @@
 package net.bmahe.genetics4j.samples.symbolicregression;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -31,13 +30,15 @@ public class SymbolicRegressionUtils {
 	public static Program buildProgram(final Random random) {
 		Validate.notNull(random);
 
+		// tag::program_def[]
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.POW);
 		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.CoefficientRounded(random, -10, 10));
 
-		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
+		programBuilder.inputSpec(ImmutableInputSpec.of(List.of(Double.class)));
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
+		// end::program_def[]
 
 		return program;
 	}
@@ -46,6 +47,7 @@ public class SymbolicRegressionUtils {
 		return (6.0 * x * x) - x + 8;
 	}
 
+	// tag::csv_logger[]
 	public static <T extends Comparable<T>> EvolutionListener<T> csvLogger(final String filename,
 			final Function<EvolutionStep<T, List<Set<Integer>>>, Double> computeScore,
 			final Function<EvolutionStep<T, List<Set<Integer>>>, Double> computeComplexity) {
@@ -55,7 +57,7 @@ public class SymbolicRegressionUtils {
 
 		return CSVEvolutionListener.<T, List<Set<Integer>>>of(filename,
 				(generation, population, fitness, isDone) -> ParetoUtils.rankedPopulation(Comparator.reverseOrder(),
-						fitness),
+						fitness), // <1>
 				List.of(ColumnExtractor.of("generation", evolutionStep -> evolutionStep.generation()),
 						ColumnExtractor.of("score", evolutionStep -> computeScore.apply(evolutionStep)),
 						ColumnExtractor.of("complexity", evolutionStep -> computeComplexity.apply(evolutionStep)),
@@ -77,4 +79,5 @@ public class SymbolicRegressionUtils {
 
 		);
 	}
+	// end::csv_logger[]
 }

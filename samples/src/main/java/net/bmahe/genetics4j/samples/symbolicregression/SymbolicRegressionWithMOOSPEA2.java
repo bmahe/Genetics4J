@@ -1,11 +1,22 @@
 package net.bmahe.genetics4j.samples.symbolicregression;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,14 +54,35 @@ import net.bmahe.genetics4j.moo.spea2.spec.replacement.SPEA2Replacement;
 public class SymbolicRegressionWithMOOSPEA2 {
 	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithMOOSPEA2.class);
 
+	final static public String PARAM_DEST_CSV = "d";
+	final static public String LONG_PARAM_DEST_CSV = "csv-dest";
+
+	final static public String PARAM_POPULATION_SIZE = "p";
+	final static public String LONG_PARAM_POPULATION_SIZE = "population-size";
+
+	final static public String DEFAULT_DEST_CSV = SymbolicRegressionWithMOOSPEA2.class.getSimpleName() + ".csv";
+
+	final static public int DEFAULT_POPULATION_SIZE = 500;
+
+	public static void cliError(final Options options, final String errorMessage) {
+		final HelpFormatter formatter = new HelpFormatter();
+		logger.error(errorMessage);
+		formatter.printHelp(SymbolicRegressionWithMOOSPEA2.class.getSimpleName(), options);
+		System.exit(-1);
+	}
+
 	@SuppressWarnings("unchecked")
-	public void run() {
+	public void run(String csvFilename, int populationSize) {
+		Validate.isTrue(StringUtils.isNotBlank(csvFilename));
+		Validate.isTrue(populationSize > 0);
+
 		final Random random = new Random();
 
 		final Program program = SymbolicRegressionUtils.buildProgram(random);
 
 		final Comparator<Genotype> deduplicator = (a, b) -> TreeNodeUtils.compare(a, b, 0);
 
+		// tag::compute_fitness[]
 		final Fitness<FitnessVector<Double>> computeFitness = (genoType) -> {
 			final TreeChromosome<Operation<?>> chromosome = (TreeChromosome<Operation<?>>) genoType.getChromosome(0);
 			final Double[][] inputs = new Double[100][1];
@@ -79,25 +111,28 @@ public class SymbolicRegressionWithMOOSPEA2 {
 					? new FitnessVector<Double>(mse / 100.0, (double) chromosome.getRoot().getSize())
 					: new FitnessVector<Double>(Double.MAX_VALUE, Double.MAX_VALUE);
 		};
+		// end::compute_fitness[]
 
+		// tag::ea_config[]
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<FitnessVector<Double>>();
-		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
-				.parentSelectionPolicy(TournamentNSGA2Selection.ofFitnessVector(2, 3, deduplicator))
-				.replacementStrategy(SPEA2Replacement.ofFitnessVector(deduplicator))
+		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program)) // <1>
+				.parentSelectionPolicy(TournamentNSGA2Selection.ofFitnessVector(2, 3, deduplicator)) // <2>
+				.replacementStrategy(SPEA2Replacement.ofFitnessVector(deduplicator)) // <3>
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(MultiMutations.of(ProgramRandomMutate.of(0.15 * 3),
 						ProgramRandomPrune.of(0.15 * 3),
 						NodeReplacement.of(0.15 * 3)), ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
 				.optimization(Optimization.MINIMIZE)
-				.termination(Terminations.or(Terminations.<FitnessVector<Double>>ofMaxGeneration(400),
+				.termination(Terminations.or(Terminations.<FitnessVector<Double>>ofMaxGeneration(200),
 						(generation, population, fitness) -> fitness.stream()
-								.anyMatch(fv -> fv.get(0) <= 0.00001 && fv.get(1) <= 15)))
+								.anyMatch(fv -> fv.get(0) <= 0.00001 && fv.get(1) <= 20)))
 				.fitness(computeFitness);
 		final EAConfiguration<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();
+		// end::ea_config[]
 
 		final var eaExecutionContextBuilder = GPEAExecutionContexts.<FitnessVector<Double>>forGP(random);
 		MOOEAExecutionContexts.enrichWithMOO(eaExecutionContextBuilder);
-		eaExecutionContextBuilder.populationSize(1500);
+		eaExecutionContextBuilder.populationSize(populationSize);
 		eaExecutionContextBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 3));
 
 		eaExecutionContextBuilder.addEvolutionListeners(
@@ -105,7 +140,7 @@ public class SymbolicRegressionWithMOOSPEA2 {
 						5,
 						Comparator.<FitnessVector<Double>, Double>comparing(fv -> fv.get(0)).reversed(),
 						(genotype) -> TreeNodeUtils.toStringTreeNode(genotype, 0)),
-				SymbolicRegressionUtils.csvLogger("symbolicregression-output-moo-spea2.csv",
+				SymbolicRegressionUtils.csvLogger(csvFilename,
 						evolutionStep -> evolutionStep.fitness().get(0),
 						evolutionStep -> evolutionStep.fitness().get(1)),
 				new EvolutionListener<FitnessVector<Double>>() {
@@ -172,9 +207,42 @@ public class SymbolicRegressionWithMOOSPEA2 {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
-		final SymbolicRegressionWithMOOSPEA2 symbolicRegression = new SymbolicRegressionWithMOOSPEA2();
-		symbolicRegression.run();
+		/**
+		 * Parse CLI
+		 */
+
+		final CommandLineParser parser = new DefaultParser();
+
+		final Options options = new Options();
+		options.addOption(PARAM_DEST_CSV, LONG_PARAM_DEST_CSV, true, "destination csv file");
+
+		options.addOption(PARAM_POPULATION_SIZE, LONG_PARAM_POPULATION_SIZE, true, "Population size");
+
+		String csvFilename = DEFAULT_DEST_CSV;
+		int populationSize = DEFAULT_POPULATION_SIZE;
+		try {
+			final CommandLine line = parser.parse(options, args);
+
+			if (line.hasOption(PARAM_DEST_CSV)) {
+				csvFilename = line.getOptionValue(PARAM_DEST_CSV);
+			}
+
+			if (line.hasOption(PARAM_POPULATION_SIZE)) {
+				populationSize = Integer.parseInt(line.getOptionValue(PARAM_POPULATION_SIZE));
+			}
+
+		} catch (ParseException exp) {
+			cliError(options, "Unexpected exception:" + exp.getMessage());
+		}
+
+		logger.info("Population size: {}", populationSize);
+
+		logger.info("CSV output located at {}", csvFilename);
+		FileUtils.forceMkdirParent(new File(csvFilename));
+
+		final var symbolicRegression = new SymbolicRegressionWithMOOSPEA2();
+		symbolicRegression.run(csvFilename, populationSize);
 	}
 }

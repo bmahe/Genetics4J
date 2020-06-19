@@ -29,12 +29,12 @@ public abstract class FitnessSharing implements Function<Population<Double>, Pop
 		}
 
 		final List<Double> newFitness = new ArrayList<>();
-		for (int i = 0; i < population.getAllGenotypes().size(); i++) {
+		for (int i = 0; i < population.size(); i++) {
 			final Genotype genotypeI = population.getGenotype(i);
 			final Double fitnessI = population.getFitness(i);
 
 			double sumSharing = 0.0d;
-			for (int j = 0; j < population.getAllGenotypes().size(); j++) {
+			for (int j = 0; j < population.size(); j++) {
 				final Genotype genotypeJ = population.getGenotype(j);
 
 				final double distance = distance().apply(genotypeI, genotypeJ);

@@ -1,8 +1,23 @@
 package net.bmahe.genetics4j.samples.symbolicregression;
 
+import static net.bmahe.genetics4j.core.termination.Terminations.ofFitnessAtMost;
+import static net.bmahe.genetics4j.core.termination.Terminations.ofMaxGeneration;
+import static net.bmahe.genetics4j.core.termination.Terminations.or;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Random;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,9 +34,9 @@ import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.Tournament;
-import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.math.SimplificationRules;
+import net.bmahe.genetics4j.gp.postevaluationprocess.TarpeianMethod;
 import net.bmahe.genetics4j.gp.program.Program;
 import net.bmahe.genetics4j.gp.spec.GPEAExecutionContexts;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
@@ -30,19 +45,39 @@ import net.bmahe.genetics4j.gp.spec.mutation.NodeReplacement;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
-import net.bmahe.genetics4j.gp.spec.mutation.TrimTree;
 import net.bmahe.genetics4j.gp.utils.ProgramUtils;
 import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 
-public class SymbolicRegressionWithEnforcedMaxDepth {
-	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithEnforcedMaxDepth.class);
+public class SymbolicRegressionWithTarpeianMethod {
+	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithTarpeianMethod.class);
+
+	final static public String PARAM_DEST_CSV = "d";
+	final static public String LONG_PARAM_DEST_CSV = "csv-dest";
+
+	final static public String PARAM_POPULATION_SIZE = "p";
+	final static public String LONG_PARAM_POPULATION_SIZE = "population-size";
+
+	final static public String DEFAULT_DEST_CSV = SymbolicRegressionWithTarpeianMethod.class.getSimpleName() + ".csv";
+
+	final static public int DEFAULT_POPULATION_SIZE = 500;
+
+	public static void cliError(final Options options, final String errorMessage) {
+		final HelpFormatter formatter = new HelpFormatter();
+		logger.error(errorMessage);
+		formatter.printHelp(SymbolicRegressionWithTarpeianMethod.class.getSimpleName(), options);
+		System.exit(-1);
+	}
 
 	@SuppressWarnings("unchecked")
-	public void run() {
+	public void run(String csvFilename, int populationSize) {
+		Validate.isTrue(StringUtils.isNotBlank(csvFilename));
+		Validate.isTrue(populationSize > 0);
+
 		final Random random = new Random();
 
 		final Program program = SymbolicRegressionUtils.buildProgram(random);
 
+		// tag::compute_fitness[]
 		final Fitness<Double> computeFitness = (genoType) -> {
 			final TreeChromosome<Operation<?>> chromosome = (TreeChromosome<Operation<?>>) genoType.getChromosome(0);
 			final Double[][] inputs = new Double[100][1];
@@ -58,52 +93,51 @@ public class SymbolicRegressionWithEnforcedMaxDepth {
 				final Object result = ProgramUtils.execute(chromosome, input);
 
 				if (Double.isFinite(expected)) {
-					if (result instanceof Double) {
-						final Double resultDouble = (Double) result;
-						mse += Double.isFinite(resultDouble) ? (expected - resultDouble) * (expected - resultDouble)
-								: 1_000_000_000;
-					} else {
-						logger.error("NOT A DOUBLE: {}", result);
-						mse += 1000;
-					}
+					final Double resultDouble = (Double) result;
+					mse += Double.isFinite(resultDouble) ? (expected - resultDouble) * (expected - resultDouble)
+							: 1_000_000_000;
 				}
 			}
 			return Double.isFinite(mse) ? mse / 100.0 : Double.MAX_VALUE;
 		};
+		// end::compute_fitness[]
 
+		// tag::ea_config[]
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
-		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
+		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program)) // <1>
 				.parentSelectionPolicy(Tournament.of(3))
 				.combinationPolicy(ProgramRandomCombine.build())
 				.mutationPolicies(ProgramRandomMutate.of(0.10),
 						ProgramRandomPrune.of(0.12),
 						NodeReplacement.of(0.05),
-						TrimTree.build(),
 						ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
-				.optimization(Optimization.MINIMIZE)
-				.termination(Terminations.or(Terminations.ofMaxGeneration(100), Terminations.ofFitnessAtMost(0.0001d)))
+				.optimization(Optimization.MINIMIZE) // <2>
+				.postEvaluationProcessor(TarpeianMethod.ofTreeChromosome(random, 0, 0.3, Double.MAX_VALUE)) // <3>
+				.termination(or(ofMaxGeneration(200), ofFitnessAtMost(0.00001d)))
 				.fitness(computeFitness);
 		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
+		// end::ea_config[]
 
+		// tag::ea_execution_config[]
 		final var eaExecutionContextBuilder = GPEAExecutionContexts.<Double>forGP(random);
 		EAExecutionContexts.enrichForScalarFitness(eaExecutionContextBuilder);
 
-		eaExecutionContextBuilder.populationSize(1500);
+		eaExecutionContextBuilder.populationSize(populationSize); // <1>
 		eaExecutionContextBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 1));
 
 		eaExecutionContextBuilder.addEvolutionListeners(
 				EvolutionListeners.ofLogTopN(logger, 5, Comparator.<Double>reverseOrder(), (genotype) -> {
-					final TreeChromosome<Operation<?>> chromosome = (TreeChromosome<Operation<?>>) genotype
-							.getChromosome(0);
+					final TreeChromosome<Operation<?>> chromosome = genotype.getChromosome(0, TreeChromosome.class);
 					final TreeNode<Operation<?>> root = chromosome.getRoot();
 
 					return TreeNodeUtils.toStringTreeNode(root);
 				}),
-				SymbolicRegressionUtils.csvLogger("symbolicregression-output-enforced-max-depth.csv",
+				SymbolicRegressionUtils.csvLogger(csvFilename,
 						evolutionStep -> evolutionStep.fitness(),
 						evolutionStep -> (double) evolutionStep.individual()
 								.getChromosome(0, TreeChromosome.class)
 								.getSize()));
+		// end::ea_execution_config[]
 
 		final EAExecutionContext<Double> eaExecutionContext = eaExecutionContextBuilder.build();
 		final EASystem<Double> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
@@ -116,11 +150,42 @@ public class SymbolicRegressionWithEnforcedMaxDepth {
 		logger.info("Best genotype - pretty print: {}", TreeNodeUtils.toStringTreeNode(bestChromosome.getRoot()));
 	}
 
-	public static int main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
-		final var symbolicRegression = new SymbolicRegressionWithEnforcedMaxDepth();
-		symbolicRegression.run();
+		/**
+		 * Parse CLI
+		 */
 
-		return 0;
+		final CommandLineParser parser = new DefaultParser();
+
+		final Options options = new Options();
+		options.addOption(PARAM_DEST_CSV, LONG_PARAM_DEST_CSV, true, "destination csv file");
+
+		options.addOption(PARAM_POPULATION_SIZE, LONG_PARAM_POPULATION_SIZE, true, "Population size");
+
+		String csvFilename = DEFAULT_DEST_CSV;
+		int populationSize = DEFAULT_POPULATION_SIZE;
+		try {
+			final CommandLine line = parser.parse(options, args);
+
+			if (line.hasOption(PARAM_DEST_CSV)) {
+				csvFilename = line.getOptionValue(PARAM_DEST_CSV);
+			}
+
+			if (line.hasOption(PARAM_POPULATION_SIZE)) {
+				populationSize = Integer.parseInt(line.getOptionValue(PARAM_POPULATION_SIZE));
+			}
+
+		} catch (ParseException exp) {
+			cliError(options, "Unexpected exception:" + exp.getMessage());
+		}
+
+		logger.info("Population size: {}", populationSize);
+
+		logger.info("CSV output located at {}", csvFilename);
+		FileUtils.forceMkdirParent(new File(csvFilename));
+
+		final var symbolicRegression = new SymbolicRegressionWithTarpeianMethod();
+		symbolicRegression.run(csvFilename, populationSize);
 	}
 }

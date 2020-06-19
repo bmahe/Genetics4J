@@ -1,0 +1,300 @@
+= 6 ways to handle your bloat issues
+:stem:
+:toc:
+:toclevels: 4
+:docinfo:
+:sourcedir: ../../../src/main/java
+:outdir: ../../target/site
+:icons: font
+
+== Preface
+
+All the executions and plots are generated from scratch at build time. This means results may vary from execution to execution.
+
+This also creates some constraints in terms of execution time. A proper analysis would have us execute each approach many times prior to making any generalization, which we cannot afford here.
+
+While I could use the same seed for the random generator and therefore generate reproducible results, this wouldn't be befitting of a demonstration of evolutionary algorithms.
+
+Note also the purpose of this document is to serve me as notes and is not meant to be taken as exhaustive or a fully fledged blog post.
+
+== Introduction
+
+_Bloat_ is a well known problem when using _Genetic Programming_ where programs will grow over time without significant improvements to the fitness. Consequently many methods have been devised to combat bloat and we will review a few of them.
+
+
+=== Methodology
+
+We will try all the methods on a symbolic regression of the equation:
+
+stem:[f(x) = 6*x^2 - x + 8]
+
+The generated programs are defined by the following specification:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionUtils.java[tags=program_def]
+----
+
+As you can see, programs will take a _double_ as an input, which will be considered as a given _x_ for the equation.
+
+It is not visible in the snippet above, but unless told otherwise, we will use populations of 500 individuals for our experimentations.
+
+
+Given that we will need to process the output of each generation in order to plot meaningful information, we will define a general CSV logger which will also record the rank of each individual comparing to the pareto frontier:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionUtils.java[tags=csv_logger]
+----
+
+<1> We are ranking the whole population and using that information as context for each _ColumnExtractor_
+
+
+=== Methods
+
+==== Tarpeian Method
+
+The tarpeian method is about minimizing the fitness of individuals with larger than average size. Only a percentage of the targeted individuals are affected as a way to modulate the intensity of the pressure.
+
+In this case, the fitness will be defined as the link:https://en.wikipedia.org/wiki/Mean_squared_error[Mean Squared Error] over a given set of input, with a large penalty for not-finite results. This implies the smaller the fitness, the better the fit and the individual:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithTarpeianMethod.java[tags=compute_fitness]
+----
+
+
+
+Here is the configuration we use:
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithTarpeianMethod.java[tags=ea_config]
+----
+
+<1> We only use a program chromosome
+<2> We do want to minize the fitness as it means less errors from the individuals
+<3> Tarpeian Method defined as a post evaluation processor to re-evaluate their fitness. We will only affect 30% of the individuals above average and set their fitness to _Double.MAX_VALUE_
+
+
+Here are some plots of an execution:
+
+image::bloat_issues_SymbolicRegressionWithTarpeianMethod-frontier.png[Best Individuals over time]
+
+
+image::bloat_issues_SymbolicRegressionWithTarpeianMethod-population_size.png[Population size over time]
+
+
+We should observe better fitness over time as well as a containment of the population size.
+
+==== Constant Parsimony Pressure
+
+Constant Parsimony Pressure attempts to control bloat by assigning a penalty based on the size of a given individual. This imply that given identical results of two programs, the one with the smaller size shall be considered as having a better fitness.
+
+In this case, the fitness will be defined as the link:https://en.wikipedia.org/wiki/Mean_squared_error[Mean Squared Error] over a given set of input, along with an additional penalty based on its size and possibly an additional large penalty for not-finite results. This implies the smaller the error and the program, the better the fit and the individual:
+
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithConstantParsimonyPressure.java[tags=compute_fitness]
+----
+
+<1> We add stem:[1.5 * "chromosome.getSize()"] to the MSE
+
+
+
+Here is the configuration we use:
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithConstantParsimonyPressure.java[tags=ea_config]
+----
+
+<1> We only use a program chromosome
+<2> We do want to minize the fitness as it means less errors from the individuals as well as a smaller size
+<3> Note that no termination condition can expect to ever reach a fitness of 0 as there will always be a cost for the program size
+
+
+Here are some plots of an execution:
+
+image::bloat_issues_SymbolicRegressionWithConstantParsimonyPressure-frontier.png[Best Individuals over time]
+
+
+image::bloat_issues_SymbolicRegressionWithConstantParsimonyPressure-population_size.png[Population size over time]
+
+We should observe better fitness over time as well as a containment of the population size.
+
+
+==== Double Tournaments
+
+Double Tournaments add some additional pressure to the selection process by combining two tournaments, one after the other:
+
+* One tournament based on fitness
+* One tournament based on program size
+
+The order of the tournaments didn't seem to matter by the authors of that method. However they did find that even using a program size tournament of 2 was too much pressure for the evolution process. To reduce that pressure, they made it probabilistic.
+
+Note that given the tournaments are combined, this means each candidate of the second tournament is the result of a tournament, the first one.
+
+Since this method is based on improving the selection process, it means the computation of the fitness is the most straightforward and only focuses on the MSE:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithDoubleTournament.java[tags=compute_fitness]
+----
+
+The definition of the double tournament is also straightforward:
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithDoubleTournament.java[tags=double_tournament]
+----
+
+
+Here is the configuration we use:
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithDoubleTournament.java[tags=ea_config]
+----
+
+<1> We only use a program chromosome
+<2> We need to override the default replacement strategy to make use of our double tournament
+<3> We do want to minize the fitness as it means less errors from the individuals
+
+Here are some plots of an execution:
+
+image::bloat_issues_SymbolicRegressionWithDoubleTournament-frontier.png[Best Individuals over time]
+
+image::bloat_issues_SymbolicRegressionWithDoubleTournament-population_size.png[Population size over time]
+
+We should observe better fitness over time as well as a containment of the population size.
+
+
+==== Proportional Tournaments
+
+Proportional Tournaments are a variant of Double Tournaments where there is only one tournament, chosen between two possible tournaments with some degree of probability.
+
+Since this method is based on improving the selection process like the double tournament method, it means the computation of the fitness is the most straightforward and only focuses on the MSE:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithProportionalTournament.java[tags=compute_fitness]
+----
+
+The definition of the proportional tournament is also straightforward. We will use two tournaments, one for the fitness and the other for the parsimony:
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithProportionalTournament.java[tags=proportional_tournament]
+----
+
+
+Here is the configuration we use:
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithProportionalTournament.java[tags=ea_config]
+----
+
+<1> We only use a program chromosome
+<2> We need to override the default replacement strategy to make use of our proportional tournament
+<3> We do want to minize the fitness as it means less errors from the individuals
+
+
+Here are some plots of an execution:
+
+image::bloat_issues_SymbolicRegressionWithProportionalTournament-frontier.png[Best Individuals over time]
+
+image::bloat_issues_SymbolicRegressionWithProportionalTournament-population_size.png[Population size over time]
+
+We should observe better fitness over time as well as a containment of the population size. However it will also fail quite frequently to find any solution, which would be translated in the plots above with a lack of clear progression with the front as well as reaching the maximum allowed number of generations, which is 200.
+
+
+==== Multi Objective Optimization with NSGA2
+
+This approach decompose the fitness in multiple objectives:
+
+* Fitness of an individual
+* Parsimony
+
+Nondominated Sorting Genetic Algorithm II (NSGA-II), is an algorithms used to apply some selection pressure.
+
+Since we are working on a _Multi Objective Optimization_ problem, this changes our fitness computation a bit. It will now return a FitnessVector, separating each component in their own dimension:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithMOO.java[tags=compute_fitness]
+----
+
+The configuration doesn't require much change as _Genetics4j_ provides support for NSGA2 through selection:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithMOO.java[tags=ea_config]
+----
+
+<1> We only use a program chromosome
+<2> We need to override the parent selection strategy to make use of our NSGA2 based tournaments
+<3> We need to override the default replacement strategy to make use of our NSGA2 based tournaments
+<4> We do have to separate the objectives when checking for termination
+
+
+The astute reader will also notice the presence of a deduplicator when configuring the NSGA2 tournaments. A deduplicator is optional and a function indicating if two individuals represent the same thing.
+
+However I noticed a definitive improvement in the results with this approach as it limits the impact of the individuals at the corners in the front. Without it, the population would rapidly be overrun by individuals with poor fitness but of size 1 as no other individual could dominate them.
+Removing duplicates helps applying continuous pressure from the front and reducing the impact of close but not identical individuals.
+
+
+Also of note that it is easy to add support for MOO by enriching the _EAExecutionContext_:
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithMOO.java[tags=eae_moo]
+----
+
+
+Here are some plots of an execution:
+
+image::bloat_issues_SymbolicRegressionWithMOONSGA2-frontier.png[Best Individuals over time]
+
+image::bloat_issues_SymbolicRegressionWithMOONSGA2-population_size.png[Population size over time]
+
+We should observe better fitness over time as well as a containment of the population size.
+
+
+==== Multi Objective Optimization with SPEA2
+
+Similarly to _NSGA2_, the _Strength Pareto Evolutionary Algorithm 2 (SPEA2)_, is geared towards _Multi Objective Optimization_ problems. Due to the specificites of the implementations in the orignal paper, SPEA2 is implemented as a replacement strategy where the _archive_ is represented by the selected population. However we can't use the _SPEA2_ fitness to select parents as we do not have that information at that step and it would not work with the actual fitness used to measure the individuals.
+
+Since we are working on a _Multi Objective Optimization_ problem, this doesn't change at all our fitness evaluation comparing to the previous approach. It still returns a FitnessVector, separating each component in their own dimension:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithMOOSPEA2.java[tags=compute_fitness]
+----
+
+
+The configuration doesn't require much change as _Genetics4j_ provides support for NSGA2 through selection. We will also take advantage of NSGA2 to select the parents:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithMOOSPEA2.java[tags=ea_config]
+----
+
+
+<1> We only use a program chromosome
+<2> We need to override the parent selection strategy to make use of our NSGA2 based tournaments
+<3> We need to override the default replacement strategy to make use of SPEA2
+
+Similarly to NSGA2, SPEA2 can benefit from deduplicating the solutions and we do make use of it here.
+
+Here are some plots of an execution:
+
+image::bloat_issues_SymbolicRegressionWithMOOSPEA2-frontier.png[Best Individuals over time]
+
+image::bloat_issues_SymbolicRegressionWithMOOSPEA2-population_size.png[Population size over time]
+
+We should observe better fitness over time as well as a containment of the population size.
+
+
+== Conclusion
+
+While this is not an exhaustive assessment and should therefore be considered accordingly, both _NSGA2_ and _SPEA2_ have *consistently* been finding solutions in short amount of steps.
+
+Interestingly, _NSGA2_ executes faster than _SPEA2_, but _SPEA2_ usually finds solutions in a shorter amount of steps. This creates some trade-off where NSGA2 can be used on larger populations or SPEA2 can be used for smaller amount of generations but at a slower speed.
+
+Bloat is an important topic, and for which all these methods demonstrate how a problem could be handled in many different ways.

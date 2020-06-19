@@ -19,10 +19,36 @@
 	<description>Samples programs demonstrating Genetics4j capabilities</description>
 
 	<properties>
+		<!-- Fitness Sharing Document -->
 		<fitnesssharingexample.filename.csv.without_fitness_sharing>${project.build.directory}/site/docs/FitnessSharingExample_without_fitness_sharing.csv</fitnesssharingexample.filename.csv.without_fitness_sharing>
 		<fitnesssharingexample.filename.csv.with_fitness_sharing>${project.build.directory}/site/docs/FitnessSharingExample_with_fitness_sharing.csv</fitnesssharingexample.filename.csv.with_fitness_sharing>
 		<fitnesssharingexample.filename.png.without_fitness_sharing>${project.build.directory}/site/docs/FitnessSharingExample_without_fitness_sharing.png</fitnesssharingexample.filename.png.without_fitness_sharing>
 		<fitnesssharingexample.filename.png.with_fitness_sharing>${project.build.directory}/site/docs/FitnessSharingExample_with_fitness_sharing.png</fitnesssharingexample.filename.png.with_fitness_sharing>
+
+		<!-- Bloat Issues Document -->
+		<SymbolicRegressionWithTarpeianMethod.filename.csv.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithTarpeianMethod.csv</SymbolicRegressionWithTarpeianMethod.filename.csv.dest>
+		<SymbolicRegressionWithTarpeianMethod.filename.frontier.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithTarpeianMethod-frontier.png</SymbolicRegressionWithTarpeianMethod.filename.frontier.png.dest>
+		<SymbolicRegressionWithTarpeianMethod.filename.population_size.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithTarpeianMethod-population_size.png</SymbolicRegressionWithTarpeianMethod.filename.population_size.png.dest>
+
+		<SymbolicRegressionWithConstantParsimonyPressure.filename.csv.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithConstantParsimonyPressure.csv</SymbolicRegressionWithConstantParsimonyPressure.filename.csv.dest>
+		<SymbolicRegressionWithConstantParsimonyPressure.filename.frontier.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithConstantParsimonyPressure-frontier.png</SymbolicRegressionWithConstantParsimonyPressure.filename.frontier.png.dest>
+		<SymbolicRegressionWithConstantParsimonyPressure.filename.population_size.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithConstantParsimonyPressure-population_size.png</SymbolicRegressionWithConstantParsimonyPressure.filename.population_size.png.dest>
+		
+		<SymbolicRegressionWithDoubleTournament.filename.csv.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithDoubleTournament.csv</SymbolicRegressionWithDoubleTournament.filename.csv.dest>
+		<SymbolicRegressionWithDoubleTournament.filename.frontier.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithDoubleTournament-frontier.png</SymbolicRegressionWithDoubleTournament.filename.frontier.png.dest>
+		<SymbolicRegressionWithDoubleTournament.filename.population_size.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithDoubleTournament-population_size.png</SymbolicRegressionWithDoubleTournament.filename.population_size.png.dest>
+
+		<SymbolicRegressionWithProportionalTournament.filename.csv.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithProportionalTournament.csv</SymbolicRegressionWithProportionalTournament.filename.csv.dest>
+		<SymbolicRegressionWithProportionalTournament.filename.frontier.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithProportionalTournament-frontier.png</SymbolicRegressionWithProportionalTournament.filename.frontier.png.dest>
+		<SymbolicRegressionWithProportionalTournament.filename.population_size.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithProportionalTournament-population_size.png</SymbolicRegressionWithProportionalTournament.filename.population_size.png.dest>
+
+		<SymbolicRegressionWithMOONSGA2.filename.csv.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithMOONSGA2.csv</SymbolicRegressionWithMOONSGA2.filename.csv.dest>
+		<SymbolicRegressionWithMOONSGA2.filename.frontier.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithMOONSGA2-frontier.png</SymbolicRegressionWithMOONSGA2.filename.frontier.png.dest>
+		<SymbolicRegressionWithMOONSGA2.filename.population_size.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithMOONSGA2-population_size.png</SymbolicRegressionWithMOONSGA2.filename.population_size.png.dest>
+
+		<SymbolicRegressionWithMOOSPEA2.filename.csv.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithMOOSPEA2.csv</SymbolicRegressionWithMOOSPEA2.filename.csv.dest>
+		<SymbolicRegressionWithMOOSPEA2.filename.frontier.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithMOOSPEA2-frontier.png</SymbolicRegressionWithMOOSPEA2.filename.frontier.png.dest>
+		<SymbolicRegressionWithMOOSPEA2.filename.population_size.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithMOOSPEA2-population_size.png</SymbolicRegressionWithMOOSPEA2.filename.population_size.png.dest>
 	</properties>
 
 	<dependencies>
@@ -107,6 +133,7 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>${maven.exec.plugin.version}</version>
 				<executions>
+					<!-- Fitness Sharing Document -->
 					<execution>
 						<id>example-FitnessSharingExample-process</id>
 						<goals>
@@ -144,6 +171,249 @@
 							<executable>gnuplot</executable>
 							<!-- arguments doesn't work. commandlineArgs works somehow -->
 							<commandlineArgs>-e "filename='${fitnesssharingexample.filename.csv.with_fitness_sharing}'" -e "plot_title='With Fitness Sharing'" -e "output_filename='${fitnesssharingexample.filename.png.with_fitness_sharing}'" ${project.build.outputDirectory}/fitness_sharing.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+
+
+					<!-- Bloat Issues Document -->
+					<!-- Tarpeian Method -->
+					<execution>
+						<id>example-SymbolicRegressionWithTarpeianMethod-process</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<mainClass>net.bmahe.genetics4j.samples.symbolicregression.SymbolicRegressionWithTarpeianMethod</mainClass>
+							<arguments>
+								<argument>--csv-dest=${SymbolicRegressionWithTarpeianMethod.filename.csv.dest}</argument>
+							</arguments>
+							<cleanupDaemonThreads>false</cleanupDaemonThreads>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithTarpeianMethod-frontier-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithTarpeianMethod.filename.csv.dest}'" -e "plot_title='Best Individuals over time - Tarpeian Method'" -e "output_filename='${SymbolicRegressionWithTarpeianMethod.filename.frontier.png.dest}'" ${project.build.outputDirectory}/bloat_issue_frontier.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithTarpeianMethod-size-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithTarpeianMethod.filename.csv.dest}'" -e "plot_title='Population Size over time - Tarpeian Method'" -e "output_filename='${SymbolicRegressionWithTarpeianMethod.filename.population_size.png.dest}'" ${project.build.outputDirectory}/bloat_issue_population_size.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+
+					<!-- Constant Parsimony Pressure -->
+					<execution>
+						<id>example-SymbolicRegressionWithConstantParsimonyPressure-process</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<mainClass>net.bmahe.genetics4j.samples.symbolicregression.SymbolicRegressionWithConstantParsimonyPressure</mainClass>
+							<arguments>
+								<argument>--csv-dest=${SymbolicRegressionWithConstantParsimonyPressure.filename.csv.dest}</argument>
+							</arguments>
+							<cleanupDaemonThreads>false</cleanupDaemonThreads>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithConstantParsimonyPressure-frontier-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithConstantParsimonyPressure.filename.csv.dest}'" -e "plot_title='Best Individuals over time - Constant Parsimony Pressure'" -e "output_filename='${SymbolicRegressionWithConstantParsimonyPressure.filename.frontier.png.dest}'" ${project.build.outputDirectory}/bloat_issue_frontier.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithConstantParsimonyPressure-size-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithConstantParsimonyPressure.filename.csv.dest}'" -e "plot_title='Population Size over time - Constant Parsimony Pressure'" -e "output_filename='${SymbolicRegressionWithConstantParsimonyPressure.filename.population_size.png.dest}'" ${project.build.outputDirectory}/bloat_issue_population_size.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+
+					<!-- Double Tournament -->
+					<execution>
+						<id>example-SymbolicRegressionWithDoubleTournament-process</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<mainClass>net.bmahe.genetics4j.samples.symbolicregression.SymbolicRegressionWithDoubleTournament</mainClass>
+							<arguments>
+								<argument>--csv-dest=${SymbolicRegressionWithDoubleTournament.filename.csv.dest}</argument>
+							</arguments>
+							<cleanupDaemonThreads>false</cleanupDaemonThreads>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithDoubleTournament-frontier-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithDoubleTournament.filename.csv.dest}'" -e "plot_title='Best Individuals over time - Double Tournament'" -e "output_filename='${SymbolicRegressionWithDoubleTournament.filename.frontier.png.dest}'" ${project.build.outputDirectory}/bloat_issue_frontier.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithDoubleTournament-size-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithDoubleTournament.filename.csv.dest}'" -e "plot_title='Population Size over time - Double Tournament'" -e "output_filename='${SymbolicRegressionWithDoubleTournament.filename.population_size.png.dest}'" ${project.build.outputDirectory}/bloat_issue_population_size.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+
+
+					<!-- Proportional Tournament -->
+					<execution>
+						<id>example-SymbolicRegressionWithProportionalTournament-process</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<mainClass>net.bmahe.genetics4j.samples.symbolicregression.SymbolicRegressionWithProportionalTournament</mainClass>
+							<arguments>
+								<argument>--csv-dest=${SymbolicRegressionWithProportionalTournament.filename.csv.dest}</argument>
+							</arguments>
+							<cleanupDaemonThreads>false</cleanupDaemonThreads>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithProportionalTournament-frontier-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithProportionalTournament.filename.csv.dest}'" -e "plot_title='Best Individuals over time - Proportional Tournament'" -e "output_filename='${SymbolicRegressionWithProportionalTournament.filename.frontier.png.dest}'" ${project.build.outputDirectory}/bloat_issue_frontier.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithProportionalTournament-size-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithProportionalTournament.filename.csv.dest}'" -e "plot_title='Population Size over time - Proportional Tournament'" -e "output_filename='${SymbolicRegressionWithProportionalTournament.filename.population_size.png.dest}'" ${project.build.outputDirectory}/bloat_issue_population_size.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+					
+					<!-- MOO - NSGA2 -->
+					<execution>
+						<id>example-SymbolicRegressionWithMOONSGA2-process</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<mainClass>net.bmahe.genetics4j.samples.symbolicregression.SymbolicRegressionWithMOO</mainClass>
+							<arguments>
+								<argument>--csv-dest=${SymbolicRegressionWithMOONSGA2.filename.csv.dest}</argument>
+							</arguments>
+							<cleanupDaemonThreads>false</cleanupDaemonThreads>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithMOONSGA2-frontier-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithMOONSGA2.filename.csv.dest}'" -e "plot_title='Best Individuals over time - MOO NSGA2'" -e "output_filename='${SymbolicRegressionWithMOONSGA2.filename.frontier.png.dest}'" ${project.build.outputDirectory}/bloat_issue_frontier.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithMOONSGA2-size-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithMOONSGA2.filename.csv.dest}'" -e "plot_title='Population Size over time - MOO NSGA2'" -e "output_filename='${SymbolicRegressionWithMOONSGA2.filename.population_size.png.dest}'" ${project.build.outputDirectory}/bloat_issue_population_size.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+					
+					<!-- MOO - SPEA2 -->
+					<execution>
+						<id>example-SymbolicRegressionWithMOOSPEA2-process</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<mainClass>net.bmahe.genetics4j.samples.symbolicregression.SymbolicRegressionWithMOOSPEA2</mainClass>
+							<arguments>
+								<argument>--csv-dest=${SymbolicRegressionWithMOOSPEA2.filename.csv.dest}</argument>
+							</arguments>
+							<cleanupDaemonThreads>false</cleanupDaemonThreads>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithMOOSPEA2-frontier-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithMOOSPEA2.filename.csv.dest}'" -e "plot_title='Best Individuals over time - MOO SPEA2'" -e "output_filename='${SymbolicRegressionWithMOOSPEA2.filename.frontier.png.dest}'" ${project.build.outputDirectory}/bloat_issue_frontier.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-SymbolicRegressionWithMOOSPEA2-size-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>gnuplot</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e "filename='${SymbolicRegressionWithMOOSPEA2.filename.csv.dest}'" -e "plot_title='Population Size over time - MOO SPEA2'" -e "output_filename='${SymbolicRegressionWithMOOSPEA2.filename.population_size.png.dest}'" ${project.build.outputDirectory}/bloat_issue_population_size.gnuplot</commandlineArgs>
 						</configuration>
 					</execution>
 				</executions>

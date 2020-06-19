@@ -57,6 +57,7 @@
 		<menu ref="modules" inherit="top"/>
 		<menu name="Documentation">
 			<item name="Fitness Sharing" href="docs/fitness_sharing.html" />
+			<item name="6 Ways to Deal with your Bloat Issues" href="docs/bloat_issues.html" />
 		</menu>
 		<menu ref="reports" inherit="top"/>
 		<footer />

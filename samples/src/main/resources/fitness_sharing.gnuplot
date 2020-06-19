@@ -1,4 +1,3 @@
-
 # Requires the following variables:
 # - filename : location of the csv file
 # - plot_title: title of the plot

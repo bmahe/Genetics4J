@@ -14,7 +14,7 @@ import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
  */
 @Value.Immutable
 public interface Elitism extends ReplacementStrategy {
-	static final double DEFAULT_OFFSPRING_RATIO = 0.95;
+	static final double DEFAULT_OFFSPRING_RATIO = 0.99;
 
 	/**
 	 * Describe which offsprings to select for the next generation
