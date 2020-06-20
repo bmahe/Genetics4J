@@ -6,7 +6,9 @@ import static net.bmahe.genetics4j.core.termination.Terminations.or;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.cli.CommandLine;
@@ -49,6 +51,7 @@ import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 import net.bmahe.genetics4j.gp.utils.ProgramUtils;
 import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
+import net.bmahe.genetics4j.moo.FitnessVector;
 
 public class SymbolicRegressionWithDoubleTournament {
 	final static public Logger logger = LogManager.getLogger(SymbolicRegressionWithDoubleTournament.class);
@@ -150,7 +153,7 @@ public class SymbolicRegressionWithDoubleTournament {
 
 					return TreeNodeUtils.toStringTreeNode(root);
 				}),
-				SymbolicRegressionUtils.csvLogger(csvFilename,
+				SymbolicRegressionUtils.csvLoggerDouble(csvFilename,
 						evolutionStep -> evolutionStep.fitness(),
 						evolutionStep -> (double) evolutionStep.individual()
 								.getChromosome(0, TreeChromosome.class)

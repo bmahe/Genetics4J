@@ -150,7 +150,7 @@ public class SymbolicRegressionWithProportionalTournament {
 
 					return TreeNodeUtils.toStringTreeNode(root);
 				}),
-				SymbolicRegressionUtils.csvLogger(csvFilename,
+				SymbolicRegressionUtils.csvLoggerDouble(csvFilename,
 						evolutionStep -> evolutionStep.fitness(),
 						evolutionStep -> (double) evolutionStep.individual()
 								.getChromosome(0, TreeChromosome.class)

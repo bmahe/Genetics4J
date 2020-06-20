@@ -1,25 +1,31 @@
 package net.bmahe.genetics4j.samples.symbolicregression;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
+import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
 import net.bmahe.genetics4j.extras.evolutionlisteners.CSVEvolutionListener;
 import net.bmahe.genetics4j.extras.evolutionlisteners.ColumnExtractor;
 import net.bmahe.genetics4j.extras.evolutionlisteners.EvolutionStep;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
+import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.math.Functions;
 import net.bmahe.genetics4j.gp.math.Terminals;
 import net.bmahe.genetics4j.gp.program.ImmutableProgram;
 import net.bmahe.genetics4j.gp.program.ImmutableProgram.Builder;
 import net.bmahe.genetics4j.gp.program.Program;
 import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
+import net.bmahe.genetics4j.moo.FitnessVector;
 import net.bmahe.genetics4j.moo.ParetoUtils;
 
 public class SymbolicRegressionUtils {
@@ -50,14 +56,17 @@ public class SymbolicRegressionUtils {
 	// tag::csv_logger[]
 	public static <T extends Comparable<T>> EvolutionListener<T> csvLogger(final String filename,
 			final Function<EvolutionStep<T, List<Set<Integer>>>, Double> computeScore,
-			final Function<EvolutionStep<T, List<Set<Integer>>>, Double> computeComplexity) {
+			final Function<EvolutionStep<T, List<Set<Integer>>>, Double> computeComplexity,
+			final BiFunction<List<Genotype>, List<T>, List<FitnessVector<Double>>> convert2FitnessVector) {
 		Validate.isTrue(StringUtils.isNotBlank(filename));
 		Validate.notNull(computeScore);
 		Validate.notNull(computeComplexity);
 
-		return CSVEvolutionListener.<T, List<Set<Integer>>>of(filename,
-				(generation, population, fitness, isDone) -> ParetoUtils.rankedPopulation(Comparator.reverseOrder(),
-						fitness), // <1>
+		return CSVEvolutionListener.<T, List<Set<Integer>>>of(filename, (generation, population, fitness, isDone) -> {
+			final List<FitnessVector<Double>> fitnessAndSizeVectors = convert2FitnessVector.apply(population, fitness);
+			return ParetoUtils.rankedPopulation(Comparator.<FitnessVector<Double>>reverseOrder(),
+					fitnessAndSizeVectors); // <1>
+		},
 				List.of(ColumnExtractor.of("generation", evolutionStep -> evolutionStep.generation()),
 						ColumnExtractor.of("score", evolutionStep -> computeScore.apply(evolutionStep)),
 						ColumnExtractor.of("complexity", evolutionStep -> computeComplexity.apply(evolutionStep)),
@@ -80,4 +89,57 @@ public class SymbolicRegressionUtils {
 		);
 	}
 	// end::csv_logger[]
+
+	/**
+	 * Sepcialization for FitnessVector<Double>
+	 * 
+	 * @param filename
+	 * @param computeScore
+	 * @param computeComplexity
+	 * @return
+	 */
+	public static EvolutionListener<FitnessVector<Double>> csvLogger(final String filename,
+			final Function<EvolutionStep<FitnessVector<Double>, List<Set<Integer>>>, Double> computeScore,
+			final Function<EvolutionStep<FitnessVector<Double>, List<Set<Integer>>>, Double> computeComplexity) {
+		Validate.isTrue(StringUtils.isNotBlank(filename));
+		Validate.notNull(computeScore);
+		Validate.notNull(computeComplexity);
+
+		return csvLogger(filename, computeScore, computeComplexity, (population, fitness) -> fitness);
+	}
+
+	/**
+	 * Sepcialization for Double
+	 * <p>
+	 * We can't have the same method name as type erasure wouldn't allow it :(
+	 * 
+	 * @param filename
+	 * @param computeScore
+	 * @param computeComplexity
+	 * @return
+	 */
+	public static EvolutionListener<Double> csvLoggerDouble(final String filename,
+			final Function<EvolutionStep<Double, List<Set<Integer>>>, Double> computeScore,
+			final Function<EvolutionStep<Double, List<Set<Integer>>>, Double> computeComplexity) {
+		Validate.isTrue(StringUtils.isNotBlank(filename));
+		Validate.notNull(computeScore);
+		Validate.notNull(computeComplexity);
+
+		return csvLogger(filename, computeScore, computeComplexity, (population, fitness) -> {
+			List<FitnessVector<Double>> fvs = new ArrayList<>();
+
+			for (int i = 0; i < fitness.size(); i++) {
+				final TreeChromosome<Operation<?>> chromosome = (TreeChromosome<Operation<?>>) population.get(i)
+						.getChromosome(0);
+				final int size = chromosome.getSize();
+
+				/**
+				 * Ideally we would re-compute the pure fitness but that would end up too
+				 * expensive
+				 */
+				fvs.add(new FitnessVector<Double>(fitness.get(i), (double) size));
+			}
+			return fvs;
+		});
+	}
 }

@@ -99,7 +99,7 @@ public class SymbolicRegressionWithEnforcedMaxDepth {
 
 					return TreeNodeUtils.toStringTreeNode(root);
 				}),
-				SymbolicRegressionUtils.csvLogger("symbolicregression-output-enforced-max-depth.csv",
+				SymbolicRegressionUtils.csvLoggerDouble("symbolicregression-output-enforced-max-depth.csv",
 						evolutionStep -> evolutionStep.fitness(),
 						evolutionStep -> (double) evolutionStep.individual()
 								.getChromosome(0, TreeChromosome.class)
