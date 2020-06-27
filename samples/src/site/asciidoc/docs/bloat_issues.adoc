@@ -19,7 +19,7 @@ Note also the purpose of this document is to serve me as notes and is not meant 
 
 == Introduction
 
-_Bloat_ is a well known problem when using _Genetic Programming_ where programs will grow over time without significant improvements to the fitness. Consequently many methods have been devised to combat bloat and we will review a few of them.
+_Bloat_ is a well known problem when using _Genetic Programming_ where programs will grow over time without significant improvement to the fitness. Consequently many methods have been devised to combat bloat and we will review a few of them.
 
 
 === Methodology
@@ -27,6 +27,8 @@ _Bloat_ is a well known problem when using _Genetic Programming_ where programs 
 We will try all the methods on a symbolic regression of the equation:
 
 stem:[f(x) = 6*x^2 - x + 8]
+
+This means we will generate 100 examples of data points _(x, f(x))_ and use _Genetic Programming_ to rediscover the equation which generated them. In a real setting, we would obviously not know the original equation.
 
 The generated programs are defined by the following specification:
 
@@ -37,7 +39,7 @@ include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicReg
 
 As you can see, programs will take a _double_ as an input, which will be considered as a given _x_ for the equation.
 
-It is not visible in the snippet above, but unless told otherwise, we will use populations of 500 individuals for our experimentations.
+It is not visible in the snippet above, but unless told otherwise, we will use populations of 500 individuals for our experiments.
 
 
 Given that we will need to process the output of each generation in order to plot meaningful information, we will define a general CSV logger which will also record the rank of each individual comparing to the pareto frontier:
