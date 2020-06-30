@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 import org.apache.commons.lang3.Validate;
 
-import net.bmahe.genetics4j.gp.ImmutableOperation;
 import net.bmahe.genetics4j.gp.math.ImmutableCoefficientOperation;
 import net.bmahe.genetics4j.gp.math.ImmutableCoefficientOperation.Builder;
 
