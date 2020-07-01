@@ -9,7 +9,6 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.gp.OperationFactories;
 import net.bmahe.genetics4j.gp.OperationFactory;
-import net.bmahe.genetics4j.gp.math.ImmutableCoefficientOperation.Builder;
 
 public class Terminals {
 
@@ -28,7 +27,7 @@ public class Terminals {
 
 			final double value = random.nextDouble() * (max - min) + min;
 
-			final Builder<Double> operationBuilder = ImmutableCoefficientOperation.builder();
+			final var operationBuilder = ImmutableCoefficientOperation.builder();
 
 			operationBuilder.name(TYPE_COEFFICIENT)
 					.prettyName(TYPE_COEFFICIENT + "[" + value + "]")
@@ -44,11 +43,30 @@ public class Terminals {
 
 			final double value = random.nextInt(max - min) + min;
 
-			final Builder<Double> operationBuilder = ImmutableCoefficientOperation.builder();
+			final var operationBuilder = ImmutableCoefficientOperation.builder();
 			operationBuilder.name(TYPE_COEFFICIENT)
 					.prettyName("CoefficientRounded[" + value + "]")
 					.returnedType(Double.class)
 					.value(value);
+
+			return operationBuilder.build();
+		});
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T> OperationFactory Input(final int inputIndex, final Class<T> clazz) {
+		Validate.isTrue(inputIndex >= 0);
+		Validate.notNull(clazz);
+
+		return OperationFactories.of(new Class[] {}, clazz, (inputSpec) -> {
+			final List<Class> types = inputSpec.types();
+			Validate.isTrue(types.get(inputIndex).isAssignableFrom(clazz));
+
+			final var operationBuilder = ImmutableInputOperation.builder();
+			operationBuilder.name(TYPE_INPUT)
+					.prettyName(TYPE_INPUT + "[" + inputIndex + "]")
+					.returnedType(clazz)
+					.index(inputIndex);
 
 			return operationBuilder.build();
 		});
@@ -72,8 +90,7 @@ public class Terminals {
 
 			final Integer inputIdx = candidates.get(random.nextInt(candidates.size()));
 
-			final net.bmahe.genetics4j.gp.math.ImmutableInputOperation.Builder<T> operationBuilder = ImmutableInputOperation
-					.builder();
+			final var operationBuilder = ImmutableInputOperation.builder();
 			operationBuilder.name(TYPE_INPUT)
 					.prettyName(TYPE_INPUT + "[" + inputIdx + "]")
 					.returnedType(clazz)
