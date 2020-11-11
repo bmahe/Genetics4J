@@ -81,6 +81,15 @@ verify:jdk15:
   variables:
     JOB_MAVEN_OVERRIDE: " -Djava.version=15 "
 
+# Verify merge requests using JDK16
+verify:jdk16:
+  <<: *verify
+  image: maven:3.6.3-openjdk-16
+  cache:
+    key: "$CI_JOB_NAME-java16"
+  variables:
+    JOB_MAVEN_OVERRIDE: " -Djava.version=16 "
+
 site:
   stage: package
   artifacts:
