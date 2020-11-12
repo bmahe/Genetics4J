@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>net.bmahe.genetics4j</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.6-SNAPSHOT</version>
+		<version>1.6</version>
 	</parent>
 
 	<groupId>net.bmahe.genetics4j</groupId>
 	<artifactId>moo</artifactId>
-	<version>1.6-SNAPSHOT</version>
+	<version>1.6</version>
 	<packaging>jar</packaging>
 
 	<name>Multi-Objective Optimization</name>
