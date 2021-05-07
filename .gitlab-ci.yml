@@ -9,6 +9,7 @@ variables:
   # `installAtEnd` and `deployAtEnd` are only effective with recent version of the corresponding plugins.
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   JOB_MAVEN_OVERRIDE: ""
+  DEBIAN_FRONTEND: noninteractive
 
 # See https://gitlab.com/help/user/application_security/index.md
 include:
