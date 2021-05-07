@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.bmahe.genetics4j</groupId>
@@ -337,35 +338,6 @@
 						</execution>
 					</executions>
 				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>${maven.javadoc.plugin.version}</version>
-					<configuration>
-					</configuration>
-					<executions>
-						<execution>
-							<id>attach-javadocs</id>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-							<configuration>
-								<doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
-								<docletArtifact>
-									<groupId>nl.talsmasoftware</groupId>
-									<artifactId>umldoclet</artifactId>
-									<version>${umldoclet.version}</version>
-								</docletArtifact>
-								<additionalOptions>
-									<!--<additionalOption>...</additionalOption> -->
-								</additionalOptions>
-								<doclint>none</doclint>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-
 			</plugins>
 		</pluginManagement>
 
@@ -378,6 +350,34 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven.javadoc.plugin.version}</version>
+				<configuration>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+							<docletArtifact>
+								<groupId>nl.talsmasoftware</groupId>
+								<artifactId>umldoclet</artifactId>
+								<version>${umldoclet.version}</version>
+							</docletArtifact>
+							<additionalOptions>
+								<!--<additionalOption>...</additionalOption> -->
+							</additionalOptions>
+							<doclint>none</doclint>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
