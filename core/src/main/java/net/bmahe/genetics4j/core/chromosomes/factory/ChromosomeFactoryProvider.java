@@ -19,11 +19,14 @@ public abstract class ChromosomeFactoryProvider {
 
 	@Value.Default
 	public List<ChromosomeFactory<? extends Chromosome>> defaultChromosomeFactories() {
-		return Arrays.asList(new BitChromosomeFactory(random()), new IntChromosomeFactory(random()));
+		final var random = random();
+
+		return Arrays.asList(new BitChromosomeFactory(random),
+				new IntChromosomeFactory(random),
+				new DoubleChromosomeFactory(random));
 	}
 
-	public abstract List<Function<ChromosomeFactoryProvider, ChromosomeFactory<? extends Chromosome>>>
-			chromosomeFactoriesGenerator();
+	public abstract List<Function<ChromosomeFactoryProvider, ChromosomeFactory<? extends Chromosome>>> chromosomeFactoriesGenerator();
 
 	@Value.Derived
 	public List<ChromosomeFactory<? extends Chromosome>> chromosomeFactories() {
