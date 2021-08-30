@@ -9,6 +9,7 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorHandler;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorResolver;
 import net.bmahe.genetics4j.core.spec.chromosome.BitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
+import net.bmahe.genetics4j.core.spec.chromosome.DoubleChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
@@ -30,8 +31,8 @@ public class MultiPointCrossoverCombinationHandler implements ChromosomeCombinat
 		Validate.notNull(combinationPolicy);
 		Validate.notNull(chromosome);
 
-		return combinationPolicy instanceof MultiPointCrossover
-				&& (chromosome instanceof BitChromosomeSpec || chromosome instanceof IntChromosomeSpec);
+		return combinationPolicy instanceof MultiPointCrossover && (chromosome instanceof BitChromosomeSpec
+				|| chromosome instanceof IntChromosomeSpec || chromosome instanceof DoubleChromosomeSpec);
 	}
 
 	@Override
@@ -48,6 +49,10 @@ public class MultiPointCrossoverCombinationHandler implements ChromosomeCombinat
 
 		if (chromosome instanceof IntChromosomeSpec) {
 			return new IntChromosomeMultiPointCrossover(random, (MultiPointCrossover) combinationPolicy);
+		}
+
+		if (chromosome instanceof DoubleChromosomeSpec) {
+			return new DoubleChromosomeMultiPointCrossover(random, (MultiPointCrossover) combinationPolicy);
 		}
 
 		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);
