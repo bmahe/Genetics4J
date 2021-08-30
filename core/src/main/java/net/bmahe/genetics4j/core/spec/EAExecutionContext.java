@@ -30,6 +30,7 @@ import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.BitChromosom
 import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.DoubleChromosomeRandomMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.IntChromosomeRandomMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.BitChromosomeSwapMutationHandler;
+import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.DoubleChromosomeSwapMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.IntChromosomeSwapMutationHandler;
 import net.bmahe.genetics4j.core.replacement.ElitismReplacementStrategyHandler;
 import net.bmahe.genetics4j.core.replacement.GenerationalReplacementStrategyHandler;
@@ -152,7 +153,8 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 				new IntChromosomeRandomMutationHandler(random()),
 				new DoubleChromosomeRandomMutationHandler(random()),
 				new BitChromosomeSwapMutationHandler(random()),
-				new IntChromosomeSwapMutationHandler(random()));
+				new IntChromosomeSwapMutationHandler(random()),
+				new DoubleChromosomeSwapMutationHandler(random()));
 	}
 
 	public abstract List<Function<EAExecutionContext<T>, ChromosomeMutationHandler<? extends Chromosome>>> chromosomeMutationPolicyHandlerFactories();
