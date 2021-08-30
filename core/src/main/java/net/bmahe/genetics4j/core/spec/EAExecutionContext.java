@@ -27,6 +27,7 @@ import net.bmahe.genetics4j.core.mutation.RandomMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.SwapMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.BitChromosomeRandomMutationHandler;
+import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.DoubleChromosomeRandomMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.IntChromosomeRandomMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.BitChromosomeSwapMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.IntChromosomeSwapMutationHandler;
@@ -63,8 +64,7 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 				new PickFirstParentHandler());
 	}
 
-	public abstract List<Function<EAExecutionContext<T>, ChromosomeCombinatorHandler>>
-			chromosomeCombinatorHandlerFactories();
+	public abstract List<Function<EAExecutionContext<T>, ChromosomeCombinatorHandler>> chromosomeCombinatorHandlerFactories();
 
 	@Value.Derived
 	public List<ChromosomeCombinatorHandler> chromosomeCombinatorHandlers() {
@@ -150,12 +150,12 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 	public List<ChromosomeMutationHandler<? extends Chromosome>> defaultChromosomeMutationPolicyHandlers() {
 		return Arrays.asList(new BitChromosomeRandomMutationHandler(random()),
 				new IntChromosomeRandomMutationHandler(random()),
+				new DoubleChromosomeRandomMutationHandler(random()),
 				new BitChromosomeSwapMutationHandler(random()),
 				new IntChromosomeSwapMutationHandler(random()));
 	}
 
-	public abstract List<Function<EAExecutionContext<T>, ChromosomeMutationHandler<? extends Chromosome>>>
-			chromosomeMutationPolicyHandlerFactories();
+	public abstract List<Function<EAExecutionContext<T>, ChromosomeMutationHandler<? extends Chromosome>>> chromosomeMutationPolicyHandlerFactories();
 
 	@Value.Derived
 	public List<ChromosomeMutationHandler<? extends Chromosome>> chromosomeMutationPolicyHandlers() {
@@ -181,8 +181,7 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 		return List.of(new ElitismReplacementStrategyHandler<>(), new GenerationalReplacementStrategyHandler<>());
 	}
 
-	public abstract List<Function<EAExecutionContext<T>, ReplacementStrategyHandler<T>>>
-			replacementStrategyHandlerFactories();
+	public abstract List<Function<EAExecutionContext<T>, ReplacementStrategyHandler<T>>> replacementStrategyHandlerFactories();
 
 	@Value.Derived
 	public List<ReplacementStrategyHandler<T>> replacementStrategyHandlers() {
