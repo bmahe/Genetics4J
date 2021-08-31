@@ -1,12 +1,14 @@
 package net.bmahe.genetics4j.core.chromosomes.factory;
 
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.chromosomes.DoubleChromosome;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.DoubleChromosomeSpec;
+import net.bmahe.genetics4j.core.util.DistributionUtils;
 
 public class DoubleChromosomeFactory implements ChromosomeFactory<DoubleChromosome> {
 
@@ -32,15 +34,19 @@ public class DoubleChromosomeFactory implements ChromosomeFactory<DoubleChromoso
 
 		final DoubleChromosomeSpec doubleChromosomeSpec = (DoubleChromosomeSpec) chromosomeSpec;
 
-		final double valueRange = doubleChromosomeSpec.maxValue() - doubleChromosomeSpec.minValue();
+		final var minValue = doubleChromosomeSpec.minValue();
+		final var maxValue = doubleChromosomeSpec.maxValue();
+		final var distribution = doubleChromosomeSpec.distribution();
+
+		final Supplier<Double> generator = DistributionUtils
+				.distributionValueSupplier(random, minValue, maxValue, distribution);
 
 		double[] values = new double[doubleChromosomeSpec.size()];
 		for (int i = 0; i < doubleChromosomeSpec.size(); i++) {
-			values[i] = doubleChromosomeSpec.minValue() + random.nextDouble() * valueRange;
+			values[i] = generator.get();
 		}
 
 		return new DoubleChromosome(doubleChromosomeSpec.size(), doubleChromosomeSpec.minValue(),
 				doubleChromosomeSpec.maxValue(), values);
 	}
-
 }

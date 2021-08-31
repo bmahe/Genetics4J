@@ -3,6 +3,9 @@ package net.bmahe.genetics4j.core.spec.chromosome;
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 
+import net.bmahe.genetics4j.core.spec.statistics.distributions.Distribution;
+import net.bmahe.genetics4j.core.spec.statistics.distributions.UniformDistribution;
+
 @Value.Immutable
 public abstract class DoubleChromosomeSpec implements ChromosomeSpec {
 
@@ -14,6 +17,11 @@ public abstract class DoubleChromosomeSpec implements ChromosomeSpec {
 
 	@Value.Parameter
 	public abstract double maxValue();
+
+	@Value.Default
+	public Distribution distribution() {
+		return UniformDistribution.build();
+	}
 
 	@Value.Check
 	protected void check() {
@@ -37,4 +45,14 @@ public abstract class DoubleChromosomeSpec implements ChromosomeSpec {
 		return ImmutableDoubleChromosomeSpec.of(size, minValue, maxValue);
 	}
 
+	public static DoubleChromosomeSpec of(final int size, final double minValue, final double maxValue,
+			final Distribution distribution) {
+		Validate.notNull(distribution);
+
+		final var doubleChromosomeSpecBuilder = new ImmutableDoubleChromosomeSpec.Builder();
+
+		doubleChromosomeSpecBuilder.size(size).minValue(minValue).maxValue(maxValue).distribution(distribution);
+
+		return doubleChromosomeSpecBuilder.build();
+	}
 }

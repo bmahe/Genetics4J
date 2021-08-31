@@ -9,15 +9,15 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.mutation.CreepMutation;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
-import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 import net.bmahe.genetics4j.core.util.ChromosomeResolverUtils;
 
-public class RandomMutationPolicyHandler implements MutationPolicyHandler {
+public class CreepMutationPolicyHandler implements MutationPolicyHandler {
 
 	private final Random random;
 
-	public RandomMutationPolicyHandler(final Random _random) {
+	public CreepMutationPolicyHandler(final Random _random) {
 		Validate.notNull(_random);
 
 		this.random = _random;
@@ -28,7 +28,7 @@ public class RandomMutationPolicyHandler implements MutationPolicyHandler {
 			final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicy);
 
-		return mutationPolicy instanceof RandomMutation;
+		return mutationPolicy instanceof CreepMutation;
 	}
 
 	@Override
@@ -39,8 +39,8 @@ public class RandomMutationPolicyHandler implements MutationPolicyHandler {
 		Validate.notNull(mutationPolicy);
 		Validate.notNull(mutationPolicyHandlerResolver);
 
-		final RandomMutation randomMutationPolicy = (RandomMutation) mutationPolicy;
-		final double populationMutationProbability = randomMutationPolicy.populationMutationProbability();
+		final CreepMutation creepMutationPolicy = (CreepMutation) mutationPolicy;
+		final double populationMutationProbability = creepMutationPolicy.populationMutationProbability();
 
 		@SuppressWarnings("rawtypes")
 		final ChromosomeMutationHandler[] chromosomeMutationHandlers = ChromosomeResolverUtils
