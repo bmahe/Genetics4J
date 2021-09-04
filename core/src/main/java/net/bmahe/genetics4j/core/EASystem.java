@@ -199,7 +199,7 @@ public class EASystem<T extends Comparable<T>> {
 				.map(pep -> pep.apply(Population.of(genotypes, fitnessScore)))
 				.orElseGet(() -> Population.of(genotypes, fitnessScore));
 
-		while (termination.isDone(generation, population.getAllGenotypes(), population.getAllFitnesses()) == false) {
+		while (termination.isDone(eaConfiguration, generation, population.getAllGenotypes(), population.getAllFitnesses()) == false) {
 			logger.info("Going through evolution of generation {}", generation);
 
 			for (final EvolutionListener<T> evolutionListener : eaExecutionContext.evolutionListeners()) {

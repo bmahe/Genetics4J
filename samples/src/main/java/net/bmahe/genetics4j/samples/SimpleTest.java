@@ -44,7 +44,7 @@ public class SimpleTest {
 
 					return denominator;
 				})
-				.termination((generation, population, fitness) -> {
+				.termination((eaConfiguration, generation, population, fitness) -> {
 					return fitness.stream().min(Comparator.naturalOrder()).orElseThrow() < 0.0001;
 				});
 		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
