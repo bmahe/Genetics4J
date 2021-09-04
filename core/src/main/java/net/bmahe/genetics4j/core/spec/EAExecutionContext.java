@@ -16,8 +16,10 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorHandler;
 import net.bmahe.genetics4j.core.combination.PickFirstParentHandler;
 import net.bmahe.genetics4j.core.combination.erx.EdgeRecombinationCrossoverHandler;
 import net.bmahe.genetics4j.core.combination.multicombinations.MultiCombinationsHandler;
+import net.bmahe.genetics4j.core.combination.multipointarithmetic.MultiPointArithmeticCombinationHandler;
 import net.bmahe.genetics4j.core.combination.multipointcrossover.MultiPointCrossoverCombinationHandler;
 import net.bmahe.genetics4j.core.combination.ordercrossover.IntOrderCrossoverHandler;
+import net.bmahe.genetics4j.core.combination.singlepointarithmetic.SinglePointArithmeticCombinationHandler;
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.SinglePointCrossoverHandler;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
 import net.bmahe.genetics4j.core.mutation.CreepMutationPolicyHandler;
@@ -63,7 +65,9 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 		return Arrays.asList(new MultiCombinationsHandler(random()),
 				new IntOrderCrossoverHandler(random()),
 				new MultiPointCrossoverCombinationHandler(random()),
+				new MultiPointArithmeticCombinationHandler(random()),
 				new SinglePointCrossoverHandler(random()),
+				new SinglePointArithmeticCombinationHandler(random()),
 				new EdgeRecombinationCrossoverHandler(random()),
 				new PickFirstParentHandler());
 	}
