@@ -27,7 +27,8 @@ public class SupersimpleTest {
 		final Builder<Double> eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
 		eaConfigurationBuilder.chromosomeSpecs(BitChromosomeSpec.of(5), IntChromosomeSpec.of(6, 10, 100))
 				.fitness((genotype) -> 1.0)
-				.termination((long generation, List<Genotype> population, List<Double> fitness) -> true)
+				.termination((EAConfiguration<Double> eaConfiguration, long generation, List<Genotype> population,
+						List<Double> fitness) -> true)
 				.parentSelectionPolicy(RandomSelection.build())
 				.combinationPolicy(SinglePointCrossover.build())
 				.addMutationPolicies(MultiMutations.of(RandomMutation.of(0.15), SwapMutation.of(0.05, 2, true)));

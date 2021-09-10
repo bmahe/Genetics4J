@@ -16,19 +16,26 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorHandler;
 import net.bmahe.genetics4j.core.combination.PickFirstParentHandler;
 import net.bmahe.genetics4j.core.combination.erx.EdgeRecombinationCrossoverHandler;
 import net.bmahe.genetics4j.core.combination.multicombinations.MultiCombinationsHandler;
+import net.bmahe.genetics4j.core.combination.multipointarithmetic.MultiPointArithmeticCombinationHandler;
 import net.bmahe.genetics4j.core.combination.multipointcrossover.MultiPointCrossoverCombinationHandler;
 import net.bmahe.genetics4j.core.combination.ordercrossover.IntOrderCrossoverHandler;
+import net.bmahe.genetics4j.core.combination.singlepointarithmetic.SinglePointArithmeticCombinationHandler;
 import net.bmahe.genetics4j.core.combination.singlepointcrossover.SinglePointCrossoverHandler;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
+import net.bmahe.genetics4j.core.mutation.CreepMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MultiMutationsPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.PartialMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.RandomMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.SwapMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
+import net.bmahe.genetics4j.core.mutation.chromosome.creepmutation.DoubleChromosomeCreepMutationHandler;
+import net.bmahe.genetics4j.core.mutation.chromosome.creepmutation.IntChromosomeCreepMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.BitChromosomeRandomMutationHandler;
+import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.DoubleChromosomeRandomMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.randommutation.IntChromosomeRandomMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.BitChromosomeSwapMutationHandler;
+import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.DoubleChromosomeSwapMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.swapmutation.IntChromosomeSwapMutationHandler;
 import net.bmahe.genetics4j.core.replacement.ElitismReplacementStrategyHandler;
 import net.bmahe.genetics4j.core.replacement.GenerationalReplacementStrategyHandler;
@@ -58,13 +65,14 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 		return Arrays.asList(new MultiCombinationsHandler(random()),
 				new IntOrderCrossoverHandler(random()),
 				new MultiPointCrossoverCombinationHandler(random()),
+				new MultiPointArithmeticCombinationHandler(random()),
 				new SinglePointCrossoverHandler(random()),
+				new SinglePointArithmeticCombinationHandler(random()),
 				new EdgeRecombinationCrossoverHandler(random()),
 				new PickFirstParentHandler());
 	}
 
-	public abstract List<Function<EAExecutionContext<T>, ChromosomeCombinatorHandler>>
-			chromosomeCombinatorHandlerFactories();
+	public abstract List<Function<EAExecutionContext<T>, ChromosomeCombinatorHandler>> chromosomeCombinatorHandlerFactories();
 
 	@Value.Derived
 	public List<ChromosomeCombinatorHandler> chromosomeCombinatorHandlers() {
@@ -122,7 +130,8 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 		return Arrays.asList(new RandomMutationPolicyHandler(random()),
 				new SwapMutationPolicyHandler(random()),
 				new MultiMutationsPolicyHandler(random()),
-				new PartialMutationPolicyHandler());
+				new PartialMutationPolicyHandler(),
+				new CreepMutationPolicyHandler(random()));
 	}
 
 	public abstract List<Function<EAExecutionContext<T>, MutationPolicyHandler>> mutationPolicyHandlerFactories();
@@ -150,12 +159,15 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 	public List<ChromosomeMutationHandler<? extends Chromosome>> defaultChromosomeMutationPolicyHandlers() {
 		return Arrays.asList(new BitChromosomeRandomMutationHandler(random()),
 				new IntChromosomeRandomMutationHandler(random()),
+				new DoubleChromosomeRandomMutationHandler(random()),
 				new BitChromosomeSwapMutationHandler(random()),
-				new IntChromosomeSwapMutationHandler(random()));
+				new IntChromosomeSwapMutationHandler(random()),
+				new DoubleChromosomeSwapMutationHandler(random()),
+				new IntChromosomeCreepMutationHandler(random()),
+				new DoubleChromosomeCreepMutationHandler(random()));
 	}
 
-	public abstract List<Function<EAExecutionContext<T>, ChromosomeMutationHandler<? extends Chromosome>>>
-			chromosomeMutationPolicyHandlerFactories();
+	public abstract List<Function<EAExecutionContext<T>, ChromosomeMutationHandler<? extends Chromosome>>> chromosomeMutationPolicyHandlerFactories();
 
 	@Value.Derived
 	public List<ChromosomeMutationHandler<? extends Chromosome>> chromosomeMutationPolicyHandlers() {
@@ -181,8 +193,7 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 		return List.of(new ElitismReplacementStrategyHandler<>(), new GenerationalReplacementStrategyHandler<>());
 	}
 
-	public abstract List<Function<EAExecutionContext<T>, ReplacementStrategyHandler<T>>>
-			replacementStrategyHandlerFactories();
+	public abstract List<Function<EAExecutionContext<T>, ReplacementStrategyHandler<T>>> replacementStrategyHandlerFactories();
 
 	@Value.Derived
 	public List<ReplacementStrategyHandler<T>> replacementStrategyHandlers() {

@@ -124,7 +124,7 @@ public class SymbolicRegressionWithMOOSPEA2 {
 						NodeReplacement.of(0.15 * 3)), ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
 				.optimization(Optimization.MINIMIZE)
 				.termination(Terminations.or(Terminations.<FitnessVector<Double>>ofMaxGeneration(200),
-						(generation, population, fitness) -> fitness.stream()
+						(eaConfiguration, generation, population, fitness) -> fitness.stream()
 								.anyMatch(fv -> fv.get(0) <= 0.00001 && fv.get(1) <= 20)))
 				.fitness(computeFitness);
 		final EAConfiguration<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();

@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.core.combination.multipointcrossover;
+package net.bmahe.genetics4j.core.combination.multipointarithmetic;
 
 import java.util.Random;
 
@@ -7,18 +7,17 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorHandler;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorResolver;
-import net.bmahe.genetics4j.core.spec.chromosome.BitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.DoubleChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
-import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
+import net.bmahe.genetics4j.core.spec.combination.MultiPointArithmetic;
 
-public class MultiPointCrossoverCombinationHandler implements ChromosomeCombinatorHandler {
+public class MultiPointArithmeticCombinationHandler implements ChromosomeCombinatorHandler {
 
 	private final Random random;
 
-	public MultiPointCrossoverCombinationHandler(final Random _random) {
+	public MultiPointArithmeticCombinationHandler(final Random _random) {
 		Validate.notNull(_random);
 
 		this.random = _random;
@@ -31,8 +30,8 @@ public class MultiPointCrossoverCombinationHandler implements ChromosomeCombinat
 		Validate.notNull(combinationPolicy);
 		Validate.notNull(chromosome);
 
-		return combinationPolicy instanceof MultiPointCrossover && (chromosome instanceof BitChromosomeSpec
-				|| chromosome instanceof IntChromosomeSpec || chromosome instanceof DoubleChromosomeSpec);
+		return combinationPolicy instanceof MultiPointArithmetic
+				&& (chromosome instanceof IntChromosomeSpec || chromosome instanceof DoubleChromosomeSpec);
 	}
 
 	@Override
@@ -41,18 +40,14 @@ public class MultiPointCrossoverCombinationHandler implements ChromosomeCombinat
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
 		Validate.notNull(chromosome);
-		Validate.isInstanceOf(MultiPointCrossover.class, combinationPolicy);
-
-		if (chromosome instanceof BitChromosomeSpec) {
-			return new BitChromosomeMultiPointCrossover(random, (MultiPointCrossover) combinationPolicy);
-		}
+		Validate.isInstanceOf(MultiPointArithmetic.class, combinationPolicy);
 
 		if (chromosome instanceof IntChromosomeSpec) {
-			return new IntChromosomeMultiPointCrossover(random, (MultiPointCrossover) combinationPolicy);
+			return new IntChromosomeMultiPointArithmetic(random, (MultiPointArithmetic) combinationPolicy);
 		}
 
 		if (chromosome instanceof DoubleChromosomeSpec) {
-			return new DoubleChromosomeMultiPointCrossover(random, (MultiPointCrossover) combinationPolicy);
+			return new DoubleChromosomeMultiPointArithmetic(random, (MultiPointArithmetic) combinationPolicy);
 		}
 
 		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);

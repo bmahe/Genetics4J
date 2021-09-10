@@ -3,11 +3,15 @@ package net.bmahe.genetics4j.core.termination;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.Optimization;
 
 public class Terminations {
 
@@ -17,7 +21,8 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
+			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
 				return generation >= maxGeneration;
@@ -34,7 +39,8 @@ public class Terminations {
 			private Long startTime = null;
 
 			@Override
-			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
+			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
 				final long nowNanos = System.nanoTime();
@@ -56,9 +62,10 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
+			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+					final List<Genotype> population, final List<T> fitness) {
 				return Arrays.stream(terminations)
-						.allMatch((termination) -> termination.isDone(generation, population, fitness));
+						.allMatch((termination) -> termination.isDone(eaConfiguration, generation, population, fitness));
 			}
 
 		};
@@ -72,9 +79,10 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
+			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+					final List<Genotype> population, final List<T> fitness) {
 				return Arrays.stream(terminations)
-						.anyMatch((termination) -> termination.isDone(generation, population, fitness));
+						.anyMatch((termination) -> termination.isDone(eaConfiguration, generation, population, fitness));
 			}
 
 		};
@@ -85,7 +93,8 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
+			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
 				return fitness.stream().anyMatch((fitnessValue) -> threshold.compareTo(fitnessValue) <= 0);
@@ -98,7 +107,8 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final long generation, final List<Genotype> population, final List<T> fitness) {
+			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
 				return fitness.stream().anyMatch((fitnessValue) -> threshold.compareTo(fitnessValue) >= 0);
@@ -106,4 +116,45 @@ public class Terminations {
 		};
 	}
 
+	/**
+	 * Will terminate if the fitness does not improve over a specified number of
+	 * generations
+	 *
+	 * @param <T>
+	 * @param stableGenerationsCount
+	 * @return
+	 */
+	public static <T extends Comparable<T>> Termination<T> ofStableFitness(final int stableGenerationsCount) {
+		Validate.isTrue(stableGenerationsCount > 0);
+
+		return new Termination<T>() {
+
+			private long lastImprovedGeneration = -1;
+			private T lastBestFitness = null;
+
+			@Override
+			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+					final List<Genotype> population, final List<T> fitness) {
+				Validate.isTrue(generation >= 0);
+
+				// TODO update for exhaustive check when upgrading java version
+				final Comparator<T> fitnessComparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
+						? Comparator.naturalOrder()
+						: Comparator.reverseOrder();
+
+				final Optional<T> bestFitnessOpt = fitness.stream().max(fitnessComparator);
+
+				if (lastImprovedGeneration < 0
+						|| bestFitnessOpt.map(bestFitness -> bestFitness.compareTo(lastBestFitness) > 0).orElse(false)) {
+					lastImprovedGeneration = generation;
+					lastBestFitness = bestFitnessOpt.get();
+				}
+
+				if (generation - lastImprovedGeneration > stableGenerationsCount) {
+					return true;
+				}
+				return false;
+			}
+		};
+	}
 }
