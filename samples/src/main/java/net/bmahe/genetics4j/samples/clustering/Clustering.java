@@ -2,12 +2,7 @@ package net.bmahe.genetics4j.samples.clustering;
 
 import static net.bmahe.genetics4j.core.termination.Terminations.or;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +14,6 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
@@ -34,7 +26,6 @@ import net.bmahe.genetics4j.core.Fitness;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.DoubleChromosome;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
-import net.bmahe.genetics4j.core.postevaluationprocess.FitnessSharing;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.chromosome.DoubleChromosomeSpec;
@@ -45,6 +36,7 @@ import net.bmahe.genetics4j.core.spec.mutation.CreepMutation;
 import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
 import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 import net.bmahe.genetics4j.core.spec.selection.Tournament;
+import net.bmahe.genetics4j.core.termination.Termination;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.extras.evolutionlisteners.CSVEvolutionListener;
 import net.bmahe.genetics4j.extras.evolutionlisteners.ColumnExtractor;
@@ -52,13 +44,13 @@ import net.bmahe.genetics4j.extras.evolutionlisteners.ColumnExtractor;
 public class Clustering {
 	final static public Logger logger = LogManager.getLogger(Clustering.class);
 
-	final static public int DEFAULT_NUM_CLUSTERS = 5;
+	final static public int DEFAULT_NUM_CLUSTERS = 6;
 	final static public int DEFAULT_NUMBER_TOURNAMENTS = 2;
-	final static public int DEFAULT_POPULATION_SIZE = 300;
+	final static public int DEFAULT_POPULATION_SIZE = 120;
 	final static public double DEFAULT_RANDOM_MUTATION_RATE = 0.15d;
 	final static public double DEFAULT_CREEP_MUTATION_RATE = 0.20d;
 	final static public double DEFAULT_CREEP_MUTATION_MEAN = 0.0d;
-	final static public double DEFAULT_CREEP_MUTATION_STDDEV = 10;
+	final static public double DEFAULT_CREEP_MUTATION_STDDEV = 5;
 	final static public int DEFAULT_COMBINATION_ARITHMETIC = 3;
 	final static public int DEFAULT_COMBINATION_CROSSOVER_ARITHMETIC = 3;
 
@@ -101,6 +93,12 @@ public class Clustering {
 	final static public String PARAM_OUTPUT_CSV = "o";
 	final static public String LONG_PARAM_OUTPUT_CSV = "output";
 
+	final static public String PARAM_OUTPUT_WITH_SSE_CSV = "g";
+	final static public String LONG_PARAM_OUTPUT_WITH_SSE_CSV = "output-sse";
+
+	final static public String PARAM_BASE_DIR_OUTPUT = "i";
+	final static public String LONG_PARAM_BASE_DIR_OUTPUT = "base-dir";
+
 	public static void cliError(final Options options, final String errorMessage) {
 		final HelpFormatter formatter = new HelpFormatter();
 		logger.error(errorMessage);
@@ -108,130 +106,38 @@ public class Clustering {
 		System.exit(-1);
 	}
 
-	public static double[][] toPhenotype(final Genotype genotype) {
-		Validate.notNull(genotype);
-
-		final var doubleChromosome = genotype.getChromosome(0, DoubleChromosome.class);
-
-		final int numClusters = doubleChromosome.getSize() / 2;
-		final double[][] clusters = new double[numClusters][2];
-
-		for (int i = 0; i < numClusters; i++) {
-			clusters[i][0] = doubleChromosome.getAllele(i * 2);
-			clusters[i][1] = doubleChromosome.getAllele(i * 2 + 1);
-		}
-
-		return clusters;
+	private final static double computeDistance(final double[][] array, final int i, final int j) {
+		final double xDiff = array[j][0] - array[i][0];
+		final double yDiff = array[j][1] - array[i][1];
+		return Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
 	}
 
-	private final static FitnessSharing simpleDistanceFitnessSharing = FitnessSharing.ofStandard((i0, i1) -> {
-		final var p0 = toPhenotype(i0);
-		final var p1 = toPhenotype(i1);
+	private final static double[][] computeAllDistances(final double[][] array) {
 
-		double distanceAcc = 0.0d;
-		for (int i = 0; i < p0.length; i++) {
-			double distance = 0.0d;
-			distance += (p1[i][0] - p0[i][0]) * (p1[i][0] - p0[i][0]);
-			distance += (p1[i][1] - p0[i][1]) * (p1[i][1] - p0[i][1]);
+		final double[][] distances = new double[array.length][array.length];
 
-			distanceAcc += Math.sqrt(distance);
+		for (int i = 0; i < array.length; i++) {
+			distances[i][i] = 0.0;
 		}
 
-		return distanceAcc;
-	}, 5.0);
-
-	private final static FitnessSharing hausDorffFitnessSharing = FitnessSharing.ofStandard((i0, i1) -> {
-		final var p0 = toPhenotype(i0);
-		final var p1 = toPhenotype(i1);
-
-		double min0 = Double.MAX_VALUE;
-		for (int i = 0; i < p0.length; i++) {
-			for (int j = 0; j < p1.length; j++) {
-				final double distance = Math
-						.sqrt((p0[i][0] - p1[j][0]) * (p0[i][0] - p1[j][0]) - (p0[i][1] - p1[j][1]) * (p0[i][1] - p1[j][1]));
-				if (distance < min0) {
-					min0 = distance;
-				}
+		for (int i = 0; i < array.length; i++) {
+			for (int j = 0; j < i; j++) {
+				final double distance = computeDistance(array, i, j);
+				distances[i][j] = distance;
+				distances[j][i] = distance;
 			}
 		}
 
-		double min1 = Double.MAX_VALUE;
-		for (int i = 0; i < p1.length; i++) {
-			for (int j = 0; j < p0.length; j++) {
-				final double distance = Math
-						.sqrt((p0[i][0] - p1[j][0]) * (p0[i][0] - p1[j][0]) - (p0[i][1] - p1[j][1]) * (p0[i][1] - p1[j][1]));
-				if (distance < min1) {
-					min1 = distance;
-				}
-			}
-		}
-
-		return Math.max(min0, min1);
-
-	}, 5.0);
-
-	private final static Fitness<Double> computeFitness(final int numDataPoints, final double[][] data,
-			final int numClusters) {
-		Validate.isTrue(numDataPoints > 0);
-		Validate.isTrue(numDataPoints == data.length);
-		Validate.isTrue(numClusters > 0);
-
-		return (genoType) -> {
-
-			final double[][] clusters = toPhenotype(genoType);
-
-			final double[] closestClusterIndex = new double[numDataPoints];
-			final double[] closestClusterDistance = new double[numDataPoints];
-			final double[] secondClosestClusterIndex = new double[numDataPoints];
-			final double[] secondClosestClusterDistance = new double[numDataPoints];
-
-			final double[] allClusterDistance = new double[numClusters];
-			for (int i = 0; i < numDataPoints; i++) {
-				closestClusterIndex[i] = -1;
-				secondClosestClusterIndex[i] = -1;
-
-				final double dataX = data[i][0];
-				final double dataY = data[i][1];
-
-				for (int clusterIndex = 0; clusterIndex < numClusters; clusterIndex++) {
-					final double clusterX = clusters[clusterIndex][0];
-					final double clusterY = clusters[clusterIndex][1];
-
-					final double distance = Math
-							.sqrt(((clusterX - dataX) * (clusterX - dataX)) + ((clusterY - dataY) * (clusterY - dataY)));
-					allClusterDistance[clusterIndex] = distance;
-
-					if (closestClusterIndex[i] == -1 || distance < closestClusterDistance[i]) {
-						closestClusterIndex[i] = clusterIndex;
-						closestClusterDistance[i] = distance;
-					}
-				}
-
-				for (int clusterIndex = 0; clusterIndex < numClusters; clusterIndex++) {
-					if (clusterIndex != closestClusterIndex[i] && (secondClosestClusterIndex[i] == -1
-							|| allClusterDistance[clusterIndex] < secondClosestClusterDistance[i])) {
-						secondClosestClusterIndex[i] = clusterIndex;
-						secondClosestClusterDistance[i] = allClusterDistance[clusterIndex];
-					}
-				}
-
-			}
-
-			double sumA = 0.0d;
-			double sumB = 0.0d;
-			for (int i = 0; i < numDataPoints; i++) {
-				sumA += closestClusterDistance[i];
-				sumB += secondClosestClusterDistance[i];
-			}
-			final double a = sumA / numDataPoints;
-			final double b = sumB / numDataPoints;
-
-			return (b - a) / Math.max(a, b);
-		};
+		return distances;
 	}
 
+	// tag::cluster_generation[]
 	public static double[][] generateClusters(final Random random, final int numClusters, final double minX,
 			final double maxX, final double minY, final double maxY) {
+		Validate.notNull(random);
+		Validate.isTrue(numClusters > 0);
+		Validate.isTrue(minX <= maxX);
+		Validate.isTrue(minY <= maxY);
 
 		logger.info("Generating {} clusters", numClusters);
 
@@ -243,9 +149,14 @@ public class Clustering {
 
 		return clusters;
 	}
+	// end::cluster_generation[]
 
+	// tag::data_generation[]
 	public static double[][] generateDataPoints(final Random random, final double[][] clusters, final int numDataPoints,
 			final double radius) {
+		Validate.notNull(random);
+		Validate.notNull(clusters);
+		Validate.isTrue(clusters.length > 0);
 
 		final int numClusters = clusters.length;
 		final double[][] data = new double[numDataPoints][3];
@@ -259,111 +170,63 @@ public class Clustering {
 
 		return data;
 	}
+	// end::data_generation[]
 
-	public static double[][] loadClusters(final String filename) {
-		logger.info("Loading clusters from {}", filename);
+	public static void doGA(final int k, final double min, final double max, final int numberTournaments,
+			final int combinationArithmetic, final int combinationCrossover, final double randomMutationRate,
+			final double creepMutationRate, final double creepMutationMean, final double creepMutationStdDev,
+			final Fitness<Double> fitnessFunction, final Termination<Double> terminations, final int populationSize,
+			final String outputCSV, final double[][] data, final double[][] distances, final String baseDir,
+			final String filenameSuffix) throws IOException {
 
-		Reader in;
-		try {
-			in = new FileReader(filename);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
+		// tag::ea_configuration[]
+		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
+		eaConfigurationBuilder.chromosomeSpecs(DoubleChromosomeSpec.of(k * 2, min, max))
+				.parentSelectionPolicy(Tournament.of(numberTournaments))
+				.combinationPolicy(MultiCombinations.of(MultiPointArithmetic.of(combinationArithmetic, 0.5),
+						MultiPointCrossover.of(combinationCrossover)))
+				.mutationPolicies(MultiMutations.of(RandomMutation.of(randomMutationRate),
+						CreepMutation.ofNormal(creepMutationRate, creepMutationMean, creepMutationStdDev)))
+				.fitness(fitnessFunction)
+				.postEvaluationProcessor(FitnessSharingUtils.clusterDistance)
+				.termination(terminations);
+		final var eaConfiguration = eaConfigurationBuilder.build();
+		// end::ea_configuration[]
+
+		final var eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
+				.populationSize(populationSize)
+				.addEvolutionListeners(EvolutionListeners.ofLogTopN(logger, 3),
+						new CSVEvolutionListener.Builder<Double, Double>().filename(outputCSV)
+								.columnExtractors(List.of(
+										ColumnExtractor.of("generation", (evolutionStep) -> evolutionStep.generation()),
+										ColumnExtractor.of("fitness", (evolutionStep) -> evolutionStep.fitness()),
+										ColumnExtractor.of("combination_arithmetic", (evolutionStep) -> combinationArithmetic),
+										ColumnExtractor.of("combination_crossover", (evolutionStep) -> combinationCrossover),
+										ColumnExtractor.of("random_mutation_rate", (evolutionStep) -> randomMutationRate),
+										ColumnExtractor.of("creep_mutation_mean", (evolutionStep) -> creepMutationMean),
+										ColumnExtractor.of("creep_mutation_stddev", (evolutionStep) -> creepMutationStdDev),
+										ColumnExtractor.of("creep_mutation_rate", (evolutionStep) -> creepMutationRate)))
+								.build())
+				.build();
+
+		final var eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
+
+		final var evolutionResult = eaSystem.evolve();
+		logger.info("Best genotype: " + evolutionResult.bestGenotype());
+		logger.info("  with fitness: {}", evolutionResult.bestFitness());
+		logger.info("  at generation: {}", evolutionResult.generation());
+
+		final Genotype bestGenotype = evolutionResult.bestGenotype();
+		final double[][] bestPhenotype = PhenotypeUtils.toPhenotype(bestGenotype);
+		logger.info("Best phenotype:");
+		for (int i = 0; i < k; i++) {
+			logger.info("\tx: {} - y: {}", bestPhenotype[i][0], bestPhenotype[i][1]);
 		}
+		final int[] bestClusterMembership = FitnessUtils.assignDataToClusters(data, distances, bestPhenotype);
+		IOUtils
+				.persistDataPoints(data, bestClusterMembership, baseDir + "clustering-result-ga" + filenameSuffix + ".csv");
+		IOUtils.persistClusters(bestPhenotype, baseDir + "clustering-result-clusters-ga" + filenameSuffix + ".csv");
 
-		Iterable<CSVRecord> records;
-		try {
-			records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		final List<double[]> entries = new ArrayList<>();
-		for (final CSVRecord record : records) {
-			final double x = Double.parseDouble(record.get(1));
-			final double y = Double.parseDouble(record.get(2));
-
-			entries.add(new double[] { x, y });
-		}
-
-		final double[][] clusters = new double[entries.size()][2];
-		for (int i = 0; i < entries.size(); i++) {
-			clusters[i][0] = entries.get(i)[0];
-			clusters[i][1] = entries.get(i)[1];
-		}
-		return clusters;
-	}
-
-	public static double[][] loadDataPoints(final String filename) throws IOException {
-		final Reader in = new FileReader(filename);
-		final Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader()
-				.withSkipHeaderRecord(true)
-				.parse(in);
-		final List<double[]> entries = new ArrayList<>();
-		for (final CSVRecord record : records) {
-			final double cluster = Double.parseDouble(record.get(0));
-			final double x = Double.parseDouble(record.get(1));
-			final double y = Double.parseDouble(record.get(2));
-
-			entries.add(new double[] { cluster, x, y });
-		}
-
-		final double[][] clusters = new double[entries.size()][3];
-		for (int i = 0; i < entries.size(); i++) {
-			clusters[i][0] = entries.get(i)[1];
-			clusters[i][1] = entries.get(i)[2];
-			clusters[i][2] = entries.get(i)[0];
-		}
-		return clusters;
-	}
-
-	public static void persistClusters(final double[][] clusters, final String originalClustersFilename)
-			throws IOException {
-		logger.info("Saving clusters to CSV: {}", originalClustersFilename);
-
-		final CSVPrinter csvPrinter;
-		try {
-			csvPrinter = CSVFormat.DEFAULT.withAutoFlush(true)
-					.withHeader(new String[] { "cluster", "x", "y" })
-					.print(Path.of(originalClustersFilename), StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			logger.error("Could not open {}", originalClustersFilename, e);
-			throw new RuntimeException("Could not open file " + originalClustersFilename, e);
-		}
-
-		for (int i = 0; i < clusters.length; i++) {
-			try {
-				csvPrinter.printRecord(i, clusters[i][0], clusters[i][1]);
-			} catch (IOException e) {
-				throw new RuntimeException("Could not write data", e);
-			}
-		}
-		csvPrinter.close(true);
-	}
-
-	public static void persistDataPoints(final double[][] clusters, final double[][] data,
-			final String originalDataFilename) throws IOException {
-		logger.info("Saving data to CSV: {}", originalDataFilename);
-
-		final int numDataPoints = data.length;
-
-		final CSVPrinter csvPrinter;
-		try {
-			csvPrinter = CSVFormat.DEFAULT.withAutoFlush(true)
-					.withHeader(new String[] { "cluster", "x", "y" })
-					.print(Path.of(originalDataFilename), StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			logger.error("Could not open {}", originalDataFilename, e);
-			throw new RuntimeException("Could not open file " + originalDataFilename, e);
-		}
-
-		for (int i = 0; i < numDataPoints; i++) {
-			try {
-				csvPrinter.printRecord((int) data[i][2], data[i][0], data[i][1]);
-			} catch (IOException e) {
-				throw new RuntimeException("Could not write data", e);
-			}
-		}
-		csvPrinter.close(true);
 	}
 
 	public static List<CentroidCluster<LocationWrapper>> apacheCommonsMathCluster(final double[][] clusters,
@@ -407,7 +270,7 @@ public class Clustering {
 
 		final double radius = 8;
 
-		final int numDataPoints = 5000;
+		final int numDataPoints = 1_000;
 
 		/**
 		 * Parse CLI
@@ -421,9 +284,12 @@ public class Clustering {
 		options.addOption(PARAM_SOURCE_CLUSTERS_CSV, LONG_PARAM_SOURCE_CUSTERS_CSV, true, "source csv file for clusters");
 		options.addOption(PARAM_SOURCE_DATA_CSV, LONG_PARAM_SOURCE_DATA_CSV, true, "source csv file for data");
 		options.addOption(PARAM_OUTPUT_CSV, LONG_PARAM_OUTPUT_CSV, true, "output csv");
+		options.addOption(PARAM_OUTPUT_WITH_SSE_CSV, LONG_PARAM_OUTPUT_WITH_SSE_CSV, true, "output with sse csv");
 		options
 				.addOption(PARAM_COMBINATION_ARITHMETIC, LONG_PARAM_COMBINATION_ARITHMETIC, true, "combination arithmetic");
 		options.addOption(PARAM_COMBINATION_CROSSOVER, LONG_PARAM_COMBINATION_CROSSOVER, true, "combination crossover");
+		options.addOption(PARAM_POPULATION_SIZE, LONG_PARAM_POPULATION_SIZE, true, "population size");
+		options.addOption(PARAM_BASE_DIR_OUTPUT, LONG_PARAM_BASE_DIR_OUTPUT, true, "base directory");
 		options.addOption(PARAM_CREEP_MUTATION_STD_DEV,
 				LONG_PARAM_CREEP_MUTATION_STD_DEV,
 				true,
@@ -449,6 +315,7 @@ public class Clustering {
 		Optional<String> paramSourceDataCSV = Optional.empty();
 		Optional<Integer> paramNumClusters = Optional.empty();
 		Optional<String> paramOutputCSV = Optional.empty();
+		Optional<String> paramOutputWithSSECSV = Optional.empty();
 		Optional<Long> paramFixedTermination = Optional.empty();
 
 		int numberTournaments = DEFAULT_NUMBER_TOURNAMENTS;
@@ -459,12 +326,15 @@ public class Clustering {
 		final double creepMutationStdDev;
 		final int combinationArithmetic;
 		final int combinationCrossover;
+		final String baseDir;
 		try {
 			final CommandLine line = parser.parse(options, args);
 
 			if (line.hasOption(PARAM_NUMBER_TOURNAMENTS)) {
 				numberTournaments = Integer.parseInt(line.getOptionValue(PARAM_NUMBER_TOURNAMENTS).strip());
 			}
+
+			baseDir = Optional.ofNullable(line.getOptionValue(PARAM_BASE_DIR_OUTPUT)).orElse("");
 
 			combinationArithmetic = Optional.ofNullable(line.getOptionValue(PARAM_COMBINATION_ARITHMETIC))
 					.map(String::strip)
@@ -483,10 +353,15 @@ public class Clustering {
 					.map(String::strip)
 					.map(Integer::parseInt)
 					.orElse(DEFAULT_POPULATION_SIZE);
+
 			paramSourceClustersCSV = Optional.ofNullable(line.getOptionValue(PARAM_SOURCE_CLUSTERS_CSV))
 					.map(String::strip);
+
 			paramSourceDataCSV = Optional.ofNullable(line.getOptionValue(PARAM_SOURCE_DATA_CSV)).map(String::strip);
+
 			paramOutputCSV = Optional.ofNullable(line.getOptionValue(PARAM_OUTPUT_CSV)).map(String::strip);
+			paramOutputWithSSECSV = Optional.ofNullable(line.getOptionValue(PARAM_OUTPUT_WITH_SSE_CSV)).map(String::strip);
+
 			paramFixedTermination = Optional.ofNullable(line.getOptionValue(PARAM_FIXED_TERMINATION))
 					.map(String::strip)
 					.map(Long::parseLong);
@@ -534,8 +409,7 @@ public class Clustering {
 		final int numClusters = paramNumClusters.orElse(DEFAULT_NUM_CLUSTERS);
 
 		logger.info("Preparing {} clusters", numClusters);
-		final double[][] clusters = paramSourceClustersCSV
-				.map(sourceClustersFileName -> loadClusters(sourceClustersFileName))
+		final double[][] clusters = paramSourceClustersCSV.map(IOUtils::loadClusters)
 				.orElseGet(() -> generateClusters(random, numClusters, minX, maxX, minY, maxY));
 		logger.info("Found {} clusters", clusters.length);
 
@@ -543,18 +417,19 @@ public class Clustering {
 		final double[][] data = paramSourceDataCSV.map(sourceDataCSVFileName -> {
 			try {
 				logger.info("Loading data points");
-				return loadDataPoints(sourceDataCSVFileName);
+				return IOUtils.loadDataPoints(sourceDataCSVFileName);
 			} catch (IOException e) {
 				throw new RuntimeException("Could not load " + sourceDataCSVFileName, e);
 			}
 		}).orElseGet(() -> generateDataPoints(random, clusters, numDataPoints, radius));
+		final double[][] distances = computeAllDistances(data);
 
 		final String originalClustersFilename = "originalClusters.csv";
 		if (paramSourceClustersCSV.isPresent()) {
 			logger.info("Not persisting clusters since it was provided");
 		} else {
 			logger.info("Saving clusters to CSV: {}", originalClustersFilename);
-			persistClusters(clusters, originalClustersFilename);
+			IOUtils.persistClusters(clusters, originalClustersFilename);
 		}
 
 		final String originalDataFilename = "originalData.csv";
@@ -562,7 +437,7 @@ public class Clustering {
 			logger.info("Not persisting data since it was provided");
 		} else {
 			logger.info("Saving data to CSV: {}", originalDataFilename);
-			persistDataPoints(clusters, data, originalDataFilename);
+			IOUtils.persistDataPoints(data, originalDataFilename);
 		}
 
 		logger.info("Clustering data with Apache Commons Math");
@@ -572,11 +447,11 @@ public class Clustering {
 		logger.info("Definition of genetic problem");
 
 		final int k = numClusters;
-		final var fitnessFunction = computeFitness(numDataPoints, data, k);
+		final var fitnessFunction = FitnessUtils.computeFitness(numDataPoints, data, distances, k);
 
 		final var terminations = paramFixedTermination
 				.map(maxGeneration -> Terminations.<Double>ofMaxGeneration(maxGeneration))
-				.orElseGet(() -> or(Terminations.<Double>ofMaxGeneration(2_000), Terminations.ofStableFitness(100)));
+				.orElseGet(() -> or(Terminations.<Double>ofMaxGeneration(500), Terminations.ofStableFitness(50)));
 
 		logger.info("Terminations: {}", paramFixedTermination);
 		logger.info("Parameters: random_mutation_rate: {} - creep_mutation_rate: {} - creep_mutation_stddev: {} ",
@@ -585,46 +460,47 @@ public class Clustering {
 				creepMutationStdDev);
 		logger.info("Combinations: arithmetic {} ; crossover {}", combinationArithmetic, combinationCrossover);
 
-		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
-		eaConfigurationBuilder.chromosomeSpecs(DoubleChromosomeSpec.of(k * 2, min, max))
-				.parentSelectionPolicy(Tournament.of(numberTournaments))
-				.combinationPolicy(MultiCombinations.of(MultiPointArithmetic.of(combinationArithmetic, 0.5),
-						MultiPointCrossover.of(combinationCrossover)))
-				.mutationPolicies(MultiMutations.of(RandomMutation.of(randomMutationRate),
-						CreepMutation.ofNormal(creepMutationRate, creepMutationMean, creepMutationStdDev)))
-				.fitness(fitnessFunction)
-				.termination(terminations);
-		final var eaConfiguration = eaConfigurationBuilder.build();
+		logger.info("Running GA with Silhouette score");
+		doGA(k,
+				min,
+				max,
+				numberTournaments,
+				combinationArithmetic,
+				combinationCrossover,
+				randomMutationRate,
+				creepMutationRate,
+				creepMutationMean,
+				creepMutationStdDev,
+				fitnessFunction,
+				terminations,
+				populationSize,
+				paramOutputCSV.orElse("output.csv"),
+				data,
+				distances,
+				baseDir,
+				"");
 
-		final var eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
-				.populationSize(populationSize)
-				.addEvolutionListeners(EvolutionListeners.ofLogTopN(logger, 3),
-						new CSVEvolutionListener.Builder<Double, Double>().filename(paramOutputCSV.orElse("output.csv"))
-								.columnExtractors(List.of(
-										ColumnExtractor.of("generation", (evolutionStep) -> evolutionStep.generation()),
-										ColumnExtractor.of("fitness", (evolutionStep) -> evolutionStep.fitness()),
-										ColumnExtractor.of("combination_arithmetic", (evolutionStep) -> combinationArithmetic),
-										ColumnExtractor.of("combination_crossover", (evolutionStep) -> combinationCrossover),
-										ColumnExtractor.of("random_mutation_rate", (evolutionStep) -> randomMutationRate),
-										ColumnExtractor.of("creep_mutation_mean", (evolutionStep) -> creepMutationMean),
-										ColumnExtractor.of("creep_mutation_stddev", (evolutionStep) -> creepMutationStdDev),
-										ColumnExtractor.of("creep_mutation_rate", (evolutionStep) -> creepMutationRate)))
-								.build())
-				.build();
-
-		final var eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
-
-		final var evolutionResult = eaSystem.evolve();
-		logger.info("Best genotype: " + evolutionResult.bestGenotype());
-		logger.info("  with fitness: {}", evolutionResult.bestFitness());
-		logger.info("  at generation: {}", evolutionResult.generation());
-
-		final Genotype bestGenotype = evolutionResult.bestGenotype();
-		final double[][] bestPhenotype = toPhenotype(bestGenotype);
-		logger.info("Best phenotype:");
-		for (int i = 0; i < numClusters; i++) {
-			logger.info("\tx: {} - y: {}", bestPhenotype[i][0], bestPhenotype[i][1]);
-		}
+		logger.info("Running GA with Silhouette score + SSE");
+		final var fitnessFunctionWithSumSquareErrors = FitnessUtils
+				.computeFitnessWithSSE(numDataPoints, data, distances, k);
+		doGA(k,
+				min,
+				max,
+				numberTournaments,
+				combinationArithmetic,
+				combinationCrossover,
+				randomMutationRate,
+				creepMutationRate,
+				creepMutationMean,
+				creepMutationStdDev,
+				fitnessFunctionWithSumSquareErrors,
+				terminations,
+				populationSize,
+				paramOutputWithSSECSV.orElse("output-with-sse.csv"),
+				data,
+				distances,
+				baseDir,
+				"-with-sse");
 
 		logger.info("Original clusters:");
 		final double[] originalMeans = new double[numClusters * 2];
@@ -636,21 +512,29 @@ public class Clustering {
 		final var originalFitness = fitnessFunction
 				.compute(new Genotype(new DoubleChromosome(k * 2, -100.0d, 100.0d, originalMeans)));
 		logger.info("Original fitness: {}", originalFitness);
+		final int[] originalClusterMembership = FitnessUtils.assignDataToClusters(data, distances, clusters);
+		IOUtils.persistDataPoints(data, originalClusterMembership, baseDir + "clustering-result-original.csv");
+		IOUtils.persistClusters(clusters, baseDir + "clustering-result-clusters-original.csv");
 
-		logger.info("Apache commons math output:");
+		logger.info("kmeans output:");
 		// output the clusters
-		final double[] apacheClusters = new double[numClusters * 2];
+		final double[] kmeansClusters = new double[numClusters * 2];
 		for (int i = 0; i < clusterResults.size(); i++) {
 			final CentroidCluster<LocationWrapper> centroidCluster = clusterResults.get(i);
 			logger.info("\t{}", centroidCluster.getCenter());
-			apacheClusters[i * 2] = centroidCluster.getCenter().getPoint()[0];
-			apacheClusters[i * 2 + 1] = centroidCluster.getCenter().getPoint()[1];
+			kmeansClusters[i * 2] = centroidCluster.getCenter().getPoint()[0];
+			kmeansClusters[i * 2 + 1] = centroidCluster.getCenter().getPoint()[1];
 		}
-		final var apacheFitness = fitnessFunction
-				.compute(new Genotype(new DoubleChromosome(k * 2, -100.0d, 100.0d, apacheClusters)));
-		logger.info("Apache fitness: {}", apacheFitness);
+		final var kmeansGenotype = new Genotype(new DoubleChromosome(k * 2, -100.0d, 100.0d, kmeansClusters));
+		final var kmeansFitness = fitnessFunction.compute(kmeansGenotype);
+		logger.info("kmeans fitness: {}", kmeansFitness);
+
+		final int[] kmeansClusterMembership = FitnessUtils
+				.assignDataToClusters(data, distances, PhenotypeUtils.toPhenotype(kmeansGenotype));
+		IOUtils.persistDataPoints(data, kmeansClusterMembership, baseDir + "clustering-result-kmeans.csv");
+		IOUtils.persistClusters(PhenotypeUtils.toPhenotype(kmeansGenotype),
+				baseDir + "clustering-result-clusters-kmeans.csv");
 
 		logger.info("Done");
 	}
-
 }

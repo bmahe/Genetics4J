@@ -48,6 +48,13 @@
 		<SymbolicRegressionWithMOOSPEA2.filename.csv.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithMOOSPEA2.csv</SymbolicRegressionWithMOOSPEA2.filename.csv.dest>
 		<SymbolicRegressionWithMOOSPEA2.filename.frontier.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithMOOSPEA2-frontier.png</SymbolicRegressionWithMOOSPEA2.filename.frontier.png.dest>
 		<SymbolicRegressionWithMOOSPEA2.filename.population_size.png.dest>${project.build.directory}/site/docs/bloat_issues_SymbolicRegressionWithMOOSPEA2-population_size.png</SymbolicRegressionWithMOOSPEA2.filename.population_size.png.dest>
+
+		<Clustering.source.clusters>${project.build.outputDirectory}/clustering-centroids.csv</Clustering.source.clusters>
+		<Clustering.source.data>${project.build.outputDirectory}/clustering-data.csv</Clustering.source.data>
+		<Clustering.output.ga>${project.build.directory}/site/docs/clustering_output_ga.csv</Clustering.output.ga>
+		<Clustering.output.ga.with_sse>${project.build.directory}/site/docs/clustering_output_ga_with_sse.csv</Clustering.output.ga.with_sse>
+		<Clustering.fitness.plot.output.png.dest>${project.build.directory}/site/docs/clustering_fitness_plot.png</Clustering.fitness.plot.output.png.dest>
+		<Clustering.fitness_with_sse.plot.output.png.dest>${project.build.directory}/site/docs/clustering_fitness_with_sse_plot.png</Clustering.fitness_with_sse.plot.output.png.dest>
 	</properties>
 
 	<dependencies>
@@ -412,6 +419,98 @@
 							<executable>gnuplot</executable>
 							<!-- arguments doesn't work. commandlineArgs works somehow -->
 							<commandlineArgs>-e "filename='${SymbolicRegressionWithMOOSPEA2.filename.csv.dest}'" -e "plot_title='Population Size over time - MOO SPEA2'" -e "output_filename='${SymbolicRegressionWithMOOSPEA2.filename.population_size.png.dest}'" ${project.build.outputDirectory}/bloat_issue_population_size.gnuplot</commandlineArgs>
+						</configuration>
+					</execution>
+
+					<!-- Clustering -->
+					<execution>
+						<id>example-Clustering</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<mainClass>net.bmahe.genetics4j.samples.clustering.Clustering</mainClass>
+							<arguments>
+								<argument>--source-clusters=${Clustering.source.clusters}</argument>
+								<argument>--source-data=${Clustering.source.data}</argument>
+								<argument>--output=${Clustering.output.ga}</argument>
+								<argument>--output-sse=${Clustering.output.ga.with_sse}</argument>
+								<argument>--base-dir=${project.build.directory}/site/docs/</argument>
+							</arguments>
+							<cleanupDaemonThreads>false</cleanupDaemonThreads>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-Clustering-fitness-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_fitness.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--execution_trace="${Clustering.output.ga}" --destination="${Clustering.fitness.plot.output.png.dest}"</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-Clustering-fitness-with-sse-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_fitness.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--execution_trace="${Clustering.output.ga.with_sse}" --destination="${Clustering.fitness_with_sse.plot.output.png.dest}"</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-Clustering-ga-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_clustering.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--result_membership=${project.build.directory}/site/docs/clustering-result-ga.csv --result_clustering=${project.build.directory}/site/docs/clustering-result-clusters-ga.csv  --destination=${project.build.directory}/site/docs/clustering-result-ga.png</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-Clustering-ga-with-sse-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_clustering.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--result_membership=${project.build.directory}/site/docs/clustering-result-ga-with-sse.csv --result_clustering=${project.build.directory}/site/docs/clustering-result-clusters-ga-with-sse.csv  --destination=${project.build.directory}/site/docs/clustering-result-ga-with-sse.png</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-Clustering-kmeans-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_clustering.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--result_membership=${project.build.directory}/site/docs/clustering-result-kmeans.csv --result_clustering=${project.build.directory}/site/docs/clustering-result-clusters-kmeans.csv  --destination=${project.build.directory}/site/docs/clustering-result-kmeans.png</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-Clustering-original-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_clustering.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--result_membership=${project.build.directory}/site/docs/clustering-result-original.csv --result_clustering=${project.build.directory}/site/docs/clustering-result-clusters-original.csv  --destination=${project.build.directory}/site/docs/clustering-result-original.png</commandlineArgs>
 						</configuration>
 					</execution>
 				</executions>

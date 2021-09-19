@@ -49,8 +49,8 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 
-		<maven.asciidoctor.maven.plugin>1.6.0</maven.asciidoctor.maven.plugin>
-		<maven.asciidoctorj.diagram.version>2.0.0</maven.asciidoctorj.diagram.version>
+		<maven.asciidoctor.maven.plugin>2.2.1</maven.asciidoctor.maven.plugin>
+		<maven.asciidoctorj.diagram.version>2.2.1</maven.asciidoctorj.diagram.version>
 		<maven.changelog.plugin.version>2.3</maven.changelog.plugin.version>
 		<maven.changes.plugin.version>2.12.1</maven.changes.plugin.version>
 		<maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
@@ -71,7 +71,7 @@
 		<maven.project.info.reports.plugin.version>3.1.0</maven.project.info.reports.plugin.version>
 		<maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
 		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
-		<maven.site.plugin.version>3.8.2</maven.site.plugin.version>
+		<maven.site.plugin.version>3.9.1</maven.site.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
 		<maven.taglist.plugin>2.4</maven.taglist.plugin>
 		<maven.versions.plugin>2.3</maven.versions.plugin>

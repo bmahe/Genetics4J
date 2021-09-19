@@ -92,6 +92,7 @@ site:
   script:
     - apt-get update -yqq
     - apt-get install -yqq gnuplot graphviz
+    - pip install matplotlib pandas
     - mvn test verify site site:stage -Dproject.recommended.version="${RECOMMENDED_VERSION}"
 
 pages:
