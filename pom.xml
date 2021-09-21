@@ -4,7 +4,7 @@
 
 	<groupId>net.bmahe.genetics4j</groupId>
 	<artifactId>parent</artifactId>
-	<version>1.8-SNAPSHOT</version>
+	<version>1.8</version>
 	<packaging>pom</packaging>
 
 	<name>Genetics4j</name>
@@ -28,7 +28,7 @@
 		<url>https://gitlab.com/bmahe/genetics4j</url>
 		<connection>scm:git:git@gitlab.com:bmahe/genetics4j.git</connection>
 		<developerConnection>scm:git:git@gitlab.com:bmahe/genetics4j.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>r1.8</tag>
 	</scm>
 
 	<developers>
@@ -104,25 +104,25 @@
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>core</artifactId>
-				<version>1.8-SNAPSHOT</version>
+				<version>1.8</version>
 			</dependency>
 
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>gp</artifactId>
-				<version>1.8-SNAPSHOT</version>
+				<version>1.8</version>
 			</dependency>
 
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>moo</artifactId>
-				<version>1.8-SNAPSHOT</version>
+				<version>1.8</version>
 			</dependency>
 
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>extras</artifactId>
-				<version>1.8-SNAPSHOT</version>
+				<version>1.8</version>
 			</dependency>
 
 			<dependency>
