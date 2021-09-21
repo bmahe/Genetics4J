@@ -1,12 +1,14 @@
 package net.bmahe.genetics4j.core.chromosomes.factory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Random;
+import java.util.random.RandomGenerator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.DoubleChromosome;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
@@ -16,15 +18,15 @@ public class DoubleChromosomeFactoryTest {
 
 	private final static double EPSILON = 0.0001d;
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new DoubleChromosomeFactory(null);
+		assertThrows(NullPointerException.class, () -> new DoubleChromosomeFactory(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleMissingParameter() {
 		final var doubleChromosomeFactory = new DoubleChromosomeFactory(new Random());
-		doubleChromosomeFactory.canHandle(null);
+		assertThrows(NullPointerException.class, () -> doubleChromosomeFactory.canHandle(null));
 	}
 
 	@Test
@@ -40,7 +42,7 @@ public class DoubleChromosomeFactoryTest {
 
 	@Test
 	public void generateTest() {
-		final Random random = mock(Random.class);
+		final RandomGenerator random = mock(RandomGenerator.class);
 		final double[] expectedValues = new double[] { 0.0d, 1.0d, 2.0d, 3.0d, 9.0d };
 		when(random.nextDouble())
 				.thenReturn(expectedValues[0], expectedValues[1], expectedValues[2], expectedValues[3], expectedValues[4]);

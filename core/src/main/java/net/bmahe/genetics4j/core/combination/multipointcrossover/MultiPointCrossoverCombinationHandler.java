@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.core.combination.multipointcrossover;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -16,12 +16,12 @@ import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
 
 public class MultiPointCrossoverCombinationHandler implements ChromosomeCombinatorHandler {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public MultiPointCrossoverCombinationHandler(final Random _random) {
-		Validate.notNull(_random);
+	public MultiPointCrossoverCombinationHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -44,15 +44,15 @@ public class MultiPointCrossoverCombinationHandler implements ChromosomeCombinat
 		Validate.isInstanceOf(MultiPointCrossover.class, combinationPolicy);
 
 		if (chromosome instanceof BitChromosomeSpec) {
-			return new BitChromosomeMultiPointCrossover(random, (MultiPointCrossover) combinationPolicy);
+			return new BitChromosomeMultiPointCrossover(randomGenerator, (MultiPointCrossover) combinationPolicy);
 		}
 
 		if (chromosome instanceof IntChromosomeSpec) {
-			return new IntChromosomeMultiPointCrossover(random, (MultiPointCrossover) combinationPolicy);
+			return new IntChromosomeMultiPointCrossover(randomGenerator, (MultiPointCrossover) combinationPolicy);
 		}
 
 		if (chromosome instanceof DoubleChromosomeSpec) {
-			return new DoubleChromosomeMultiPointCrossover(random, (MultiPointCrossover) combinationPolicy);
+			return new DoubleChromosomeMultiPointCrossover(randomGenerator, (MultiPointCrossover) combinationPolicy);
 		}
 
 		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);

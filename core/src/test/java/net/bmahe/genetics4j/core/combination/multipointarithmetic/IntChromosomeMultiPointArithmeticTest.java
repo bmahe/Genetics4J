@@ -1,16 +1,18 @@
 package net.bmahe.genetics4j.core.combination.multipointarithmetic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
@@ -18,14 +20,14 @@ import net.bmahe.genetics4j.core.spec.combination.MultiPointArithmetic;
 
 public class IntChromosomeMultiPointArithmeticTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new IntChromosomeMultiPointArithmetic(null, null);
+		assertThrows(NullPointerException.class, () -> new IntChromosomeMultiPointArithmetic(null, null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void combinationPolicyIsRequired() {
-		new IntChromosomeMultiPointArithmetic(new Random(), null);
+		assertThrows(NullPointerException.class, () -> new IntChromosomeMultiPointArithmetic(new Random(), null));
 	}
 
 	private int mixAlleles(final int a, final int b, final double alpha) {
@@ -34,7 +36,7 @@ public class IntChromosomeMultiPointArithmeticTest {
 
 	@Test
 	public void combineTest() {
-		final Random mockRandom = mock(Random.class);
+		final RandomGenerator mockRandom = mock(RandomGenerator.class);
 
 		when(mockRandom.ints(anyInt(), anyInt())).thenReturn(IntStream.of(1, 3, 4));
 

@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.mutation.chromosome.randommutation;
 
 import java.util.BitSet;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -15,12 +15,12 @@ import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 
 public class BitChromosomeRandomMutationHandler implements ChromosomeMutationHandler<BitChromosome> {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public BitChromosomeRandomMutationHandler(final Random _random) {
-		Validate.notNull(_random);
+	public BitChromosomeRandomMutationHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class BitChromosomeRandomMutationHandler implements ChromosomeMutationHan
 			newBitSet.or(bitChromosome.getBitSet());
 		}
 
-		final int bitFlipIndex = random.nextInt(bitChromosome.getNumAlleles());
+		final int bitFlipIndex = randomGenerator.nextInt(bitChromosome.getNumAlleles());
 		newBitSet.flip(bitFlipIndex);
 
 		final BitChromosome newBitChromosome = new BitChromosome(bitChromosome.getNumAlleles(), newBitSet);

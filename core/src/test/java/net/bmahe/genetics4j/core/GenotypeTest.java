@@ -1,13 +1,14 @@
 package net.bmahe.genetics4j.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.BitChromosome;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
@@ -15,19 +16,19 @@ import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 
 public class GenotypeTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void nullChromosomeArrayCtor() {
-		final Genotype genotype = new Genotype((Chromosome[]) null);
+		assertThrows(NullPointerException.class, () -> new Genotype((Chromosome[]) null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void nullChromosomeCollectionCtor() {
-		final Genotype genotype = new Genotype((Collection<Chromosome>) null);
+		assertThrows(NullPointerException.class, () -> new Genotype((Collection<Chromosome>) null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void emptyChromosomeCollectionCtor() {
-		final Genotype genotype = new Genotype(Collections.emptyList());
+		assertThrows(IllegalArgumentException.class, () -> new Genotype(Collections.emptyList()));
 	}
 
 	@Test

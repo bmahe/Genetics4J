@@ -1,8 +1,8 @@
 package net.bmahe.genetics4j.core.mutation.chromosome.creepmutation;
 
 import java.util.Arrays;
-import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -18,12 +18,12 @@ import net.bmahe.genetics4j.core.util.DistributionUtils;
 
 public class DoubleChromosomeCreepMutationHandler implements ChromosomeMutationHandler<DoubleChromosome> {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public DoubleChromosomeCreepMutationHandler(final Random _random) {
-		Validate.notNull(_random);
+	public DoubleChromosomeCreepMutationHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -49,11 +49,11 @@ public class DoubleChromosomeCreepMutationHandler implements ChromosomeMutationH
 		final Distribution distribution = creepMutation.distribution();
 
 		final Supplier<Double> distributionValueSupplier = DistributionUtils
-				.distributionValueSupplier(random, minValue, maxValue, distribution);
+				.distributionValueSupplier(randomGenerator, minValue, maxValue, distribution);
 
 		final double[] newValues = Arrays.copyOf(doubleChromosome.getValues(), doubleChromosome.getNumAlleles());
 
-		final int alleleFlipIndex = random.nextInt(doubleChromosome.getNumAlleles());
+		final int alleleFlipIndex = randomGenerator.nextInt(doubleChromosome.getNumAlleles());
 		newValues[alleleFlipIndex] += distributionValueSupplier.get();
 
 		if (newValues[alleleFlipIndex] > maxValue) {

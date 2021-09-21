@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.gp.program;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -10,22 +10,22 @@ import net.bmahe.genetics4j.gp.Operation;
 
 public class RampedHalfAndHalfProgramGenerator implements ProgramGenerator {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 	private final ProgramHelper programHelper;
 
 	private final ProgramGenerator programGenerator;
 
-	public RampedHalfAndHalfProgramGenerator(final Random _random, final ProgramHelper _programHelper) {
-		Validate.notNull(_random);
+	public RampedHalfAndHalfProgramGenerator(final RandomGenerator _randomGenerator, final ProgramHelper _programHelper) {
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_programHelper);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.programHelper = _programHelper;
 
 		final GrowProgramGenerator growProgramGenerator = new GrowProgramGenerator(programHelper);
 		final FullProgramGenerator fullProgramGenerator = new FullProgramGenerator(programHelper);
 
-		this.programGenerator = new MultiProgramGenerator(random, List.of(fullProgramGenerator, growProgramGenerator));
+		this.programGenerator = new MultiProgramGenerator(randomGenerator, List.of(fullProgramGenerator, growProgramGenerator));
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class RampedHalfAndHalfProgramGenerator implements ProgramGenerator {
 		Validate.notNull(program);
 		Validate.isTrue(maxDepth > 0);
 
-		final int newMaxDepth = 1 + random.nextInt(maxDepth);
+		final int newMaxDepth = 1 + randomGenerator.nextInt(maxDepth);
 		return programGenerator.generate(program, newMaxDepth);
 	}
 
@@ -50,7 +50,7 @@ public class RampedHalfAndHalfProgramGenerator implements ProgramGenerator {
 		Validate.notNull(rootType);
 		Validate.isTrue(maxDepth > 0);
 
-		final int newMaxDepth = 1 + random.nextInt(maxDepth);
+		final int newMaxDepth = 1 + randomGenerator.nextInt(maxDepth);
 		return programGenerator.generate(program, newMaxDepth, rootType);
 	}
 

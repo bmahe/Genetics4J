@@ -3,7 +3,7 @@ package net.bmahe.genetics4j.gp.program;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -14,19 +14,20 @@ public class MultiProgramGenerator implements ProgramGenerator {
 
 	final private List<ProgramGenerator> programGenerators = new ArrayList<ProgramGenerator>();
 
-	final private Random random;
+	final private RandomGenerator randomGenerator;
 
-	public MultiProgramGenerator(final Random _random, final Collection<ProgramGenerator> _programGenerators) {
-		Validate.notNull(_random);
+	public MultiProgramGenerator(final RandomGenerator _randomGenerator,
+			final Collection<ProgramGenerator> _programGenerators) {
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_programGenerators);
 		Validate.isTrue(_programGenerators.size() > 0);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.programGenerators.addAll(_programGenerators);
 	}
 
 	private ProgramGenerator pickProgramGenerator() {
-		final int programGeneratorIndex = random.nextInt(programGenerators.size());
+		final int programGeneratorIndex = randomGenerator.nextInt(programGenerators.size());
 
 		return programGenerators.get(programGeneratorIndex);
 	}

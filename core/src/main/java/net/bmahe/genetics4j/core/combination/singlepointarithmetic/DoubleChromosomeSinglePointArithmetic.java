@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.combination.singlepointarithmetic;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -11,14 +11,14 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 
 public class DoubleChromosomeSinglePointArithmetic implements ChromosomeCombinator {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 	private final double alpha;
 
-	public DoubleChromosomeSinglePointArithmetic(final Random _random, final double _alpha) {
-		Validate.notNull(_random);
+	public DoubleChromosomeSinglePointArithmetic(final RandomGenerator _randomGenerator, final double _alpha) {
+		Validate.notNull(_randomGenerator);
 		Validate.inclusiveBetween(0.0d, 1.0d, _alpha);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.alpha = _alpha;
 	}
 
@@ -30,7 +30,7 @@ public class DoubleChromosomeSinglePointArithmetic implements ChromosomeCombinat
 		Validate.isInstanceOf(DoubleChromosome.class, chromosome2);
 		Validate.isTrue(chromosome1.getNumAlleles() == chromosome2.getNumAlleles());
 
-		final int alleleSplit = random.nextInt(chromosome1.getNumAlleles());
+		final int alleleSplit = randomGenerator.nextInt(chromosome1.getNumAlleles());
 
 		final DoubleChromosome intChromosome1 = (DoubleChromosome) chromosome1;
 		final DoubleChromosome intChromosome2 = (DoubleChromosome) chromosome2;

@@ -1,25 +1,25 @@
 package net.bmahe.genetics4j.moo.nsga2.impl;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.moo.nsga2.spec.TournamentNSGA2Selection;
 
 public class TournamentNSGA2SelectionPolicyHandler<T extends Comparable<T>> implements SelectionPolicyHandler<T> {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public TournamentNSGA2SelectionPolicyHandler(final Random _random) {
-		Validate.notNull(_random);
+	public TournamentNSGA2SelectionPolicyHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -40,6 +40,6 @@ public class TournamentNSGA2SelectionPolicyHandler<T extends Comparable<T>> impl
 
 		final TournamentNSGA2Selection<T> tournamentNsga2Spec = (TournamentNSGA2Selection<T>) selectionPolicy;
 
-		return new TournamentNSGA2Selector<T>(random, tournamentNsga2Spec);
+		return new TournamentNSGA2Selector<T>(randomGenerator, tournamentNsga2Spec);
 	}
 }

@@ -1,33 +1,34 @@
 package net.bmahe.genetics4j.core.chromosomes;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TreeNodeTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void staticFactoryAllNull() {
-		TreeNode.of(null, null);
+		assertThrows(NullPointerException.class, () -> TreeNode.of(null, null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void staticFactoryNullData() {
-		TreeNode.of(null, List.of(new TreeNode<>(2)));
+		assertThrows(NullPointerException.class, () -> TreeNode.of(null, List.of(new TreeNode<>(2))));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void staticFactoryNullChildren() {
-		TreeNode.of(2, null);
+		assertThrows(NullPointerException.class, () -> TreeNode.of(2, null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void staticFactoryEmptyChildren() {
-		TreeNode.of(2, Collections.emptyList());
+		assertThrows(IllegalArgumentException.class, () -> TreeNode.of(2, Collections.emptyList()));
 	}
 
 	@Test

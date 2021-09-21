@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.util;
 
-import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -11,16 +11,16 @@ import net.bmahe.genetics4j.core.spec.statistics.distributions.UniformDistributi
 
 public class DistributionUtils {
 
-	public static Supplier<Double> distributionValueSupplier(final Random random, final double minValue,
-			final double maxValue, final Distribution distribution) {
-		Validate.notNull(random);
+	public static Supplier<Double> distributionValueSupplier(final RandomGenerator randomGenerator,
+			final double minValue, final double maxValue, final Distribution distribution) {
+		Validate.notNull(randomGenerator);
 		Validate.notNull(distribution);
 		Validate.isTrue(minValue <= maxValue);
 
 		if (distribution instanceof UniformDistribution) {
 			final double valueRange = maxValue - minValue;
 
-			return () -> minValue + random.nextDouble() * valueRange;
+			return () -> minValue + randomGenerator.nextDouble() * valueRange;
 		}
 
 		if (distribution instanceof NormalDistribution) {
@@ -29,7 +29,7 @@ public class DistributionUtils {
 			final double standardDeviation = normalDistribution.standardDeviation();
 
 			return () -> {
-				final double value = mean + random.nextGaussian() * standardDeviation;
+				final double value = mean + randomGenerator.nextGaussian() * standardDeviation;
 
 				if (value < minValue) {
 					return minValue;

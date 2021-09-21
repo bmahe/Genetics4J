@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.core.mutation;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -15,12 +15,12 @@ import net.bmahe.genetics4j.core.util.ChromosomeResolverUtils;
 
 public class CreepMutationPolicyHandler implements MutationPolicyHandler {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public CreepMutationPolicyHandler(final Random _random) {
-		Validate.notNull(_random);
+	public CreepMutationPolicyHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class CreepMutationPolicyHandler implements MutationPolicyHandler {
 				final Chromosome[] chromosomes = original.getChromosomes();
 				final Chromosome[] newChromosomes = new Chromosome[chromosomes.length];
 
-				if (random.nextDouble() < populationMutationProbability) {
+				if (randomGenerator.nextDouble() < populationMutationProbability) {
 
 					for (int i = 0; i < chromosomes.length; i++) {
 						final Chromosome chromosome = chromosomes[i];

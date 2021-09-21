@@ -1,9 +1,10 @@
 package net.bmahe.genetics4j.core.selection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,9 +12,10 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
@@ -37,17 +39,17 @@ public class RandomSelectionPolicyHandlerTest {
 			.termination(Terminations.ofMaxGeneration(100))
 			.build();
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new RandomSelectionPolicyHandler<Double>(null);
+		assertThrows(NullPointerException.class, () -> new RandomSelectionPolicyHandler<Double>(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleRequireSelection() {
 		final RandomSelectionPolicyHandler<Double> selectionPolicyHandler = new RandomSelectionPolicyHandler<>(
 				new Random());
 
-		selectionPolicyHandler.canHandle(null);
+		assertThrows(NullPointerException.class, () -> selectionPolicyHandler.canHandle(null));
 	}
 
 	@Test
@@ -66,7 +68,7 @@ public class RandomSelectionPolicyHandlerTest {
 		final int evenIndex = 2;
 		final int oddIndex = 3;
 
-		final Random random = mock(Random.class);
+		final RandomGenerator random = mock(RandomGenerator.class);
 		when(random.nextInt(anyInt())).thenReturn(2,
 				Stream.iterate(1, i -> i + 1)
 						.limit(numRequestedSelection)

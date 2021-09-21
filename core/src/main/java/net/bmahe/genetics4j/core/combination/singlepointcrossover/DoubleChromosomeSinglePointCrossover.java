@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.combination.singlepointcrossover;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -11,12 +11,12 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 
 public class DoubleChromosomeSinglePointCrossover implements ChromosomeCombinator {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public DoubleChromosomeSinglePointCrossover(final Random _random) {
-		Validate.notNull(_random);
+	public DoubleChromosomeSinglePointCrossover(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class DoubleChromosomeSinglePointCrossover implements ChromosomeCombinato
 		Validate.isInstanceOf(DoubleChromosome.class, chromosome2);
 		Validate.isTrue(chromosome1.getNumAlleles() == chromosome2.getNumAlleles());
 
-		final int alleleSplit = random.nextInt(chromosome1.getNumAlleles());
+		final int alleleSplit = randomGenerator.nextInt(chromosome1.getNumAlleles());
 
 		final var doubleChromosome1 = (DoubleChromosome) chromosome1;
 		final var doubleChromosome2 = (DoubleChromosome) chromosome2;

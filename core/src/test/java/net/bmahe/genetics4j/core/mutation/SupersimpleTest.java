@@ -2,15 +2,15 @@ package net.bmahe.genetics4j.core.mutation;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.EASystem;
 import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.Genotype;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
-import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAConfiguration.Builder;
+import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.chromosome.BitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;

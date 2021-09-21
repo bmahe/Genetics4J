@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.combination.multipointcrossover;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -12,16 +12,16 @@ import net.bmahe.genetics4j.core.spec.combination.MultiPointCrossover;
 
 public class IntChromosomeMultiPointCrossover implements ChromosomeCombinator {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
 	private final MultiPointCrossover multiPointCrossoverPolicy;
 
-	public IntChromosomeMultiPointCrossover(final Random _random,
+	public IntChromosomeMultiPointCrossover(final RandomGenerator _randomGenerator,
 			final MultiPointCrossover _multiPointCrossoverPolicy) {
-		Validate.notNull(_random);
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_multiPointCrossoverPolicy);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.multiPointCrossoverPolicy = _multiPointCrossoverPolicy;
 	}
 
@@ -36,7 +36,7 @@ public class IntChromosomeMultiPointCrossover implements ChromosomeCombinator {
 		Validate.isTrue(multiPointCrossoverPolicy.numCrossovers() < chromosome1.getNumAlleles());
 		Validate.isTrue(multiPointCrossoverPolicy.numCrossovers() < chromosome2.getNumAlleles());
 
-		final int[] alleleSplits = random.ints(0, chromosome1.getNumAlleles())
+		final int[] alleleSplits = randomGenerator.ints(0, chromosome1.getNumAlleles())
 				.distinct()
 				.limit(multiPointCrossoverPolicy.numCrossovers())
 				.sorted()
@@ -68,8 +68,7 @@ public class IntChromosomeMultiPointCrossover implements ChromosomeCombinator {
 		}
 
 		return List.of(
-				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome2.getMaxValue(),
-						firstChildValues),
+				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome2.getMaxValue(), firstChildValues),
 				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome2.getMaxValue(),
 						secondChildValues));
 	}

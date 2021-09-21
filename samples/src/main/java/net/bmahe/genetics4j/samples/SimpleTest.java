@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.samples;
 
 import java.util.Comparator;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +27,7 @@ public class SimpleTest {
 
 	public static void main(String[] args) {
 
-		final Random random = new Random();
+		final RandomGenerator randomGenerator = RandomGenerator.getDefault();
 
 		final Builder<Double> eaConfigurationBuilder = new EAConfiguration.Builder<>();
 		eaConfigurationBuilder.chromosomeSpecs(IntChromosomeSpec.of(10, 0, 10))
@@ -51,7 +51,7 @@ public class SimpleTest {
 
 		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)
-				.random(random)
+				.randomGenerator(randomGenerator)
 				.addEvolutionListeners(EvolutionListeners.ofLogTopN(logger, 3, Comparator.<Double>reverseOrder()))
 				.build();
 

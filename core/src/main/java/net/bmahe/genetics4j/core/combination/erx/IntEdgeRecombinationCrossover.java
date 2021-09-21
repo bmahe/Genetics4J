@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -17,12 +17,12 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 
 public class IntEdgeRecombinationCrossover implements ChromosomeCombinator {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public IntEdgeRecombinationCrossover(final Random _random) {
-		Validate.notNull(_random);
+	public IntEdgeRecombinationCrossover(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	protected void addEdges(final Map<Integer, Set<Integer>> edgeMap, final int[] chromosomeValues) {
@@ -117,7 +117,7 @@ public class IntEdgeRecombinationCrossover implements ChromosomeCombinator {
 		addEdges(edgeMap, chromosome2Values);
 
 		int[] chromosome = new int[chromosome1.getNumAlleles()];
-		int currentCity = random.nextInt(chromosome1Values.length);
+		int currentCity = randomGenerator.nextInt(chromosome1Values.length);
 		int currentIndex = 0;
 		final Set<Integer> citiesVisited = new HashSet<>();
 		while (edgeMap.size() > 0) {
@@ -137,7 +137,7 @@ public class IntEdgeRecombinationCrossover implements ChromosomeCombinator {
 				if (citiesSet.size() == 1) {
 					currentCity = citiesSet.iterator().next();
 				} else if (citiesSet.size() > 0) {
-					currentCity = citiesSet.stream().skip(random.nextInt(citiesSet.size() - 1)).findFirst().get();
+					currentCity = citiesSet.stream().skip(randomGenerator.nextInt(citiesSet.size() - 1)).findFirst().get();
 				}
 			}
 		}

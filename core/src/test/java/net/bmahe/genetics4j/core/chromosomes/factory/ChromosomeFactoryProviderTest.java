@@ -1,11 +1,12 @@
 package net.bmahe.genetics4j.core.chromosomes.factory;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder;
@@ -15,29 +16,30 @@ import net.bmahe.genetics4j.core.spec.chromosome.ImmutableIntChromosomeSpec;
 
 public class ChromosomeFactoryProviderTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void nullChromosomeSpec() {
 
 		final Random random = new Random();
 
 		final Builder builder = ImmutableChromosomeFactoryProvider.builder();
-		builder.random(random);
+		builder.randomGenerator(random);
 		final ImmutableChromosomeFactoryProvider chromosomeFactoryProvider = builder.build();
 
-		chromosomeFactoryProvider.provideChromosomeFactory(null);
+		assertThrows(NullPointerException.class, () -> chromosomeFactoryProvider.provideChromosomeFactory(null));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void unknownChromosomeSpec() {
 
 		final Random random = new Random();
 
 		final Builder builder = ImmutableChromosomeFactoryProvider.builder();
-		builder.random(random);
+		builder.randomGenerator(random);
 		final ImmutableChromosomeFactoryProvider chromosomeFactoryProvider = builder.build();
 
-		chromosomeFactoryProvider.provideChromosomeFactory(new ChromosomeSpec() {
-		});
+		assertThrows(IllegalStateException.class,
+				() -> chromosomeFactoryProvider.provideChromosomeFactory(new ChromosomeSpec() {
+				}));
 	}
 
 	@Test
@@ -46,7 +48,7 @@ public class ChromosomeFactoryProviderTest {
 		final Random random = new Random();
 
 		final Builder builder = ImmutableChromosomeFactoryProvider.builder();
-		builder.random(random);
+		builder.randomGenerator(random);
 		final ImmutableChromosomeFactoryProvider chromosomeFactoryProvider = builder.build();
 
 		final ChromosomeFactory<? extends Chromosome> chromosomeFactory = chromosomeFactoryProvider
@@ -61,7 +63,7 @@ public class ChromosomeFactoryProviderTest {
 		final Random random = new Random();
 
 		final Builder builder = ImmutableChromosomeFactoryProvider.builder();
-		builder.random(random);
+		builder.randomGenerator(random);
 		final ImmutableChromosomeFactoryProvider chromosomeFactoryProvider = builder.build();
 
 		final ChromosomeFactory<? extends Chromosome> chromosomeFactory = chromosomeFactoryProvider
@@ -76,10 +78,10 @@ public class ChromosomeFactoryProviderTest {
 		final Random random = new Random();
 
 		final Builder builder = ImmutableChromosomeFactoryProvider.builder();
-		builder.random(random);
+		builder.randomGenerator(random);
 		final ImmutableChromosomeFactoryProvider chromosomeFactoryProvider = builder.build();
 
-		assertTrue(random == chromosomeFactoryProvider.random());
+		assertTrue(random == chromosomeFactoryProvider.randomGenerator());
 		assertNotNull(chromosomeFactoryProvider.chromosomeFactories());
 	}
 }

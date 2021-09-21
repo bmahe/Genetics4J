@@ -1,84 +1,88 @@
 package net.bmahe.genetics4j.moo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FitnessVectorTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNoArg() {
-		new FitnessVector<Double>(null, null);
+		assertThrows(NullPointerException.class, () -> new FitnessVector<Double>(null, null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNoComparatorArg() {
-		new FitnessVector<Double>(List.of(2.0d), null);
+		assertThrows(NullPointerException.class, () -> new FitnessVector<Double>(List.of(2.0d), null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ctorEmptyComparatorArg() {
-		new FitnessVector<Double>(List.of(2.0d), Collections.emptyList());
+		assertThrows(IllegalArgumentException.class,
+				() -> new FitnessVector<Double>(List.of(2.0d), Collections.emptyList()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ctorEmptyVectorArg() {
-		new FitnessVector<Double>(Collections.emptyList(), List.of(Comparator.<Double>naturalOrder()));
+		assertThrows(IllegalArgumentException.class,
+				() -> new FitnessVector<Double>(Collections.emptyList(), List.of(Comparator.<Double>naturalOrder())));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ctorNotSameSizeComparatorArg() {
-		new FitnessVector<Double>(List.of(2.0d),
-				List.of(Comparator.<Double>naturalOrder(), Comparator.<Double>reverseOrder()));
+		assertThrows(IllegalArgumentException.class,
+				() -> new FitnessVector<Double>(List.of(2.0d),
+						List.of(Comparator.<Double>naturalOrder(), Comparator.<Double>reverseOrder())));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNoArgArr() {
-		new FitnessVector<Double>((Double) null);
+		assertThrows(NullPointerException.class, () -> new FitnessVector<Double>((Double) null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ctorEmptyArg() {
-		new FitnessVector<Double>(Collections.emptyList());
+		assertThrows(IllegalArgumentException.class, () -> new FitnessVector<Double>(Collections.emptyList()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void negativeGetIndex() {
 		final FitnessVector<Integer> fv1 = new FitnessVector<>(1, 2, 3, 4);
 
-		fv1.get(-10);
+		assertThrows(IllegalArgumentException.class, () -> fv1.get(-10));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void outOfBoundGetIndex() {
 		final FitnessVector<Integer> fv1 = new FitnessVector<>(1, 2, 3, 4);
 
-		fv1.get(10);
+		assertThrows(IllegalArgumentException.class, () -> fv1.get(10));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void negativeComparatorGetIndex() {
 		final Comparator<Integer> naturalOrder = Comparator.naturalOrder();
 
 		final FitnessVector<Integer> fv1 = new FitnessVector<>(List.of(1, 2, 3, 4),
 				List.of(naturalOrder, naturalOrder, naturalOrder, naturalOrder));
 
-		fv1.getComparator(-10);
+		assertThrows(IllegalArgumentException.class, () -> fv1.getComparator(-10));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void outOfBoundComparatorGetIndex() {
 		final Comparator<Integer> naturalOrder = Comparator.naturalOrder();
 
 		final FitnessVector<Integer> fv1 = new FitnessVector<>(List.of(1, 2, 3, 4),
 				List.of(naturalOrder, naturalOrder, naturalOrder, naturalOrder));
 
-		fv1.getComparator(10);
+		assertThrows(IllegalArgumentException.class, () -> fv1.getComparator(10));
 	}
 
 	@Test
@@ -127,8 +131,9 @@ public class FitnessVectorTest {
 
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void dominanceCheckDifferentDimensions() {
-		new FitnessVector<>(1, 2).compareTo(new FitnessVector<>(0, 2, 3));
+		assertThrows(IllegalArgumentException.class,
+				() -> new FitnessVector<>(1, 2).compareTo(new FitnessVector<>(0, 2, 3)));
 	}
 }

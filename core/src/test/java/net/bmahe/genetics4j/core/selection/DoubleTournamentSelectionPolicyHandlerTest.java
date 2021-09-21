@@ -1,9 +1,10 @@
 package net.bmahe.genetics4j.core.selection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,8 +12,9 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.random.RandomGenerator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
@@ -41,17 +43,17 @@ public class DoubleTournamentSelectionPolicyHandlerTest {
 			.termination(Terminations.ofMaxGeneration(100))
 			.build();
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new DoubleTournamentSelectionPolicyHandler<Double>(null);
+		assertThrows(NullPointerException.class, () -> new DoubleTournamentSelectionPolicyHandler<Double>(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleRequireSelection() {
 		final DoubleTournamentSelectionPolicyHandler<Double> selectionPolicyHandler = new DoubleTournamentSelectionPolicyHandler<>(
 				new Random());
 
-		selectionPolicyHandler.canHandle(null);
+		assertThrows(NullPointerException.class, () -> selectionPolicyHandler.canHandle(null));
 	}
 
 	@Test
@@ -68,10 +70,10 @@ public class DoubleTournamentSelectionPolicyHandlerTest {
 	@Test
 	public void selectMaximize() {
 
-		final Random random = mock(Random.class);
+		final RandomGenerator random = mock(RandomGenerator.class);
 		when(random.nextDouble()).thenReturn(0.0);
 		when(random.nextInt(anyInt())).thenReturn(2, 1, 0, 3, 4, 0, 1, 0); // We will select 2 genotypes with each
-																			// tournament of
+		// tournament of
 		// 2
 		// candidates
 
@@ -112,10 +114,10 @@ public class DoubleTournamentSelectionPolicyHandlerTest {
 	@Test
 	public void selectMaximizeAndDoFitnessLast() {
 
-		final Random random = mock(Random.class);
+		final RandomGenerator random = mock(RandomGenerator.class);
 		when(random.nextDouble()).thenReturn(0.0);
 		when(random.nextInt(anyInt())).thenReturn(2, 1, 0, 3, 4, 0, 1, 2); // We will select 2 genotypes with each
-																			// tournament of
+		// tournament of
 		// 2
 		// candidates
 
@@ -161,10 +163,10 @@ public class DoubleTournamentSelectionPolicyHandlerTest {
 	@Test
 	public void selectMinimize() {
 
-		final Random random = mock(Random.class);
+		final RandomGenerator random = mock(RandomGenerator.class);
 		when(random.nextDouble()).thenReturn(0.0);
 		when(random.nextInt(anyInt())).thenReturn(2, 1, 0, 3, 4, 0, 1, 0); // We will select 2 genotypes with each
-																			// tournament of
+		// tournament of
 		// 2
 		// candidates
 

@@ -1,20 +1,24 @@
 package net.bmahe.genetics4j.core.selection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.random.RandomGenerator;
+import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Individual;
@@ -43,17 +47,17 @@ public class ProportionalTournamentSelectionPolicyHandlerTest {
 			.termination(Terminations.ofMaxGeneration(100))
 			.build();
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new ProportionalTournamentSelectionPolicyHandler<Double>(null);
+		assertThrows(NullPointerException.class, () -> new ProportionalTournamentSelectionPolicyHandler<Double>(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleRequireSelection() {
 		final ProportionalTournamentSelectionPolicyHandler<Double> selectionPolicyHandler = new ProportionalTournamentSelectionPolicyHandler<>(
 				new Random());
 
-		selectionPolicyHandler.canHandle(null);
+		assertThrows(NullPointerException.class, () -> selectionPolicyHandler.canHandle(null));
 	}
 
 	@Test
@@ -73,11 +77,12 @@ public class ProportionalTournamentSelectionPolicyHandlerTest {
 	@Test
 	public void selectMaximize() {
 
-		final Random mockRandom = mock(Random.class);
+		final Random mockRandom = mock(Random.class, withSettings().withoutAnnotations());
 		when(mockRandom.nextDouble()).thenReturn(0.1, 0.8);
-		when(mockRandom.nextInt(anyInt())).thenReturn(2, 1, 0, 3, 4, 0, 1, 3); // We will select 2 genotypes with each
-																				// tournament of 2 candidates
-		when(mockRandom.ints(anyLong(), anyInt(), anyInt())).thenCallRealMethod();
+		when(mockRandom.ints(anyLong(), anyInt(), anyInt())).thenReturn(IntStream.of(2, 1))
+				.thenReturn(IntStream.of(0, 3))
+				.thenReturn(IntStream.of(4, 0))
+				.thenReturn(IntStream.of(1, 3));
 
 		final int populationSize = 5;
 		final List<Genotype> population = new ArrayList<Genotype>(populationSize);
@@ -128,11 +133,12 @@ public class ProportionalTournamentSelectionPolicyHandlerTest {
 	@Test
 	public void selectMinimize() {
 
-		final Random mockRandom = mock(Random.class);
+		final RandomGenerator mockRandom = mock(RandomGenerator.class);
 		when(mockRandom.nextDouble()).thenReturn(0.1, 0.8);
-		when(mockRandom.nextInt(anyInt())).thenReturn(2, 1, 0, 3, 4, 0, 1, 3); // We will select 2 genotypes with each
-																				// tournament of 2 candidates
-		when(mockRandom.ints(anyLong(), anyInt(), anyInt())).thenCallRealMethod();
+		when(mockRandom.ints(anyLong(), anyInt(), anyInt())).thenReturn(IntStream.of(2, 1))
+				.thenReturn(IntStream.of(0, 3))
+				.thenReturn(IntStream.of(4, 0))
+				.thenReturn(IntStream.of(1, 3));
 
 		final int populationSize = 5;
 		final List<Genotype> population = new ArrayList<Genotype>(populationSize);

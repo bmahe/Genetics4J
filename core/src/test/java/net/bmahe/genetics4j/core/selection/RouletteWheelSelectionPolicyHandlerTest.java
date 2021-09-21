@@ -1,25 +1,27 @@
 package net.bmahe.genetics4j.core.selection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.random.RandomGenerator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
@@ -37,17 +39,17 @@ public class RouletteWheelSelectionPolicyHandlerTest {
 			.termination(Terminations.ofMaxGeneration(100))
 			.build();
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new RouletteWheelSelectionPolicyHandler<Double>(null);
+		assertThrows(NullPointerException.class, () -> new RouletteWheelSelectionPolicyHandler<Double>(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleRequireSelection() {
 		final RouletteWheelSelectionPolicyHandler<Double> selectionPolicyHandler = new RouletteWheelSelectionPolicyHandler<>(
 				new Random());
 
-		selectionPolicyHandler.canHandle(null);
+		assertThrows(NullPointerException.class, () -> selectionPolicyHandler.canHandle(null));
 	}
 
 	@Test
@@ -63,7 +65,7 @@ public class RouletteWheelSelectionPolicyHandlerTest {
 	@Test
 	public void selectMaximizing() {
 
-		final Random random = mock(Random.class);
+		final RandomGenerator random = mock(RandomGenerator.class);
 		when(random.nextDouble()).thenReturn(0.1, 0.6, 0.8);
 
 		final int populationSize = 5;
@@ -105,7 +107,7 @@ public class RouletteWheelSelectionPolicyHandlerTest {
 	@Test
 	public void selectMinimizing() {
 
-		final Random random = mock(Random.class);
+		final RandomGenerator random = mock(RandomGenerator.class);
 		when(random.nextDouble()).thenReturn(0.1, 0.6, 0.8);
 
 		final int populationSize = 5;

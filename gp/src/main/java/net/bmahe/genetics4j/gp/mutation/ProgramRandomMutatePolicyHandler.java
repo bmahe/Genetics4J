@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.gp.mutation;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -18,14 +18,15 @@ import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 	final static public Logger logger = LogManager.getLogger(ProgramRandomMutatePolicyHandler.class);
 
-	final Random random;
+	final RandomGenerator randomGenerator;
 	final ProgramGenerator programGenerator;
 
-	public ProgramRandomMutatePolicyHandler(final Random _random, final ProgramGenerator _programGenerator) {
-		Validate.notNull(_random);
+	public ProgramRandomMutatePolicyHandler(final RandomGenerator _randomGenerator,
+			final ProgramGenerator _programGenerator) {
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_programGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.programGenerator = _programGenerator;
 	}
 
@@ -50,6 +51,7 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 		final ProgramRandomMutate programRandomMutate = (ProgramRandomMutate) mutationPolicy;
 		final double populationMutationProbability = programRandomMutate.populationMutationProbability();
 
-		return new ProgramRandomMutateMutator(programGenerator, random, eaConfiguration, populationMutationProbability);
+		return new ProgramRandomMutateMutator(programGenerator, randomGenerator, eaConfiguration,
+				populationMutationProbability);
 	}
 }

@@ -1,8 +1,8 @@
 package net.bmahe.genetics4j.gp.mutation;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,19 +24,19 @@ import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 public class NodeReplacementMutator implements Mutator {
 
 	private final ProgramHelper programHelper;
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 	private final EAConfiguration eaConfiguration;
 	private final double populationMutationProbability;
 
-	public NodeReplacementMutator(final ProgramHelper _programHelper, final Random _random,
+	public NodeReplacementMutator(final ProgramHelper _programHelper, final RandomGenerator _randomGenerator,
 			final EAConfiguration _eaConfiguration, final double populationMutationProbability) {
 		Validate.notNull(_programHelper);
-		Validate.notNull(_random);
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_eaConfiguration);
 		Validate.inclusiveBetween(0.0, 1.0, populationMutationProbability);
 
 		this.programHelper = _programHelper;
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.eaConfiguration = _eaConfiguration;
 		this.populationMutationProbability = populationMutationProbability;
 	}
@@ -114,7 +114,7 @@ public class NodeReplacementMutator implements Mutator {
 
 			if (candidates.size() > 0) {
 
-				final OperationFactory chosenOperationFactory = candidates.get(random.nextInt(candidates.size()));
+				final OperationFactory chosenOperationFactory = candidates.get(randomGenerator.nextInt(candidates.size()));
 				final Operation operation = chosenOperationFactory.build(program.inputSpec());
 
 				final TreeNode<Operation<?>> replacedNode = new TreeNode<Operation<?>>(operation);
@@ -122,10 +122,7 @@ public class NodeReplacementMutator implements Mutator {
 				for (final TreeNode<Operation<?>> child : root.getChildren()) {
 					final int childSize = child.getSize();
 
-					final TreeNode<Operation<?>> childCopy = duplicateAndReplaceNode(program,
-							child,
-							cutPoint,
-							currentIndex);
+					final TreeNode<Operation<?>> childCopy = duplicateAndReplaceNode(program, child, cutPoint, currentIndex);
 					replacedNode.addChild(childCopy);
 					currentIndex += childSize;
 
@@ -144,7 +141,7 @@ public class NodeReplacementMutator implements Mutator {
 	public Genotype mutate(final Genotype original) {
 		Validate.notNull(original);
 
-		if (random.nextDouble() < populationMutationProbability == false) {
+		if (randomGenerator.nextDouble() < populationMutationProbability == false) {
 			return original;
 		}
 
@@ -169,7 +166,7 @@ public class NodeReplacementMutator implements Mutator {
 			final int chromosomeSize = treeChromosome.getSize();
 
 			if (chromosomeSize > 2) {
-				final int cutPoint = random.nextInt(chromosomeSize - 1) + 1;
+				final int cutPoint = randomGenerator.nextInt(chromosomeSize - 1) + 1;
 
 				final TreeNode<Operation<?>> root = treeChromosome.getRoot();
 				final TreeNode<Operation<?>> newRoot = duplicateAndReplaceNode(programTreeChromosomeSpec.program(),

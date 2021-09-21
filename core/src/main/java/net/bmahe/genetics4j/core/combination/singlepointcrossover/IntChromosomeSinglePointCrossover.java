@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.combination.singlepointcrossover;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -11,12 +11,12 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 
 public class IntChromosomeSinglePointCrossover implements ChromosomeCombinator {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public IntChromosomeSinglePointCrossover(final Random _random) {
-		Validate.notNull(_random);
+	public IntChromosomeSinglePointCrossover(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class IntChromosomeSinglePointCrossover implements ChromosomeCombinator {
 		Validate.isInstanceOf(IntChromosome.class, chromosome2);
 		Validate.isTrue(chromosome1.getNumAlleles() == chromosome2.getNumAlleles());
 
-		final int alleleSplit = random.nextInt(chromosome1.getNumAlleles());
+		final int alleleSplit = randomGenerator.nextInt(chromosome1.getNumAlleles());
 
 		final IntChromosome intChromosome1 = (IntChromosome) chromosome1;
 		final IntChromosome intChromosome2 = (IntChromosome) chromosome2;
@@ -48,8 +48,7 @@ public class IntChromosomeSinglePointCrossover implements ChromosomeCombinator {
 		}
 
 		return List.of(
-				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome1.getMaxValue(),
-						firstChildValues),
+				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome1.getMaxValue(), firstChildValues),
 				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome1.getMaxValue(),
 						secondChildValues));
 	}

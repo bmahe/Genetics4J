@@ -1,30 +1,31 @@
 package net.bmahe.genetics4j.gp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OperationFactoriesTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofOperationSupplierNullAccept() {
-		OperationFactories.of(null, Double.class, (inputSpec) -> null);
+		assertThrows(NullPointerException.class, () -> OperationFactories.of(null, Double.class, (inputSpec) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofOperationSupplierNullReturned() {
-		OperationFactories.of(new Class[] {}, null, (inputSpec) -> null);
+		assertThrows(NullPointerException.class, () -> OperationFactories.of(new Class[] {}, null, (inputSpec) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofOperationSupplierNullFunction() {
-		OperationFactories.of(new Class[] {}, Double.class, null);
+		assertThrows(NullPointerException.class, () -> OperationFactories.of(new Class[] {}, Double.class, null));
 	}
 
 	@Test
@@ -47,19 +48,19 @@ public class OperationFactoriesTest {
 		assertEquals(operation, operationFactory.build(ImmutableInputSpec.of(Collections.singletonList(Double.class))));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofFunctionNullAccept() {
-		OperationFactories.of(null, Double.class, (inputSpec) -> null);
+		assertThrows(NullPointerException.class, () -> OperationFactories.of(null, Double.class, (inputSpec) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofFunctionNullReturned() {
-		OperationFactories.of(new Class[] {}, null, (inputSpec) -> null);
+		assertThrows(NullPointerException.class, () -> OperationFactories.of(new Class[] {}, null, (inputSpec) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofFunctionNullFunction() {
-		OperationFactories.of(new Class[] {}, Double.class, null);
+		assertThrows(NullPointerException.class, () -> OperationFactories.of(new Class[] {}, Double.class, null));
 	}
 
 	@Test
@@ -82,34 +83,42 @@ public class OperationFactoriesTest {
 		assertEquals(operation, operationFactory.build(ImmutableInputSpec.of(Collections.singletonList(Double.class))));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofBiFunctionNullName() {
-		OperationFactories.of(null, new Class[] {}, Double.class, (Object[] input, Object[] parameters) -> null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories
+						.of(null, new Class[] {}, Double.class, (Object[] input, Object[] parameters) -> null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ofBiFunctionEmptyName() {
-		OperationFactories.of("", new Class[] {}, Double.class, (Object[] input, Object[] parameters) -> null);
+		assertThrows(IllegalArgumentException.class,
+				() -> OperationFactories
+						.of("", new Class[] {}, Double.class, (Object[] input, Object[] parameters) -> null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ofBiFunctionBlankName() {
-		OperationFactories.of("   ", new Class[] {}, Double.class, (Object[] input, Object[] parameters) -> null);
+		assertThrows(IllegalArgumentException.class,
+				() -> OperationFactories
+						.of("   ", new Class[] {}, Double.class, (Object[] input, Object[] parameters) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofBiFunctionNullAccept() {
-		OperationFactories.of("test", null, Double.class, (Object[] input, Object[] parameters) -> null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.of("test", null, Double.class, (Object[] input, Object[] parameters) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofBiFunctionNullReturned() {
-		OperationFactories.of("test", new Class[] {}, null, (Object[] input, Object[] parameters) -> null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.of("test", new Class[] {}, null, (Object[] input, Object[] parameters) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofBiFunctionNullFunction() {
-		OperationFactories.of("test", new Class[] {}, Double.class, null);
+		assertThrows(NullPointerException.class, () -> OperationFactories.of("test", new Class[] {}, Double.class, null));
 	}
 
 	@Test
@@ -126,29 +135,29 @@ public class OperationFactoriesTest {
 		assertEquals(Double.class, operationFactory.returnedType());
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofTerminalNullName() {
-		OperationFactories.ofTerminal(null, Double.class, () -> null);
+		assertThrows(NullPointerException.class, () -> OperationFactories.ofTerminal(null, Double.class, () -> null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ofTerminalEmptyName() {
-		OperationFactories.ofTerminal("", Double.class, () -> null);
+		assertThrows(IllegalArgumentException.class, () -> OperationFactories.ofTerminal("", Double.class, () -> null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ofTerminalBlankName() {
-		OperationFactories.ofTerminal("  ", Double.class, () -> null);
+		assertThrows(IllegalArgumentException.class, () -> OperationFactories.ofTerminal("  ", Double.class, () -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofTerminalNullReturned() {
-		OperationFactories.ofTerminal("test", null, () -> null);
+		assertThrows(NullPointerException.class, () -> OperationFactories.ofTerminal("test", null, () -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofTerminalNullFunction() {
-		OperationFactories.ofTerminal("test", Double.class, null);
+		assertThrows(NullPointerException.class, () -> OperationFactories.ofTerminal("test", Double.class, null));
 	}
 
 	@Test
@@ -168,34 +177,40 @@ public class OperationFactoriesTest {
 						.apply(new Object[] {}, new Object[] {}));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofUnaryNullName() {
-		OperationFactories.ofUnary(null, Double.class, Double.class, (p) -> null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.ofUnary(null, Double.class, Double.class, (p) -> null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ofUnaryEmptyName() {
-		OperationFactories.ofUnary("", Double.class, Double.class, (p) -> null);
+		assertThrows(IllegalArgumentException.class,
+				() -> OperationFactories.ofUnary("", Double.class, Double.class, (p) -> null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ofUnaryBlankName() {
-		OperationFactories.ofUnary("  ", Double.class, Double.class, (p) -> null);
+		assertThrows(IllegalArgumentException.class,
+				() -> OperationFactories.ofUnary("  ", Double.class, Double.class, (p) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofUnaryNullAccepted() {
-		OperationFactories.ofUnary("test", null, Double.class, (p) -> null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.ofUnary("test", null, Double.class, (p) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofUnaryNullReturned() {
-		OperationFactories.ofUnary("test", Double.class, null, (p) -> null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.ofUnary("test", Double.class, null, (p) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofUnaryNullFunction() {
-		OperationFactories.ofUnary("test", Double.class, Double.class, null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.ofUnary("test", Double.class, Double.class, null));
 	}
 
 	@Test
@@ -217,39 +232,46 @@ public class OperationFactoriesTest {
 						.apply(new Object[] {}, new Object[] { value }));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofBinaryNullName() {
-		OperationFactories.ofBinary(null, Double.class, Double.class, Double.class, (p, v) -> null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.ofBinary(null, Double.class, Double.class, Double.class, (p, v) -> null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ofBinaryEmptyName() {
-		OperationFactories.ofBinary("", Double.class, Double.class, Double.class, (p, v) -> null);
+		assertThrows(IllegalArgumentException.class,
+				() -> OperationFactories.ofBinary("", Double.class, Double.class, Double.class, (p, v) -> null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ofBinaryBlankName() {
-		OperationFactories.ofBinary("   ", Double.class, Double.class, Double.class, (p, v) -> null);
+		assertThrows(IllegalArgumentException.class,
+				() -> OperationFactories.ofBinary("   ", Double.class, Double.class, Double.class, (p, v) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofBinaryNullAccepted1() {
-		OperationFactories.ofBinary("test", null, Double.class, Double.class, (p, v) -> null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.ofBinary("test", null, Double.class, Double.class, (p, v) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofBinaryNullAccepted2() {
-		OperationFactories.ofBinary("test", Double.class, null, Double.class, (p, v) -> null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.ofBinary("test", Double.class, null, Double.class, (p, v) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofBinaryNullReturned() {
-		OperationFactories.ofBinary("test", Double.class, Double.class, null, (p, v) -> null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.ofBinary("test", Double.class, Double.class, null, (p, v) -> null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ofBinaryNullFunction() {
-		OperationFactories.ofBinary("test", Double.class, Double.class, Double.class, null);
+		assertThrows(NullPointerException.class,
+				() -> OperationFactories.ofBinary("test", Double.class, Double.class, Double.class, null));
 	}
 
 	@Test
@@ -273,5 +295,4 @@ public class OperationFactoriesTest {
 				operationFactory.build(ImmutableInputSpec.of(Collections.singletonList(Double.class)))
 						.apply(new Object[] {}, new Object[] { str, intValue }));
 	}
-
 }

@@ -1,9 +1,10 @@
 package net.bmahe.genetics4j.core.selection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -12,8 +13,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.random.RandomGenerator;
+import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Individual;
@@ -41,17 +44,17 @@ public class MultiTournamentsSelectionPolicyHandlerTest {
 			.termination(Terminations.ofMaxGeneration(100))
 			.build();
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new MultiTournamentsSelectionPolicyHandler<Double>(null);
+		assertThrows(NullPointerException.class, () -> new MultiTournamentsSelectionPolicyHandler<Double>(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleRequireSelection() {
 		final MultiTournamentsSelectionPolicyHandler<Double> selectionPolicyHandler = new MultiTournamentsSelectionPolicyHandler<>(
 				new Random());
 
-		selectionPolicyHandler.canHandle(null);
+		assertThrows(NullPointerException.class, () -> selectionPolicyHandler.canHandle(null));
 	}
 
 	@Test
@@ -68,12 +71,16 @@ public class MultiTournamentsSelectionPolicyHandlerTest {
 	@Test
 	public void selectMaxThenMin() {
 
-		final Random random = mock(Random.class);
-		when(random.ints(anyInt(), anyInt())).thenCallRealMethod();
-		when(random.nextInt(anyInt())).thenReturn(2, 1, 0, 3, 4, 3, 1, 0); // We will select 2 genotypes with each
-																			// tournament of
-		// 2
-		// candidates
+		final RandomGenerator random = mock(RandomGenerator.class);
+
+		/*
+		 * We will select 2 genotypes with each tournament of 2 candidates
+		 * 
+		 */
+		when(random.ints(anyInt(), anyInt())).thenReturn(IntStream.of(2, 1))
+				.thenReturn(IntStream.of(0, 3))
+				.thenReturn(IntStream.of(4, 3))
+				.thenReturn(IntStream.of(1, 0));
 
 		final int populationSize = 5;
 		final List<Genotype> population = new ArrayList<Genotype>(populationSize);

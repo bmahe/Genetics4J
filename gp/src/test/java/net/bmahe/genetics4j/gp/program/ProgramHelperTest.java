@@ -1,16 +1,18 @@
 package net.bmahe.genetics4j.gp.program;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
 import net.bmahe.genetics4j.gp.OperationFactories;
@@ -20,26 +22,26 @@ import net.bmahe.genetics4j.gp.math.Terminals;
 
 public class ProgramHelperTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void checkRandomCtor() {
 
-		final ProgramHelper programHelper = new ProgramHelper(null);
+		assertThrows(NullPointerException.class, () -> new ProgramHelper(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void pickRandomFunctionNoProgram() {
 
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
-		programHelper.pickRandomFunction(null);
+		assertThrows(NullPointerException.class, () -> programHelper.pickRandomFunction(null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void pickRandomFunctionButNoFunction() {
 
 		final Random random = new Random();
-		final Program mockProgram = mock(Program.class);
+		final Program mockProgram = mock(Program.class, withSettings().withoutAnnotations());
 
 		// Used a linkedhashset to have a predictable iteration
 		final LinkedHashSet<OperationFactory> functions = new LinkedHashSet<>();
@@ -55,7 +57,7 @@ public class ProgramHelperTest {
 
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
-		final OperationFactory randomFunction = programHelper.pickRandomFunction(mockProgram);
+		assertThrows(IllegalArgumentException.class, () -> programHelper.pickRandomFunction(mockProgram));
 	}
 
 	@Test
@@ -89,7 +91,7 @@ public class ProgramHelperTest {
 	@Test
 	public void pickRandomFunction() {
 
-		final Random mockRandom = mock(Random.class);
+		final Random mockRandom = mock(Random.class, withSettings().withoutAnnotations());
 		when(mockRandom.nextInt(anyInt())).thenReturn(2);
 
 		final Program mockProgram = mock(Program.class);
@@ -122,7 +124,7 @@ public class ProgramHelperTest {
 		assertEquals(Functions.DIV, randomFunction);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void pickRandomFunctionWithConstraintButNoFunctionAvailable() {
 
 		final Random random = new Random();
@@ -153,7 +155,7 @@ public class ProgramHelperTest {
 
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
-		final OperationFactory randomFunction = programHelper.pickRandomFunction(mockProgram, String.class);
+		assertThrows(IllegalArgumentException.class, () -> programHelper.pickRandomFunction(mockProgram, String.class));
 	}
 
 	@Test
@@ -163,8 +165,8 @@ public class ProgramHelperTest {
 
 		final Program mockProgram = mock(Program.class);
 
-		final OperationFactory doubleToStringOperationFactory = OperationFactories.ofUnary("DoubleToString",
-				Double.class, String.class, String::valueOf);
+		final OperationFactory doubleToStringOperationFactory = OperationFactories
+				.ofUnary("DoubleToString", Double.class, String.class, String::valueOf);
 
 		// Used a linkedhashset to have a predictable iteration
 		final LinkedHashSet<OperationFactory> functions = new LinkedHashSet<>();
@@ -199,16 +201,16 @@ public class ProgramHelperTest {
 		assertEquals(doubleToStringOperationFactory, randomFunction);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void pickRandomTerminalNoProgram() {
 
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
-		programHelper.pickRandomTerminal(null);
+		assertThrows(NullPointerException.class, () -> programHelper.pickRandomTerminal(null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void pickRandomTerminalButNoTerminal() {
 
 		final Random random = new Random();
@@ -227,7 +229,7 @@ public class ProgramHelperTest {
 
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
-		final OperationFactory randomTerminal = programHelper.pickRandomTerminal(mockProgram);
+		assertThrows(IllegalArgumentException.class, () -> programHelper.pickRandomTerminal(mockProgram));
 	}
 
 	@Test
@@ -258,7 +260,7 @@ public class ProgramHelperTest {
 	@Test
 	public void pickRandomTerminal() {
 
-		final Random mockRandom = mock(Random.class);
+		final Random mockRandom = mock(Random.class, withSettings().withoutAnnotations());
 		when(mockRandom.nextInt(anyInt())).thenReturn(2);
 
 		final Program mockProgram = mock(Program.class);
@@ -291,7 +293,7 @@ public class ProgramHelperTest {
 		assertEquals(Terminals.E, randomTerminal);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void pickRandomTerminalWithConstraintButNoTerminalAvailable() {
 
 		final Random random = new Random();
@@ -322,7 +324,7 @@ public class ProgramHelperTest {
 
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
-		final OperationFactory randomTerminal = programHelper.pickRandomTerminal(mockProgram, String.class);
+		assertThrows(IllegalArgumentException.class, () -> programHelper.pickRandomTerminal(mockProgram, String.class));
 	}
 
 	@Test
@@ -343,8 +345,8 @@ public class ProgramHelperTest {
 		functions.add(Functions.EXP);
 		when(mockProgram.functions()).thenReturn(functions);
 
-		final OperationFactory spaceStringTerminalFactory = OperationFactories.ofTerminal("SpaceString", String.class,
-				() -> StringUtils.SPACE);
+		final OperationFactory spaceStringTerminalFactory = OperationFactories
+				.ofTerminal("SpaceString", String.class, () -> StringUtils.SPACE);
 		// Used a linkedhashset to have a predictable iteration
 		final LinkedHashSet<OperationFactory> terminals = new LinkedHashSet<>();
 		terminals.add(Terminals.PI);
@@ -370,7 +372,7 @@ public class ProgramHelperTest {
 	@Test
 	public void pickRandomTerminalOrFunciton() {
 
-		final Random mockRandom = mock(Random.class);
+		final Random mockRandom = mock(Random.class, withSettings().withoutAnnotations());
 		when(mockRandom.nextInt(anyInt())).thenReturn(2).thenReturn(6);
 
 		final Program mockProgram = mock(Program.class);
@@ -411,7 +413,7 @@ public class ProgramHelperTest {
 
 		final Random random = new Random();
 
-		final Program mockProgram = mock(Program.class);
+		final Program mockProgram = mock(Program.class, withSettings().withoutAnnotations());
 
 		// Used a linkedhashset to have a predictable iteration
 		final LinkedHashSet<OperationFactory> functions = new LinkedHashSet<>();
@@ -424,8 +426,8 @@ public class ProgramHelperTest {
 		functions.add(Functions.EXP);
 		when(mockProgram.functions()).thenReturn(functions);
 
-		final OperationFactory spaceStringTerminalFactory = OperationFactories.ofTerminal("SpaceString", String.class,
-				() -> StringUtils.SPACE);
+		final OperationFactory spaceStringTerminalFactory = OperationFactories
+				.ofTerminal("SpaceString", String.class, () -> StringUtils.SPACE);
 		// Used a linkedhashset to have a predictable iteration
 		final LinkedHashSet<OperationFactory> terminals = new LinkedHashSet<>();
 		terminals.add(Terminals.PI);

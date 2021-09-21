@@ -1,14 +1,14 @@
 package net.bmahe.genetics4j.gp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OperationTest {
 
@@ -43,9 +43,7 @@ public class OperationTest {
 		assertNotNull(operation);
 		assertEquals("name", operation.getName());
 		assertEquals("name", operation.getPrettyName());
-		assertEquals(2,
-				operation.acceptedTypes()
-						.size());
+		assertEquals(2, operation.acceptedTypes().size());
 		assertEquals(2, operation.getArity());
 		assertFalse(operation.isTerminal());
 		assertEquals("lapin", operation.apply(new String[] { "LaPin" }, new Object[] {}));

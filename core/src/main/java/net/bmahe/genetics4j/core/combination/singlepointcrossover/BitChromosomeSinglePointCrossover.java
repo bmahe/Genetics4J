@@ -2,7 +2,7 @@ package net.bmahe.genetics4j.core.combination.singlepointcrossover;
 
 import java.util.BitSet;
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -12,12 +12,12 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 
 public class BitChromosomeSinglePointCrossover implements ChromosomeCombinator {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public BitChromosomeSinglePointCrossover(final Random _random) {
-		Validate.notNull(_random);
+	public BitChromosomeSinglePointCrossover(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class BitChromosomeSinglePointCrossover implements ChromosomeCombinator {
 		Validate.isInstanceOf(BitChromosome.class, chromosome2);
 		Validate.isTrue(chromosome1.getNumAlleles() == chromosome2.getNumAlleles());
 
-		final int alleleSplit = random.nextInt(chromosome1.getNumAlleles());
+		final int alleleSplit = randomGenerator.nextInt(chromosome1.getNumAlleles());
 
 		final BitChromosome bitChromosome1 = (BitChromosome) chromosome1;
 		final BitChromosome bitChromosome2 = (BitChromosome) chromosome2;
@@ -46,7 +46,6 @@ public class BitChromosomeSinglePointCrossover implements ChromosomeCombinator {
 			secondChildBitSet.set(i, bitChromosome1.getBit(i));
 		}
 
-		return List.of(new BitChromosome(numAlleles, firstChildBitSet),
-				new BitChromosome(numAlleles, secondChildBitSet));
+		return List.of(new BitChromosome(numAlleles, firstChildBitSet), new BitChromosome(numAlleles, secondChildBitSet));
 	}
 }

@@ -1,16 +1,18 @@
 package net.bmahe.genetics4j.core.mutation.chromosome.creepmutation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.spec.chromosome.BitChromosomeSpec;
@@ -24,23 +26,25 @@ public class IntChromosomeCreepMutationHandlerTest {
 
 	private final static double EPSILON = 0.0001d;
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new IntChromosomeCreepMutationHandler(null);
+		assertThrows(NullPointerException.class, () -> new IntChromosomeCreepMutationHandler(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleNullMutationSpec() {
 		final var intChromosomeCreepMutationHandler = new IntChromosomeCreepMutationHandler(new Random());
 
-		intChromosomeCreepMutationHandler.canHandle(null, ImmutableIntChromosomeSpec.of(10, 0, 5));
+		assertThrows(NullPointerException.class,
+				() -> intChromosomeCreepMutationHandler.canHandle(null, ImmutableIntChromosomeSpec.of(10, 0, 5)));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleNullChromosomeSpec() {
 		final var intChromosomeCreepMutationHandler = new IntChromosomeCreepMutationHandler(new Random());
 
-		intChromosomeCreepMutationHandler.canHandle(CreepMutation.ofNormal(0.1, 0.0d, 1.0d), null);
+		assertThrows(NullPointerException.class,
+				() -> intChromosomeCreepMutationHandler.canHandle(CreepMutation.ofNormal(0.1, 0.0d, 1.0d), null));
 	}
 
 	@Test
@@ -57,7 +61,7 @@ public class IntChromosomeCreepMutationHandlerTest {
 	public void mutateValidate(final int flippedIndex, final double flippedValue, final int expectedFlippedValue,
 			final int minValue, final int maxValue) {
 
-		final Random random = mock(Random.class);
+		final RandomGenerator random = mock(RandomGenerator.class);
 		when(random.nextInt(anyInt())).thenReturn(flippedIndex);
 		when(random.nextDouble()).thenReturn(flippedValue);
 
@@ -73,7 +77,7 @@ public class IntChromosomeCreepMutationHandlerTest {
 		assertEquals(chromosome.getNumAlleles(), mutatedChromosome.getNumAlleles());
 		for (int i = 0; i < numInts; i++) {
 			final double expectedValue = i == flippedIndex ? expectedFlippedValue : i + offset;
-			assertEquals(String.format("at index %d", i), expectedValue, mutatedChromosome.getValues()[i], EPSILON);
+			assertEquals(expectedValue, mutatedChromosome.getValues()[i], EPSILON, String.format("at index %d", i));
 		}
 	}
 

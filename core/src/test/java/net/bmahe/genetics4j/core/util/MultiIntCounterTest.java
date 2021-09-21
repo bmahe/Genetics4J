@@ -1,11 +1,11 @@
 package net.bmahe.genetics4j.core.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MultiIntCounterTest {
 	final static public Logger logger = LogManager.getLogger(MultiIntCounterTest.class);

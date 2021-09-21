@@ -1,13 +1,14 @@
 package net.bmahe.genetics4j.gp.chromosomes.factory;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
@@ -24,12 +25,12 @@ import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 
 public class ProgramTreeChromosomeFactoryTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void mustHaveAProgramGenerator() {
-		new ProgramTreeChromosomeFactory(null);
+		assertThrows(NullPointerException.class, () -> new ProgramTreeChromosomeFactory(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void mustHaveASpecForCanHandle() {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
@@ -38,7 +39,7 @@ public class ProgramTreeChromosomeFactoryTest {
 		final ProgramTreeChromosomeFactory programTreeChromosomeFactory = new ProgramTreeChromosomeFactory(
 				stdProgramGenerator);
 
-		programTreeChromosomeFactory.canHandle(null);
+		assertThrows(NullPointerException.class, () -> programTreeChromosomeFactory.canHandle(null));
 	}
 
 	@Test
@@ -51,10 +52,18 @@ public class ProgramTreeChromosomeFactoryTest {
 				stdProgramGenerator);
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
 		programBuilder.maxDepth(4);
@@ -76,10 +85,18 @@ public class ProgramTreeChromosomeFactoryTest {
 				stdProgramGenerator);
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -25, 25));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -25, 25));
 
 		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
 		programBuilder.maxDepth(4);
@@ -87,8 +104,7 @@ public class ProgramTreeChromosomeFactoryTest {
 
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = ProgramTreeChromosomeSpec.of(program);
 
-		final TreeChromosome<Operation<?>> chromosome = programTreeChromosomeFactory
-				.generate(programTreeChromosomeSpec);
+		final TreeChromosome<Operation<?>> chromosome = programTreeChromosomeFactory.generate(programTreeChromosomeSpec);
 		assertNotNull(chromosome);
 	}
 }

@@ -1,13 +1,15 @@
 package net.bmahe.genetics4j.core.chromosomes.factory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Random;
+import java.util.random.RandomGenerator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
@@ -15,15 +17,15 @@ import net.bmahe.genetics4j.core.spec.chromosome.ImmutableIntChromosomeSpec;
 
 public class IntChromosomeFactoryTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new IntChromosomeFactory(null);
+		assertThrows(NullPointerException.class, () -> new IntChromosomeFactory(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleMissingParameter() {
 		final IntChromosomeFactory intChromosomeFactory = new IntChromosomeFactory(new Random());
-		intChromosomeFactory.canHandle(null);
+		assertThrows(NullPointerException.class, () -> intChromosomeFactory.canHandle(null));
 	}
 
 	@Test
@@ -39,7 +41,7 @@ public class IntChromosomeFactoryTest {
 
 	@Test
 	public void generateTest() {
-		final Random random = mock(Random.class);
+		final RandomGenerator random = mock(RandomGenerator.class);
 		when(random.nextInt(anyInt())).thenReturn(0, 1, 2, 3, 9);
 
 		final IntChromosomeFactory intChromosomeFactory = new IntChromosomeFactory(random);

@@ -1,33 +1,34 @@
 package net.bmahe.genetics4j.core.chromosomes;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.BitSet;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BitChromosomeTest {
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void noNegativeSize() {
-		new BitChromosome(-1, new BitSet());
+		assertThrows(IllegalArgumentException.class, () -> new BitChromosome(-1, new BitSet()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void noZeroSize() {
-		new BitChromosome(0, new BitSet());
+		assertThrows(IllegalArgumentException.class, () -> new BitChromosome(0, new BitSet()));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void noNullBitSet() {
-		new BitChromosome(10, null);
+		assertThrows(NullPointerException.class, () -> new BitChromosome(10, null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void sizeAndBitSetMustMatch() {
-		new BitChromosome(6005, new BitSet(5));
+		assertThrows(IllegalArgumentException.class, () -> new BitChromosome(6005, new BitSet(5)));
 	}
 
 	@Test

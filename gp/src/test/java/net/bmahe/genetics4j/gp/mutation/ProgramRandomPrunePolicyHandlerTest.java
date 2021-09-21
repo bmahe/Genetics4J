@@ -1,13 +1,14 @@
 package net.bmahe.genetics4j.gp.mutation;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
@@ -19,25 +20,25 @@ import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 
 public class ProgramRandomPrunePolicyHandlerTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void noCtorArguments() {
-		new ProgramRandomPrunePolicyHandler(null, null);
+		assertThrows(NullPointerException.class, () -> new ProgramRandomPrunePolicyHandler(null, null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void noRandomCtorArguments() {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
-		new ProgramRandomPrunePolicyHandler(null, programHelper);
+		assertThrows(NullPointerException.class, () -> new ProgramRandomPrunePolicyHandler(null, programHelper));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void noProgramGeneratorCtorArguments() {
-		new ProgramRandomPrunePolicyHandler(new Random(), null);
+		assertThrows(NullPointerException.class, () -> new ProgramRandomPrunePolicyHandler(new Random(), null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleNoMutationPolicyHandlerResolver() {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
@@ -47,10 +48,10 @@ public class ProgramRandomPrunePolicyHandlerTest {
 		final ProgramRandomPrunePolicyHandler programRandomPrunePolicyHandler = new ProgramRandomPrunePolicyHandler(
 				random, programHelper);
 
-		programRandomPrunePolicyHandler.canHandle(null, mutationPolicy);
+		assertThrows(NullPointerException.class, () -> programRandomPrunePolicyHandler.canHandle(null, mutationPolicy));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleNoMutationPolicy() {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
@@ -58,9 +59,9 @@ public class ProgramRandomPrunePolicyHandlerTest {
 		final ProgramRandomPrunePolicyHandler programRandomPrunePolicyHandler = new ProgramRandomPrunePolicyHandler(
 				random, programHelper);
 
-		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(
-				MutationPolicyHandlerResolver.class);
-		programRandomPrunePolicyHandler.canHandle(mockMutationPolicyHandlerResolver, null);
+		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(MutationPolicyHandlerResolver.class);
+		assertThrows(NullPointerException.class,
+				() -> programRandomPrunePolicyHandler.canHandle(mockMutationPolicyHandlerResolver, null));
 	}
 
 	@Test
@@ -72,8 +73,7 @@ public class ProgramRandomPrunePolicyHandlerTest {
 		final ProgramRandomPrunePolicyHandler programRandomPrunePolicyHandler = new ProgramRandomPrunePolicyHandler(
 				random, programHelper);
 
-		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(
-				MutationPolicyHandlerResolver.class);
+		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(MutationPolicyHandlerResolver.class);
 
 		assertTrue(programRandomPrunePolicyHandler.canHandle(mockMutationPolicyHandlerResolver, mutationPolicy));
 		assertFalse(programRandomPrunePolicyHandler.canHandle(mockMutationPolicyHandlerResolver,
@@ -89,8 +89,7 @@ public class ProgramRandomPrunePolicyHandlerTest {
 		final ProgramRandomPrunePolicyHandler programRandomPrunePolicyHandler = new ProgramRandomPrunePolicyHandler(
 				random, programHelper);
 
-		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(
-				MutationPolicyHandlerResolver.class);
+		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(MutationPolicyHandlerResolver.class);
 		final EAExecutionContext mockEaExecutionContext = mock(EAExecutionContext.class);
 		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
 

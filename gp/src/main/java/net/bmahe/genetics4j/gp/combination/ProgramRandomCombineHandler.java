@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.gp.combination;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -17,12 +17,12 @@ import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
 public class ProgramRandomCombineHandler implements ChromosomeCombinatorHandler {
 	final static public Logger logger = LogManager.getLogger(ProgramRandomCombineHandler.class);
 
-	final Random random;
+	final RandomGenerator randomGenerator;
 
-	public ProgramRandomCombineHandler(final Random _random) {
-		Validate.notNull(_random);
+	public ProgramRandomCombineHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -48,6 +48,6 @@ public class ProgramRandomCombineHandler implements ChromosomeCombinatorHandler 
 
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = (ProgramTreeChromosomeSpec) chromosomeSpec;
 
-		return new ProgramChromosomeCombinator(random);
+		return new ProgramChromosomeCombinator(randomGenerator);
 	}
 }

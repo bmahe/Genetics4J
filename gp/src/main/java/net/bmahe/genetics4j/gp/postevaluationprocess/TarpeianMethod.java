@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.gp.postevaluationprocess;
 
-import java.util.Random;
 import java.util.function.Function;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
@@ -14,7 +14,7 @@ import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 public abstract class TarpeianMethod implements Function<Population<Double>, Population<Double>> {
 
 	@Value.Parameter
-	public abstract Random random();
+	public abstract RandomGenerator randomGenerator();
 
 	@Value.Parameter
 	public abstract Function<Genotype, Integer> sizeFunction();
@@ -52,7 +52,7 @@ public abstract class TarpeianMethod implements Function<Population<Double>, Pop
 			final int size = sizeFunction().apply(genotype);
 
 			double fitness = population.getFitness(i);
-			if (size > averageSize && random().nextDouble() < probability()) {
+			if (size > averageSize && randomGenerator().nextDouble() < probability()) {
 				fitness = newValue();
 			}
 
@@ -62,15 +62,15 @@ public abstract class TarpeianMethod implements Function<Population<Double>, Pop
 		return newPopulation;
 	}
 
-	public static TarpeianMethod of(final Random random, final Function<Genotype, Integer> sizeFunction,
-			final double probability, final double newValue) {
-		return ImmutableTarpeianMethod.of(random, sizeFunction, probability, newValue);
+	public static TarpeianMethod of(final RandomGenerator randomGenerator,
+			final Function<Genotype, Integer> sizeFunction, final double probability, final double newValue) {
+		return ImmutableTarpeianMethod.of(randomGenerator, sizeFunction, probability, newValue);
 	}
 
-	public static TarpeianMethod ofTreeChromosome(final Random random, final int chromosomeIndex,
+	public static TarpeianMethod ofTreeChromosome(final RandomGenerator randomGenerator, final int chromosomeIndex,
 			final double probability, final double newValue) {
 
-		return ImmutableTarpeianMethod.of(random,
+		return ImmutableTarpeianMethod.of(randomGenerator,
 				(genotype) -> genotype.getChromosome(chromosomeIndex, TreeChromosome.class).getSize(),
 				probability,
 				newValue);

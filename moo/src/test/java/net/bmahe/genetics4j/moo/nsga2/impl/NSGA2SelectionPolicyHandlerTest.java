@@ -1,18 +1,19 @@
 package net.bmahe.genetics4j.moo.nsga2.impl;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Comparator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelection;
@@ -31,10 +32,10 @@ public class NSGA2SelectionPolicyHandlerTest {
 			.termination(Terminations.ofMaxGeneration(100))
 			.build();
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleNullArg() {
 		final NSGA2SelectionPolicyHandler<Integer> selectionPolicyHandler = new NSGA2SelectionPolicyHandler<>();
-		selectionPolicyHandler.canHandle(null);
+		assertThrows(NullPointerException.class, () -> selectionPolicyHandler.canHandle(null));
 	}
 
 	@Test
@@ -52,7 +53,7 @@ public class NSGA2SelectionPolicyHandlerTest {
 		assertFalse(selectionPolicyHandler.canHandle(RandomSelection.build()));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void resolveNoGSD() {
 		final NSGA2SelectionPolicyHandler<Integer> selectionPolicyHandler = new NSGA2SelectionPolicyHandler<>();
 
@@ -71,11 +72,12 @@ public class NSGA2SelectionPolicyHandlerTest {
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				eaExecutionContext);
 
-		final Selector<Integer> selector = selectionPolicyHandler
-				.resolve(null, SIMPLE_MAXIMIZING_EA_CONFIGURATION, selectionPolicyHandlerResolver, nsga2Selection);
+		assertThrows(NullPointerException.class,
+				() -> selectionPolicyHandler
+						.resolve(null, SIMPLE_MAXIMIZING_EA_CONFIGURATION, selectionPolicyHandlerResolver, nsga2Selection));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void resolveNoSpec() {
 		final NSGA2SelectionPolicyHandler<Integer> selectionPolicyHandler = new NSGA2SelectionPolicyHandler<>();
 
@@ -93,11 +95,12 @@ public class NSGA2SelectionPolicyHandlerTest {
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				eaExecutionContext);
 
-		final Selector<Integer> selector = selectionPolicyHandler
-				.resolve(eaExecutionContext, null, selectionPolicyHandlerResolver, nsga2Selection);
+		assertThrows(NullPointerException.class,
+				() -> selectionPolicyHandler
+						.resolve(eaExecutionContext, null, selectionPolicyHandlerResolver, nsga2Selection));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void resolveNoSHR() {
 		final NSGA2SelectionPolicyHandler<Integer> selectionPolicyHandler = new NSGA2SelectionPolicyHandler<>();
 
@@ -116,11 +119,12 @@ public class NSGA2SelectionPolicyHandlerTest {
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				eaExecutionContext);
 
-		final Selector<Integer> selector = selectionPolicyHandler
-				.resolve(eaExecutionContext, SIMPLE_MAXIMIZING_EA_CONFIGURATION, null, nsga2Selection);
+		assertThrows(NullPointerException.class,
+				() -> selectionPolicyHandler
+						.resolve(eaExecutionContext, SIMPLE_MAXIMIZING_EA_CONFIGURATION, null, nsga2Selection));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void resolveNoSelectionSpec() {
 		final NSGA2SelectionPolicyHandler<Integer> selectionPolicyHandler = new NSGA2SelectionPolicyHandler<>();
 
@@ -136,11 +140,12 @@ public class NSGA2SelectionPolicyHandlerTest {
 		eaExecutionContextBuilder.populationSize(100);
 		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 
-		final Selector<Integer> selector = selectionPolicyHandler
-				.resolve(eaExecutionContext, SIMPLE_MAXIMIZING_EA_CONFIGURATION, null, nsga2Selection);
+		assertThrows(NullPointerException.class,
+				() -> selectionPolicyHandler
+						.resolve(eaExecutionContext, SIMPLE_MAXIMIZING_EA_CONFIGURATION, null, nsga2Selection));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void resolveWrongSelectionSpec() {
 		final NSGA2SelectionPolicyHandler<Integer> selectionPolicyHandler = new NSGA2SelectionPolicyHandler<>();
 
@@ -152,10 +157,11 @@ public class NSGA2SelectionPolicyHandlerTest {
 		final SelectionPolicyHandlerResolver<Integer> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				eaExecutionContext);
 
-		final Selector<Integer> selector = selectionPolicyHandler.resolve(eaExecutionContext,
-				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
-				selectionPolicyHandlerResolver,
-				RandomSelection.build());
+		assertThrows(IllegalArgumentException.class,
+				() -> selectionPolicyHandler.resolve(eaExecutionContext,
+						SIMPLE_MAXIMIZING_EA_CONFIGURATION,
+						selectionPolicyHandlerResolver,
+						RandomSelection.build()));
 	}
 
 	@Test

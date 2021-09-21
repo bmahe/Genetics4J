@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.combination.multicombinations;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
@@ -15,12 +15,12 @@ import net.bmahe.genetics4j.core.spec.combination.MultiCombinations;
 
 public class MultiCombinationsHandler implements ChromosomeCombinatorHandler {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public MultiCombinationsHandler(final Random _random) {
-		Validate.notNull(_random);
+	public MultiCombinationsHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -60,6 +60,6 @@ public class MultiCombinationsHandler implements ChromosomeCombinatorHandler {
 				})
 				.collect(Collectors.toList());
 
-		return new MultiChromosomeCombinations(random, chromosomeCombinators);
+		return new MultiChromosomeCombinations(randomGenerator, chromosomeCombinators);
 	}
 }

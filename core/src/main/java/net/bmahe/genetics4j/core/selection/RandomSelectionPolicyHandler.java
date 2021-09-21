@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.selection;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -14,12 +14,12 @@ import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
 public class RandomSelectionPolicyHandler<T extends Comparable<T>> implements SelectionPolicyHandler<T> {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public RandomSelectionPolicyHandler(final Random _random) {
-		Validate.notNull(_random);
+	public RandomSelectionPolicyHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -29,16 +29,17 @@ public class RandomSelectionPolicyHandler<T extends Comparable<T>> implements Se
 	}
 
 	@Override
-	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, EAConfiguration<T> eaConfiguration,
-			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
+	public Selector<T> resolve(final EAExecutionContext<T> eaExecutionContext, final EAConfiguration<T> eaConfiguration,
+			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
+			final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(RandomSelection.class, selectionPolicy);
 
 		return new Selector<T>() {
 
 			@Override
-			public Population<T> select(EAConfiguration<T> eaConfiguration, int numIndividuals,
-					List<Genotype> population, List<T> fitnessScore) {
+			public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+					final List<Genotype> population, final List<T> fitnessScore) {
 				Validate.notNull(eaConfiguration);
 				Validate.notNull(population);
 				Validate.notNull(fitnessScore);
@@ -50,7 +51,7 @@ public class RandomSelectionPolicyHandler<T extends Comparable<T>> implements Se
 				final Population<T> selected = new Population<>();
 
 				for (int i = 0; i < numIndividuals; i++) {
-					final int selectedIndex = random.nextInt(population.size());
+					final int selectedIndex = randomGenerator.nextInt(population.size());
 					selected.add(population.get(selectedIndex), fitnessScore.get(selectedIndex));
 				}
 				return selected;

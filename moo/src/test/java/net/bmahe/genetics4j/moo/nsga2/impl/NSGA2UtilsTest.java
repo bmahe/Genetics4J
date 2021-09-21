@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.moo.FitnessVector;
 
@@ -29,6 +29,5 @@ public class NSGA2UtilsTest {
 
 		logger.info("fitnessScore: {}", fitnessScore);
 		logger.info("CrowdingDistanceAssignment: {}", crowdingDistanceAssignment);
-
 	}
 }

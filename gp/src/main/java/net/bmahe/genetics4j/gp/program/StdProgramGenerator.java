@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.gp.program;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -11,13 +11,13 @@ import net.bmahe.genetics4j.gp.OperationFactory;
 public class StdProgramGenerator implements ProgramGenerator {
 
 	private final ProgramHelper programHelper;
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private <T, U> TreeNode<Operation<T>> generate(final Program program, Class<U> acceptedType, int maxDepth,
 			int depth) {
 
-		OperationFactory currentNode = depth < maxDepth - 1 && random.nextDouble() < 0.5
+		OperationFactory currentNode = depth < maxDepth - 1 && randomGenerator.nextDouble() < 0.5
 				? programHelper.pickRandomFunction(program, acceptedType)
 				: programHelper.pickRandomTerminal(program, acceptedType);
 
@@ -36,12 +36,12 @@ public class StdProgramGenerator implements ProgramGenerator {
 		return currentTreeNode;
 	}
 
-	public StdProgramGenerator(final ProgramHelper _programHelper, final Random _random) {
+	public StdProgramGenerator(final ProgramHelper _programHelper, final RandomGenerator _randomGenerator) {
 		Validate.notNull(_programHelper);
-		Validate.notNull(_random);
+		Validate.notNull(_randomGenerator);
 
 		this.programHelper = _programHelper;
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -50,7 +50,8 @@ public class StdProgramGenerator implements ProgramGenerator {
 		Validate.notNull(program);
 		Validate.isTrue(maxDepth > 0);
 
-		final OperationFactory currentNode = random.nextDouble() < 0.98 ? programHelper.pickRandomFunction(program)
+		final OperationFactory currentNode = randomGenerator.nextDouble() < 0.98
+				? programHelper.pickRandomFunction(program)
 				: programHelper.pickRandomTerminal(program);
 
 		final Operation currentOperation = currentNode.build(program.inputSpec());

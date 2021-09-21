@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.core.mutation;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -15,12 +15,12 @@ import net.bmahe.genetics4j.core.util.ChromosomeResolverUtils;
 
 public class SwapMutationPolicyHandler implements MutationPolicyHandler {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public SwapMutationPolicyHandler(final Random _random) {
-		Validate.notNull(_random);
+	public SwapMutationPolicyHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -56,12 +56,11 @@ public class SwapMutationPolicyHandler implements MutationPolicyHandler {
 				final Chromosome[] chromosomes = original.getChromosomes();
 				final Chromosome[] newChromosomes = new Chromosome[chromosomes.length];
 
-				if (random.nextDouble() < populationMutationProbability) {
+				if (randomGenerator.nextDouble() < populationMutationProbability) {
 
 					for (int i = 0; i < chromosomes.length; i++) {
 						final Chromosome chromosome = chromosomes[i];
-						final Chromosome mutatedChromosome = chromosomeMutationHandlers[i].mutate(mutationPolicy,
-								chromosome);
+						final Chromosome mutatedChromosome = chromosomeMutationHandlers[i].mutate(mutationPolicy, chromosome);
 
 						newChromosomes[i] = mutatedChromosome;
 					}

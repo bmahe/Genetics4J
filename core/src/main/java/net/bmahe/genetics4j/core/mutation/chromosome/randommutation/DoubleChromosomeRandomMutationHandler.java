@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.mutation.chromosome.randommutation;
 
 import java.util.Arrays;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -15,12 +15,12 @@ import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 
 public class DoubleChromosomeRandomMutationHandler implements ChromosomeMutationHandler<DoubleChromosome> {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public DoubleChromosomeRandomMutationHandler(final Random _random) {
-		Validate.notNull(_random);
+	public DoubleChromosomeRandomMutationHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -44,8 +44,8 @@ public class DoubleChromosomeRandomMutationHandler implements ChromosomeMutation
 
 		final double[] newValues = Arrays.copyOf(doubleChromosome.getValues(), doubleChromosome.getNumAlleles());
 
-		final int alleleFlipIndex = random.nextInt(doubleChromosome.getNumAlleles());
-		newValues[alleleFlipIndex] = minValue + random.nextDouble() * (maxValue - minValue);
+		final int alleleFlipIndex = randomGenerator.nextInt(doubleChromosome.getNumAlleles());
+		newValues[alleleFlipIndex] = minValue + randomGenerator.nextDouble() * (maxValue - minValue);
 
 		return new DoubleChromosome(doubleChromosome.getSize(), minValue, maxValue, newValues);
 	}

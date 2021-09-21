@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.core.combination.singlepointarithmetic;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -15,12 +15,12 @@ import net.bmahe.genetics4j.core.spec.combination.SinglePointArithmetic;
 
 public class SinglePointArithmeticCombinationHandler implements ChromosomeCombinatorHandler {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public SinglePointArithmeticCombinationHandler(final Random _random) {
-		Validate.notNull(_random);
+	public SinglePointArithmeticCombinationHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -46,14 +46,13 @@ public class SinglePointArithmeticCombinationHandler implements ChromosomeCombin
 		final double alpha = singlePointArithmeticRecombination.alpha();
 
 		if (chromosome instanceof IntChromosomeSpec) {
-			return new IntChromosomeSinglePointArithmetic(random, alpha);
+			return new IntChromosomeSinglePointArithmetic(randomGenerator, alpha);
 		}
 
 		if (chromosome instanceof DoubleChromosomeSpec) {
-			return new DoubleChromosomeSinglePointArithmetic(random, alpha);
+			return new DoubleChromosomeSinglePointArithmetic(randomGenerator, alpha);
 		}
 
 		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);
 	}
-
 }

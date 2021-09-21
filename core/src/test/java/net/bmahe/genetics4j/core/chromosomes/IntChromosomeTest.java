@@ -1,36 +1,37 @@
 package net.bmahe.genetics4j.core.chromosomes;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class IntChromosomeTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void noValues() {
-		new IntChromosome(10, 0, 10, null);
+		assertThrows(NullPointerException.class, () -> new IntChromosome(10, 0, 10, null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void zeroSize() {
-		new IntChromosome(0, 0, 10, new int[2]);
+		assertThrows(IllegalArgumentException.class, () -> new IntChromosome(0, 0, 10, new int[2]));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void negativeSize() {
-		new IntChromosome(-10, 0, 10, new int[2]);
+		assertThrows(IllegalArgumentException.class, () -> new IntChromosome(-10, 0, 10, new int[2]));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void minGreaterThanMax() {
-		new IntChromosome(10, 100, 10, new int[10]);
+		assertThrows(IllegalArgumentException.class, () -> new IntChromosome(10, 100, 10, new int[10]));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void sizeAndValueLengthDontMatch() {
-		new IntChromosome(10, 100, 1000, new int[11]);
+		assertThrows(IllegalArgumentException.class, () -> new IntChromosome(10, 100, 1000, new int[11]));
 	}
 
 	@Test

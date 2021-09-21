@@ -1,8 +1,9 @@
 package net.bmahe.genetics4j.gp.mutation;
 
 import static net.bmahe.genetics4j.gp.math.Functions.ADD;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
@@ -11,7 +12,7 @@ import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
@@ -40,17 +41,17 @@ import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 public class ProgramRulesApplicatorMutatorTest {
 	final static public Logger logger = LogManager.getLogger(ProgramRulesApplicatorMutatorTest.class);
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNoRules() {
 		final EAConfiguration eaConfiguration = mock(EAConfiguration.class);
-		new ProgramRulesApplicatorMutator(null, eaConfiguration);
+		assertThrows(NullPointerException.class, () -> new ProgramRulesApplicatorMutator(null, eaConfiguration));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ctorEmptyRules() {
 		final EAConfiguration eaConfiguration = mock(EAConfiguration.class);
 		final List<Rule> rules = Collections.emptyList();
-		new ProgramRulesApplicatorMutator(rules, eaConfiguration);
+		assertThrows(IllegalArgumentException.class, () -> new ProgramRulesApplicatorMutator(rules, eaConfiguration));
 	}
 
 	@Test
