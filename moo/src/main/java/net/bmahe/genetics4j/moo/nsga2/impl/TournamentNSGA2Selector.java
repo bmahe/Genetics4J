@@ -2,10 +2,10 @@ package net.bmahe.genetics4j.moo.nsga2.impl;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -24,13 +24,14 @@ public class TournamentNSGA2Selector<T extends Comparable<T>> implements Selecto
 	final static public Logger logger = LogManager.getLogger(TournamentNSGA2Selector.class);
 
 	private final TournamentNSGA2Selection<T> tournamentNSGA2Selection;
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public TournamentNSGA2Selector(final Random _random, final TournamentNSGA2Selection<T> _tournamentNSGA2Selection) {
-		Validate.notNull(_random);
+	public TournamentNSGA2Selector(final RandomGenerator _randomGenerator,
+			final TournamentNSGA2Selection<T> _tournamentNSGA2Selection) {
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_tournamentNSGA2Selection);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.tournamentNSGA2Selection = _tournamentNSGA2Selection;
 
 	}
@@ -72,11 +73,11 @@ public class TournamentNSGA2Selector<T extends Comparable<T>> implements Selecto
 		logger.debug("Selecting {} individuals from a population of {}", numIndividuals, individuals.size());
 
 		switch (eaConfiguration.optimization()) {
-			case MAXIMZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
+		case MAXIMZE:
+		case MINIMIZE:
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 		}
 
 		final int numberObjectives = tournamentNSGA2Selection.numberObjectives();
@@ -131,7 +132,7 @@ public class TournamentNSGA2Selector<T extends Comparable<T>> implements Selecto
 			T bestFitness = null;
 
 			for (int i = 0; i < numCandidates; i++) {
-				final int candidateIndex = random.nextInt(individuals.size());
+				final int candidateIndex = randomGenerator.nextInt(individuals.size());
 
 				logger.trace("\tCandidate - index {} - rank {} - crowding distance {} - fitness {}",
 						candidateIndex,

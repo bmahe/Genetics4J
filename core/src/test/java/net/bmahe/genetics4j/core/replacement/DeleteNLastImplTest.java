@@ -1,9 +1,10 @@
 package net.bmahe.genetics4j.core.replacement;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -12,7 +13,7 @@ import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
@@ -27,21 +28,21 @@ import net.bmahe.genetics4j.core.spec.selection.RandomSelection;
 public class DeleteNLastImplTest {
 	final static public Logger logger = LogManager.getLogger(DeleteNLastImplTest.class);
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNullArgs() {
-		new DeleteNLastImpl<>(null, null);
+		assertThrows(NullPointerException.class, () -> new DeleteNLastImpl<>(null, null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNullSpec() {
 		final Selector<Double> mockSelector = mock(Selector.class);
-		new DeleteNLastImpl<>(null, mockSelector);
+		assertThrows(NullPointerException.class, () -> new DeleteNLastImpl<>(null, mockSelector));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNullSelector() {
 		final DeleteNLast deleteNLast = DeleteNLast.of(0.2, RandomSelection.build());
-		new DeleteNLastImpl<>(deleteNLast, null);
+		assertThrows(NullPointerException.class, () -> new DeleteNLastImpl<>(deleteNLast, null));
 	}
 
 	@Test

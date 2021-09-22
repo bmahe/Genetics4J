@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.chromosomes.factory;
 
-import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -12,12 +12,12 @@ import net.bmahe.genetics4j.core.util.DistributionUtils;
 
 public class DoubleChromosomeFactory implements ChromosomeFactory<DoubleChromosome> {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public DoubleChromosomeFactory(final Random _random) {
-		Validate.notNull(_random);
+	public DoubleChromosomeFactory(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class DoubleChromosomeFactory implements ChromosomeFactory<DoubleChromoso
 		final var distribution = doubleChromosomeSpec.distribution();
 
 		final Supplier<Double> generator = DistributionUtils
-				.distributionValueSupplier(random, minValue, maxValue, distribution);
+				.distributionValueSupplier(randomGenerator, minValue, maxValue, distribution);
 
 		double[] values = new double[doubleChromosomeSpec.size()];
 		for (int i = 0; i < doubleChromosomeSpec.size(); i++) {

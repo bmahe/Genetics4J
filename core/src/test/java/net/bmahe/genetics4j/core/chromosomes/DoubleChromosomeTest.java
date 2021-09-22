@@ -1,38 +1,39 @@
 package net.bmahe.genetics4j.core.chromosomes;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DoubleChromosomeTest {
 
 	private final static double EPSILON = 0.0001d;
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void noValues() {
-		new DoubleChromosome(10, 0.0, 10.0, null);
+		assertThrows(NullPointerException.class, () -> new DoubleChromosome(10, 0.0, 10.0, null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void zeroSize() {
-		new DoubleChromosome(0, 0, 10, new double[2]);
+		assertThrows(IllegalArgumentException.class, () -> new DoubleChromosome(0, 0, 10, new double[2]));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void negativeSize() {
-		new DoubleChromosome(-10, 0, 10, new double[2]);
+		assertThrows(IllegalArgumentException.class, () -> new DoubleChromosome(-10, 0, 10, new double[2]));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void minGreaterThanMax() {
-		new DoubleChromosome(10, 100, 10, new double[10]);
+		assertThrows(IllegalArgumentException.class, () -> new DoubleChromosome(10, 100, 10, new double[10]));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void sizeAndValueLengthDontMatch() {
-		new DoubleChromosome(10, 100, 1000, new double[11]);
+		assertThrows(IllegalArgumentException.class, () -> new DoubleChromosome(10, 100, 1000, new double[11]));
 	}
 
 	@Test

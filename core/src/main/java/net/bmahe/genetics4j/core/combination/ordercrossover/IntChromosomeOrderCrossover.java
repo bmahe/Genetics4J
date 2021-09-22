@@ -2,8 +2,8 @@ package net.bmahe.genetics4j.core.combination.ordercrossover;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -13,12 +13,12 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 
 public class IntChromosomeOrderCrossover implements ChromosomeCombinator {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public IntChromosomeOrderCrossover(final Random _random) {
-		Validate.notNull(_random);
+	public IntChromosomeOrderCrossover(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -35,8 +35,8 @@ public class IntChromosomeOrderCrossover implements ChromosomeCombinator {
 		final int numAlleles = chromosome1.getNumAlleles();
 		final int[] newValues = new int[numAlleles];
 
-		final int random1 = random.nextInt(chromosome1.getNumAlleles());
-		final int random2 = random.nextInt(chromosome1.getNumAlleles());
+		final int random1 = randomGenerator.nextInt(chromosome1.getNumAlleles());
+		final int random2 = randomGenerator.nextInt(chromosome1.getNumAlleles());
 
 		final int rangeStart = Math.min(random1, random2);
 		final int rangeEnd = Math.max(random1, random2);

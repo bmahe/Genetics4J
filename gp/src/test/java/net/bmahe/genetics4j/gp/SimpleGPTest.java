@@ -5,7 +5,7 @@ import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
@@ -29,10 +29,18 @@ public class SimpleGPTest {
 		final ProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
-		programBuilder.addFunctions(Functions.ADD, Functions.MUL, Functions.DIV, Functions.SUB, Functions.COS,
-				Functions.SIN, Functions.EXP);
-		programBuilder.addTerminal(Terminals.InputDouble(random), Terminals.PI, Terminals.E,
-				Terminals.Coefficient(random, -50, 100), Terminals.CoefficientRounded(random, -5, 7));
+		programBuilder.addFunctions(Functions.ADD,
+				Functions.MUL,
+				Functions.DIV,
+				Functions.SUB,
+				Functions.COS,
+				Functions.SIN,
+				Functions.EXP);
+		programBuilder.addTerminal(Terminals.InputDouble(random),
+				Terminals.PI,
+				Terminals.E,
+				Terminals.Coefficient(random, -50, 100),
+				Terminals.CoefficientRounded(random, -5, 7));
 
 		programBuilder.inputSpec(ImmutableInputSpec.of(Arrays.asList(Double.class, String.class)));
 		programBuilder.maxDepth(4);

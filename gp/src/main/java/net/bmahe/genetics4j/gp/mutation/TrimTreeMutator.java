@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.gp.mutation;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -24,19 +24,19 @@ public class TrimTreeMutator implements Mutator {
 	final static public Logger logger = LogManager.getLogger(TrimTreeMutator.class);
 
 	private final ProgramGenerator programGenerator;
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 	private final EAConfiguration eaConfiguration;
 	private final TrimTree trimTree;
 
-	public TrimTreeMutator(final ProgramGenerator _programGenerator, final Random _random,
+	public TrimTreeMutator(final ProgramGenerator _programGenerator, final RandomGenerator _randomGenerator,
 			final EAConfiguration _eaConfiguration, final TrimTree _trimTree) {
 		Validate.notNull(_programGenerator);
-		Validate.notNull(_random);
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_eaConfiguration);
 		Validate.notNull(_trimTree);
 
 		this.programGenerator = _programGenerator;
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.eaConfiguration = _eaConfiguration;
 		this.trimTree = _trimTree;
 	}

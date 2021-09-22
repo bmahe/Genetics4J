@@ -2,7 +2,7 @@ package net.bmahe.genetics4j.core.selection;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -20,15 +20,16 @@ public class ProportionalTournamentSelector<T extends Comparable<T>> implements 
 	final static public Logger logger = LogManager.getLogger(ProportionalTournamentSelector.class);
 
 	private final SelectionPolicy selectionPolicy;
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public ProportionalTournamentSelector(final SelectionPolicy _selectionPolicy, final Random _random) {
+	public ProportionalTournamentSelector(final SelectionPolicy _selectionPolicy,
+			final RandomGenerator _randomGenerator) {
 		Validate.notNull(_selectionPolicy);
 		Validate.isInstanceOf(ProportionalTournament.class, _selectionPolicy);
-		Validate.notNull(_random);
+		Validate.notNull(_randomGenerator);
 
 		this.selectionPolicy = _selectionPolicy;
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -48,11 +49,11 @@ public class ProportionalTournamentSelector<T extends Comparable<T>> implements 
 		final double proportionFirst = proportionalTournament.proportionFirst();
 
 		switch (eaConfiguration.optimization()) {
-			case MAXIMZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
+		case MAXIMZE:
+		case MINIMIZE:
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 		}
 
 		final Comparator<Individual<T>> firstComparatorOptimize = Optimization.MAXIMZE
@@ -67,10 +68,11 @@ public class ProportionalTournamentSelector<T extends Comparable<T>> implements 
 
 		while (selectedIndividuals.size() < numIndividuals) {
 
-			final Comparator<Individual<T>> comparator = random.nextDouble() < proportionFirst ? firstComparatorOptimize
+			final Comparator<Individual<T>> comparator = randomGenerator.nextDouble() < proportionFirst
+					? firstComparatorOptimize
 					: secondComparatorOptimize;
 
-			final Individual<T> selected = random.ints(numCandidates, 0, population.size())
+			final Individual<T> selected = randomGenerator.ints(numCandidates, 0, population.size())
 					.boxed()
 					.map((i) -> Individual.of(population.get(i), fitnessScore.get(i)))
 					.max(comparator)

@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
@@ -22,12 +22,12 @@ import net.bmahe.genetics4j.gp.Operation;
 
 final class ProgramChromosomeCombinator implements ChromosomeCombinator {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public ProgramChromosomeCombinator(final Random _random) {
-		Validate.notNull(_random);
+	public ProgramChromosomeCombinator(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -46,11 +46,9 @@ final class ProgramChromosomeCombinator implements ChromosomeCombinator {
 			final Class returnedType = operation.returnedType();
 
 			returnedTypeIndex.computeIfAbsent(returnedType, k -> new ArrayList<>());
-			returnedTypeIndex.get(returnedType)
-					.add(node);
+			returnedTypeIndex.get(returnedType).add(node);
 
-			if (node.getChildren() != null && node.getChildren()
-					.isEmpty() == false) {
+			if (node.getChildren() != null && node.getChildren().isEmpty() == false) {
 				nodes.addAll(node.getChildren());
 			}
 		}
@@ -72,9 +70,7 @@ final class ProgramChromosomeCombinator implements ChromosomeCombinator {
 		final List<TreeNode<Operation<?>>> children = root.getChildren();
 
 		final List<TreeNode<Operation<?>>> copiedChildren = children == null ? null
-				: children.stream()
-						.map(child -> copyAndReplace(child, replaced, replacement))
-						.collect(Collectors.toList());
+				: children.stream().map(child -> copyAndReplace(child, replaced, replacement)).collect(Collectors.toList());
 
 		final TreeNode<Operation<?>> copy = new TreeNode<>(data);
 		if (children.isEmpty() == false) {
@@ -95,19 +91,16 @@ final class ProgramChromosomeCombinator implements ChromosomeCombinator {
 		Validate.notNull(returnedTypeToNodeA);
 		Validate.notNull(returnedTypeToNodeB);
 
-		final int targetClassIndex = random.nextInt(acceptableClasses.size());
-		final Class targetClass = acceptableClasses.stream()
-				.skip(targetClassIndex)
-				.findFirst()
-				.get();
+		final int targetClassIndex = randomGenerator.nextInt(acceptableClasses.size());
+		final Class targetClass = acceptableClasses.stream().skip(targetClassIndex).findFirst().get();
 
 		final List<TreeNode<Operation<?>>> candidateReplacedNodes = returnedTypeToNodeA.get(targetClass);
 		final TreeNode<Operation<?>> replacedNode = candidateReplacedNodes
-				.get(random.nextInt(candidateReplacedNodes.size()));
+				.get(randomGenerator.nextInt(candidateReplacedNodes.size()));
 
 		final List<TreeNode<Operation<?>>> candidateReplacementNodes = returnedTypeToNodeB.get(targetClass);
 		final TreeNode<Operation<?>> replacementNode = candidateReplacementNodes
-				.get(random.nextInt(candidateReplacementNodes.size()));
+				.get(randomGenerator.nextInt(candidateReplacementNodes.size()));
 
 		return copyAndReplace(rootA, replacedNode, replacementNode);
 	}
@@ -119,13 +112,13 @@ final class ProgramChromosomeCombinator implements ChromosomeCombinator {
 		Validate.notNull(chromosome2);
 
 		if (chromosome1 instanceof TreeChromosome<?> == false) {
-			throw new IllegalArgumentException("This mutator does not support chromosome of type " + chromosome1.getClass()
-					.getSimpleName());
+			throw new IllegalArgumentException(
+					"This mutator does not support chromosome of type " + chromosome1.getClass().getSimpleName());
 		}
 
 		if (chromosome2 instanceof TreeChromosome<?> == false) {
-			throw new IllegalArgumentException("This mutator does not support chromosome of type " + chromosome2.getClass()
-					.getSimpleName());
+			throw new IllegalArgumentException(
+					"This mutator does not support chromosome of type " + chromosome2.getClass().getSimpleName());
 		}
 
 		if (chromosome1 == chromosome2) {

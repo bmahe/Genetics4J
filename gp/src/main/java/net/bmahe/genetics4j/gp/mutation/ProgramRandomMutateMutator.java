@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.gp.mutation;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -23,19 +23,19 @@ public class ProgramRandomMutateMutator implements Mutator {
 	final static public Logger logger = LogManager.getLogger(ProgramRandomMutateMutator.class);
 
 	private final ProgramGenerator programGenerator;
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 	private final EAConfiguration eaConfiguration;
 	private final double populationMutationProbability;
 
-	public ProgramRandomMutateMutator(final ProgramGenerator _programGenerator, final Random _random,
+	public ProgramRandomMutateMutator(final ProgramGenerator _programGenerator, final RandomGenerator _randomGenerator,
 			final EAConfiguration _eaConfiguration, final double _populationMutationProbability) {
 		Validate.notNull(_programGenerator);
-		Validate.notNull(_random);
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_eaConfiguration);
 		Validate.inclusiveBetween(0.0, 1.0, _populationMutationProbability);
 
 		this.programGenerator = _programGenerator;
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.eaConfiguration = _eaConfiguration;
 		this.populationMutationProbability = _populationMutationProbability;
 	}
@@ -50,7 +50,7 @@ public class ProgramRandomMutateMutator implements Mutator {
 
 		if (nodeIndex == cutPoint) {
 			final int depth = Math.max(1, program.maxDepth() - currentDepth);
-			final int maxSubtreeDepth = depth > 1 ? random.nextInt(depth - 1) + 1 : depth;
+			final int maxSubtreeDepth = depth > 1 ? randomGenerator.nextInt(depth - 1) + 1 : depth;
 			return programGenerator.generate(program, maxSubtreeDepth, rootData.returnedType());
 		}
 
@@ -79,7 +79,7 @@ public class ProgramRandomMutateMutator implements Mutator {
 	public Genotype mutate(final Genotype originalGenotype) {
 		Validate.notNull(originalGenotype);
 
-		if (random.nextDouble() >= populationMutationProbability) {
+		if (randomGenerator.nextDouble() >= populationMutationProbability) {
 			return originalGenotype;
 		}
 
@@ -106,7 +106,7 @@ public class ProgramRandomMutateMutator implements Mutator {
 			final int chromosomeSize = treeChromosome.getSize();
 
 			if (chromosomeSize > 2) {
-				final int cutPoint = random.nextInt(chromosomeSize - 1);
+				final int cutPoint = randomGenerator.nextInt(chromosomeSize - 1);
 
 				final TreeNode<Operation<?>> root = treeChromosome.getRoot();
 				final TreeNode<Operation<?>> newRoot = duplicateAndMutate(programTreeChromosomeSpec
@@ -114,8 +114,8 @@ public class ProgramRandomMutateMutator implements Mutator {
 				final TreeChromosome<Operation<?>> newTreeChromosome = new TreeChromosome<>(newRoot);
 				newChromosomes[chromosomeIndex] = newTreeChromosome;
 			} else {
-				final TreeNode<Operation<Object>> newRoot = programGenerator
-						.generate(programTreeChromosomeSpec.program(), programTreeChromosomeSpec.program().maxDepth());
+				final TreeNode<Operation<Object>> newRoot = programGenerator.generate(programTreeChromosomeSpec.program(),
+						programTreeChromosomeSpec.program().maxDepth());
 				final TreeChromosome<Operation<Object>> newTreeChromosome = new TreeChromosome<>(newRoot);
 
 				newChromosomes[chromosomeIndex] = newTreeChromosome;

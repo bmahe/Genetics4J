@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.gp.math;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -22,10 +22,11 @@ public class Terminals {
 
 	public static OperationFactory E = OperationFactories.ofTerminal(NAME_E, Double.class, () -> Math.E);
 
-	public static OperationFactory Coefficient(final Random random, final double min, final double max) {
+	public static OperationFactory Coefficient(final RandomGenerator randomGenerator, final double min,
+			final double max) {
 		return OperationFactories.ofOperationSupplier(new Class[] {}, Double.class, () -> {
 
-			final double value = random.nextDouble() * (max - min) + min;
+			final double value = randomGenerator.nextDouble() * (max - min) + min;
 
 			final var operationBuilder = ImmutableCoefficientOperation.builder();
 
@@ -38,10 +39,11 @@ public class Terminals {
 		});
 	}
 
-	public static OperationFactory CoefficientRounded(final Random random, final int min, final int max) {
+	public static OperationFactory CoefficientRounded(final RandomGenerator randomGenerator, final int min,
+			final int max) {
 		return OperationFactories.ofOperationSupplier(new Class[] {}, Double.class, () -> {
 
-			final double value = random.nextInt(max - min) + min;
+			final double value = randomGenerator.nextInt(max - min) + min;
 
 			final var operationBuilder = ImmutableCoefficientOperation.builder();
 			operationBuilder.name(TYPE_COEFFICIENT)
@@ -73,8 +75,8 @@ public class Terminals {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> OperationFactory Input(final Random random, final Class<T> clazz) {
-		Validate.notNull(random);
+	public static <T> OperationFactory Input(final RandomGenerator randomGenerator, final Class<T> clazz) {
+		Validate.notNull(randomGenerator);
 		Validate.notNull(clazz);
 
 		return OperationFactories.of(new Class[] {}, clazz, (inputSpec) -> {
@@ -88,7 +90,7 @@ public class Terminals {
 				throw new IllegalArgumentException("No input with type " + clazz + " found");
 			}
 
-			final Integer inputIdx = candidates.get(random.nextInt(candidates.size()));
+			final Integer inputIdx = candidates.get(randomGenerator.nextInt(candidates.size()));
 
 			final var operationBuilder = ImmutableInputOperation.builder();
 			operationBuilder.name(TYPE_INPUT)
@@ -100,11 +102,11 @@ public class Terminals {
 		});
 	}
 
-	public static OperationFactory InputDouble(final Random random) {
-		return Input(random, Double.class);
+	public static OperationFactory InputDouble(final RandomGenerator randomGenerator) {
+		return Input(randomGenerator, Double.class);
 	}
 
-	public static OperationFactory InputString(final Random random) {
-		return Input(random, String.class);
+	public static OperationFactory InputString(final RandomGenerator randomGenerator) {
+		return Input(randomGenerator, String.class);
 	}
 }

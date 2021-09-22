@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.core.combination.erx;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -14,12 +14,12 @@ import net.bmahe.genetics4j.core.spec.combination.EdgeRecombinationCrossover;
 
 public class EdgeRecombinationCrossoverHandler implements ChromosomeCombinatorHandler {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public EdgeRecombinationCrossoverHandler(final Random _random) {
-		Validate.notNull(_random);
+	public EdgeRecombinationCrossoverHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -39,7 +39,6 @@ public class EdgeRecombinationCrossoverHandler implements ChromosomeCombinatorHa
 		Validate.notNull(chromosome);
 		Validate.isTrue(canHandle(chromosomeCombinatorResolver, combinationPolicy, chromosome));
 
-		return new IntEdgeRecombinationCrossover(random);
+		return new IntEdgeRecombinationCrossover(randomGenerator);
 	}
-
 }

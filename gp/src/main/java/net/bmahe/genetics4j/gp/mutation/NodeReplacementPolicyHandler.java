@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.gp.mutation;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -15,14 +15,14 @@ import net.bmahe.genetics4j.gp.spec.mutation.NodeReplacement;
 
 public class NodeReplacementPolicyHandler implements MutationPolicyHandler {
 
-	final Random random;
+	final RandomGenerator randomGenerator;
 	final ProgramHelper programHelper;
 
-	public NodeReplacementPolicyHandler(final Random _random, final ProgramHelper _programHelper) {
-		Validate.notNull(_random);
+	public NodeReplacementPolicyHandler(final RandomGenerator _randomGenerator, final ProgramHelper _programHelper) {
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_programHelper);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.programHelper = _programHelper;
 	}
 
@@ -47,6 +47,6 @@ public class NodeReplacementPolicyHandler implements MutationPolicyHandler {
 		final NodeReplacement nodeReplacementMutate = (NodeReplacement) mutationPolicy;
 		final double populationMutationProbability = nodeReplacementMutate.populationMutationProbability();
 
-		return new NodeReplacementMutator(programHelper, random, eaConfiguration, populationMutationProbability);
+		return new NodeReplacementMutator(programHelper, randomGenerator, eaConfiguration, populationMutationProbability);
 	}
 }

@@ -1,25 +1,26 @@
 package net.bmahe.genetics4j.core.mutation;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.spec.mutation.ImmutableCreepMutation;
 
 public class CreepMutationPolicyHandlerTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new CreepMutationPolicyHandler(null);
+		assertThrows(NullPointerException.class, () -> new CreepMutationPolicyHandler(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleRequireMutation() {
 		final CreepMutationPolicyHandler randomMutationPolicyHandler = new CreepMutationPolicyHandler(new Random());
 
-		randomMutationPolicyHandler.canHandle(null, null);
+		assertThrows(NullPointerException.class, () -> randomMutationPolicyHandler.canHandle(null, null));
 	}
 
 	@Test

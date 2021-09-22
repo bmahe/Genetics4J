@@ -1,16 +1,18 @@
 package net.bmahe.genetics4j.core.mutation.chromosome.randommutation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.spec.chromosome.ImmutableBitChromosomeSpec;
@@ -19,25 +21,27 @@ import net.bmahe.genetics4j.core.spec.mutation.ImmutableRandomMutation;
 
 public class IntChromosomeRandomMutationHandlerTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new IntChromosomeRandomMutationHandler(null);
+		assertThrows(NullPointerException.class, () -> new IntChromosomeRandomMutationHandler(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleNullMutationSpec() {
 		final IntChromosomeRandomMutationHandler intChromosomeRandomMutationHandler = new IntChromosomeRandomMutationHandler(
 				new Random());
 
-		intChromosomeRandomMutationHandler.canHandle(null, ImmutableIntChromosomeSpec.of(10, 0, 5));
+		assertThrows(NullPointerException.class,
+				() -> intChromosomeRandomMutationHandler.canHandle(null, ImmutableIntChromosomeSpec.of(10, 0, 5)));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canHandleNullChromosomeSpec() {
 		final IntChromosomeRandomMutationHandler intChromosomeRandomMutationHandler = new IntChromosomeRandomMutationHandler(
 				new Random());
 
-		intChromosomeRandomMutationHandler.canHandle(ImmutableRandomMutation.of(0.1), null);
+		assertThrows(NullPointerException.class,
+				() -> intChromosomeRandomMutationHandler.canHandle(ImmutableRandomMutation.of(0.1), null));
 	}
 
 	@Test
@@ -57,7 +61,7 @@ public class IntChromosomeRandomMutationHandlerTest {
 		final int flippedIntIndex = 2;
 		final int flippedValue = -1;
 
-		final Random random = mock(Random.class);
+		final RandomGenerator random = mock(RandomGenerator.class);
 		when(random.nextInt(anyInt())).thenReturn(flippedIntIndex, flippedValue);
 
 		final IntChromosomeRandomMutationHandler randomMutationHandler = new IntChromosomeRandomMutationHandler(random);

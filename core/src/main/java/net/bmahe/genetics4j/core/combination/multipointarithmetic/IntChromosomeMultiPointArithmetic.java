@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.combination.multipointarithmetic;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -12,16 +12,16 @@ import net.bmahe.genetics4j.core.spec.combination.MultiPointArithmetic;
 
 public class IntChromosomeMultiPointArithmetic implements ChromosomeCombinator {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
 	private final MultiPointArithmetic multiPointArithmeticPolicy;
 
-	public IntChromosomeMultiPointArithmetic(final Random _random,
+	public IntChromosomeMultiPointArithmetic(final RandomGenerator _randomGenerator,
 			final MultiPointArithmetic _multiPointArithmeticPolicy) {
-		Validate.notNull(_random);
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_multiPointArithmeticPolicy);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.multiPointArithmeticPolicy = _multiPointArithmeticPolicy;
 	}
 
@@ -39,7 +39,7 @@ public class IntChromosomeMultiPointArithmetic implements ChromosomeCombinator {
 		final int numCrossovers = multiPointArithmeticPolicy.numCrossovers();
 		final double alpha = multiPointArithmeticPolicy.alpha();
 
-		final int[] alleleSplits = random.ints(0, chromosome1.getNumAlleles())
+		final int[] alleleSplits = randomGenerator.ints(0, chromosome1.getNumAlleles())
 				.distinct()
 				.limit(numCrossovers)
 				.sorted()

@@ -3,7 +3,7 @@ package net.bmahe.genetics4j.core.selection;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.Validate;
@@ -23,15 +23,15 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 	final static public Logger logger = LogManager.getLogger(DoubleTournamentSelector.class);
 
 	private final SelectionPolicy selectionPolicy;
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public DoubleTournamentSelector(final SelectionPolicy _selectionPolicy, final Random _random) {
+	public DoubleTournamentSelector(final SelectionPolicy _selectionPolicy, final RandomGenerator _randomGenerator) {
 		Validate.notNull(_selectionPolicy);
 		Validate.isInstanceOf(DoubleTournament.class, _selectionPolicy);
-		Validate.notNull(_random);
+		Validate.notNull(_randomGenerator);
 
 		this.selectionPolicy = _selectionPolicy;
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	protected Individual<T> randomIndividual(final List<Genotype> population, final List<T> fitnessScore) {
@@ -40,7 +40,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 		Validate.isTrue(fitnessScore.size() > 0);
 		Validate.isTrue(population.size() == fitnessScore.size());
 
-		final int candidateIndex = random.nextInt(fitnessScore.size());
+		final int candidateIndex = randomGenerator.nextInt(fitnessScore.size());
 		return Individual.of(population.get(candidateIndex), fitnessScore.get(candidateIndex));
 
 	}
@@ -70,7 +70,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 		final int parsimonyCompared = parsimonyComparator.compare(first, second);
 
 		Individual<T> selected = first;
-		if (random.nextDouble() < parsimonyTournamentSize / 2.0) {
+		if (randomGenerator.nextDouble() < parsimonyTournamentSize / 2.0) {
 			if (parsimonyCompared > 0) {
 				selected = second;
 			}
@@ -103,11 +103,11 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 				|| doFitnessFirst == false);
 
 		switch (eaConfiguration.optimization()) {
-			case MAXIMZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
+		case MAXIMZE:
+		case MINIMIZE:
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 		}
 
 		final Comparator<Individual<T>> fitnessComparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
@@ -132,10 +132,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 						population,
 						fitnessScore);
 
-				final Individual<T> selected = parsimonyPick(parsimonyComparator,
-						parsimonyTournamentSize,
-						first,
-						second);
+				final Individual<T> selected = parsimonyPick(parsimonyComparator, parsimonyTournamentSize, first, second);
 
 				selectedIndividuals.add(selected.genotype(), selected.fitness());
 			} else {

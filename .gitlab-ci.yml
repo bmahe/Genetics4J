@@ -19,7 +19,7 @@ include:
 
 spotbugs-sast:
   variables:
-    SAST_JAVA_VERSION: 11
+    SAST_JAVA_VERSION: 17
 
 stages:
   - build
@@ -27,8 +27,8 @@ stages:
   - package
   - deploy
 
-# This template uses jdk11 for verifying and deploying images
-image: maven:3.8.1-adoptopenjdk-11
+# This template uses jdk17 for verifying and deploying images
+image: maven:3.8.2-openjdk-17
 
 # Cache downloaded dependencies and plugins between builds.
 # To keep cache across branches add 'key: "$CI_JOB_NAME"'
@@ -42,47 +42,12 @@ cache:
 .verify: &verify
   stage: test
   script:
-    - apt-get update -yqq
-    - apt-get install -yqq gnuplot graphviz
+    - microdnf install gnuplot graphviz
     - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE verify'
 
-# Verify merge requests using JDK11
-verify:jdk11:
+# Verify merge requests using JDK17
+verify:jdk17:
   <<: *verify
-
-# Verify merge requests using JDK11 Openj9
-verify:jdk11-openj9:
-  <<: *verify
-  image: maven:3.8.1-adoptopenjdk-11-openj9
-  cache:
-    key: "$CI_JOB_NAME-java11openj9"
-
-# Verify merge requests using JDK15
-verify:jdk15:
-  <<: *verify
-  image: maven:3.8.1-adoptopenjdk-15
-  cache:
-    key: "$CI_JOB_NAME-java15"
-  variables:
-    JOB_MAVEN_OVERRIDE: " -Djava.version=15 "
-
-# Verify merge requests using JDK16
-verify:jdk16:
-  <<: *verify
-  image: maven:3.8.1-adoptopenjdk-16
-  cache:
-    key: "$CI_JOB_NAME-java16"
-  variables:
-    JOB_MAVEN_OVERRIDE: " -Djava.version=16 "
-
-# Verify merge requests using JDK16
-verify:jdk16-openj9:
-  <<: *verify
-  image: maven:3.8.1-adoptopenjdk-16-openj9
-  cache:
-    key: "$CI_JOB_NAME-java16"
-  variables:
-    JOB_MAVEN_OVERRIDE: " -Djava.version=16 "
 
 site:
   stage: package
@@ -90,9 +55,8 @@ site:
     paths:
     - target/staging
   script:
-    - apt-get update -yqq
-    - apt-get install -yqq gnuplot graphviz
-    - apt-get install -yqq python3 python3-pip
+    - microdnf install gnuplot graphviz
+    - microdnf install python3 python3-pip
     - pip3 install matplotlib pandas
     - mvn test verify site site:stage -Dproject.recommended.version="${RECOMMENDED_VERSION}"
 
@@ -114,7 +78,6 @@ release:
     - if [ ! -f ci_settings.xml ];
         then echo "CI settings missing\! If deploying to GitLab Maven Repository, please see https://gitlab.com/help/user/project/packages/maven_repository.md#creating-maven-packages-with-gitlab-cicd for instructions.";
       fi
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
     - rm -rf ~/.ssh/*
     - mkdir -p ~/.ssh
@@ -127,8 +90,8 @@ release:
     - git config --global user.email "ci@bmahe.net"
     - git config --global user.name "Gitlab CI"
     - git checkout -B "$CI_BUILD_REF_NAME"
-    - apt-get update -yqq
-    - apt-get install -yqq gnuplot graphviz
+    - microdnf install gnuplot graphviz
+    - microdnf install python3 python3-pip
     - mvn $MAVEN_CLI_OPTS --batch-mode release:prepare -DtagNameFormat="r@{project.version}" -DscmCommentPrefix="[maven-release-plugin][ci skip] " -s ci_settings.xml
     - mvn $MAVEN_CLI_OPTS --batch-mode release:perform -Dgoals="deploy" -s ci_settings.xml
   when: manual

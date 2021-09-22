@@ -1,16 +1,18 @@
 package net.bmahe.genetics4j.moo.nsga2.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
@@ -38,69 +40,76 @@ public class TournamentNSGA2SelectorTest {
 			.termination(Terminations.ofMaxGeneration(100))
 			.build();
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorAllNull() {
-		new TournamentNSGA2Selector<>(null, null);
+		assertThrows(NullPointerException.class, () -> new TournamentNSGA2Selector<>(null, null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNullRandom() {
-		new TournamentNSGA2Selector<>(null, SIMPLE_TOURNAMENT_NSGA2_SELECTION_SPEC);
+		assertThrows(NullPointerException.class,
+				() -> new TournamentNSGA2Selector<>(null, SIMPLE_TOURNAMENT_NSGA2_SELECTION_SPEC));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNullSelectionSpec() {
-		new TournamentNSGA2Selector<>(new Random(), null);
+		assertThrows(NullPointerException.class, () -> new TournamentNSGA2Selector<>(new Random(), null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void selectNullEaConfiguration() {
 		final Random random = new Random();
 		final TournamentNSGA2Selection<Integer> nsga2Selection = mock(TournamentNSGA2Selection.class);
 
 		final TournamentNSGA2Selector<Integer> nsga2Selector = new TournamentNSGA2Selector<>(random, nsga2Selection);
-		nsga2Selector.select(null, 4, Collections.emptyList(), Collections.emptyList());
+		assertThrows(NullPointerException.class,
+				() -> nsga2Selector.select(null, 4, Collections.emptyList(), Collections.emptyList()));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void selectNullPopulation() {
 		final Random random = new Random();
 		final TournamentNSGA2Selection<Integer> nsga2Selection = mock(TournamentNSGA2Selection.class);
 
 		final TournamentNSGA2Selector<Integer> nsga2Selector = new TournamentNSGA2Selector<>(random, nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 4, null, Collections.emptyList());
+		assertThrows(NullPointerException.class,
+				() -> nsga2Selector.select(mock(EAConfiguration.class), 4, null, Collections.emptyList()));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void selectNullFitness() {
 		final Random random = new Random();
 		final TournamentNSGA2Selection<Integer> nsga2Selection = mock(TournamentNSGA2Selection.class);
 
 		final TournamentNSGA2Selector<Integer> nsga2Selector = new TournamentNSGA2Selector<>(random, nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 4, Collections.emptyList(), null);
+		assertThrows(NullPointerException.class,
+				() -> nsga2Selector.select(mock(EAConfiguration.class), 4, Collections.emptyList(), null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void selectNothing() {
 		final Random random = new Random();
 		final TournamentNSGA2Selection<Integer> nsga2Selection = mock(TournamentNSGA2Selection.class);
 
 		final TournamentNSGA2Selector<Integer> nsga2Selector = new TournamentNSGA2Selector<>(random, nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 0, Collections.emptyList(), Collections.emptyList());
+		assertThrows(IllegalArgumentException.class,
+				() -> nsga2Selector
+						.select(mock(EAConfiguration.class), 0, Collections.emptyList(), Collections.emptyList()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void selectPopulationFitnessDontMatch() {
 		final Random random = new Random();
 		final TournamentNSGA2Selection<Integer> nsga2Selection = mock(TournamentNSGA2Selection.class);
 
 		final TournamentNSGA2Selector<Integer> nsga2Selector = new TournamentNSGA2Selector<>(random, nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 1, Collections.emptyList(), List.of(4));
+		assertThrows(IllegalArgumentException.class,
+				() -> nsga2Selector.select(mock(EAConfiguration.class), 1, Collections.emptyList(), List.of(4)));
 	}
 
 	@Test
 	public void simple() {
-		final Random random = mock(Random.class);
+		final Random random = mock(Random.class, withSettings().withoutAnnotations());
 		when(random.nextInt(anyInt())).thenReturn(0, 1, 0, 1, 0, 1, 0, 1, 0);
 
 		final TournamentNSGA2Selector<FitnessVector<Integer>> nsga2Selector = new TournamentNSGA2Selector<>(random,

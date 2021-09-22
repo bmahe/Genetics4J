@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.gp.spec;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -34,32 +34,32 @@ public class GPEAExecutionContexts {
 	 * It adds support for some operators to select, mutate and combine programs.
 	 * 
 	 * @param <T>              Type of the fitness measurement
-	 * @param random           Random Generator
+	 * @param randomGenerator  Random Generator
 	 * @param programHelper    Instance of ProgramHelper
 	 * @param programGenerator Instance of a program generator which will be used to
 	 *                         generate individuals
 	 * @return A new instance of a EAExecutionContext
 	 */
-	public static <T extends Comparable<T>> Builder<T> forGP(final Random random, final ProgramHelper programHelper,
-			final ProgramGenerator programGenerator) {
-		Validate.notNull(random);
+	public static <T extends Comparable<T>> Builder<T> forGP(final RandomGenerator randomGenerator,
+			final ProgramHelper programHelper, final ProgramGenerator programGenerator) {
+		Validate.notNull(randomGenerator);
 		Validate.notNull(programHelper);
 		Validate.notNull(programGenerator);
 
 		final var builder = ImmutableEAExecutionContext.<T>builder();
-		builder.random(random);
+		builder.randomGenerator(randomGenerator);
 
 		builder.addMutationPolicyHandlerFactories(
-				gsd -> new ProgramRandomPrunePolicyHandler(gsd.random(), programHelper),
-				gsd -> new ProgramRandomMutatePolicyHandler(gsd.random(), programGenerator),
-				gsd -> new NodeReplacementPolicyHandler(random, programHelper),
+				gsd -> new ProgramRandomPrunePolicyHandler(gsd.randomGenerator(), programHelper),
+				gsd -> new ProgramRandomMutatePolicyHandler(gsd.randomGenerator(), programGenerator),
+				gsd -> new NodeReplacementPolicyHandler(randomGenerator, programHelper),
 				gsd -> new ProgramRulesApplicatorPolicyHandler(),
-				gsd -> new TrimTreePolicyHandler(random, programGenerator));
+				gsd -> new TrimTreePolicyHandler(randomGenerator, programGenerator));
 
-		builder.addChromosomeCombinatorHandlerFactories(gsd -> new ProgramRandomCombineHandler(gsd.random()));
+		builder.addChromosomeCombinatorHandlerFactories(gsd -> new ProgramRandomCombineHandler(gsd.randomGenerator()));
 
 		final var chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider.builder();
-		chromosomeFactoryProviderBuilder.random(random);
+		chromosomeFactoryProviderBuilder.randomGenerator(randomGenerator);
 		chromosomeFactoryProviderBuilder
 				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		builder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
@@ -74,16 +74,16 @@ public class GPEAExecutionContexts {
 	 * It adds support for some operators to select, mutate and combine programs. It
 	 * also configure a default program generation based on ramped hald and half.
 	 * 
-	 * @param <T>    Type of the fitness measurement
-	 * @param random Random Generator
+	 * @param <T>             Type of the fitness measurement
+	 * @param randomGenerator Random Generator
 	 * @return A new instance of a EAExecutionContext
 	 */
-	public static <T extends Comparable<T>> Builder<T> forGP(final Random random) {
-		Validate.notNull(random);
+	public static <T extends Comparable<T>> Builder<T> forGP(final RandomGenerator randomGenerator) {
+		Validate.notNull(randomGenerator);
 
-		final var programHelper = new ProgramHelper(random);
-		final var programGenerator = new RampedHalfAndHalfProgramGenerator(random, programHelper);
+		final var programHelper = new ProgramHelper(randomGenerator);
+		final var programGenerator = new RampedHalfAndHalfProgramGenerator(randomGenerator, programHelper);
 
-		return forGP(random, programHelper, programGenerator);
+		return forGP(randomGenerator, programHelper, programGenerator);
 	}
 }

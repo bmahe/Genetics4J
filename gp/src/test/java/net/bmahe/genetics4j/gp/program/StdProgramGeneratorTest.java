@@ -1,7 +1,8 @@
 package net.bmahe.genetics4j.gp.program;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -10,7 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
@@ -22,10 +23,10 @@ import net.bmahe.genetics4j.gp.math.Terminals;
 
 public class StdProgramGeneratorTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void checkNoParamCtor() {
 
-		final StdProgramGenerator programGenerator = new StdProgramGenerator(null, null);
+		assertThrows(NullPointerException.class, () -> new StdProgramGenerator(null, null));
 	}
 
 	@Test
@@ -45,8 +46,8 @@ public class StdProgramGeneratorTest {
 		functions.add(Functions.EXP);
 		when(mockProgram.functions()).thenReturn(functions);
 
-		final OperationFactory spaceStringTerminalFactory = OperationFactories.ofTerminal("SpaceString", String.class,
-				() -> StringUtils.SPACE);
+		final OperationFactory spaceStringTerminalFactory = OperationFactories
+				.ofTerminal("SpaceString", String.class, () -> StringUtils.SPACE);
 		// Used a linkedhashset to have a predictable iteration
 		final LinkedHashSet<OperationFactory> terminals = new LinkedHashSet<>();
 		terminals.add(Terminals.PI);
@@ -63,8 +64,8 @@ public class StdProgramGeneratorTest {
 		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final TreeNode<Operation<?>> program = programGenerator.generate(mockProgram, 3);
-		assertTrue("Message longer than expected. Depth: " + program.getDepth() + "; Program: " + program,
-				program.getDepth() <= 3);
+		assertTrue(program.getDepth() <= 3,
+				"Message longer than expected. Depth: " + program.getDepth() + "; Program: " + program);
 	}
 
 	@Test
@@ -85,8 +86,8 @@ public class StdProgramGeneratorTest {
 		functions.add(OperationFactories.ofUnary("toString", Double.class, String.class, (d) -> Double.toString(d)));
 		when(mockProgram.functions()).thenReturn(functions);
 
-		final OperationFactory spaceStringTerminalFactory = OperationFactories.ofTerminal("SpaceString", String.class,
-				() -> StringUtils.SPACE);
+		final OperationFactory spaceStringTerminalFactory = OperationFactories
+				.ofTerminal("SpaceString", String.class, () -> StringUtils.SPACE);
 		// Used a linkedhashset to have a predictable iteration
 		final LinkedHashSet<OperationFactory> terminals = new LinkedHashSet<>();
 		terminals.add(Terminals.PI);
@@ -103,8 +104,8 @@ public class StdProgramGeneratorTest {
 		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final TreeNode<Operation<String>> program = programGenerator.generate(mockProgram, 3, String.class);
-		assertTrue("Message longer than expected. Depth: " + program.getDepth() + "; Program: " + program,
-				program.getDepth() <= 3);
+		assertTrue(program.getDepth() <= 3,
+				"Message longer than expected. Depth: " + program.getDepth() + "; Program: " + program);
 		assertEquals(String.class, program.getData().returnedType());
 	}
 }

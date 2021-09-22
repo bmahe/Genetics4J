@@ -46,8 +46,8 @@
 
 		<!-- Test dependencies -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
 
@@ -78,6 +78,9 @@
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
+				<configuration>
+					<skip>${skipPITests}</skip>
+				</configuration>
 				<reportSets>
 					<reportSet>
 						<reports>

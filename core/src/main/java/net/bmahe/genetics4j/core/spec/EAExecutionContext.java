@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Function;
+import java.util.random.RandomGenerator;
 
 import org.immutables.value.Value;
 
@@ -62,13 +62,13 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 
 	@Value.Default
 	public List<ChromosomeCombinatorHandler> defaultChromosomeCombinatorHandlers() {
-		return Arrays.asList(new MultiCombinationsHandler(random()),
-				new IntOrderCrossoverHandler(random()),
-				new MultiPointCrossoverCombinationHandler(random()),
-				new MultiPointArithmeticCombinationHandler(random()),
-				new SinglePointCrossoverHandler(random()),
-				new SinglePointArithmeticCombinationHandler(random()),
-				new EdgeRecombinationCrossoverHandler(random()),
+		return Arrays.asList(new MultiCombinationsHandler(randomGenerator()),
+				new IntOrderCrossoverHandler(randomGenerator()),
+				new MultiPointCrossoverCombinationHandler(randomGenerator()),
+				new MultiPointArithmeticCombinationHandler(randomGenerator()),
+				new SinglePointCrossoverHandler(randomGenerator()),
+				new SinglePointArithmeticCombinationHandler(randomGenerator()),
+				new EdgeRecombinationCrossoverHandler(randomGenerator()),
 				new PickFirstParentHandler());
 	}
 
@@ -95,11 +95,11 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 
 	@Value.Default
 	public List<SelectionPolicyHandler<T>> defaultSelectionPolicyHandlers() {
-		return Arrays.asList(new RandomSelectionPolicyHandler<T>(random()),
-				new TournamentSelectionPolicyHandler<T>(random()),
-				new DoubleTournamentSelectionPolicyHandler<T>(random()),
-				new ProportionalTournamentSelectionPolicyHandler<T>(random()),
-				new MultiTournamentsSelectionPolicyHandler<T>(random()),
+		return Arrays.asList(new RandomSelectionPolicyHandler<T>(randomGenerator()),
+				new TournamentSelectionPolicyHandler<T>(randomGenerator()),
+				new DoubleTournamentSelectionPolicyHandler<T>(randomGenerator()),
+				new ProportionalTournamentSelectionPolicyHandler<T>(randomGenerator()),
+				new MultiTournamentsSelectionPolicyHandler<T>(randomGenerator()),
 				new MultiSelectionsPolicyHandler<T>(),
 				new SelectAllPolicyHandler<T>());
 	}
@@ -127,11 +127,11 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 
 	@Value.Default
 	public List<MutationPolicyHandler> defaultMutationPolicyHandlers() {
-		return Arrays.asList(new RandomMutationPolicyHandler(random()),
-				new SwapMutationPolicyHandler(random()),
-				new MultiMutationsPolicyHandler(random()),
+		return Arrays.asList(new RandomMutationPolicyHandler(randomGenerator()),
+				new SwapMutationPolicyHandler(randomGenerator()),
+				new MultiMutationsPolicyHandler(randomGenerator()),
 				new PartialMutationPolicyHandler(),
-				new CreepMutationPolicyHandler(random()));
+				new CreepMutationPolicyHandler(randomGenerator()));
 	}
 
 	public abstract List<Function<EAExecutionContext<T>, MutationPolicyHandler>> mutationPolicyHandlerFactories();
@@ -157,14 +157,14 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 
 	@Value.Default
 	public List<ChromosomeMutationHandler<? extends Chromosome>> defaultChromosomeMutationPolicyHandlers() {
-		return Arrays.asList(new BitChromosomeRandomMutationHandler(random()),
-				new IntChromosomeRandomMutationHandler(random()),
-				new DoubleChromosomeRandomMutationHandler(random()),
-				new BitChromosomeSwapMutationHandler(random()),
-				new IntChromosomeSwapMutationHandler(random()),
-				new DoubleChromosomeSwapMutationHandler(random()),
-				new IntChromosomeCreepMutationHandler(random()),
-				new DoubleChromosomeCreepMutationHandler(random()));
+		return Arrays.asList(new BitChromosomeRandomMutationHandler(randomGenerator()),
+				new IntChromosomeRandomMutationHandler(randomGenerator()),
+				new DoubleChromosomeRandomMutationHandler(randomGenerator()),
+				new BitChromosomeSwapMutationHandler(randomGenerator()),
+				new IntChromosomeSwapMutationHandler(randomGenerator()),
+				new DoubleChromosomeSwapMutationHandler(randomGenerator()),
+				new IntChromosomeCreepMutationHandler(randomGenerator()),
+				new DoubleChromosomeCreepMutationHandler(randomGenerator()));
 	}
 
 	public abstract List<Function<EAExecutionContext<T>, ChromosomeMutationHandler<? extends Chromosome>>> chromosomeMutationPolicyHandlerFactories();
@@ -214,8 +214,8 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 	/////////////////////////////////////////
 
 	@Value.Default
-	public Random random() {
-		return new Random();
+	public RandomGenerator randomGenerator() {
+		return RandomGenerator.getDefault();
 	}
 
 	@Value.Default
@@ -236,7 +236,7 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 
 	@Value.Default
 	public ChromosomeFactoryProvider chromosomeFactoryProvider() {
-		return ImmutableChromosomeFactoryProvider.builder().random(random()).build();
+		return ImmutableChromosomeFactoryProvider.builder().randomGenerator(randomGenerator()).build();
 	}
 
 	@Value.Default

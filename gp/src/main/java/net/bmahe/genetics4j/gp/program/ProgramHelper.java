@@ -1,8 +1,8 @@
 package net.bmahe.genetics4j.gp.program;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,12 +12,12 @@ import net.bmahe.genetics4j.gp.OperationFactory;
 
 public class ProgramHelper {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public ProgramHelper(final Random _random) {
-		Validate.notNull(_random);
+	public ProgramHelper(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	public OperationFactory pickRandomFunction(final Program program) {
@@ -25,7 +25,7 @@ public class ProgramHelper {
 		Validate.isTrue(program.functions().size() > 0);
 
 		final Set<OperationFactory> functions = program.functions();
-		return functions.stream().skip(random.nextInt(functions.size())).findFirst().get();
+		return functions.stream().skip(randomGenerator.nextInt(functions.size())).findFirst().get();
 	}
 
 	public <T> OperationFactory pickRandomFunction(final Program program, final Class<T> requiredClass) {
@@ -43,7 +43,7 @@ public class ProgramHelper {
 			throw new IllegalArgumentException("Could not find a suitable function returning a " + requiredClass);
 		}
 
-		return candidates.get(random.nextInt(candidates.size()));
+		return candidates.get(randomGenerator.nextInt(candidates.size()));
 	}
 
 	public <T> OperationFactory pickRandomTerminal(final Program program, final Class<T> requiredClass) {
@@ -60,7 +60,7 @@ public class ProgramHelper {
 			throw new IllegalArgumentException("Could not find a suitable terminal returning a " + requiredClass);
 		}
 
-		return candidates.get(random.nextInt(candidates.size()));
+		return candidates.get(randomGenerator.nextInt(candidates.size()));
 	}
 
 	public OperationFactory pickRandomTerminal(final Program program) {
@@ -69,7 +69,7 @@ public class ProgramHelper {
 		final Set<OperationFactory> terminals = program.terminal();
 		final List<OperationFactory> candidates = terminals.stream().collect(Collectors.toList());
 
-		return candidates.get(random.nextInt(candidates.size()));
+		return candidates.get(randomGenerator.nextInt(candidates.size()));
 	}
 
 	public OperationFactory pickRandomFunctionOrTerminal(final Program program) {
@@ -80,7 +80,7 @@ public class ProgramHelper {
 		final int totalNumberCandidates = terminals.size() + functions.size();
 
 		final Stream<OperationFactory> candidates = Stream.concat(terminals.stream(), functions.stream());
-		final int chosenCandidate = random.nextInt(totalNumberCandidates);
+		final int chosenCandidate = randomGenerator.nextInt(totalNumberCandidates);
 
 		return candidates.skip(chosenCandidate).findFirst().get();
 	}
@@ -99,7 +99,7 @@ public class ProgramHelper {
 				.filter((operationFactory) -> operationFactory.returnedType().isAssignableFrom(requiredClass))
 				.collect(Collectors.toList());
 
-		final int chosenCandidate = random.nextInt(filteredCandidates.size());
+		final int chosenCandidate = randomGenerator.nextInt(filteredCandidates.size());
 
 		return filteredCandidates.get(chosenCandidate);
 	}

@@ -1,15 +1,16 @@
 package net.bmahe.genetics4j.moo.nsga2.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.factory.BitChromosomeFactory;
@@ -36,54 +37,60 @@ public class NSGA2SelectorTest {
 			.termination(Terminations.ofMaxGeneration(100))
 			.build();
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNoSelectionPolicy() {
-		new NSGA2Selector<>(null);
+		assertThrows(NullPointerException.class, () -> new NSGA2Selector<>(null));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void selectNullEaConfiguration() {
 
 		final NSGA2Selection<Integer> nsga2Selection = mock(NSGA2Selection.class);
 
 		final NSGA2Selector<Integer> nsga2Selector = new NSGA2Selector<>(nsga2Selection);
-		nsga2Selector.select(null, 4, Collections.emptyList(), Collections.emptyList());
+		assertThrows(NullPointerException.class,
+				() -> nsga2Selector.select(null, 4, Collections.emptyList(), Collections.emptyList()));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void selectNullPopulation() {
 
 		final NSGA2Selection<Integer> nsga2Selection = mock(NSGA2Selection.class);
 
 		final NSGA2Selector<Integer> nsga2Selector = new NSGA2Selector<>(nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 4, null, Collections.emptyList());
+		assertThrows(NullPointerException.class,
+				() -> nsga2Selector.select(mock(EAConfiguration.class), 4, null, Collections.emptyList()));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void selectNullFitness() {
 
 		final NSGA2Selection<Integer> nsga2Selection = mock(NSGA2Selection.class);
 
 		final NSGA2Selector<Integer> nsga2Selector = new NSGA2Selector<>(nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 4, Collections.emptyList(), null);
+		assertThrows(NullPointerException.class,
+				() -> nsga2Selector.select(mock(EAConfiguration.class), 4, Collections.emptyList(), null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void selectNothing() {
 
 		final NSGA2Selection<Integer> nsga2Selection = mock(NSGA2Selection.class);
 
 		final NSGA2Selector<Integer> nsga2Selector = new NSGA2Selector<>(nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 0, Collections.emptyList(), Collections.emptyList());
+		assertThrows(IllegalArgumentException.class,
+				() -> nsga2Selector
+						.select(mock(EAConfiguration.class), 0, Collections.emptyList(), Collections.emptyList()));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void selectPopulationFitnessDontMatch() {
 
 		final NSGA2Selection<Integer> nsga2Selection = mock(NSGA2Selection.class);
 
 		final NSGA2Selector<Integer> nsga2Selector = new NSGA2Selector<>(nsga2Selection);
-		nsga2Selector.select(mock(EAConfiguration.class), 1, Collections.emptyList(), List.of(4));
+		assertThrows(IllegalArgumentException.class,
+				() -> nsga2Selector.select(mock(EAConfiguration.class), 1, Collections.emptyList(), List.of(4)));
 	}
 
 	@Test
@@ -106,8 +113,7 @@ public class NSGA2SelectorTest {
 				new FitnessVector<>(-10, -10),
 				new FitnessVector<>(2, 1));
 
-		final var selectedTopOne = nsga2Selector
-				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 1, population, fitnessScore);
+		final var selectedTopOne = nsga2Selector.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 1, population, fitnessScore);
 		assertNotNull(selectedTopOne);
 		assertEquals(1, selectedTopOne.size());
 		assertEquals(population.get(1), selectedTopOne.getGenotype(0));

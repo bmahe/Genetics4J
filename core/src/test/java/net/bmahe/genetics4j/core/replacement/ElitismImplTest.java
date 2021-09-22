@@ -1,14 +1,15 @@
 package net.bmahe.genetics4j.core.replacement;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
@@ -37,7 +38,7 @@ public class ElitismImplTest {
 			.termination(Terminations.ofMaxGeneration(100))
 			.build();
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNoElitismSpec() {
 		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)
@@ -52,10 +53,10 @@ public class ElitismImplTest {
 				selectionPolicyHandlerResolver,
 				SelectAll.build());
 
-		final ElitismImpl<Double> elitismImpl = new ElitismImpl<>(null, allSelector, allSelector);
+		assertThrows(NullPointerException.class, () -> new ElitismImpl<>(null, allSelector, allSelector));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNoOffspringSelector() {
 		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)
@@ -76,10 +77,10 @@ public class ElitismImplTest {
 				.offspringRatio(0.5)
 				.build();
 
-		final ElitismImpl<Double> elitismImpl = new ElitismImpl<>(elitismSpec, null, allSelector);
+		assertThrows(NullPointerException.class, () -> new ElitismImpl<>(elitismSpec, null, allSelector));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNoSurvivorSelector() {
 		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)
@@ -100,7 +101,7 @@ public class ElitismImplTest {
 				.offspringRatio(0.5)
 				.build();
 
-		final ElitismImpl<Double> elitismImpl = new ElitismImpl<>(elitismSpec, allSelector, null);
+		assertThrows(NullPointerException.class, () -> new ElitismImpl<>(elitismSpec, allSelector, null));
 	}
 
 	@Test

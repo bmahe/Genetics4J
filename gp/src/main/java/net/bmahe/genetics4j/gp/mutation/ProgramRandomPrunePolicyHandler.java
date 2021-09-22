@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.gp.mutation;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -15,14 +15,14 @@ import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 
 public class ProgramRandomPrunePolicyHandler implements MutationPolicyHandler {
 
-	final Random random;
+	final RandomGenerator randomGenerator;
 	final ProgramHelper programHelper;
 
-	public ProgramRandomPrunePolicyHandler(final Random _random, final ProgramHelper _programHelper) {
-		Validate.notNull(_random);
+	public ProgramRandomPrunePolicyHandler(final RandomGenerator _randomGenerator, final ProgramHelper _programHelper) {
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_programHelper);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.programHelper = _programHelper;
 	}
 
@@ -47,6 +47,7 @@ public class ProgramRandomPrunePolicyHandler implements MutationPolicyHandler {
 		final ProgramRandomPrune programRandomPrune = (ProgramRandomPrune) mutationPolicy;
 		final double populationMutationProbability = programRandomPrune.populationMutationProbability();
 
-		return new ProgramRandomPruneMutator(programHelper, random, eaConfiguration, populationMutationProbability);
+		return new ProgramRandomPruneMutator(programHelper, randomGenerator, eaConfiguration,
+				populationMutationProbability);
 	}
 }

@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.mutation.chromosome.randommutation;
 
 import java.util.Arrays;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -15,12 +15,12 @@ import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 
 public class IntChromosomeRandomMutationHandler implements ChromosomeMutationHandler<IntChromosome> {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public IntChromosomeRandomMutationHandler(final Random _random) {
-		Validate.notNull(_random);
+	public IntChromosomeRandomMutationHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -42,8 +42,8 @@ public class IntChromosomeRandomMutationHandler implements ChromosomeMutationHan
 
 		final int[] newValues = Arrays.copyOf(intChromosome.getValues(), intChromosome.getNumAlleles());
 
-		final int alleleFlipIndex = random.nextInt(intChromosome.getNumAlleles());
-		newValues[alleleFlipIndex] = random.nextInt(intChromosome.getMaxValue() - intChromosome.getMinValue())
+		final int alleleFlipIndex = randomGenerator.nextInt(intChromosome.getNumAlleles());
+		newValues[alleleFlipIndex] = randomGenerator.nextInt(intChromosome.getMaxValue() - intChromosome.getMinValue())
 				+ intChromosome.getMinValue();
 
 		return new IntChromosome(intChromosome.getSize(), intChromosome.getMinValue(), intChromosome.getMaxValue(),

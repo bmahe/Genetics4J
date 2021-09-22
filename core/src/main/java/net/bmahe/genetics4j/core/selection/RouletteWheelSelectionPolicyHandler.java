@@ -2,7 +2,7 @@ package net.bmahe.genetics4j.core.selection;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -17,12 +17,12 @@ import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T>>
 		implements SelectionPolicyHandler<T> {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public RouletteWheelSelectionPolicyHandler(final Random _random) {
-		Validate.notNull(_random);
+	public RouletteWheelSelectionPolicyHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -49,12 +49,11 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 				Validate.isTrue(population.size() == fitnessScore.size());
 
 				switch (eaConfiguration.optimization()) {
-					case MAXIMZE:
-					case MINIMIZE:
-						break;
-					default:
-						throw new IllegalArgumentException(
-								"Unsupported optimization " + eaConfiguration.optimization());
+				case MAXIMZE:
+				case MINIMIZE:
+					break;
+				default:
+					throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 				}
 
 				final Population<T> selectedIndividuals = new Population<>();
@@ -82,7 +81,7 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 				}
 
 				for (int i = 0; i < numIndividuals; i++) {
-					final double targetScore = random.nextDouble() * sumFitness;
+					final double targetScore = randomGenerator.nextDouble() * sumFitness;
 
 					int index = 0;
 					while (probabilities[index] < targetScore) {

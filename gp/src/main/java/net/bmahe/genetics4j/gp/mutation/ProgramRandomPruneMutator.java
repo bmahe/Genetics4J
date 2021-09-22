@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.gp.mutation;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -21,19 +21,19 @@ import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 public class ProgramRandomPruneMutator implements Mutator {
 
 	private final ProgramHelper programHelper;
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 	private final EAConfiguration eaConfiguration;
 	private final double populationMutationProbability;
 
-	public ProgramRandomPruneMutator(final ProgramHelper _programHelper, final Random _random,
+	public ProgramRandomPruneMutator(final ProgramHelper _programHelper, final RandomGenerator _randomGenerator,
 			final EAConfiguration _eaConfiguration, final double populationMutationProbability) {
 		Validate.notNull(_programHelper);
-		Validate.notNull(_random);
+		Validate.notNull(_randomGenerator);
 		Validate.notNull(_eaConfiguration);
 		Validate.inclusiveBetween(0.0, 1.0, populationMutationProbability);
 
 		this.programHelper = _programHelper;
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 		this.eaConfiguration = _eaConfiguration;
 		this.populationMutationProbability = populationMutationProbability;
 	}
@@ -72,7 +72,7 @@ public class ProgramRandomPruneMutator implements Mutator {
 	public Genotype mutate(final Genotype original) {
 		Validate.notNull(original);
 
-		if (random.nextDouble() < populationMutationProbability == false) {
+		if (randomGenerator.nextDouble() < populationMutationProbability == false) {
 			return original;
 		}
 
@@ -97,7 +97,7 @@ public class ProgramRandomPruneMutator implements Mutator {
 			final int chromosomeSize = treeChromosome.getSize();
 
 			if (chromosomeSize > 2) {
-				final int cutPoint = random.nextInt(chromosomeSize - 1) + 1;
+				final int cutPoint = randomGenerator.nextInt(chromosomeSize - 1) + 1;
 
 				final TreeNode<Operation<?>> root = treeChromosome.getRoot();
 				final TreeNode<Operation<?>> newRoot = duplicateAndCut(programTreeChromosomeSpec.program(),

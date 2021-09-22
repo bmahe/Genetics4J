@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.core.combination.multipointarithmetic;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -15,12 +15,12 @@ import net.bmahe.genetics4j.core.spec.combination.MultiPointArithmetic;
 
 public class MultiPointArithmeticCombinationHandler implements ChromosomeCombinatorHandler {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public MultiPointArithmeticCombinationHandler(final Random _random) {
-		Validate.notNull(_random);
+	public MultiPointArithmeticCombinationHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -43,11 +43,11 @@ public class MultiPointArithmeticCombinationHandler implements ChromosomeCombina
 		Validate.isInstanceOf(MultiPointArithmetic.class, combinationPolicy);
 
 		if (chromosome instanceof IntChromosomeSpec) {
-			return new IntChromosomeMultiPointArithmetic(random, (MultiPointArithmetic) combinationPolicy);
+			return new IntChromosomeMultiPointArithmetic(randomGenerator, (MultiPointArithmetic) combinationPolicy);
 		}
 
 		if (chromosome instanceof DoubleChromosomeSpec) {
-			return new DoubleChromosomeMultiPointArithmetic(random, (MultiPointArithmetic) combinationPolicy);
+			return new DoubleChromosomeMultiPointArithmetic(randomGenerator, (MultiPointArithmetic) combinationPolicy);
 		}
 
 		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);

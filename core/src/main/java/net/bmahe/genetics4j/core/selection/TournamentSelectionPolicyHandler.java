@@ -2,7 +2,7 @@ package net.bmahe.genetics4j.core.selection;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -20,12 +20,12 @@ import net.bmahe.genetics4j.core.spec.selection.Tournament;
 public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implements SelectionPolicyHandler<T> {
 	final static public Logger logger = LogManager.getLogger(TournamentSelectionPolicyHandler.class);
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public TournamentSelectionPolicyHandler(final Random _random) {
-		Validate.notNull(_random);
+	public TournamentSelectionPolicyHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -57,12 +57,11 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 				final Tournament<T> tournamentSelection = (Tournament<T>) selectionPolicy;
 
 				switch (eaConfiguration.optimization()) {
-					case MAXIMZE:
-					case MINIMIZE:
-						break;
-					default:
-						throw new IllegalArgumentException(
-								"Unsupported optimization " + eaConfiguration.optimization());
+				case MAXIMZE:
+				case MINIMIZE:
+					break;
+				default:
+					throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 				}
 
 				final Comparator<Individual<T>> baseComparator = tournamentSelection.comparator();
@@ -78,7 +77,7 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 					Individual<T> bestIndividual = null;
 
 					for (int i = 0; i < tournamentSelection.numCandidates(); i++) {
-						final int candidateIndex = random.nextInt(fitnessScore.size());
+						final int candidateIndex = randomGenerator.nextInt(fitnessScore.size());
 						final Individual<T> candidate = Individual.of(population.get(candidateIndex),
 								fitnessScore.get(candidateIndex));
 

@@ -3,8 +3,8 @@ package net.bmahe.genetics4j.core.chromosomes.factory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Function;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
@@ -15,15 +15,15 @@ import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 @Value.Immutable
 public abstract class ChromosomeFactoryProvider {
 
-	public abstract Random random();
+	public abstract RandomGenerator randomGenerator();
 
 	@Value.Default
 	public List<ChromosomeFactory<? extends Chromosome>> defaultChromosomeFactories() {
-		final var random = random();
+		final var randomGenerator = randomGenerator();
 
-		return Arrays.asList(new BitChromosomeFactory(random),
-				new IntChromosomeFactory(random),
-				new DoubleChromosomeFactory(random));
+		return Arrays.asList(new BitChromosomeFactory(randomGenerator),
+				new IntChromosomeFactory(randomGenerator),
+				new DoubleChromosomeFactory(randomGenerator));
 	}
 
 	public abstract List<Function<ChromosomeFactoryProvider, ChromosomeFactory<? extends Chromosome>>> chromosomeFactoriesGenerator();

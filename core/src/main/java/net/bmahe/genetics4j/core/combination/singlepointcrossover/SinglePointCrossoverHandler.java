@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.core.combination.singlepointcrossover;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -16,12 +16,12 @@ import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 
 public class SinglePointCrossoverHandler implements ChromosomeCombinatorHandler {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public SinglePointCrossoverHandler(final Random _random) {
-		Validate.notNull(_random);
+	public SinglePointCrossoverHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -44,18 +44,17 @@ public class SinglePointCrossoverHandler implements ChromosomeCombinatorHandler 
 		Validate.isInstanceOf(SinglePointCrossover.class, combinationPolicy);
 
 		if (chromosome instanceof BitChromosomeSpec) {
-			return new BitChromosomeSinglePointCrossover(random);
+			return new BitChromosomeSinglePointCrossover(randomGenerator);
 		}
 
 		if (chromosome instanceof IntChromosomeSpec) {
-			return new IntChromosomeSinglePointCrossover(random);
+			return new IntChromosomeSinglePointCrossover(randomGenerator);
 		}
 
 		if (chromosome instanceof DoubleChromosomeSpec) {
-			return new DoubleChromosomeSinglePointCrossover(random);
+			return new DoubleChromosomeSinglePointCrossover(randomGenerator);
 		}
 
 		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);
 	}
-
 }

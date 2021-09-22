@@ -1,9 +1,9 @@
 package net.bmahe.genetics4j.gp.math;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CoefficientOperationTest {
 
@@ -35,12 +35,8 @@ public class CoefficientOperationTest {
 		assertEquals(NAME, coefficientOperation.getName());
 		assertEquals(Long.class, coefficientOperation.returnedType());
 		assertNotNull(coefficientOperation.acceptedTypes());
-		assertEquals(0,
-				coefficientOperation.acceptedTypes()
-						.size());
+		assertEquals(0, coefficientOperation.acceptedTypes().size());
 		assertNotNull(coefficientOperation.compute());
-		assertEquals(VALUE,
-				coefficientOperation.compute()
-						.apply(null, null));
+		assertEquals(VALUE, coefficientOperation.compute().apply(null, null));
 	}
 }

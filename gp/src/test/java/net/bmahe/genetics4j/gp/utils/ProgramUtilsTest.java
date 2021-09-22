@@ -1,13 +1,14 @@
 package net.bmahe.genetics4j.gp.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
@@ -97,17 +98,17 @@ public class ProgramUtilsTest {
 		simpleInput(1, false, false);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void incompatibleInput() {
-		simpleInput(2, false, true);
+		assertThrows(IllegalArgumentException.class, () -> simpleInput(2, false, true));
 	}
 
 	public void complexOperators(final boolean value0, final boolean value1, final boolean outputValue) {
 		final InputSpec inputSpec = ImmutableInputSpec.of(List.of(Boolean.class, Boolean.class, String.class));
 
 		final TreeNode<Operation<?>> treeNode = TreeNode.of(AND.build(inputSpec),
-				List.of(TreeNode.of(NOT.build(inputSpec),
-						List.of(new TreeNode<>(Input(0, Boolean.class).build(inputSpec)))),
+				List.of(
+						TreeNode.of(NOT.build(inputSpec), List.of(new TreeNode<>(Input(0, Boolean.class).build(inputSpec)))),
 						new TreeNode<>(Input(1, Boolean.class).build(inputSpec))));
 
 		final TreeChromosome<Operation<?>> treeChromosome = new TreeChromosome<>(treeNode);

@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.mutation.chromosome.swapmutation;
 
 import java.util.Arrays;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -15,12 +15,12 @@ import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
 
 public class DoubleChromosomeSwapMutationHandler implements ChromosomeMutationHandler<DoubleChromosome> {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public DoubleChromosomeSwapMutationHandler(final Random _random) {
-		Validate.notNull(_random);
+	public DoubleChromosomeSwapMutationHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class DoubleChromosomeSwapMutationHandler implements ChromosomeMutationHa
 
 		final SwapMutation swapMutation = (SwapMutation) mutationPolicy;
 		final int numSwap = swapMutation.isNumSwapFixed() ? swapMutation.numSwap()
-				: 1 + random.nextInt(swapMutation.numSwap());
+				: 1 + randomGenerator.nextInt(swapMutation.numSwap());
 
 		final DoubleChromosome doubleChromosome = (DoubleChromosome) chromosome;
 
@@ -48,8 +48,8 @@ public class DoubleChromosomeSwapMutationHandler implements ChromosomeMutationHa
 		final double[] newValues = Arrays.copyOf(values, values.length);
 
 		for (int i = 0; i < numSwap; i++) {
-			final int value1Index = random.nextInt(doubleChromosome.getNumAlleles());
-			final int value2Index = random.nextInt(doubleChromosome.getNumAlleles());
+			final int value1Index = randomGenerator.nextInt(doubleChromosome.getNumAlleles());
+			final int value2Index = randomGenerator.nextInt(doubleChromosome.getNumAlleles());
 
 			final double value1 = newValues[value1Index];
 			final double value2 = newValues[value2Index];

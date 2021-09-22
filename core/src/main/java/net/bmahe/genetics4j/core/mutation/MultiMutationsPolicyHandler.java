@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.mutation;
 
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
@@ -14,12 +14,12 @@ import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
 public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public MultiMutationsPolicyHandler(final Random _random) {
-		Validate.notNull(_random);
+	public MultiMutationsPolicyHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
 			public Genotype mutate(final Genotype original) {
 				Validate.notNull(original);
 
-				final int selectedMutatorIndex = random.nextInt(mutators.size());
+				final int selectedMutatorIndex = randomGenerator.nextInt(mutators.size());
 
 				return mutators.get(selectedMutatorIndex).mutate(original);
 			}

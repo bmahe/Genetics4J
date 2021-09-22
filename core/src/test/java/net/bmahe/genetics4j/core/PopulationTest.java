@@ -1,34 +1,35 @@
 package net.bmahe.genetics4j.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 
 public class PopulationTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNoGenotype() {
-		new Population<Integer>(null, Collections.emptyList());
+		assertThrows(NullPointerException.class, () -> new Population<Integer>(null, Collections.emptyList()));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void ctorNoFitness() {
-		new Population<Integer>(Collections.emptyList(), null);
+		assertThrows(NullPointerException.class, () -> new Population<Integer>(Collections.emptyList(), null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void ctorDifferentSizes() {
-		new Population<Integer>(Collections.emptyList(), List.of(1));
+		assertThrows(IllegalArgumentException.class, () -> new Population<Integer>(Collections.emptyList(), List.of(1)));
 	}
 
 	@Test

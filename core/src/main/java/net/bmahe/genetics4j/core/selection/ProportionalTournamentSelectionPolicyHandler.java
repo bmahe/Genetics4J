@@ -1,6 +1,6 @@
 package net.bmahe.genetics4j.core.selection;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -11,12 +11,12 @@ import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
 public class ProportionalTournamentSelectionPolicyHandler<T extends Comparable<T>>
 		implements SelectionPolicyHandler<T> {
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public ProportionalTournamentSelectionPolicyHandler(final Random _random) {
-		Validate.notNull(_random);
+	public ProportionalTournamentSelectionPolicyHandler(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -34,6 +34,6 @@ public class ProportionalTournamentSelectionPolicyHandler<T extends Comparable<T
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(ProportionalTournament.class, selectionPolicy);
 
-		return new ProportionalTournamentSelector<T>(selectionPolicy, random);
+		return new ProportionalTournamentSelector<T>(selectionPolicy, randomGenerator);
 	}
 }

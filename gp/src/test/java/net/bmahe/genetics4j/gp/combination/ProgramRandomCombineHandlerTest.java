@@ -1,13 +1,14 @@
 package net.bmahe.genetics4j.gp.combination;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
@@ -32,9 +33,9 @@ import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
 
 public class ProgramRandomCombineHandlerTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void noRandomParameter() {
-		new ProgramRandomCombineHandler(null);
+		assertThrows(NullPointerException.class, () -> new ProgramRandomCombineHandler(null));
 	}
 
 	@Test
@@ -73,7 +74,7 @@ public class ProgramRandomCombineHandlerTest {
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
-		chromosomeFactoryProviderBuilder.random(random);
+		chromosomeFactoryProviderBuilder.randomGenerator(random);
 		chromosomeFactoryProviderBuilder
 				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
@@ -133,7 +134,7 @@ public class ProgramRandomCombineHandlerTest {
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
-		chromosomeFactoryProviderBuilder.random(random);
+		chromosomeFactoryProviderBuilder.randomGenerator(random);
 		chromosomeFactoryProviderBuilder
 				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
@@ -152,7 +153,7 @@ public class ProgramRandomCombineHandlerTest {
 		assertNotNull(chromosomeCombinator);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void resolveNoResolver() {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
@@ -171,11 +172,11 @@ public class ProgramRandomCombineHandlerTest {
 
 		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
 
-		final ChromosomeCombinator chromosomeCombinator = programRandomCombineHandler
-				.resolve(null, programRandomCombine, programTreeChromosomeSpec);
+		assertThrows(NullPointerException.class,
+				() -> programRandomCombineHandler.resolve(null, programRandomCombine, programTreeChromosomeSpec));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void resolveNoCombinationPolicy() {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
@@ -201,7 +202,7 @@ public class ProgramRandomCombineHandlerTest {
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
-		chromosomeFactoryProviderBuilder.random(random);
+		chromosomeFactoryProviderBuilder.randomGenerator(random);
 		chromosomeFactoryProviderBuilder
 				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
@@ -214,11 +215,11 @@ public class ProgramRandomCombineHandlerTest {
 
 		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
 
-		final ChromosomeCombinator chromosomeCombinator = programRandomCombineHandler
-				.resolve(chromosomeCombinatorResolver, null, programTreeChromosomeSpec);
+		assertThrows(NullPointerException.class,
+				() -> programRandomCombineHandler.resolve(chromosomeCombinatorResolver, null, programTreeChromosomeSpec));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void resolveNoChromosomeSpec() {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
@@ -236,7 +237,7 @@ public class ProgramRandomCombineHandlerTest {
 
 		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
 				.builder();
-		chromosomeFactoryProviderBuilder.random(random);
+		chromosomeFactoryProviderBuilder.randomGenerator(random);
 		chromosomeFactoryProviderBuilder
 				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
@@ -249,7 +250,7 @@ public class ProgramRandomCombineHandlerTest {
 
 		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
 
-		final ChromosomeCombinator chromosomeCombinator = programRandomCombineHandler
-				.resolve(chromosomeCombinatorResolver, programRandomCombine, null);
+		assertThrows(NullPointerException.class,
+				() -> programRandomCombineHandler.resolve(chromosomeCombinatorResolver, programRandomCombine, null));
 	}
 }

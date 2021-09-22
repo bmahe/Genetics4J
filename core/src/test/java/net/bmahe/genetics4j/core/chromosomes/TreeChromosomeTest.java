@@ -1,17 +1,18 @@
 package net.bmahe.genetics4j.core.chromosomes;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TreeChromosomeTest {
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void nullRootCtor() {
-		new TreeChromosome<>(null);
+		assertThrows(NullPointerException.class, () -> new TreeChromosome<>(null));
 	}
 
 	@Test

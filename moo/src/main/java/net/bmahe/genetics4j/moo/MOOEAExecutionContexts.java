@@ -16,7 +16,7 @@ public class MOOEAExecutionContexts {
 		Validate.notNull(builder);
 
 		builder.addSelectionPolicyHandlerFactories((gsd) -> new NSGA2SelectionPolicyHandler<T>(),
-				gsd -> new TournamentNSGA2SelectionPolicyHandler<T>(gsd.random()));
+				gsd -> new TournamentNSGA2SelectionPolicyHandler<T>(gsd.randomGenerator()));
 
 		builder.addReplacementStrategyHandlerFactories((gsd) -> new SPEA2ReplacementStrategyHandler<T>());
 		return builder;

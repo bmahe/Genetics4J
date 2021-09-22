@@ -1,14 +1,15 @@
 package net.bmahe.genetics4j.core.combination.singlepointarithmetic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.chromosomes.DoubleChromosome;
 
@@ -16,14 +17,14 @@ public class DoubleChromosomeSinglePointArithmeticTest {
 
 	private final static double EPSILON = 0.0001d;
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void randomIsRequired() {
-		new DoubleChromosomeSinglePointArithmetic(null, 0.5d);
+		assertThrows(NullPointerException.class, () -> new DoubleChromosomeSinglePointArithmetic(null, 0.5d));
 	}
 
 	@Test
 	public void combineTest() {
-		final Random mockRandom = mock(Random.class);
+		final RandomGenerator mockRandom = mock(RandomGenerator.class);
 
 		final int splitIndex = 2;
 		when(mockRandom.nextInt(anyInt())).thenReturn(splitIndex);

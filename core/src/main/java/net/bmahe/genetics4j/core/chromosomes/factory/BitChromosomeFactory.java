@@ -1,7 +1,7 @@
 package net.bmahe.genetics4j.core.chromosomes.factory;
 
 import java.util.BitSet;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
@@ -11,12 +11,12 @@ import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 
 public class BitChromosomeFactory implements ChromosomeFactory<BitChromosome> {
 
-	private final Random random;
+	private final RandomGenerator randomGenerator;
 
-	public BitChromosomeFactory(final Random _random) {
-		Validate.notNull(_random);
+	public BitChromosomeFactory(final RandomGenerator _randomGenerator) {
+		Validate.notNull(_randomGenerator);
 
-		this.random = _random;
+		this.randomGenerator = _randomGenerator;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class BitChromosomeFactory implements ChromosomeFactory<BitChromosome> {
 
 		final BitSet bitSet = new BitSet(numBits);
 		for (int i = 0; i < numBits; i++) {
-			bitSet.set(i, random.nextBoolean());
+			bitSet.set(i, randomGenerator.nextBoolean());
 		}
 
 		return new BitChromosome(numBits, bitSet);

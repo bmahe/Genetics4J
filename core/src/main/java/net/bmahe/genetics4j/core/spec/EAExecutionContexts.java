@@ -32,7 +32,8 @@ public class EAExecutionContexts {
 	public static <T extends Number & Comparable<T>> Builder<T> enrichForScalarFitness(final Builder<T> builder) {
 		Validate.notNull(builder);
 
-		builder.addSelectionPolicyHandlerFactories(gsd -> new RouletteWheelSelectionPolicyHandler<T>(gsd.random()));
+		builder.addSelectionPolicyHandlerFactories(
+				gsd -> new RouletteWheelSelectionPolicyHandler<T>(gsd.randomGenerator()));
 		return builder;
 	}
 
