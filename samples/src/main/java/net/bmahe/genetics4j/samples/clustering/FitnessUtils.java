@@ -63,9 +63,6 @@ public class FitnessUtils {
 			}
 		}
 
-		if (minMean < 0.0) {
-			throw new IllegalStateException("Average min can't be negative. Missing clusters?");
-		}
 		return minMean;
 	}
 	// end::b_i[]
