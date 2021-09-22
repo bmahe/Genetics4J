@@ -46,3 +46,12 @@ There are various ways to learn more about _Genetics4j_:
 * Various additional reports are also published under _Project Reports_, including link:gitlog.html[changelogs] and tests results and coverage
 
 
+# Examples
+
+There are a few examples with this library. Namely:
+
+* link:https://bmahe.gitlab.io/genetics4j/samples/docs/clustering.html[Clustering] where we attempt to find the best way to cluster data and compare the different approaches
+* link:https://bmahe.gitlab.io/genetics4j/samples/docs/bloat_issues.html[6 ways to handle your bloat issues] where we explore different methods from the _Multi Objective Optimization_ field to find the best equation to represent a set of data points. This provides us a way to find a good trade-off between long and precise equations and shorter but less precise equations
+* link:https://bmahe.gitlab.io/genetics4j/samples/docs/fitness_sharing.html[Fitness Sharing] where we present one technique to reduce the likelihood to get stuck in a local optimum and explore a great set of diverse solutions
+
+
