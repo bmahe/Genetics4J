@@ -11,7 +11,6 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.Optimization;
 
 public class Terminations {
 
@@ -137,15 +136,17 @@ public class Terminations {
 					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
-				// TODO update for exhaustive check when upgrading java version
-				final Comparator<T> fitnessComparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
-						? Comparator.naturalOrder()
-						: Comparator.reverseOrder();
+				final Comparator<T> fitnessComparator = switch (eaConfiguration.optimization()) {
+					case MAXIMZE -> Comparator.naturalOrder();
+					case MINIMIZE -> Comparator.reverseOrder();
+					default -> throw new IllegalArgumentException("Unknown optimization " + eaConfiguration.optimization());
+				};
 
 				final Optional<T> bestFitnessOpt = fitness.stream().max(fitnessComparator);
 
 				if (lastImprovedGeneration < 0
-						|| bestFitnessOpt.map(bestFitness -> bestFitness.compareTo(lastBestFitness) > 0).orElse(false)) {
+						|| bestFitnessOpt.map(bestFitness -> fitnessComparator.compare(bestFitness, lastBestFitness) > 0)
+								.orElse(false)) {
 					lastImprovedGeneration = generation;
 					lastBestFitness = bestFitnessOpt.get();
 				}
