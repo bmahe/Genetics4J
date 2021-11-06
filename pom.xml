@@ -79,6 +79,7 @@
 		<maven.versions.plugin>2.4</maven.versions.plugin>
 		<umldoclet.version>2.0.2</umldoclet.version>
 		<pitest.plugin.version>1.7.0</pitest.plugin.version>
+		<pitest.junit5.plugin.version>0.15</pitest.junit5.plugin.version>
 
 		<apache.commons.cli.version>1.4</apache.commons.cli.version>
 		<apache.commons.csv.version>1.8</apache.commons.csv.version>
@@ -109,7 +110,7 @@
 		<profile>
 			<id>pitest-java</id>
 			<activation>
-				<jdk>17</jdk>
+				<jdk>18</jdk>
 			</activation>
 			<properties>
 				<skipPITests>true</skipPITests>
@@ -271,6 +272,13 @@
 							<avoidCallsTo>org.apache.commons.lang3.Validate</avoidCallsTo>
 						</avoidCallsTo>
 					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.pitest</groupId>
+							<artifactId>pitest-junit5-plugin</artifactId>
+							<version>${pitest.junit5.plugin.version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 
 				<plugin>
