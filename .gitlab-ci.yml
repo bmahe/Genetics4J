@@ -44,7 +44,7 @@ cache:
   script:
     - apt-get update -yqq
     - apt-get install -yqq gnuplot graphviz
-    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE verify'
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE verify -DskipPITests'
 
 # Verify merge requests using JDK17
 verify:jdk17:
