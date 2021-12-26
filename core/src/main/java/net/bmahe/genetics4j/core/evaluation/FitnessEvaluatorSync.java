@@ -12,12 +12,12 @@ import org.apache.logging.log4j.Logger;
 
 import net.bmahe.genetics4j.core.Fitness;
 import net.bmahe.genetics4j.core.Genotype;
-import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 
 /**
- * Wrapper around {@link net.bmahe.genetics4j.core.FitnessSync} for computing
- * the fitness of a population
+ * Wrapper around {@link net.bmahe.genetics4j.core.Fitness} for computing the
+ * fitness of a population
  * <p>
  * In order to leverage multi-core systems and speed up computations, the
  * population will be split according to the number of partitions defined in
@@ -30,12 +30,12 @@ public class FitnessEvaluatorSync<T extends Comparable<T>> implements FitnessEva
 	public static final Logger logger = LogManager.getLogger(FitnessEvaluatorSync.class);
 
 	private final EAExecutionContext<T> eaExecutionContext;
-	private final EAConfigurationSync<T> eaConfigurationSync;
+	private final EAConfiguration<T> eaConfigurationSync;
 
 	private final ExecutorService executorService;
 
 	public FitnessEvaluatorSync(final EAExecutionContext<T> _eaExecutionContext,
-			final EAConfigurationSync<T> _eaConfigurationSync, final ExecutorService _executorService) {
+			final EAConfiguration<T> _eaConfigurationSync, final ExecutorService _executorService) {
 		Validate.notNull(_eaExecutionContext);
 		Validate.notNull(_eaConfigurationSync);
 		Validate.notNull(_executorService);

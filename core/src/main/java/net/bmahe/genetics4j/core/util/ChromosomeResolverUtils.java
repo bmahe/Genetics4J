@@ -6,7 +6,7 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
@@ -33,7 +33,7 @@ public class ChromosomeResolverUtils {
 
 	@SuppressWarnings("rawtypes")
 	public static ChromosomeMutationHandler[] resolveChromosomeMutationHandlers(
-			final EAExecutionContext eaExecutionContext, final EAConfiguration eaConfiguration,
+			final EAExecutionContext eaExecutionContext, final AbstractEAConfiguration eaConfiguration,
 			final MutationPolicy mutationPolicy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);

@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.selection.MultiTournaments;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
@@ -92,7 +92,7 @@ public class MultiTournamentsSelectionPolicyHandler<T extends Comparable<T>> imp
 	}
 
 	@Override
-	public Selector<T> resolve(final EAExecutionContext<T> eaExecutionContext, final EAConfiguration<T> eaConfiguration,
+	public Selector<T> resolve(final EAExecutionContext<T> eaExecutionContext, final AbstractEAConfiguration<T> eaConfiguration,
 			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
 			final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
@@ -101,7 +101,7 @@ public class MultiTournamentsSelectionPolicyHandler<T extends Comparable<T>> imp
 		return new Selector<T>() {
 
 			@Override
-			public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+			public Population<T> select(final AbstractEAConfiguration<T> eaConfiguration, final int numIndividuals,
 					final List<Genotype> population, final List<T> fitnessScore) {
 				Validate.notNull(eaConfiguration);
 				Validate.notNull(population);

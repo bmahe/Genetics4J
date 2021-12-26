@@ -13,7 +13,7 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.mutation.Mutator;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.program.Program;
@@ -25,9 +25,9 @@ public class ProgramRulesApplicatorMutator implements Mutator {
 	final static public Logger logger = LogManager.getLogger(ProgramRulesApplicatorMutator.class);
 
 	private final List<Rule> rules;
-	private final EAConfiguration eaConfiguration;
+	private final AbstractEAConfiguration eaConfiguration;
 
-	public ProgramRulesApplicatorMutator(final List<Rule> _rules, final EAConfiguration _eaConfiguration) {
+	public ProgramRulesApplicatorMutator(final List<Rule> _rules, final AbstractEAConfiguration _eaConfiguration) {
 		Validate.notNull(_rules);
 		Validate.isTrue(_rules.isEmpty() == false);
 		Validate.notNull(_eaConfiguration);

@@ -6,7 +6,7 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.selection.SelectAll;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
@@ -23,7 +23,7 @@ public class SelectAllPolicyHandler<T extends Comparable<T>> implements Selectio
 	}
 
 	@Override
-	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, EAConfiguration<T> eaConfiguration,
+	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, AbstractEAConfiguration<T> eaConfiguration,
 			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(SelectAll.class, selectionPolicy);
@@ -31,7 +31,7 @@ public class SelectAllPolicyHandler<T extends Comparable<T>> implements Selectio
 		return new Selector<T>() {
 
 			@Override
-			public Population<T> select(EAConfiguration<T> eaConfiguration, int numIndividuals,
+			public Population<T> select(AbstractEAConfiguration<T> eaConfiguration, int numIndividuals,
 					List<Genotype> population, List<T> fitnessScore) {
 				Validate.notNull(eaConfiguration);
 				Validate.notNull(population);

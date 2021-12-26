@@ -10,7 +10,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 
 public class Terminations {
 
@@ -20,7 +20,7 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+			public boolean isDone(final AbstractEAConfiguration<T> eaConfiguration, final long generation,
 					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
@@ -38,7 +38,7 @@ public class Terminations {
 			private Long startTime = null;
 
 			@Override
-			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+			public boolean isDone(final AbstractEAConfiguration<T> eaConfiguration, final long generation,
 					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
@@ -61,7 +61,7 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+			public boolean isDone(final AbstractEAConfiguration<T> eaConfiguration, final long generation,
 					final List<Genotype> population, final List<T> fitness) {
 				return Arrays.stream(terminations)
 						.allMatch((termination) -> termination.isDone(eaConfiguration, generation, population, fitness));
@@ -78,7 +78,7 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+			public boolean isDone(final AbstractEAConfiguration<T> eaConfiguration, final long generation,
 					final List<Genotype> population, final List<T> fitness) {
 				return Arrays.stream(terminations)
 						.anyMatch((termination) -> termination.isDone(eaConfiguration, generation, population, fitness));
@@ -92,7 +92,7 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+			public boolean isDone(final AbstractEAConfiguration<T> eaConfiguration, final long generation,
 					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
@@ -106,7 +106,7 @@ public class Terminations {
 		return new Termination<T>() {
 
 			@Override
-			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+			public boolean isDone(final AbstractEAConfiguration<T> eaConfiguration, final long generation,
 					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
@@ -132,7 +132,7 @@ public class Terminations {
 			private T lastBestFitness = null;
 
 			@Override
-			public boolean isDone(final EAConfiguration<T> eaConfiguration, final long generation,
+			public boolean isDone(final AbstractEAConfiguration<T> eaConfiguration, final long generation,
 					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 

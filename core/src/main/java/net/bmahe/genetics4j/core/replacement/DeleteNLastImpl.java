@@ -9,7 +9,7 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.replacement.DeleteNLast;
 
@@ -27,7 +27,7 @@ public class DeleteNLastImpl<T extends Comparable<T>> implements ReplacementStra
 	}
 
 	@Override
-	public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+	public Population<T> select(final AbstractEAConfiguration<T> eaConfiguration, final int numIndividuals,
 			final List<Genotype> population, final List<T> populationScores, final List<Genotype> offsprings,
 			final List<T> offspringScores) {
 		Validate.notNull(eaConfiguration);

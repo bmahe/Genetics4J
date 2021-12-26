@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.DoubleTournament;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
@@ -45,7 +45,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 
 	}
 
-	protected Individual<T> selectForFitness(final EAConfiguration<T> eaConfiguration,
+	protected Individual<T> selectForFitness(final AbstractEAConfiguration<T> eaConfiguration,
 			final Comparator<Individual<T>> fitnessComparator, final int numCandidates, final List<Genotype> population,
 			final List<T> fitnessScore) {
 		Validate.notNull(population);
@@ -84,7 +84,7 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 	}
 
 	@Override
-	public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+	public Population<T> select(final AbstractEAConfiguration<T> eaConfiguration, final int numIndividuals,
 			final List<Genotype> population, final List<T> fitnessScore) {
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(population);

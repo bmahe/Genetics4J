@@ -13,7 +13,7 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.mutation.Mutator;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.OperationFactory;
@@ -25,11 +25,11 @@ public class NodeReplacementMutator implements Mutator {
 
 	private final ProgramHelper programHelper;
 	private final RandomGenerator randomGenerator;
-	private final EAConfiguration eaConfiguration;
+	private final AbstractEAConfiguration eaConfiguration;
 	private final double populationMutationProbability;
 
 	public NodeReplacementMutator(final ProgramHelper _programHelper, final RandomGenerator _randomGenerator,
-			final EAConfiguration _eaConfiguration, final double populationMutationProbability) {
+			final AbstractEAConfiguration _eaConfiguration, final double populationMutationProbability) {
 		Validate.notNull(_programHelper);
 		Validate.notNull(_randomGenerator);
 		Validate.notNull(_eaConfiguration);

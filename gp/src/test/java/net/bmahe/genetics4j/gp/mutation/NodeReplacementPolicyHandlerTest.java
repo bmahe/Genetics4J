@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
 import net.bmahe.genetics4j.gp.program.ProgramHelper;
@@ -91,7 +91,7 @@ public class NodeReplacementPolicyHandlerTest {
 
 		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(MutationPolicyHandlerResolver.class);
 		final EAExecutionContext mockEaExecutionContext = mock(EAExecutionContext.class);
-		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
+		final AbstractEAConfiguration mockEaConfiguration = mock(AbstractEAConfiguration.class);
 
 		final Mutator mutator = nodeReplacementPolicyHandler.createMutator(mockEaExecutionContext,
 				mockEaConfiguration,

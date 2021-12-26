@@ -12,7 +12,7 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.mutation.Mutator;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.gp.Operation;
 import net.bmahe.genetics4j.gp.program.Program;
@@ -25,11 +25,11 @@ public class TrimTreeMutator implements Mutator {
 
 	private final ProgramGenerator programGenerator;
 	private final RandomGenerator randomGenerator;
-	private final EAConfiguration eaConfiguration;
+	private final AbstractEAConfiguration eaConfiguration;
 	private final TrimTree trimTree;
 
 	public TrimTreeMutator(final ProgramGenerator _programGenerator, final RandomGenerator _randomGenerator,
-			final EAConfiguration _eaConfiguration, final TrimTree _trimTree) {
+			final AbstractEAConfiguration _eaConfiguration, final TrimTree _trimTree) {
 		Validate.notNull(_programGenerator);
 		Validate.notNull(_randomGenerator);
 		Validate.notNull(_eaConfiguration);

@@ -10,7 +10,7 @@ import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
 import net.bmahe.genetics4j.gp.spec.mutation.Rule;
@@ -28,7 +28,7 @@ public class ProgramRulesApplicatorPolicyHandler implements MutationPolicyHandle
 	}
 
 	@Override
-	public Mutator createMutator(final EAExecutionContext eaExecutionContext, final EAConfiguration eaConfiguration,
+	public Mutator createMutator(final EAExecutionContext eaExecutionContext, final AbstractEAConfiguration eaConfiguration,
 			final MutationPolicyHandlerResolver mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);

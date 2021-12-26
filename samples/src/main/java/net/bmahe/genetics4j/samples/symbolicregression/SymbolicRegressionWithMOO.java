@@ -26,7 +26,6 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.Optimization;
@@ -131,7 +130,7 @@ public class SymbolicRegressionWithMOO {
 						(eaConfiguration, generation, population, fitness) -> fitness.stream()
 								.anyMatch(fv -> fv.get(0) <= 0.000001 && fv.get(1) <= 20))) // <4>
 				.fitness(computeFitness);
-		final EAConfigurationSync<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();
+		final EAConfiguration<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();
 		// end::ea_config[]
 
 		// tag::eae_moo[]

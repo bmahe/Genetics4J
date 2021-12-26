@@ -29,7 +29,6 @@ import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
@@ -115,19 +114,20 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 				.optimization(Optimization.MINIMIZE) // <2>
 				.termination(or(ofMaxGeneration(200), ofFitnessAtMost(20.0d))) // <3>
 				.fitness(computeFitness);
-		final EAConfigurationSync<Double> eaConfiguration = eaConfigurationBuilder.build();
+		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
 		// end::ea_config[]
 
 		final var eaExecutionContextBuilder = GPEAExecutionContexts.<Double>forGP(random);
 		EAExecutionContexts.enrichForScalarFitness(eaExecutionContextBuilder);
 
 		eaExecutionContextBuilder.populationSize(populationSize);
-		eaExecutionContextBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 1));
+		eaExecutionContextBuilder.numberOfPartitions(Math.max(1,
+				Runtime.getRuntime()
+						.availableProcessors() - 1));
 
 		eaExecutionContextBuilder.addEvolutionListeners(
 				EvolutionListeners.ofLogTopN(logger, 5, Comparator.<Double>reverseOrder(), (genotype) -> {
-					final TreeChromosome<Operation<?>> chromosome = (TreeChromosome<Operation<?>>) genotype
-							.getChromosome(0);
+					final TreeChromosome<Operation<?>> chromosome = (TreeChromosome<Operation<?>>) genotype.getChromosome(0);
 					final TreeNode<Operation<?>> root = chromosome.getRoot();
 
 					return TreeNodeUtils.toStringTreeNode(root);
@@ -143,8 +143,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 
 		final EvolutionResult<Double> evolutionResult = eaSystem.evolve();
 		final Genotype bestGenotype = evolutionResult.bestGenotype();
-		final TreeChromosome<Operation<?>> bestChromosome = (TreeChromosome<Operation<?>>) bestGenotype
-				.getChromosome(0);
+		final TreeChromosome<Operation<?>> bestChromosome = (TreeChromosome<Operation<?>>) bestGenotype.getChromosome(0);
 		logger.info("Best genotype: {}", bestChromosome.getRoot());
 		logger.info("Best genotype - pretty print: {}", TreeNodeUtils.toStringTreeNode(bestChromosome.getRoot()));
 	}

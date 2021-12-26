@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.ProportionalTournament;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
@@ -33,7 +33,7 @@ public class ProportionalTournamentSelector<T extends Comparable<T>> implements 
 	}
 
 	@Override
-	public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+	public Population<T> select(final AbstractEAConfiguration<T> eaConfiguration, final int numIndividuals,
 			final List<Genotype> population, final List<T> fitnessScore) {
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(population);

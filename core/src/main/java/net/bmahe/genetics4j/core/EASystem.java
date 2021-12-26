@@ -21,7 +21,7 @@ import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
 import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.replacement.ReplacementStrategyImplementor;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.ImmutableEvolutionResult;
@@ -36,7 +36,7 @@ public class EASystem<T extends Comparable<T>> {
 	final static public Logger logger = LogManager.getLogger(EASystem.class);
 
 	private final FitnessEvaluator<T> fitnessEvaluator;
-	private final EAConfiguration<T> eaConfiguration;
+	private final AbstractEAConfiguration<T> eaConfiguration;
 	private final EAExecutionContext<T> eaExecutionContext;
 	private final int populationSize;
 
@@ -51,7 +51,7 @@ public class EASystem<T extends Comparable<T>> {
 
 	private Selector<T> parentSelector;
 
-	public EASystem(final EAConfiguration<T> _eaConfiguration, final long _populationSize,
+	public EASystem(final AbstractEAConfiguration<T> _eaConfiguration, final long _populationSize,
 			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
 			final Selector<T> _parentSelectionPolicyHandler, final List<Mutator> _mutators,
 			final ReplacementStrategyImplementor<T> _replacementStrategyImplementor,
@@ -80,7 +80,7 @@ public class EASystem<T extends Comparable<T>> {
 		this.replacementStrategyImplementor = _replacementStrategyImplementor;
 	}
 
-	private List<Genotype> generateGenotype(final EAConfiguration<T> eaConfiguration, final int numPopulation) {
+	private List<Genotype> generateGenotype(final AbstractEAConfiguration<T> eaConfiguration, final int numPopulation) {
 		Validate.notNull(eaConfiguration);
 		Validate.isTrue(numPopulation > 0);
 
@@ -131,7 +131,7 @@ public class EASystem<T extends Comparable<T>> {
 		return fitnesses;
 	}
 
-	public EAConfiguration<T> getEAConfiguration() {
+	public AbstractEAConfiguration<T> getEAConfiguration() {
 		return eaConfiguration;
 	}
 

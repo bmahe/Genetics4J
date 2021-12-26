@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheel;
@@ -32,7 +32,7 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 	}
 
 	@Override
-	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, EAConfiguration<T> eaConfiguration,
+	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, AbstractEAConfiguration<T> eaConfiguration,
 			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(RouletteWheel.class, selectionPolicy);
@@ -40,7 +40,7 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 		return new Selector<T>() {
 
 			@Override
-			public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+			public Population<T> select(final AbstractEAConfiguration<T> eaConfiguration, final int numIndividuals,
 					final List<Genotype> population, final List<T> fitnessScore) {
 				Validate.notNull(eaConfiguration);
 				Validate.notNull(population);

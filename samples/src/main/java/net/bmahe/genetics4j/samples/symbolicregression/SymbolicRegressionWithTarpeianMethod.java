@@ -29,7 +29,6 @@ import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
@@ -116,7 +115,7 @@ public class SymbolicRegressionWithTarpeianMethod {
 				.postEvaluationProcessor(TarpeianMethod.ofTreeChromosome(random, 0, 0.3, Double.MAX_VALUE)) // <3>
 				.termination(or(ofMaxGeneration(200), ofFitnessAtMost(0.00001d)))
 				.fitness(computeFitness);
-		final EAConfigurationSync<Double> eaConfiguration = eaConfigurationBuilder.build();
+		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
 		// end::ea_config[]
 
 		// tag::ea_execution_config[]

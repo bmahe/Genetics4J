@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import net.bmahe.genetics4j.core.EASystem;
 import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
@@ -26,7 +27,7 @@ public class SupersimpleTest {
 		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
 		eaConfigurationBuilder.chromosomeSpecs(BitChromosomeSpec.of(5), IntChromosomeSpec.of(6, 10, 100))
 				.fitness((genotype) -> 1.0)
-				.termination((EAConfiguration<Double> eaConfiguration, long generation, List<Genotype> population,
+				.termination((AbstractEAConfiguration<Double> eaConfiguration, long generation, List<Genotype> population,
 						List<Double> fitness) -> true)
 				.parentSelectionPolicy(RandomSelection.build())
 				.combinationPolicy(SinglePointCrossover.build())

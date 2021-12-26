@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.gp.ImmutableInputSpec;
 import net.bmahe.genetics4j.gp.InputSpec;
 import net.bmahe.genetics4j.gp.Operation;
@@ -47,7 +47,7 @@ public class ProgramRandomMutateMutatorTest {
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
-		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
+		final AbstractEAConfiguration mockEaConfiguration = mock(AbstractEAConfiguration.class);
 
 		// 0% chance of mutation
 		final ProgramRandomMutateMutator programRandomMutateMutator = new ProgramRandomMutateMutator(programGenerator,
@@ -95,7 +95,7 @@ public class ProgramRandomMutateMutatorTest {
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
-		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
+		final AbstractEAConfiguration mockEaConfiguration = mock(AbstractEAConfiguration.class);
 
 		final ProgramRandomMutateMutator programRandomMutateMutator = new ProgramRandomMutateMutator(programGenerator,
 				random, mockEaConfiguration, 1.0);

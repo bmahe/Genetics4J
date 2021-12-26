@@ -18,9 +18,9 @@ import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.replacement.ReplacementStrategyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAConfigurationBulkAsync;
-import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
+import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
@@ -38,7 +38,7 @@ public class EASystemFactory {
 	private EASystemFactory() {
 	}
 
-	private static <T extends Comparable<T>> EASystem<T> from(final EAConfiguration<T> eaConfiguration,
+	private static <T extends Comparable<T>> EASystem<T> from(final AbstractEAConfiguration<T> eaConfiguration,
 			final EAExecutionContext<T> eaExecutionContext, final ExecutorService executorService,
 			final FitnessEvaluator<T> fitnessEvaluator) {
 		Validate.notNull(eaConfiguration);
@@ -120,7 +120,7 @@ public class EASystemFactory {
 	 * @param executorService
 	 * @return
 	 */
-	public static <T extends Comparable<T>> EASystem<T> from(final EAConfigurationSync<T> eaConfigurationSync,
+	public static <T extends Comparable<T>> EASystem<T> from(final EAConfiguration<T> eaConfigurationSync,
 			final EAExecutionContext<T> eaExecutionContext, final ExecutorService executorService) {
 
 		final var fitnessEvaluator = new FitnessEvaluatorSync<>(eaExecutionContext, eaConfigurationSync, executorService);
@@ -139,7 +139,7 @@ public class EASystemFactory {
 	 * @param eaExecutionContext
 	 * @return
 	 */
-	public static <T extends Comparable<T>> EASystem<T> from(final EAConfigurationSync<T> eaConfigurationSync,
+	public static <T extends Comparable<T>> EASystem<T> from(final EAConfiguration<T> eaConfigurationSync,
 			final EAExecutionContext<T> eaExecutionContext) {
 		final ExecutorService executorService = ForkJoinPool.commonPool();
 		return from(eaConfigurationSync, eaExecutionContext, executorService);

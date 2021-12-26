@@ -30,7 +30,6 @@ import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
@@ -136,7 +135,7 @@ public class SymbolicRegressionWithDoubleTournament {
 				.optimization(Optimization.MINIMIZE) // <3>
 				.termination(or(ofMaxGeneration(200), ofFitnessAtMost(0.00001)))
 				.fitness(computeFitness);
-		final EAConfigurationSync<Double> eaConfiguration = eaConfigurationBuilder.build();
+		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
 		// end::ea_config[]
 
 		final var eaExecutionContextBuilder = GPEAExecutionContexts.<Double>forGP(random);

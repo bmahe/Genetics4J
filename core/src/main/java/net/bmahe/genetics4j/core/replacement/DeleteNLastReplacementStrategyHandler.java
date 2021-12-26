@@ -5,7 +5,7 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.replacement.DeleteNLast;
 import net.bmahe.genetics4j.core.spec.replacement.ReplacementStrategy;
@@ -22,7 +22,7 @@ public class DeleteNLastReplacementStrategyHandler<T extends Comparable<T>> impl
 
 	@Override
 	public ReplacementStrategyImplementor<T> resolve(final EAExecutionContext<T> eaExecutionContext,
-			final EAConfiguration<T> eaConfiguration,
+			final AbstractEAConfiguration<T> eaConfiguration,
 			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
 			final ReplacementStrategy replacementStrategy) {
 		Validate.notNull(eaExecutionContext);
