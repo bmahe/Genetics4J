@@ -29,6 +29,7 @@ import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.chromosomes.TreeNode;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
@@ -114,7 +115,7 @@ public class SymbolicRegressionWithConstantParsimonyPressure {
 				.optimization(Optimization.MINIMIZE) // <2>
 				.termination(or(ofMaxGeneration(200), ofFitnessAtMost(20.0d))) // <3>
 				.fitness(computeFitness);
-		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
+		final EAConfigurationSync<Double> eaConfiguration = eaConfigurationBuilder.build();
 		// end::ea_config[]
 
 		final var eaExecutionContextBuilder = GPEAExecutionContexts.<Double>forGP(random);

@@ -21,6 +21,7 @@ import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.Optimization;
@@ -35,7 +36,7 @@ import net.bmahe.genetics4j.core.termination.Terminations;
 
 public class DoubleTournamentSelectionPolicyHandlerTest {
 
-	private final EAConfiguration<Double> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<Double>()
+	private final EAConfigurationSync<Double> SIMPLE_MAXIMIZING_EA_CONFIGURATION = new EAConfiguration.Builder<Double>()
 			.addChromosomeSpecs(BitChromosomeSpec.of(3))
 			.parentSelectionPolicy(RandomSelection.build())
 			.combinationPolicy(SinglePointCrossover.build())
@@ -189,8 +190,7 @@ public class DoubleTournamentSelectionPolicyHandlerTest {
 		final SelectionPolicyHandlerResolver<Double> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				eaExecutionContext);
 
-		final EAConfiguration<Double> eaConfiguration = new EAConfiguration.Builder<Double>()
-				.from(SIMPLE_MAXIMIZING_EA_CONFIGURATION)
+		final var eaConfiguration = new EAConfiguration.Builder<Double>().from(SIMPLE_MAXIMIZING_EA_CONFIGURATION)
 				.optimization(Optimization.MINIMIZE)
 				.build();
 

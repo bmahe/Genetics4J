@@ -11,52 +11,55 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorResolver;
-import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
+import net.bmahe.genetics4j.core.evaluation.FitnessEvaluator;
+import net.bmahe.genetics4j.core.evaluation.FitnessEvaluatorBulkAsync;
+import net.bmahe.genetics4j.core.evaluation.FitnessEvaluatorSync;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.replacement.ReplacementStrategyHandler;
-import net.bmahe.genetics4j.core.replacement.ReplacementStrategyImplementor;
-import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
-import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAConfigurationBulkAsync;
+import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
-import net.bmahe.genetics4j.core.spec.replacement.ReplacementStrategy;
 
+/**
+ * Suite of helper methods to create instances of
+ * {@link net.bmahe.genetics4j.core.EASystem}
+ *
+ */
 public class EASystemFactory {
 
+	/**
+	 * Prevents instantiation since it's a bunch of static methods
+	 */
 	private EASystemFactory() {
 	}
 
-	public static <T extends Comparable<T>> EASystem<T> from(final EAConfiguration<T> eaConfiguration,
-			final EAExecutionContext<T> eaExecutionContext) {
-		final ExecutorService executorService = ForkJoinPool.commonPool();
-		return from(eaConfiguration, eaExecutionContext, executorService);
-	}
-
-	public static <T extends Comparable<T>> EASystem<T> from(final EAConfiguration<T> eaConfiguration,
-			final EAExecutionContext<T> eaExecutionContext, final ExecutorService executorService) {
+	private static <T extends Comparable<T>> EASystem<T> from(final EAConfiguration<T> eaConfiguration,
+			final EAExecutionContext<T> eaExecutionContext, final ExecutorService executorService,
+			final FitnessEvaluator<T> fitnessEvaluator) {
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(executorService);
+		Validate.notNull(fitnessEvaluator);
 
-		final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
-				eaExecutionContext);
+		final var selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<T>(eaExecutionContext);
 
-		final SelectionPolicyHandler<T> parentSelectionPolicyHandler = selectionPolicyHandlerResolver
+		final var parentSelectionPolicyHandler = selectionPolicyHandlerResolver
 				.resolve(eaConfiguration.parentSelectionPolicy());
-		final Selector<T> parentSelector = parentSelectionPolicyHandler.resolve(eaExecutionContext,
+
+		final var parentSelector = parentSelectionPolicyHandler.resolve(eaExecutionContext,
 				eaConfiguration,
 				selectionPolicyHandlerResolver,
 				eaConfiguration.parentSelectionPolicy());
 
-		final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver = new MutationPolicyHandlerResolver<>(
-				eaExecutionContext);
+		final var mutationPolicyHandlerResolver = new MutationPolicyHandlerResolver<T>(eaExecutionContext);
 
-		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
-				eaExecutionContext);
+		final var chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(eaExecutionContext);
+
 		final CombinationPolicy combinationPolicy = eaConfiguration.combinationPolicy();
 		final List<ChromosomeCombinator> chromosomeCombinators = eaConfiguration.chromosomeSpecs()
 				.stream()
@@ -65,35 +68,118 @@ public class EASystemFactory {
 				})
 				.collect(Collectors.toList());
 
-		final List<Mutator> mutators = new ArrayList<Mutator>();
-		for (int i = 0; i < eaConfiguration.mutationPolicies().size(); i++) {
-			final MutationPolicy mutationPolicy = eaConfiguration.mutationPolicies().get(i);
+		final List<Mutator> mutators = new ArrayList<>();
+		final List<MutationPolicy> mutationPolicies = eaConfiguration.mutationPolicies();
+		for (int i = 0; i < mutationPolicies.size(); i++) {
+			final var mutationPolicy = mutationPolicies.get(i);
 
-			final MutationPolicyHandler mutationPolicyHandler = mutationPolicyHandlerResolver.resolve(mutationPolicy);
-			final Mutator mutator = mutationPolicyHandler
+			final var mutationPolicyHandler = mutationPolicyHandlerResolver.resolve(mutationPolicy);
+			final var mutator = mutationPolicyHandler
 					.createMutator(eaExecutionContext, eaConfiguration, mutationPolicyHandlerResolver, mutationPolicy);
 
 			mutators.add(mutator);
 
 		}
 
-		final List<ReplacementStrategyHandler<T>> replacementStrategyHandlers = eaExecutionContext
-				.replacementStrategyHandlers();
-		final ReplacementStrategy replacementStrategy = eaConfiguration.replacementStrategy();
-		final Optional<ReplacementStrategyHandler<T>> replacementStrategyHandlerOpt = replacementStrategyHandlers
-				.stream()
+		final var replacementStrategyHandlers = eaExecutionContext.replacementStrategyHandlers();
+		final var replacementStrategy = eaConfiguration.replacementStrategy();
+
+		final Optional<ReplacementStrategyHandler<T>> replacementStrategyHandlerOpt = replacementStrategyHandlers.stream()
 				.filter(replacementStrategyHandler -> replacementStrategyHandler.canHandle(replacementStrategy))
 				.findFirst();
+
 		final ReplacementStrategyHandler<T> replacementStrategyHandler = replacementStrategyHandlerOpt
 				.orElseThrow(() -> new IllegalStateException(
 						"Could not find an implementation to handle the replacement strategy " + replacementStrategy));
-		final ReplacementStrategyImplementor<T> replacementStrategyImplementor = replacementStrategyHandler
+		final var replacementStrategyImplementor = replacementStrategyHandler
 				.resolve(eaExecutionContext, eaConfiguration, selectionPolicyHandlerResolver, replacementStrategy);
 
 		final long populationSize = eaExecutionContext.populationSize();
 
-		return new EASystem<>(eaConfiguration, populationSize, chromosomeCombinators,
-				eaConfiguration.offspringGeneratedRatio(), parentSelector, mutators, replacementStrategyImplementor,
-				eaExecutionContext, executorService);
+		return new EASystem<>(eaConfiguration,
+				populationSize,
+				chromosomeCombinators,
+				eaConfiguration.offspringGeneratedRatio(),
+				parentSelector,
+				mutators,
+				replacementStrategyImplementor,
+				eaExecutionContext,
+				fitnessEvaluator);
+	}
+
+	/**
+	 * Factory method to create a {@link net.bmahe.genetics4j.core.EASystem} with a
+	 * simple fitness computation method
+	 * <p>
+	 * This is the most common and straight forward approach and ideal when
+	 * computing the fitness is fast and straightforward
+	 * 
+	 * @param <T>
+	 * @param eaConfigurationSync
+	 * @param eaExecutionContext
+	 * @param executorService
+	 * @return
+	 */
+	public static <T extends Comparable<T>> EASystem<T> from(final EAConfigurationSync<T> eaConfigurationSync,
+			final EAExecutionContext<T> eaExecutionContext, final ExecutorService executorService) {
+
+		final var fitnessEvaluator = new FitnessEvaluatorSync<>(eaExecutionContext, eaConfigurationSync, executorService);
+		return from(eaConfigurationSync, eaExecutionContext, executorService, fitnessEvaluator);
+	}
+
+	/**
+	 * Factory method to create a {@link net.bmahe.genetics4j.core.EASystem} with a
+	 * simple fitness computation method.
+	 * <p>
+	 * This is the most common and straight forward approach and ideal when
+	 * computing the fitness is fast and straightforward
+	 * 
+	 * @param <T>
+	 * @param eaConfigurationSync
+	 * @param eaExecutionContext
+	 * @return
+	 */
+	public static <T extends Comparable<T>> EASystem<T> from(final EAConfigurationSync<T> eaConfigurationSync,
+			final EAExecutionContext<T> eaExecutionContext) {
+		final ExecutorService executorService = ForkJoinPool.commonPool();
+		return from(eaConfigurationSync, eaExecutionContext, executorService);
+	}
+
+	/**
+	 * Factory method to create a {@link net.bmahe.genetics4j.core.EASystem} with an
+	 * asynchronous fitness computation method
+	 * <p>
+	 * This is an ideal approach when computing fitnesses requires external requests
+	 * or could benefit from bulk processing, such as leveraging GPUs
+	 * 
+	 * @param <T>
+	 * @param eaConfigurationBulkAsync
+	 * @param eaExecutionContext
+	 * @param executorService
+	 * @return
+	 */
+	public static <T extends Comparable<T>> EASystem<T> from(final EAConfigurationBulkAsync<T> eaConfigurationBulkAsync,
+			final EAExecutionContext<T> eaExecutionContext, final ExecutorService executorService) {
+
+		final var fitnessEvaluator = new FitnessEvaluatorBulkAsync<>(eaConfigurationBulkAsync, executorService);
+		return from(eaConfigurationBulkAsync, eaExecutionContext, executorService, fitnessEvaluator);
+	}
+
+	/**
+	 * Factory method to create a {@link net.bmahe.genetics4j.core.EASystem} with an
+	 * asynchronous fitness computation method
+	 * <p>
+	 * This is an ideal approach when computing fitnesses requires external requests
+	 * or could benefit from bulk processing, such as leveraging GPUs
+	 * 
+	 * @param <T>
+	 * @param eaConfigurationBulkAsync
+	 * @param eaExecutionContext
+	 * @return
+	 */
+	public static <T extends Comparable<T>> EASystem<T> from(final EAConfigurationBulkAsync<T> eaConfigurationBulkAsync,
+			final EAExecutionContext<T> eaExecutionContext) {
+		final ExecutorService executorService = ForkJoinPool.commonPool();
+		return from(eaConfigurationBulkAsync, eaExecutionContext, executorService);
 	}
 }

@@ -2,12 +2,8 @@ package net.bmahe.genetics4j.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -20,6 +16,7 @@ import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactory;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
+import net.bmahe.genetics4j.core.evaluation.FitnessEvaluator;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
 import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.replacement.ReplacementStrategyImplementor;
@@ -30,10 +27,15 @@ import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.ImmutableEvolutionResult;
 import net.bmahe.genetics4j.core.termination.Termination;
 
+/**
+ * Main class used to manage and execute the evolution process
+ *
+ * @param <T>
+ */
 public class EASystem<T extends Comparable<T>> {
 	final static public Logger logger = LogManager.getLogger(EASystem.class);
 
-	private final ExecutorService executorService;
+	private final FitnessEvaluator<T> fitnessEvaluator;
 	private final EAConfiguration<T> eaConfiguration;
 	private final EAExecutionContext<T> eaExecutionContext;
 	private final int populationSize;
@@ -53,7 +55,7 @@ public class EASystem<T extends Comparable<T>> {
 			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
 			final Selector<T> _parentSelectionPolicyHandler, final List<Mutator> _mutators,
 			final ReplacementStrategyImplementor<T> _replacementStrategyImplementor,
-			final EAExecutionContext<T> _eaExecutionContext, final ExecutorService _executorService) {
+			final EAExecutionContext<T> _eaExecutionContext, final FitnessEvaluator<T> _fitnessEvaluator) {
 		Validate.notNull(_eaConfiguration);
 		Validate.isTrue(_populationSize > 0);
 		Validate.notNull(_chromosomeCombinators);
@@ -62,9 +64,8 @@ public class EASystem<T extends Comparable<T>> {
 		Validate.notNull(_parentSelectionPolicyHandler);
 		Validate.notNull(_replacementStrategyImplementor);
 		Validate.notNull(_eaExecutionContext);
-		Validate.notNull(_executorService);
+		Validate.notNull(_fitnessEvaluator);
 
-		this.executorService = _executorService;
 		this.eaConfiguration = _eaConfiguration;
 		this.eaExecutionContext = _eaExecutionContext;
 		this.populationSize = (int) _populationSize;
@@ -72,22 +73,11 @@ public class EASystem<T extends Comparable<T>> {
 		this.offspringRatio = _offspringRatio;
 		this.mutators = _mutators;
 		this.chromosomeFactoryProvider = _eaExecutionContext.chromosomeFactoryProvider();
+		this.fitnessEvaluator = _fitnessEvaluator;
 
 		parentSelector = _parentSelectionPolicyHandler;
 
 		this.replacementStrategyImplementor = _replacementStrategyImplementor;
-	}
-
-	public EAConfiguration<T> geteaConfiguration() {
-		return eaConfiguration;
-	}
-
-	public long getPopulationSize() {
-		return populationSize;
-	}
-
-	public Fitness<T> getFitness() {
-		return eaConfiguration.fitness();
 	}
 
 	private List<Genotype> generateGenotype(final EAConfiguration<T> eaConfiguration, final int numPopulation) {
@@ -130,56 +120,30 @@ public class EASystem<T extends Comparable<T>> {
 		return population;
 	}
 
-	private List<T> evaluateGenotypes(final List<Genotype> population) {
+	private List<T> evaluate(final List<Genotype> population) {
 		Validate.notNull(population);
 		Validate.isTrue(population.size() > 0);
 
 		logger.debug("Evaluating population of size {}", population.size());
-
-		final Fitness<T> fitness = eaConfiguration.fitness();
-		final int numPartitions = eaExecutionContext.numberOfPartitions();
-		final int partitionSize = (int) Math.ceil(population.size() / numPartitions);
-
-		final List<CompletableFuture<TaskResult<T>>> tasks = new ArrayList<>();
-		for (int i = 0; i < population.size();) {
-			final int numSubPopulation = population.size() - i > partitionSize ? partitionSize : population.size() - i;
-			final int partitionStart = i;
-			final int partitionEnd = partitionStart + numSubPopulation;
-			final List<Genotype> partition = population.subList(partitionStart, partitionEnd);
-			final CompletableFuture<TaskResult<T>> asyncFitnessCompute = CompletableFuture.supplyAsync(() -> {
-				final List<T> fitnessPartition = new ArrayList<>(numSubPopulation);
-				for (int j = 0; j < partition.size(); j++) {
-					final T fitnessIndividual = fitness.compute(partition.get(j));
-					fitnessPartition.add(fitnessIndividual);
-				}
-				final TaskResult<T> taskResult = new TaskResult<>();
-				taskResult.from = partitionStart;
-				taskResult.fitness = fitnessPartition;
-				return taskResult;
-			}, executorService);
-			tasks.add(asyncFitnessCompute);
-
-			i += numSubPopulation;
-		}
-
-		CompletableFuture.allOf(tasks.toArray(new CompletableFuture[tasks.size()]));
-
-		final List<T> fitnessScores = new ArrayList<>(population.size());
-		tasks.stream().map(t -> {
-			try {
-				return t.get();
-			} catch (InterruptedException | ExecutionException e1) {
-				throw new RuntimeException(e1);
-			}
-		}).sorted(Comparator.comparingInt(t -> t.from)).forEach(taskResult -> {
-			fitnessScores.addAll(taskResult.fitness);
-		});
+		final List<T> fitnesses = fitnessEvaluator.evaluate(population);
 
 		logger.debug("Done evaluating population of size {}", population.size());
-
-		return fitnessScores;
+		return fitnesses;
 	}
 
+	public EAConfiguration<T> getEAConfiguration() {
+		return eaConfiguration;
+	}
+
+	public long getPopulationSize() {
+		return populationSize;
+	}
+
+	/**
+	 * Triggers the evolutionary process
+	 * 
+	 * @return
+	 */
 	public EvolutionResult<T> evolve() {
 		final Termination<T> termination = eaConfiguration.termination();
 		final GenotypeCombinator genotypeCombinator = eaConfiguration.genotypeCombinator();
@@ -193,13 +157,14 @@ public class EASystem<T extends Comparable<T>> {
 		List<Genotype> genotypes = generateGenotype(eaConfiguration, initialPopulationSize);
 
 		logger.info("Evaluating initial population");
-		final List<T> fitnessScore = evaluateGenotypes(genotypes);
+		final List<T> fitnessScore = evaluate(genotypes);
 
 		Population<T> population = eaConfiguration.postEvaluationProcessor()
 				.map(pep -> pep.apply(Population.of(genotypes, fitnessScore)))
 				.orElseGet(() -> Population.of(genotypes, fitnessScore));
 
-		while (termination.isDone(eaConfiguration, generation, population.getAllGenotypes(), population.getAllFitnesses()) == false) {
+		while (termination
+				.isDone(eaConfiguration, generation, population.getAllGenotypes(), population.getAllFitnesses()) == false) {
 			logger.info("Going through evolution of generation {}", generation);
 
 			for (final EvolutionListener<T> evolutionListener : eaExecutionContext.evolutionListeners()) {
@@ -231,10 +196,7 @@ public class EASystem<T extends Comparable<T>> {
 							.combine(firstChromosome, secondChromosome);
 
 					chromosomes.add(combinedChromosomes);
-					logger.trace("Combining {} with {} ---> {}",
-							firstChromosome,
-							secondChromosome,
-							combinedChromosomes);
+					logger.trace("Combining {} with {} ---> {}", firstChromosome, secondChromosome, combinedChromosomes);
 				}
 
 				final List<Genotype> offsprings = genotypeCombinator.combine(eaConfiguration, chromosomes);
@@ -244,18 +206,20 @@ public class EASystem<T extends Comparable<T>> {
 			logger.info("Generated {} offsprings", children.size());
 
 			logger.info("Mutating children");
-			final List<Genotype> mutatedChildren = children.stream().map(child -> {
-				Genotype mutatedChild = child;
+			final List<Genotype> mutatedChildren = children.stream()
+					.map(child -> {
+						Genotype mutatedChild = child;
 
-				for (final Mutator mutator : mutators) {
-					mutatedChild = mutator.mutate(mutatedChild);
-				}
+						for (final Mutator mutator : mutators) {
+							mutatedChild = mutator.mutate(mutatedChild);
+						}
 
-				return mutatedChild;
-			}).collect(Collectors.toList());
+						return mutatedChild;
+					})
+					.collect(Collectors.toList());
 
 			logger.info("Evaluating offsprings");
-			final List<T> offspringScores = evaluateGenotypes(mutatedChildren);
+			final List<T> offspringScores = evaluate(mutatedChildren);
 
 			final Population<T> childrenPopulation = eaConfiguration.postEvaluationProcessor()
 					.map(pep -> pep.apply(Population.of(mutatedChildren, offspringScores)))
@@ -278,7 +242,7 @@ public class EASystem<T extends Comparable<T>> {
 
 				if (additionalIndividuals.size() > 0) {
 
-					final List<T> additionalFitness = evaluateGenotypes(additionalIndividuals);
+					final List<T> additionalFitness = evaluate(additionalIndividuals);
 					newPopulation.addAll(Population.of(additionalIndividuals, additionalFitness));
 				}
 			}
@@ -298,10 +262,5 @@ public class EASystem<T extends Comparable<T>> {
 
 		return ImmutableEvolutionResult
 				.of(eaConfiguration, generation, population.getAllGenotypes(), population.getAllFitnesses());
-	}
-
-	private static class TaskResult<T> {
-		public int from;
-		public List<T> fitness;
 	}
 }

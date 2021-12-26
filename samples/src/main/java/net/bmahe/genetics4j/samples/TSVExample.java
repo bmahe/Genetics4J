@@ -15,6 +15,7 @@ import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAConfiguration.Builder;
+import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.EdgeRecombinationCrossover;
@@ -86,7 +87,7 @@ public class TSVExample {
 					return new Genotype(chromosome);
 				});
 		// @formatter:on
-		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
+		final EAConfigurationSync<Double> eaConfiguration = eaConfigurationBuilder.build();
 
 		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)

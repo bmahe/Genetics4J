@@ -225,7 +225,7 @@ public abstract class EAExecutionContext<T extends Comparable<T>> {
 
 	/**
 	 * XXX TODO review how to specify the execution system. This might need some
-	 * abstraction as to accomodate different execution systems
+	 * abstraction as to accommodate different execution systems
 	 * 
 	 * @return
 	 */

@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 
-import net.bmahe.genetics4j.core.Fitness;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.combination.AllCasesGenotypeCombinator;
@@ -28,12 +27,13 @@ import net.bmahe.genetics4j.core.termination.Termination;
  * <p>
  * This describe the set of strategies to use. They describe the genotype, the
  * different policies for selection, combination as well as mutation, and other
- * relevant parameters such as how to determine the fitness of a given
- * individual.
+ * relevant parameters
+ * <p>
+ * Fitness computation is delegated to subclasses to better match the various
+ * ways in which they can be computed
  * 
  * @param <T> Type of the fitness measurement
  */
-@Value.Immutable
 public abstract class EAConfiguration<T extends Comparable<T>> {
 	/**
 	 * Default offspring ratio
@@ -96,13 +96,6 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 
 		return replacementStrategyBuilder.build();
 	}
-
-	/**
-	 * Defines how should individuals' fitness be assessed
-	 * 
-	 * @return
-	 */
-	public abstract Fitness<T> fitness();
 
 	/**
 	 * Post-processing of a population after it got evaluated
@@ -200,13 +193,18 @@ public abstract class EAConfiguration<T extends Comparable<T>> {
 		return chromosomeSpecs().size();
 	}
 
-	public static class Builder<T extends Comparable<T>> extends ImmutableEAConfiguration.Builder<T> {
+	/**
+	 * Convenience using the default sync applicable to most simple cases
+	 *
+	 * @param <T>
+	 */
+	public static class Builder<T extends Comparable<T>> extends ImmutableEAConfigurationSync.Builder<T> {
 
-		public final EAConfiguration.Builder<T> chromosomeSpecs(final ChromosomeSpec... elements) {
+		public final EAConfigurationSync.Builder<T> chromosomeSpecs(final ChromosomeSpec... elements) {
 			return this.chromosomeSpecs(Arrays.asList(elements));
 		}
 
-		public final EAConfiguration.Builder<T> mutationPolicies(final MutationPolicy... elements) {
+		public final EAConfigurationSync.Builder<T> mutationPolicies(final MutationPolicy... elements) {
 			return this.mutationPolicies(Arrays.asList(elements));
 		}
 	}

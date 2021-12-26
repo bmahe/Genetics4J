@@ -11,6 +11,7 @@ import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAConfiguration.Builder;
+import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
@@ -50,7 +51,7 @@ public class QuickStart {
 					return correctCount;
 				})
 				.termination(or(Terminations.ofFitnessAtLeast(numEntries), Terminations.ofMaxGeneration(50)));
-		final EAConfiguration<Integer> eaConfiguration = eaConfigurationBuilder.build();
+		final EAConfigurationSync<Integer> eaConfiguration = eaConfigurationBuilder.build();
 		// end::quickstart_genotype_spec[]
 
 		// tag::quickstart_genetic_system_descriptor[]

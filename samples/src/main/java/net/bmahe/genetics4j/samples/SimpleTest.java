@@ -11,6 +11,7 @@ import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAConfiguration.Builder;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
@@ -45,9 +46,11 @@ public class SimpleTest {
 					return denominator;
 				})
 				.termination((eaConfiguration, generation, population, fitness) -> {
-					return fitness.stream().min(Comparator.naturalOrder()).orElseThrow() < 0.0001;
+					return fitness.stream()
+							.min(Comparator.naturalOrder())
+							.orElseThrow() < 0.0001;
 				});
-		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
+		final EAConfigurationSync<Double> eaConfiguration = eaConfigurationBuilder.build();
 
 		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)

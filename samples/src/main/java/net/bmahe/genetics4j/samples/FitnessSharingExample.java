@@ -23,6 +23,7 @@ import net.bmahe.genetics4j.core.chromosomes.BitChromosome;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.postevaluationprocess.FitnessSharing;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAConfiguration.Builder;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
@@ -130,7 +131,7 @@ public class FitnessSharingExample {
 					return x < 0 || x > 100 ? 0.0 : Math.abs(30 * Math.sin(x / 10));
 				})
 				.termination(Terminations.ofMaxGeneration(5));
-		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
+		final EAConfigurationSync<Double> eaConfiguration = eaConfigurationBuilder.build();
 		// end::eaConfigurationBuilder[]
 
 		// tag::eaExecutionContext[]

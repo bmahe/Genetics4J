@@ -29,6 +29,7 @@ import net.bmahe.genetics4j.core.chromosomes.TreeChromosome;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListener;
 import net.bmahe.genetics4j.core.evolutionlisteners.EvolutionListeners;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.EAConfigurationSync;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.Optimization;
@@ -107,8 +108,9 @@ public class SymbolicRegressionWithMOOSPEA2 {
 				}
 			}
 
-			return Double.isFinite(mse)
-					? new FitnessVector<Double>(mse / 100.0, (double) chromosome.getRoot().getSize())
+			return Double.isFinite(mse) ? new FitnessVector<Double>(mse / 100.0,
+					(double) chromosome.getRoot()
+							.getSize())
 					: new FitnessVector<Double>(Double.MAX_VALUE, Double.MAX_VALUE);
 		};
 		// end::compute_fitness[]
@@ -119,30 +121,35 @@ public class SymbolicRegressionWithMOOSPEA2 {
 				.parentSelectionPolicy(TournamentNSGA2Selection.ofFitnessVector(2, 3, deduplicator)) // <2>
 				.replacementStrategy(SPEA2Replacement.ofFitnessVector(deduplicator)) // <3>
 				.combinationPolicy(ProgramRandomCombine.build())
-				.mutationPolicies(MultiMutations.of(ProgramRandomMutate.of(0.15 * 3),
-						ProgramRandomPrune.of(0.15 * 3),
-						NodeReplacement.of(0.15 * 3)), ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
+				.mutationPolicies(MultiMutations
+						.of(ProgramRandomMutate.of(0.15 * 3), ProgramRandomPrune.of(0.15 * 3), NodeReplacement.of(0.15 * 3)),
+						ProgramApplyRules.of(SimplificationRules.SIMPLIFY_RULES))
 				.optimization(Optimization.MINIMIZE)
 				.termination(Terminations.or(Terminations.<FitnessVector<Double>>ofMaxGeneration(200),
 						(eaConfiguration, generation, population, fitness) -> fitness.stream()
 								.anyMatch(fv -> fv.get(0) <= 0.00001 && fv.get(1) <= 20)))
 				.fitness(computeFitness);
-		final EAConfiguration<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();
+		final EAConfigurationSync<FitnessVector<Double>> eaConfiguration = eaConfigurationBuilder.build();
 		// end::ea_config[]
 
 		final var eaExecutionContextBuilder = GPEAExecutionContexts.<FitnessVector<Double>>forGP(random);
 		MOOEAExecutionContexts.enrichWithMOO(eaExecutionContextBuilder);
 		eaExecutionContextBuilder.populationSize(populationSize);
-		eaExecutionContextBuilder.numberOfPartitions(Math.max(1, Runtime.getRuntime().availableProcessors() - 3));
+		eaExecutionContextBuilder.numberOfPartitions(Math.max(1,
+				Runtime.getRuntime()
+						.availableProcessors() - 3));
 
 		eaExecutionContextBuilder.addEvolutionListeners(
 				EvolutionListeners.ofLogTopN(logger,
 						5,
-						Comparator.<FitnessVector<Double>, Double>comparing(fv -> fv.get(0)).reversed(),
+						Comparator.<FitnessVector<Double>, Double>comparing(fv -> fv.get(0))
+								.reversed(),
 						(genotype) -> TreeNodeUtils.toStringTreeNode(genotype, 0)),
 				SymbolicRegressionUtils.csvLogger(csvFilename,
-						evolutionStep -> evolutionStep.fitness().get(0),
-						evolutionStep -> evolutionStep.fitness().get(1)),
+						evolutionStep -> evolutionStep.fitness()
+								.get(0),
+						evolutionStep -> evolutionStep.fitness()
+								.get(1)),
 				new EvolutionListener<FitnessVector<Double>>() {
 
 					long startTime = -1;
@@ -178,32 +185,42 @@ public class SymbolicRegressionWithMOOSPEA2 {
 
 		final EvolutionResult<FitnessVector<Double>> evolutionResult = eaSystem.evolve();
 		final Genotype bestGenotype = evolutionResult.bestGenotype();
-		final TreeChromosome<Operation<?>> bestChromosome = (TreeChromosome<Operation<?>>) bestGenotype
-				.getChromosome(0);
+		final TreeChromosome<Operation<?>> bestChromosome = (TreeChromosome<Operation<?>>) bestGenotype.getChromosome(0);
 		logger.info("Best genotype: {}", bestChromosome.getRoot());
 		logger.info("Best genotype - pretty print: {}", TreeNodeUtils.toStringTreeNode(bestChromosome.getRoot()));
 
 		final int depthIdx = 1;
 		for (int i = 0; i < 15; i++) {
 			final int depth = i;
-			final Optional<Integer> optIdx = IntStream.range(0, evolutionResult.fitness().size())
+			final Optional<Integer> optIdx = IntStream.range(0,
+					evolutionResult.fitness()
+							.size())
 					.boxed()
-					.filter((idx) -> evolutionResult.fitness().get(idx).get(depthIdx) == depth)
-					.sorted((a, b) -> Double.compare(evolutionResult.fitness().get(a).get(0),
-							evolutionResult.fitness().get(b).get(0)))
+					.filter((idx) -> evolutionResult.fitness()
+							.get(idx)
+							.get(depthIdx) == depth)
+					.sorted((a, b) -> Double.compare(evolutionResult.fitness()
+							.get(a)
+							.get(0),
+							evolutionResult.fitness()
+									.get(b)
+									.get(0)))
 					.findFirst();
 
-			optIdx.stream().forEach((idx) -> {
-				final TreeChromosome<Operation<?>> treeChromosome = (TreeChromosome<Operation<?>>) evolutionResult
-						.population()
-						.get(idx)
-						.getChromosome(0);
+			optIdx.stream()
+					.forEach((idx) -> {
+						final TreeChromosome<Operation<?>> treeChromosome = (TreeChromosome<Operation<?>>) evolutionResult
+								.population()
+								.get(idx)
+								.getChromosome(0);
 
-				logger.info("Best genotype for depth {} - score {} -> {}",
-						depth,
-						evolutionResult.fitness().get(idx).get(0),
-						TreeNodeUtils.toStringTreeNode(treeChromosome.getRoot()));
-			});
+						logger.info("Best genotype for depth {} - score {} -> {}",
+								depth,
+								evolutionResult.fitness()
+										.get(idx)
+										.get(0),
+								TreeNodeUtils.toStringTreeNode(treeChromosome.getRoot()));
+					});
 		}
 	}
 
