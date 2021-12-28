@@ -6,13 +6,12 @@ import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.replacement.GenerationalReplacement;
 import net.bmahe.genetics4j.core.spec.replacement.ReplacementStrategy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
-public class GenerationalReplacementStrategyHandler<T extends Comparable<T>>
-		implements ReplacementStrategyHandler<T> {
+public class GenerationalReplacementStrategyHandler<T extends Comparable<T>> implements ReplacementStrategyHandler<T> {
 
 	@Override
 	public boolean canHandle(final ReplacementStrategy replacementStrategy) {
@@ -22,7 +21,7 @@ public class GenerationalReplacementStrategyHandler<T extends Comparable<T>>
 	}
 
 	@Override
-	public ReplacementStrategyImplementor<T> resolve(final EAExecutionContext<T> eaExecutionContext,
+	public ReplacementStrategyImplementor<T> resolve(final AbstractEAExecutionContext<T> eaExecutionContext,
 			final AbstractEAConfiguration<T> eaConfiguration,
 			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
 			final ReplacementStrategy replacementStrategy) {
@@ -42,5 +41,4 @@ public class GenerationalReplacementStrategyHandler<T extends Comparable<T>>
 
 		return new GenerationalReplacementImpl<T>(generationalReplacement, offspringSelector);
 	}
-
 }

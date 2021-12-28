@@ -6,7 +6,7 @@ import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.replacement.Elitism;
 import net.bmahe.genetics4j.core.spec.replacement.ReplacementStrategy;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
@@ -21,7 +21,7 @@ public class ElitismReplacementStrategyHandler<T extends Comparable<T>> implemen
 	}
 
 	@Override
-	public ReplacementStrategyImplementor<T> resolve(final EAExecutionContext<T> eaExecutionContext,
+	public ReplacementStrategyImplementor<T> resolve(final AbstractEAExecutionContext<T> eaExecutionContext,
 			final AbstractEAConfiguration<T> eaConfiguration,
 			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
 			final ReplacementStrategy replacementStrategy) {

@@ -12,7 +12,7 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.Tournament;
@@ -36,7 +36,8 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 	}
 
 	@Override
-	public Selector<T> resolve(final EAExecutionContext<T> eaExecutionContext, final AbstractEAConfiguration<T> eaConfiguration,
+	public Selector<T> resolve(final AbstractEAExecutionContext<T> eaExecutionContext,
+			final AbstractEAConfiguration<T> eaConfiguration,
 			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
 			final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
@@ -57,11 +58,11 @@ public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implement
 				final Tournament<T> tournamentSelection = (Tournament<T>) selectionPolicy;
 
 				switch (eaConfiguration.optimization()) {
-				case MAXIMZE:
-				case MINIMIZE:
-					break;
-				default:
-					throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
+					case MAXIMZE:
+					case MINIMIZE:
+						break;
+					default:
+						throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 				}
 
 				final Comparator<Individual<T>> baseComparator = tournamentSelection.comparator();

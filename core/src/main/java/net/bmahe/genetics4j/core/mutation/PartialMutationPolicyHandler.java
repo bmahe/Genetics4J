@@ -7,7 +7,7 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.PartialMutation;
 
@@ -30,7 +30,8 @@ public class PartialMutationPolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public Mutator createMutator(final EAExecutionContext eaExecutionContext, final AbstractEAConfiguration eaConfiguration,
+	public Mutator createMutator(final AbstractEAExecutionContext eaExecutionContext,
+			final AbstractEAConfiguration eaConfiguration,
 			final MutationPolicyHandlerResolver mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);
@@ -53,8 +54,7 @@ public class PartialMutationPolicyHandler implements MutationPolicyHandler {
 			public Genotype mutate(final Genotype original) {
 				Validate.notNull(original);
 
-				final Chromosome[] chromosomes = Arrays.copyOf(original.getChromosomes(),
-						original.getChromosomes().length);
+				final Chromosome[] chromosomes = Arrays.copyOf(original.getChromosomes(), original.getChromosomes().length);
 				final Genotype mutated = childMutator.mutate(original);
 
 				chromosomes[mutatedChromosomeIndex] = mutated.getChromosome(mutatedChromosomeIndex);
@@ -63,5 +63,4 @@ public class PartialMutationPolicyHandler implements MutationPolicyHandler {
 			}
 		};
 	}
-
 }

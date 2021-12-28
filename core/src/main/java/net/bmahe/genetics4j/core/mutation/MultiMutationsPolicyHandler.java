@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
@@ -34,11 +34,14 @@ public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
 
 		final MultiMutations multiMutations = (MultiMutations) mutationPolicy;
 
-		return multiMutations.mutationPolicies().stream().allMatch((mp) -> mutationPolicyHandlerResolver.canHandle(mp));
+		return multiMutations.mutationPolicies()
+				.stream()
+				.allMatch((mp) -> mutationPolicyHandlerResolver.canHandle(mp));
 	}
 
 	@Override
-	public Mutator createMutator(final EAExecutionContext eaExecutionContext, final AbstractEAConfiguration eaConfiguration,
+	public Mutator createMutator(final AbstractEAExecutionContext eaExecutionContext,
+			final AbstractEAConfiguration eaConfiguration,
 			final MutationPolicyHandlerResolver mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);
@@ -48,13 +51,16 @@ public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
 
 		final MultiMutations multiMutations = (MultiMutations) mutationPolicy;
 
-		final List<Mutator> mutators = multiMutations.mutationPolicies().stream().map((mp) -> {
+		final List<Mutator> mutators = multiMutations.mutationPolicies()
+				.stream()
+				.map((mp) -> {
 
-			final MutationPolicyHandler mutationPolicyHandler = mutationPolicyHandlerResolver.resolve(mp);
+					final MutationPolicyHandler mutationPolicyHandler = mutationPolicyHandlerResolver.resolve(mp);
 
-			return mutationPolicyHandler
-					.createMutator(eaExecutionContext, eaConfiguration, mutationPolicyHandlerResolver, mp);
-		}).collect(Collectors.toList());
+					return mutationPolicyHandler
+							.createMutator(eaExecutionContext, eaConfiguration, mutationPolicyHandlerResolver, mp);
+				})
+				.collect(Collectors.toList());
 
 		return new Mutator() {
 
@@ -64,7 +70,8 @@ public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
 
 				final int selectedMutatorIndex = randomGenerator.nextInt(mutators.size());
 
-				return mutators.get(selectedMutatorIndex).mutate(original);
+				return mutators.get(selectedMutatorIndex)
+						.mutate(original);
 			}
 		};
 	}

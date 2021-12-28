@@ -22,7 +22,7 @@ import net.bmahe.genetics4j.core.mutation.Mutator;
 import net.bmahe.genetics4j.core.replacement.ReplacementStrategyImplementor;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.ImmutableEvolutionResult;
 import net.bmahe.genetics4j.core.termination.Termination;
@@ -37,7 +37,7 @@ public class EASystem<T extends Comparable<T>> {
 
 	private final FitnessEvaluator<T> fitnessEvaluator;
 	private final AbstractEAConfiguration<T> eaConfiguration;
-	private final EAExecutionContext<T> eaExecutionContext;
+	private final AbstractEAExecutionContext<T> eaExecutionContext;
 	private final int populationSize;
 
 	private final List<ChromosomeCombinator> chromosomeCombinators;
@@ -55,7 +55,7 @@ public class EASystem<T extends Comparable<T>> {
 			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
 			final Selector<T> _parentSelectionPolicyHandler, final List<Mutator> _mutators,
 			final ReplacementStrategyImplementor<T> _replacementStrategyImplementor,
-			final EAExecutionContext<T> _eaExecutionContext, final FitnessEvaluator<T> _fitnessEvaluator) {
+			final AbstractEAExecutionContext<T> _eaExecutionContext, final FitnessEvaluator<T> _fitnessEvaluator) {
 		Validate.notNull(_eaConfiguration);
 		Validate.isTrue(_populationSize > 0);
 		Validate.notNull(_chromosomeCombinators);

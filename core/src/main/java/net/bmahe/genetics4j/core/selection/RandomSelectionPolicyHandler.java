@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelection;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
@@ -29,7 +29,8 @@ public class RandomSelectionPolicyHandler<T extends Comparable<T>> implements Se
 	}
 
 	@Override
-	public Selector<T> resolve(final EAExecutionContext<T> eaExecutionContext, final AbstractEAConfiguration<T> eaConfiguration,
+	public Selector<T> resolve(final AbstractEAExecutionContext<T> eaExecutionContext,
+			final AbstractEAConfiguration<T> eaConfiguration,
 			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
 			final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
