@@ -23,7 +23,8 @@ public abstract class ChromosomeFactoryProvider {
 
 		return Arrays.asList(new BitChromosomeFactory(randomGenerator),
 				new IntChromosomeFactory(randomGenerator),
-				new DoubleChromosomeFactory(randomGenerator));
+				new DoubleChromosomeFactory(randomGenerator),
+				new FloatChromosomeFactory(randomGenerator));
 	}
 
 	public abstract List<Function<ChromosomeFactoryProvider, ChromosomeFactory<? extends Chromosome>>> chromosomeFactoriesGenerator();

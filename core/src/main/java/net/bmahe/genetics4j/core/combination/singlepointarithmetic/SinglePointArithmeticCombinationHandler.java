@@ -9,6 +9,7 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorHandler;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinatorResolver;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.DoubleChromosomeSpec;
+import net.bmahe.genetics4j.core.spec.chromosome.FloatChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointArithmetic;
@@ -30,8 +31,8 @@ public class SinglePointArithmeticCombinationHandler implements ChromosomeCombin
 		Validate.notNull(combinationPolicy);
 		Validate.notNull(chromosome);
 
-		return combinationPolicy instanceof SinglePointArithmetic
-				&& (chromosome instanceof IntChromosomeSpec || chromosome instanceof DoubleChromosomeSpec);
+		return combinationPolicy instanceof SinglePointArithmetic && (chromosome instanceof IntChromosomeSpec
+				|| chromosome instanceof DoubleChromosomeSpec || chromosome instanceof FloatChromosomeSpec);
 	}
 
 	@Override
@@ -51,6 +52,10 @@ public class SinglePointArithmeticCombinationHandler implements ChromosomeCombin
 
 		if (chromosome instanceof DoubleChromosomeSpec) {
 			return new DoubleChromosomeSinglePointArithmetic(randomGenerator, alpha);
+		}
+
+		if (chromosome instanceof FloatChromosomeSpec) {
+			return new FloatChromosomeSinglePointArithmetic(randomGenerator, (float) alpha);
 		}
 
 		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);
