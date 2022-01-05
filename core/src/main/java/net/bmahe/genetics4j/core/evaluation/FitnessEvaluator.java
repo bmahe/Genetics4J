@@ -11,11 +11,17 @@ import net.bmahe.genetics4j.core.Genotype;
  */
 public interface FitnessEvaluator<T extends Comparable<T>> {
 
+	default void preEvaluation() {
+	}
+
+	default void postEvaluation() {
+	}
+
 	/**
 	 * Compute the fitness for a list of genotypes
 	 * 
 	 * @param genotypes Population to evaluate
 	 * @return Their associated fitnesses
 	 */
-	List<T> evaluate(final List<Genotype> genotypes);
+	List<T> evaluate(final long generation, final List<Genotype> genotypes);
 }

@@ -36,7 +36,8 @@ public class FitnessEvaluatorBulkAsync<T extends Comparable<T>> implements Fitne
 	}
 
 	@Override
-	public List<T> evaluate(final List<Genotype> genotypes) {
+	public List<T> evaluate(final long generation, final List<Genotype> genotypes) {
+		Validate.isTrue(generation >= 0);
 		Validate.notNull(genotypes);
 		Validate.isTrue(genotypes.size() > 0);
 

@@ -46,7 +46,8 @@ public class FitnessEvaluatorSync<T extends Comparable<T>> implements FitnessEva
 	}
 
 	@Override
-	public List<T> evaluate(final List<Genotype> population) {
+	public List<T> evaluate(final long generation, final List<Genotype> population) {
+		Validate.isTrue(generation >= 0);
 		Validate.notNull(population);
 		Validate.isTrue(population.size() > 0);
 

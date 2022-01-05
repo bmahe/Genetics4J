@@ -120,12 +120,13 @@ public class EASystem<T extends Comparable<T>> {
 		return population;
 	}
 
-	private List<T> evaluate(final List<Genotype> population) {
+	private List<T> evaluate(final long generation, final List<Genotype> population) {
+		Validate.isTrue(generation >= 0);
 		Validate.notNull(population);
 		Validate.isTrue(population.size() > 0);
 
 		logger.debug("Evaluating population of size {}", population.size());
-		final List<T> fitnesses = fitnessEvaluator.evaluate(population);
+		final List<T> fitnesses = fitnessEvaluator.evaluate(generation, population);
 
 		logger.debug("Done evaluating population of size {}", population.size());
 		return fitnesses;
@@ -150,14 +151,16 @@ public class EASystem<T extends Comparable<T>> {
 
 		logger.info("Starting evolution");
 
+		fitnessEvaluator.preEvaluation();
+
 		final int initialPopulationSize = eaExecutionContext.populationSize();
 		logger.info("Generating initial population of {} individuals", initialPopulationSize);
 
 		long generation = 0;
-		List<Genotype> genotypes = generateGenotype(eaConfiguration, initialPopulationSize);
+		final List<Genotype> genotypes = generateGenotype(eaConfiguration, initialPopulationSize);
 
 		logger.info("Evaluating initial population");
-		final List<T> fitnessScore = evaluate(genotypes);
+		final List<T> fitnessScore = evaluate(generation, genotypes);
 
 		Population<T> population = eaConfiguration.postEvaluationProcessor()
 				.map(pep -> pep.apply(Population.of(genotypes, fitnessScore)))
@@ -219,7 +222,7 @@ public class EASystem<T extends Comparable<T>> {
 					.collect(Collectors.toList());
 
 			logger.info("Evaluating offsprings");
-			final List<T> offspringScores = evaluate(mutatedChildren);
+			final List<T> offspringScores = evaluate(generation, mutatedChildren);
 
 			final Population<T> childrenPopulation = eaConfiguration.postEvaluationProcessor()
 					.map(pep -> pep.apply(Population.of(mutatedChildren, offspringScores)))
@@ -242,7 +245,7 @@ public class EASystem<T extends Comparable<T>> {
 
 				if (additionalIndividuals.size() > 0) {
 
-					final List<T> additionalFitness = evaluate(additionalIndividuals);
+					final List<T> additionalFitness = evaluate(generation, additionalIndividuals);
 					newPopulation.addAll(Population.of(additionalIndividuals, additionalFitness));
 				}
 			}
@@ -259,6 +262,8 @@ public class EASystem<T extends Comparable<T>> {
 		for (final EvolutionListener<T> evolutionListener : eaExecutionContext.evolutionListeners()) {
 			evolutionListener.onEvolution(generation, population.getAllGenotypes(), population.getAllFitnesses(), true);
 		}
+
+		fitnessEvaluator.postEvaluation();
 
 		return ImmutableEvolutionResult
 				.of(eaConfiguration, generation, population.getAllGenotypes(), population.getAllFitnesses());
