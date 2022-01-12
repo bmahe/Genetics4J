@@ -268,4 +268,16 @@ public class EASystem<T extends Comparable<T>> {
 		return ImmutableEvolutionResult
 				.of(eaConfiguration, generation, population.getAllGenotypes(), population.getAllFitnesses());
 	}
+
+	public List<T> evaluateOnce(final long generation, final List<Genotype> population) {
+		Validate.isTrue(generation >= 0);
+		Validate.notNull(population);
+		Validate.isTrue(population.size() > 0);
+
+		fitnessEvaluator.preEvaluation();
+		final var fitness = evaluate(generation, population);
+		fitnessEvaluator.postEvaluation();
+
+		return fitness;
+	}
 }
