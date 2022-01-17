@@ -269,13 +269,19 @@ public class EASystem<T extends Comparable<T>> {
 				.of(eaConfiguration, generation, population.getAllGenotypes(), population.getAllFitnesses());
 	}
 
-	public List<T> evaluateOnce(final long generation, final List<Genotype> population) {
+	public List<T> evaluateOnce(final long generation, final List<Genotype> genotypes) {
 		Validate.isTrue(generation >= 0);
-		Validate.notNull(population);
-		Validate.isTrue(population.size() > 0);
+		Validate.notNull(genotypes);
+		Validate.isTrue(genotypes.size() > 0);
 
 		fitnessEvaluator.preEvaluation();
-		final var fitness = evaluate(generation, population);
+		final var fitness = evaluate(generation, genotypes);
+
+		final var population = Population.of(genotypes, fitness);
+		for (final EvolutionListener<T> evolutionListener : eaExecutionContext.evolutionListeners()) {
+			evolutionListener.onEvolution(generation, population.getAllGenotypes(), population.getAllFitnesses(), true);
+		}
+
 		fitnessEvaluator.postEvaluation();
 
 		return fitness;
