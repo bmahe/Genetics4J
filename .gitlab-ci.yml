@@ -24,6 +24,7 @@ spotbugs-sast:
 stages:
   - build
   - test
+  - verify
   - package
   - deploy
 
@@ -37,25 +38,56 @@ cache:
   paths:
     - .m2/repository
 
-# For merge requests do not `deploy` but only run `verify`.
+
+build:
+  stage: build
+  before_script:
+    - apt-get update -yqq
+    - apt-get install -yqq gnuplot graphviz
+    - apt-get install -yqq pocl-opencl-icd opencl-headers
+  script:
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE package -DskipTests -DskipPITests -Dmaven.javadoc.skip=true'
+  artifacts:
+    paths:
+      - core/target
+      - extras/target
+      - gp/target
+      - gpu/target
+      - moo/target
+      - samples/target
+      - target
+    expire_in: 1 week
+
+
+# For merge requests do not `deploy` but only run `validate`.
 # See https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
-.verify: &verify
+.validate: &validate
   stage: test
   before_script:
     - apt-get update -yqq
     - apt-get install -yqq gnuplot graphviz
+    - apt-get install -yqq pocl-opencl-icd opencl-headers
   script:
-    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE verify -DskipPITests'
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE test -DskipPITests -Dmaven.javadoc.skip=true'
 
-# Verify merge requests using JDK17 - Temurin (default)
-verify:jdk17:
-  <<: *verify
+# Validate merge requests using JDK17 - Temurin (default)
+validate:jdk17:
+  <<: *validate
   cache:
     key: "$CI_JOB_NAME-java17"
+  artifacts:
+    paths:
+      - core/target
+      - extras/target
+      - gp/target
+      - gpu/target
+      - moo/target
+      - samples/target
+    expire_in: 1 week
 
-# Verify merge requests using JDK17 - OpenJDK
-verify:jdk17-openjdk:
-  <<: *verify
+# Validate merge requests using JDK17 - OpenJDK
+validate:jdk17-openjdk:
+  <<: *validate
   image: maven:3.8.4-openjdk-17
   cache:
     key: "$CI_JOB_NAME-java17-openjdk"
@@ -63,15 +95,88 @@ verify:jdk17-openjdk:
     - microdnf install gnuplot graphviz
     - microdnf install python3 python3-pip
 
-# Verify merge requests using JDK17 - Amazon Corretto
-verify:jdk17-amazoncorretto:
-  <<: *verify
+# Validate merge requests using JDK17 - Amazon Corretto
+validate:jdk17-amazoncorretto:
+  <<: *validate
   image: maven:3.8.4-amazoncorretto-17
   cache:
     key: "$CI_JOB_NAME-java17-amazoncorretto"
   before_script:
     - yum install -y gnuplot graphviz
     - yum install -y python3 python3-pip
+
+.verify: &verify
+  stage: verify
+  cache:
+    key: "$CI_JOB_NAME-java17"
+  before_script:
+    - apt-get update -yqq
+    - apt-get install -yqq gnuplot graphviz
+    - apt-get install -yqq pocl-opencl-icd opencl-headers
+
+verify-core:
+  <<: *verify
+  script:
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE --projects core --also-make verify'
+  artifacts:
+    paths:
+      - core/target
+    expire_in: 1 week
+
+verify-extras:
+  <<: *verify
+  script:
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE install -DskipTests -DskipPITests'
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE --projects extras verify'
+    - 'rm -rfv $CI_PROJECT_DIR/.m2/repository/net/bmahe'
+  artifacts:
+    paths:
+      - extras/target
+    expire_in: 1 week
+
+verify-gp:
+  <<: *verify
+  script:
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE install -DskipTests -DskipPITests'
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE --projects gp verify'
+    - 'rm -rfv $CI_PROJECT_DIR/.m2/repository/net/bmahe'
+  artifacts:
+    paths:
+      - gp/target
+    expire_in: 1 week
+
+verify-gpu:
+  <<: *verify
+  script:
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE install -DskipTests -DskipPITests'
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE --projects gpu verify'
+    - 'rm -rfv $CI_PROJECT_DIR/.m2/repository/net/bmahe'
+  artifacts:
+    paths:
+      - gpu/target
+    expire_in: 1 week
+
+verify-moo:
+  <<: *verify
+  script:
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE install -DskipTests -DskipPITests'
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE --projects moo verify'
+    - 'rm -rfv $CI_PROJECT_DIR/.m2/repository/net/bmahe'
+  artifacts:
+    paths:
+      - moo/target
+    expire_in: 1 week
+
+verify-samples:
+  <<: *verify
+  script:
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE install -DskipTests -DskipPITests'
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE --projects samples verify'
+    - 'rm -rfv $CI_PROJECT_DIR/.m2/repository/net/bmahe'
+  artifacts:
+    paths:
+      - samples/target
+    expire_in: 1 week
 
 site:
   stage: package
@@ -81,9 +186,12 @@ site:
   script:
     - apt-get update -yqq
     - apt-get install -yqq gnuplot graphviz
-    - apt-get install -yqq python3 python3-pip
+    - apt-get install -yqq python3.9 python3-pip
+    - apt-get install -yqq pocl-opencl-icd opencl-headers
+    - rm /usr/bin/python3
+    - ln -s /usr/bin/python3.9 /usr/bin/python3
     - pip3 install matplotlib pandas
-    - mvn test verify site site:stage -Dproject.recommended.version="${RECOMMENDED_VERSION}"
+    - mvn site site:stage -Dproject.recommended.version="${RECOMMENDED_VERSION}"
 
 pages:
   stage: deploy
@@ -119,6 +227,8 @@ release:
     - git checkout -B "$CI_BUILD_REF_NAME"
     - apt-get install -yqq gnuplot graphviz
     - apt-get install -yqq python3 python3-pip
+    - rm /usr/bin/python3
+    - ln -s /usr/bin/python3.9 /usr/bin/python3
     - mvn $MAVEN_CLI_OPTS --batch-mode release:prepare -DtagNameFormat="r@{project.version}" -DscmCommentPrefix="[maven-release-plugin][ci skip] " -s ci_settings.xml
     - mvn $MAVEN_CLI_OPTS --batch-mode release:perform -Dgoals="deploy" -s ci_settings.xml
   when: manual

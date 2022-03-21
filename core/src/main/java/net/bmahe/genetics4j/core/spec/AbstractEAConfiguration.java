@@ -1,5 +1,7 @@
 package net.bmahe.genetics4j.core.spec;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -120,6 +122,16 @@ public abstract class AbstractEAConfiguration<T extends Comparable<T>> {
 	 * @return
 	 */
 	public abstract Optional<Supplier<Genotype>> genotypeGenerator();
+
+	/**
+	 * Seed the initial population with specific individuals
+	 * 
+	 * @return
+	 */
+	@Value.Default
+	public Collection<Genotype> seedPopulation() {
+		return Collections.emptyList();
+	}
 
 	/**
 	 * Defines how to combine the offspring chromosomes generated

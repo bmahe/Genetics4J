@@ -103,10 +103,18 @@ public class FitnessVectorTest {
 		final FitnessVector<Integer> fv1 = new FitnessVector<>(1, 2, 3, 4);
 		assertEquals(4, fv1.dimensions());
 
-		assertEquals(1, fv1.get(0).intValue());
-		assertEquals(2, fv1.get(1).intValue());
-		assertEquals(3, fv1.get(2).intValue());
-		assertEquals(4, fv1.get(3).intValue());
+		assertEquals(1,
+				fv1.get(0)
+						.intValue());
+		assertEquals(2,
+				fv1.get(1)
+						.intValue());
+		assertEquals(3,
+				fv1.get(2)
+						.intValue());
+		assertEquals(4,
+				fv1.get(3)
+						.intValue());
 
 		final FitnessVector<Integer> fv2 = new FitnessVector<>(1, 2, 3, 4);
 		assertEquals(0, fv1.compareTo(fv2));
@@ -123,12 +131,14 @@ public class FitnessVectorTest {
 		assertEquals(0, new FitnessVector<>(1, 2).compareTo(new FitnessVector<>(0, 3)));
 		assertEquals(-1, new FitnessVector<>(1, 2).compareTo(new FitnessVector<>(2, 2)));
 		assertEquals(-1, new FitnessVector<>(1, 2).compareTo(new FitnessVector<>(3, 2)));
+		assertEquals(-1,
+				new FitnessVector<>(4f, 5.0201883f, 0.51985145f)
+						.compareTo(new FitnessVector<>(4f, 5.0217524f, 0.54367197f)));
 
 		assertEquals(1,
 				new FitnessVector<>(List.of(1, 2),
 						List.of(Comparator.<Integer>reverseOrder(), Comparator.<Integer>reverseOrder()))
 								.compareTo(new FitnessVector<>(3, 2)));
-
 	}
 
 	@Test

@@ -105,7 +105,7 @@ public abstract class TournamentNSGA2Selection<T extends Comparable<T>> implemen
 		final var builder = new Builder<FitnessVector<U>>();
 
 		builder.objectiveComparator((m) -> (a, b) -> Double.compare(a.get(m).doubleValue(), b.get(m).doubleValue()))
-				.distance((a, b, m) -> b.get(m).doubleValue() - a.get(m).doubleValue())
+				.distance((a, b, m) -> Math.abs(b.get(m).doubleValue() - a.get(m).doubleValue()))
 				.numberObjectives(numberObjectives)
 				.numCandidates(numberCandidates)
 				.deduplicate(Optional.ofNullable(deduplicate));

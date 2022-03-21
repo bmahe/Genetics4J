@@ -34,15 +34,17 @@ public class ParetoUtils {
 			int dominated = 0;
 
 			for (int otherIndex = 0; otherIndex < fitnessScore.size(); otherIndex++) {
+				if (otherIndex != i) {
+					final T otherFitness = fitnessScore.get(otherIndex);
 
-				final T otherFitness = fitnessScore.get(otherIndex);
-
-				final int comparison = dominance.compare(individualFitness, otherFitness);
-				if (comparison > 0) {
-					dominating.computeIfAbsent(i, (k) -> new HashSet<>());
-					dominating.get(i).add(otherIndex);
-				} else if (comparison < 0) {
-					dominated++;
+					final int comparison = dominance.compare(individualFitness, otherFitness);
+					if (comparison > 0) {
+						dominating.computeIfAbsent(i, (k) -> new HashSet<>());
+						dominating.get(i)
+								.add(otherIndex);
+					} else if (comparison < 0) {
+						dominated++;
+					}
 				}
 			}
 			dominatedCount.put(i, dominated);
@@ -54,7 +56,8 @@ public class ParetoUtils {
 		}
 
 		int frontIndex = 0;
-		while (frontIndex < rankedPopulation.size() && rankedPopulation.get(frontIndex).isEmpty() == false) {
+		while (frontIndex < rankedPopulation.size() && rankedPopulation.get(frontIndex)
+				.isEmpty() == false) {
 			final Set<Integer> currentFront = rankedPopulation.get(frontIndex);
 
 			final Set<Integer> nextFront = new HashSet<>();
@@ -62,8 +65,7 @@ public class ParetoUtils {
 			for (final int i : currentFront) {
 				if (dominating.containsKey(i)) {
 					for (final Integer dominatedByI : dominating.get(i)) {
-						final Integer updatedDominatedCount = dominatedCount.computeIfPresent(dominatedByI,
-								(k, v) -> v - 1);
+						final Integer updatedDominatedCount = dominatedCount.computeIfPresent(dominatedByI, (k, v) -> v - 1);
 
 						if (updatedDominatedCount != null && updatedDominatedCount == 0) {
 							nextFront.add(dominatedByI);

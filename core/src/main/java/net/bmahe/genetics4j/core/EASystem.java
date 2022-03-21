@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -132,6 +133,31 @@ public class EASystem<T extends Comparable<T>> {
 		return fitnesses;
 	}
 
+	private List<Genotype> initializePopulation() {
+		final int initialPopulationSize = eaExecutionContext.populationSize();
+		logger.info("Generating initial population of {} individuals", initialPopulationSize);
+
+		final List<Genotype> genotypes = new ArrayList<>(initialPopulationSize);
+
+		final var seedPopulation = eaConfiguration.seedPopulation();
+		if (CollectionUtils.isNotEmpty(seedPopulation)) {
+			genotypes.addAll(seedPopulation);
+		}
+		if (genotypes.size() < initialPopulationSize) {
+			final var missingInitialIndividualCount = initialPopulationSize - genotypes.size();
+			logger.info(
+					"{} seed individual(s) added and generating {} individuals to reach the target of {} initial population size",
+					genotypes.size(),
+					missingInitialIndividualCount,
+					initialPopulationSize);
+
+			final var extraIndividuals = generateGenotype(eaConfiguration, missingInitialIndividualCount);
+			genotypes.addAll(extraIndividuals);
+		}
+
+		return genotypes;
+	}
+
 	public AbstractEAConfiguration<T> getEAConfiguration() {
 		return eaConfiguration;
 	}
@@ -157,7 +183,7 @@ public class EASystem<T extends Comparable<T>> {
 		logger.info("Generating initial population of {} individuals", initialPopulationSize);
 
 		long generation = 0;
-		final List<Genotype> genotypes = generateGenotype(eaConfiguration, initialPopulationSize);
+		final List<Genotype> genotypes = initializePopulation();
 
 		logger.info("Evaluating initial population");
 		final List<T> fitnessScore = evaluate(generation, genotypes);

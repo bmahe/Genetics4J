@@ -19,7 +19,10 @@ public class Population<T extends Comparable<T>> {
 		Validate.notNull(_genotype);
 		Validate.notNull(_fitnesses);
 		Validate.isTrue(_genotype.size() > 0);
-		Validate.isTrue(_genotype.size() == _fitnesses.size());
+		Validate.isTrue(_genotype.size() == _fitnesses.size(),
+				"Size of genotype (%d) does not match size of fitnesses (%d)",
+				_genotype.size(),
+				_fitnesses.size());
 
 		this.genotypes = new ArrayList<Genotype>(_genotype);
 		this.fitnesses = new ArrayList<>(_fitnesses);

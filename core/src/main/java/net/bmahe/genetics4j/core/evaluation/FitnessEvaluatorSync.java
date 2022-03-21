@@ -53,7 +53,7 @@ public class FitnessEvaluatorSync<T extends Comparable<T>> implements FitnessEva
 
 		final Fitness<T> fitness = eaConfigurationSync.fitness();
 		final int numPartitions = eaExecutionContext.numberOfPartitions();
-		final int partitionSize = (int) Math.ceil(population.size() / numPartitions);
+		final int partitionSize = Math.max(1, (int) Math.ceil(population.size() / numPartitions));
 
 		final List<CompletableFuture<TaskResult<T>>> tasks = new ArrayList<>();
 		for (int i = 0; i < population.size();) {
