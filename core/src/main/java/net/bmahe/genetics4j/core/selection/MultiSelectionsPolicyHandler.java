@@ -7,8 +7,8 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.selection.MultiSelections;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
@@ -24,7 +24,8 @@ public class MultiSelectionsPolicyHandler<T extends Comparable<T>> implements Se
 	}
 
 	@Override
-	public Selector<T> resolve(final EAExecutionContext<T> eaExecutionContext, final EAConfiguration<T> eaConfiguration,
+	public Selector<T> resolve(final AbstractEAExecutionContext<T> eaExecutionContext,
+			final AbstractEAConfiguration<T> eaConfiguration,
 			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
 			final SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
@@ -34,16 +35,18 @@ public class MultiSelectionsPolicyHandler<T extends Comparable<T>> implements Se
 		final List<SelectionPolicy> selectionPolicies = multiSelections.selectionPolicies();
 		Validate.isTrue(selectionPolicies.isEmpty() == false);
 
-		final List<Selector<T>> selectors = selectionPolicies.stream().map((sp) -> {
+		final List<Selector<T>> selectors = selectionPolicies.stream()
+				.map((sp) -> {
 
-			final SelectionPolicyHandler<T> spHandler = selectionPolicyHandlerResolver.resolve(sp);
-			return spHandler.resolve(eaExecutionContext, eaConfiguration, selectionPolicyHandlerResolver, sp);
-		}).collect(Collectors.toList());
+					final SelectionPolicyHandler<T> spHandler = selectionPolicyHandlerResolver.resolve(sp);
+					return spHandler.resolve(eaExecutionContext, eaConfiguration, selectionPolicyHandlerResolver, sp);
+				})
+				.collect(Collectors.toList());
 
 		return new Selector<T>() {
 
 			@Override
-			public Population<T> select(EAConfiguration<T> eaConfiguration, int numIndividuals,
+			public Population<T> select(AbstractEAConfiguration<T> eaConfiguration, int numIndividuals,
 					List<Genotype> population, List<T> fitnessScore) {
 				final int incrementSelection = numIndividuals / selectors.size();
 
@@ -56,8 +59,8 @@ public class MultiSelectionsPolicyHandler<T extends Comparable<T>> implements Se
 				int i = 0;
 				while (selectedIndividuals.size() < numIndividuals) {
 
-					selectedIndividuals.addAll(
-							selectors.get(i).select(eaConfiguration, incrementSelection, population, fitnessScore));
+					selectedIndividuals.addAll(selectors.get(i)
+							.select(eaConfiguration, incrementSelection, population, fitnessScore));
 
 					i = (i + 1) % selectors.size();
 				}

@@ -7,6 +7,8 @@ import java.util.function.Function;
 import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.immutables.value.Value;
 
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
@@ -14,6 +16,7 @@ import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 
 @Value.Immutable
 public abstract class ChromosomeFactoryProvider {
+	final static public Logger logger = LogManager.getLogger(ChromosomeFactoryProvider.class);
 
 	public abstract RandomGenerator randomGenerator();
 
@@ -23,7 +26,8 @@ public abstract class ChromosomeFactoryProvider {
 
 		return Arrays.asList(new BitChromosomeFactory(randomGenerator),
 				new IntChromosomeFactory(randomGenerator),
-				new DoubleChromosomeFactory(randomGenerator));
+				new DoubleChromosomeFactory(randomGenerator),
+				new FloatChromosomeFactory(randomGenerator));
 	}
 
 	public abstract List<Function<ChromosomeFactoryProvider, ChromosomeFactory<? extends Chromosome>>> chromosomeFactoriesGenerator();
@@ -49,6 +53,8 @@ public abstract class ChromosomeFactoryProvider {
 		Validate.notNull(chromosomeSpec);
 
 		final List<ChromosomeFactory<? extends Chromosome>> chromosomeFactories = chromosomeFactories();
+
+		logger.trace("Known chromosome factories: {}", chromosomeFactories);
 
 		return chromosomeFactories.stream()
 				.dropWhile((chromosomeFactory) -> chromosomeFactory.canHandle(chromosomeSpec) == false)

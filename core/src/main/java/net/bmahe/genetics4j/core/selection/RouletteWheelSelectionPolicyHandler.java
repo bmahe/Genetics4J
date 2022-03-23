@@ -8,14 +8,15 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheel;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
 public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T>>
-		implements SelectionPolicyHandler<T> {
+		implements SelectionPolicyHandler<T>
+{
 
 	private final RandomGenerator randomGenerator;
 
@@ -32,15 +33,16 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 	}
 
 	@Override
-	public Selector<T> resolve(EAExecutionContext<T> eaExecutionContext, EAConfiguration<T> eaConfiguration,
-			SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver, SelectionPolicy selectionPolicy) {
+	public Selector<T> resolve(AbstractEAExecutionContext<T> eaExecutionContext,
+			AbstractEAConfiguration<T> eaConfiguration, SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
+			SelectionPolicy selectionPolicy) {
 		Validate.notNull(selectionPolicy);
 		Validate.isInstanceOf(RouletteWheel.class, selectionPolicy);
 
 		return new Selector<T>() {
 
 			@Override
-			public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+			public Population<T> select(final AbstractEAConfiguration<T> eaConfiguration, final int numIndividuals,
 					final List<Genotype> population, final List<T> fitnessScore) {
 				Validate.notNull(eaConfiguration);
 				Validate.notNull(population);
@@ -49,11 +51,11 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 				Validate.isTrue(population.size() == fitnessScore.size());
 
 				switch (eaConfiguration.optimization()) {
-				case MAXIMZE:
-				case MINIMIZE:
-					break;
-				default:
-					throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
+					case MAXIMZE:
+					case MINIMIZE:
+						break;
+					default:
+						throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 				}
 
 				final Population<T> selectedIndividuals = new Population<>();
@@ -72,10 +74,13 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 				final double[] probabilities = new double[population.size()];
 
 				for (int i = 0; i < population.size(); i++) {
-					if (eaConfiguration.optimization().equals(Optimization.MAXIMZE)) {
-						sumFitness += fitnessScore.get(i).doubleValue();
+					if (eaConfiguration.optimization()
+							.equals(Optimization.MAXIMZE)) {
+						sumFitness += fitnessScore.get(i)
+								.doubleValue();
 					} else {
-						sumFitness += reversedBase - fitnessScore.get(i).doubleValue();
+						sumFitness += reversedBase - fitnessScore.get(i)
+								.doubleValue();
 					}
 					probabilities[i] = sumFitness;
 				}

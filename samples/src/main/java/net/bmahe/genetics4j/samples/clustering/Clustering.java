@@ -40,6 +40,7 @@ import net.bmahe.genetics4j.core.termination.Termination;
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.extras.evolutionlisteners.CSVEvolutionListener;
 import net.bmahe.genetics4j.extras.evolutionlisteners.ColumnExtractor;
+import net.bmahe.genetics4j.samples.CLIUtils;
 
 public class Clustering {
 	final static public Logger logger = LogManager.getLogger(Clustering.class);
@@ -100,10 +101,7 @@ public class Clustering {
 	final static public String LONG_PARAM_BASE_DIR_OUTPUT = "base-dir";
 
 	public static void cliError(final Options options, final String errorMessage) {
-		final HelpFormatter formatter = new HelpFormatter();
-		logger.error(errorMessage);
-		formatter.printHelp(Clustering.class.getSimpleName(), options);
-		System.exit(-1);
+		CLIUtils.cliHelpAndExit(logger, Clustering.class, options, errorMessage);
 	}
 
 	private final static double computeDistance(final double[][] array, final int i, final int j) {
@@ -247,7 +245,8 @@ public class Clustering {
 		logger.info("Running kmeans");
 
 		final KMeansPlusPlusClusterer<LocationWrapper> clusterer = new KMeansPlusPlusClusterer<LocationWrapper>(
-				numClusters, 10_000);
+				numClusters,
+				10_000);
 		final List<CentroidCluster<LocationWrapper>> clusterResults = clusterer.cluster(clusterInput);
 
 		final long durationMs = System.currentTimeMillis() - startTs;
@@ -331,10 +330,12 @@ public class Clustering {
 			final CommandLine line = parser.parse(options, args);
 
 			if (line.hasOption(PARAM_NUMBER_TOURNAMENTS)) {
-				numberTournaments = Integer.parseInt(line.getOptionValue(PARAM_NUMBER_TOURNAMENTS).strip());
+				numberTournaments = Integer.parseInt(line.getOptionValue(PARAM_NUMBER_TOURNAMENTS)
+						.strip());
 			}
 
-			baseDir = Optional.ofNullable(line.getOptionValue(PARAM_BASE_DIR_OUTPUT)).orElse("");
+			baseDir = Optional.ofNullable(line.getOptionValue(PARAM_BASE_DIR_OUTPUT))
+					.orElse("");
 
 			combinationArithmetic = Optional.ofNullable(line.getOptionValue(PARAM_COMBINATION_ARITHMETIC))
 					.map(String::strip)
@@ -357,10 +358,13 @@ public class Clustering {
 			paramSourceClustersCSV = Optional.ofNullable(line.getOptionValue(PARAM_SOURCE_CLUSTERS_CSV))
 					.map(String::strip);
 
-			paramSourceDataCSV = Optional.ofNullable(line.getOptionValue(PARAM_SOURCE_DATA_CSV)).map(String::strip);
+			paramSourceDataCSV = Optional.ofNullable(line.getOptionValue(PARAM_SOURCE_DATA_CSV))
+					.map(String::strip);
 
-			paramOutputCSV = Optional.ofNullable(line.getOptionValue(PARAM_OUTPUT_CSV)).map(String::strip);
-			paramOutputWithSSECSV = Optional.ofNullable(line.getOptionValue(PARAM_OUTPUT_WITH_SSE_CSV)).map(String::strip);
+			paramOutputCSV = Optional.ofNullable(line.getOptionValue(PARAM_OUTPUT_CSV))
+					.map(String::strip);
+			paramOutputWithSSECSV = Optional.ofNullable(line.getOptionValue(PARAM_OUTPUT_WITH_SSE_CSV))
+					.map(String::strip);
 
 			paramFixedTermination = Optional.ofNullable(line.getOptionValue(PARAM_FIXED_TERMINATION))
 					.map(String::strip)
@@ -421,7 +425,8 @@ public class Clustering {
 			} catch (IOException e) {
 				throw new RuntimeException("Could not load " + sourceDataCSVFileName, e);
 			}
-		}).orElseGet(() -> generateDataPoints(random, clusters, numDataPoints, radius));
+		})
+				.orElseGet(() -> generateDataPoints(random, clusters, numDataPoints, radius));
 		final double[][] distances = computeAllDistances(data);
 
 		final String originalClustersFilename = "originalClusters.csv";
@@ -522,8 +527,10 @@ public class Clustering {
 		for (int i = 0; i < clusterResults.size(); i++) {
 			final CentroidCluster<LocationWrapper> centroidCluster = clusterResults.get(i);
 			logger.info("\t{}", centroidCluster.getCenter());
-			kmeansClusters[i * 2] = centroidCluster.getCenter().getPoint()[0];
-			kmeansClusters[i * 2 + 1] = centroidCluster.getCenter().getPoint()[1];
+			kmeansClusters[i * 2] = centroidCluster.getCenter()
+					.getPoint()[0];
+			kmeansClusters[i * 2 + 1] = centroidCluster.getCenter()
+					.getPoint()[1];
 		}
 		final var kmeansGenotype = new Genotype(new DoubleChromosome(k * 2, -100.0d, 100.0d, kmeansClusters));
 		final var kmeansFitness = fitnessFunction.compute(kmeansGenotype);

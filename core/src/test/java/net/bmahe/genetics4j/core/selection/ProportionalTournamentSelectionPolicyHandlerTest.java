@@ -111,7 +111,8 @@ public class ProportionalTournamentSelectionPolicyHandlerTest {
 				ProportionalTournament.<Double>of(2,
 						0.5,
 						Comparator.comparingDouble(Individual::fitness),
-						Comparator.comparingDouble(Individual<Double>::fitness).reversed()));
+						Comparator.comparingDouble(Individual<Double>::fitness)
+								.reversed()));
 		final Population<Double> selected = selector
 				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 2, population, fitnessScore);
 

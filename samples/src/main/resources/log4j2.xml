@@ -13,7 +13,9 @@
 		<Logger name="net.bmahe.genetics4j.core" level="INFO" />
 		<Logger name="net.bmahe.genetics4j.gp" level="DEBUG" />
 		<Logger name="net.bmahe.genetics4j.gp.mutation.ProgramRulesApplicatorMutator" level="DEBUG" />
+		<Logger name="net.bmahe.genetics4j.gpu" level="DEBUG" />
 		<Logger name="net.bmahe.genetics4j.moo.nsga2" level="DEBUG" />
 		<Logger name="net.bmahe.genetics4j.moo.spea2" level="DEBUG" />
+		<Logger name="net.bmahe.genetics4j.samples" level="TRACE" />
 	</Loggers>
 </Configuration>

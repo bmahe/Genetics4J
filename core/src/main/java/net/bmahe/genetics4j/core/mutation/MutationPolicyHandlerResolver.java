@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
 public class MutationPolicyHandlerResolver<T extends Comparable<T>> {
 
-	private final EAExecutionContext<T> eaExecutionContext;
+	private final AbstractEAExecutionContext<T> eaExecutionContext;
 	private final List<MutationPolicyHandler> mutationPolicyHandlers;
 
-	public MutationPolicyHandlerResolver(final EAExecutionContext<T> _eaExecutionContext) {
+	public MutationPolicyHandlerResolver(final AbstractEAExecutionContext<T> _eaExecutionContext) {
 		Validate.notNull(_eaExecutionContext);
 
 		this.eaExecutionContext = _eaExecutionContext;
@@ -22,7 +22,8 @@ public class MutationPolicyHandlerResolver<T extends Comparable<T>> {
 	public boolean canHandle(final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicy);
 
-		return mutationPolicyHandlers.stream().anyMatch((sph) -> sph.canHandle(this, mutationPolicy));
+		return mutationPolicyHandlers.stream()
+				.anyMatch((sph) -> sph.canHandle(this, mutationPolicy));
 	}
 
 	public MutationPolicyHandler resolve(final MutationPolicy mutationPolicy) {

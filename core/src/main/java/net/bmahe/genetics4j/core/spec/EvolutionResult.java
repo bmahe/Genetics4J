@@ -14,7 +14,7 @@ import net.bmahe.genetics4j.core.Genotype;
 public abstract class EvolutionResult<T extends Comparable<T>> {
 
 	@Value.Parameter
-	public abstract EAConfiguration<T> eaConfiguration();
+	public abstract AbstractEAConfiguration<T> eaConfiguration();
 
 	@Value.Parameter
 	public abstract long generation();

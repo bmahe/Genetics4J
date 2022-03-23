@@ -5,8 +5,8 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.replacement.ReplacementStrategyHandler;
 import net.bmahe.genetics4j.core.replacement.ReplacementStrategyImplementor;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.replacement.ReplacementStrategy;
 import net.bmahe.genetics4j.moo.spea2.spec.replacement.SPEA2Replacement;
 
@@ -20,8 +20,8 @@ public class SPEA2ReplacementStrategyHandler<T extends Comparable<T>> implements
 	}
 
 	@Override
-	public ReplacementStrategyImplementor<T> resolve(final EAExecutionContext<T> eaExecutionContext,
-			final EAConfiguration<T> eaConfiguration,
+	public ReplacementStrategyImplementor<T> resolve(final AbstractEAExecutionContext<T> eaExecutionContext,
+			final AbstractEAConfiguration<T> eaConfiguration,
 			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
 			final ReplacementStrategy replacementStrategy) {
 		Validate.notNull(eaExecutionContext);

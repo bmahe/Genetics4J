@@ -44,7 +44,10 @@ public class Genotype {
 
 	public <T extends Chromosome> T getChromosome(final int index, Class<T> clazz) {
 		Validate.isTrue(index >= 0);
-		Validate.isTrue(index < chromosomes.length);
+		Validate.isTrue(index < chromosomes.length,
+				"Index (%d) larger than the number of chromosomes (%d)",
+				index,
+				chromosomes.length);
 		Validate.notNull(clazz);
 
 		return clazz.cast(chromosomes[index]);

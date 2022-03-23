@@ -7,8 +7,8 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
 import net.bmahe.genetics4j.core.util.ChromosomeResolverUtils;
@@ -32,7 +32,7 @@ public class SwapMutationPolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public Mutator createMutator(EAExecutionContext eaExecutionContext, EAConfiguration eaConfiguration,
+	public Mutator createMutator(AbstractEAExecutionContext eaExecutionContext, AbstractEAConfiguration eaConfiguration,
 			MutationPolicyHandlerResolver mutationPolicyHandlerResolver, MutationPolicy mutationPolicy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);

@@ -4,16 +4,16 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 
 public class ChromosomeCombinatorResolver {
 
-	final EAExecutionContext eaExecutionContext;
+	final AbstractEAExecutionContext eaExecutionContext;
 	private List<ChromosomeCombinatorHandler> chromosomeCombinatorHandlers;
 
-	public ChromosomeCombinatorResolver(final EAExecutionContext _eaExecutionContext) {
+	public ChromosomeCombinatorResolver(final AbstractEAExecutionContext _eaExecutionContext) {
 		Validate.notNull(_eaExecutionContext);
 
 		this.eaExecutionContext = _eaExecutionContext;

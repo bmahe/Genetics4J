@@ -49,7 +49,8 @@ public class TerminationsTest {
 
 		for (int i = 0; i < size; i++) {
 
-			final int[] values = randomGenerator.ints(CHROMOSOME_SIZE).toArray();
+			final int[] values = randomGenerator.ints(CHROMOSOME_SIZE)
+					.toArray();
 			final var chromosome = new IntChromosome(CHROMOSOME_SIZE, 0, 10, values);
 			final var genotype = new Genotype(chromosome);
 			population.add(genotype);
@@ -62,7 +63,10 @@ public class TerminationsTest {
 		Validate.isTrue(size > 0);
 
 		final RandomGenerator randomGenerator = RandomGenerator.getDefault();
-		return randomGenerator.doubles(size).map(d -> d + offset).boxed().toList();
+		return randomGenerator.doubles(size)
+				.map(d -> d + offset)
+				.boxed()
+				.toList();
 	}
 
 	protected List<Double> generateFitness(final int size) {

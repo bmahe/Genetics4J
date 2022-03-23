@@ -61,7 +61,7 @@ public class GPEAExecutionContexts {
 		final var chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider.builder();
 		chromosomeFactoryProviderBuilder.randomGenerator(randomGenerator);
 		chromosomeFactoryProviderBuilder
-				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
+				.addChromosomeFactoriesGenerator(cdp -> new ProgramTreeChromosomeFactory(programGenerator));
 		builder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
 
 		return builder;

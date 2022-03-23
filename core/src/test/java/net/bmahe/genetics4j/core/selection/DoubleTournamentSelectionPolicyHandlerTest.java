@@ -189,8 +189,7 @@ public class DoubleTournamentSelectionPolicyHandlerTest {
 		final SelectionPolicyHandlerResolver<Double> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
 				eaExecutionContext);
 
-		final EAConfiguration<Double> eaConfiguration = new EAConfiguration.Builder<Double>()
-				.from(SIMPLE_MAXIMIZING_EA_CONFIGURATION)
+		final var eaConfiguration = new EAConfiguration.Builder<Double>().from(SIMPLE_MAXIMIZING_EA_CONFIGURATION)
 				.optimization(Optimization.MINIMIZE)
 				.build();
 

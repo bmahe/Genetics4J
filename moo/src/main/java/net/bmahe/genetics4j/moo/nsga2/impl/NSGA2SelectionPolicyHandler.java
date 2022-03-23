@@ -5,8 +5,8 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandler;
 import net.bmahe.genetics4j.core.selection.SelectionPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.EAExecutionContext;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.moo.nsga2.spec.NSGA2Selection;
 
@@ -19,7 +19,8 @@ public class NSGA2SelectionPolicyHandler<T extends Comparable<T>> implements Sel
 	}
 
 	@Override
-	public Selector<T> resolve(final EAExecutionContext<T> eaExecutionContext, final EAConfiguration<T> eaConfiguration,
+	public Selector<T> resolve(final AbstractEAExecutionContext<T> eaExecutionContext,
+			final AbstractEAConfiguration<T> eaConfiguration,
 			final SelectionPolicyHandlerResolver<T> selectionPolicyHandlerResolver,
 			final SelectionPolicy selectionPolicy) {
 		Validate.notNull(eaExecutionContext);

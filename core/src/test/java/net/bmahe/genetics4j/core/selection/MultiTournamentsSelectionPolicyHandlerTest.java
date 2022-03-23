@@ -107,7 +107,9 @@ public class MultiTournamentsSelectionPolicyHandlerTest {
 				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
 				selectionPolicyHandlerResolver,
 				MultiTournaments.<Double>of(Tournament.of(2),
-						Tournament.of(2, Comparator.comparing(Individual<Double>::fitness).reversed())));
+						Tournament.of(2,
+								Comparator.comparing(Individual<Double>::fitness)
+										.reversed())));
 		final Population<Double> selected = selector
 				.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION, 2, population, fitnessScore);
 

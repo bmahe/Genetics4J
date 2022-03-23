@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.util.MultiIntCounter;
 
 /**
@@ -20,7 +20,7 @@ import net.bmahe.genetics4j.core.util.MultiIntCounter;
 public class AllCasesGenotypeCombinator implements GenotypeCombinator {
 
 	@Override
-	public List<Genotype> combine(final EAConfiguration eaConfiguration, final List<List<Chromosome>> chromosomes) {
+	public List<Genotype> combine(final AbstractEAConfiguration eaConfiguration, final List<List<Chromosome>> chromosomes) {
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(chromosomes);
 		Validate.isTrue(eaConfiguration.chromosomeSpecs().size() == chromosomes.size());

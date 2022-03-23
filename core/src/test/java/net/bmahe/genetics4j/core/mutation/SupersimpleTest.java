@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import net.bmahe.genetics4j.core.EASystem;
 import net.bmahe.genetics4j.core.EASystemFactory;
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.EAConfiguration;
-import net.bmahe.genetics4j.core.spec.EAConfiguration.Builder;
 import net.bmahe.genetics4j.core.spec.EAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EAExecutionContexts;
 import net.bmahe.genetics4j.core.spec.chromosome.BitChromosomeSpec;
@@ -24,16 +24,16 @@ public class SupersimpleTest {
 	@Test
 	public void simple() {
 
-		final Builder<Double> eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
+		final var eaConfigurationBuilder = new EAConfiguration.Builder<Double>();
 		eaConfigurationBuilder.chromosomeSpecs(BitChromosomeSpec.of(5), IntChromosomeSpec.of(6, 10, 100))
 				.fitness((genotype) -> 1.0)
-				.termination((EAConfiguration<Double> eaConfiguration, long generation, List<Genotype> population,
+				.termination((AbstractEAConfiguration<Double> eaConfiguration, long generation, List<Genotype> population,
 						List<Double> fitness) -> true)
 				.parentSelectionPolicy(RandomSelection.build())
 				.combinationPolicy(SinglePointCrossover.build())
 				.addMutationPolicies(MultiMutations.of(RandomMutation.of(0.15), SwapMutation.of(0.05, 2, true)));
 
-		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
+		final var eaConfiguration = eaConfigurationBuilder.build();
 
 		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
 				.populationSize(100)

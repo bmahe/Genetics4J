@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.replacement.ReplacementStrategyImplementor;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.moo.spea2.spec.replacement.SPEA2Replacement;
 
@@ -301,7 +301,7 @@ public class SPEA2ReplacementStrategyImplementor<T extends Comparable<T>> implem
 	}
 
 	@Override
-	public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+	public Population<T> select(final AbstractEAConfiguration<T> eaConfiguration, final int numIndividuals,
 			final List<Genotype> population, final List<T> populationScores, final List<Genotype> offsprings,
 			final List<T> offspringScores) {
 		Validate.notNull(eaConfiguration);

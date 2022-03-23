@@ -19,7 +19,7 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.chromosomes.factory.IntChromosomeFactory;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.replacement.DeleteNLast;
@@ -53,7 +53,7 @@ public class DeleteNLastImplTest {
 		final DeleteNLastImpl<Integer> deleteNLastImpl = new DeleteNLastImpl<>(deleteNLast, new Selector<Integer>() {
 
 			@Override
-			public Population<Integer> select(EAConfiguration<Integer> eaConfiguration, int numIndividuals,
+			public Population<Integer> select(AbstractEAConfiguration<Integer> eaConfiguration, int numIndividuals,
 					List<Genotype> population, List<Integer> fitnessScore) {
 				return new Population<Integer>(population.subList(0, numIndividuals),
 						fitnessScore.subList(0, numIndividuals));
@@ -77,7 +77,7 @@ public class DeleteNLastImplTest {
 		logger.info("Population: {}", population);
 		logger.info("\nOffsprings: {}", offsprings);
 
-		final EAConfiguration<Integer> mockEAConfiguration = mock(EAConfiguration.class);
+		final AbstractEAConfiguration<Integer> mockEAConfiguration = mock(AbstractEAConfiguration.class);
 		when(mockEAConfiguration.optimization()).thenReturn(Optimization.MINIMIZE);
 
 		final Population<Integer> nextGeneration = deleteNLastImpl.select(mockEAConfiguration,

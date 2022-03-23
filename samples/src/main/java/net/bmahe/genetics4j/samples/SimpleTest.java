@@ -23,7 +23,7 @@ import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheel;
 
 public class SimpleTest {
-	final static public Logger logger = LogManager.getLogger(SimpleTest.class);
+	public static final Logger logger = LogManager.getLogger(SimpleTest.class);
 
 	public static void main(String[] args) {
 
@@ -45,7 +45,9 @@ public class SimpleTest {
 					return denominator;
 				})
 				.termination((eaConfiguration, generation, population, fitness) -> {
-					return fitness.stream().min(Comparator.naturalOrder()).orElseThrow() < 0.0001;
+					return fitness.stream()
+							.min(Comparator.naturalOrder())
+							.orElseThrow() < 0.0001;
 				});
 		final EAConfiguration<Double> eaConfiguration = eaConfigurationBuilder.build();
 

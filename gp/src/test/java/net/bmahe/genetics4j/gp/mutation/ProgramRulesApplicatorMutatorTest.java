@@ -86,7 +86,8 @@ public class ProgramRulesApplicatorMutatorTest {
 
 		final TreeNode<Operation<?>> nodeStrToDouble = new TreeNode<Operation<?>>(
 				Functions.STR_TO_DOUBLE.build(inputSpec));
-		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random).build(inputSpec)));
+		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random)
+				.build(inputSpec)));
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
@@ -135,15 +136,16 @@ public class ProgramRulesApplicatorMutatorTest {
 
 		final TreeNode<Operation<?>> nodeStrToDouble = new TreeNode<Operation<?>>(
 				Functions.STR_TO_DOUBLE.build(inputSpec));
-		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random).build(inputSpec)));
+		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random)
+				.build(inputSpec)));
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
 		final EAConfiguration mockEaConfiguration = mock(EAConfiguration.class);
 		final TreeNode<Operation<?>> replacement = new TreeNode<>(Terminals.E.build(inputSpec));
 
-		final List<Rule> rules = List.of(ImmutableRule
-				.of((node) -> Functions.NAME_STR_TO_DOUBLE.equals(node.getData().getName()), (p, n) -> replacement));
+		final List<Rule> rules = List.of(ImmutableRule.of((node) -> Functions.NAME_STR_TO_DOUBLE.equals(node.getData()
+				.getName()), (p, n) -> replacement));
 		final ProgramRulesApplicatorMutator programRulesApplicatorMutator = new ProgramRulesApplicatorMutator(rules,
 				mockEaConfiguration);
 
@@ -151,9 +153,16 @@ public class ProgramRulesApplicatorMutatorTest {
 		assertNotNull(outputRule);
 		assertEquals(root.getData(), outputRule.getData());
 		assertEquals(root.getSize() - 1, outputRule.getSize());
-		assertEquals(root.getChild(0).getData(), outputRule.getChild(0).getData());
-		assertEquals(PINode.getData(), outputRule.getChild(0).getData());
-		assertEquals(replacement.getData(), outputRule.getChild(1).getData());
+		assertEquals(root.getChild(0)
+				.getData(),
+				outputRule.getChild(0)
+						.getData());
+		assertEquals(PINode.getData(),
+				outputRule.getChild(0)
+						.getData());
+		assertEquals(replacement.getData(),
+				outputRule.getChild(1)
+						.getData());
 	}
 
 	@Test
@@ -188,7 +197,8 @@ public class ProgramRulesApplicatorMutatorTest {
 
 		final TreeNode<Operation<?>> nodeStrToDouble = new TreeNode<Operation<?>>(
 				Functions.STR_TO_DOUBLE.build(inputSpec));
-		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random).build(inputSpec)));
+		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random)
+				.build(inputSpec)));
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
@@ -254,14 +264,15 @@ public class ProgramRulesApplicatorMutatorTest {
 
 		final TreeNode<Operation<?>> nodeStrToDouble = new TreeNode<Operation<?>>(
 				Functions.STR_TO_DOUBLE.build(inputSpec));
-		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random).build(inputSpec)));
+		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random)
+				.build(inputSpec)));
 		root.addChild(nodeStrToDouble);
 		///////////////////////
 
 		final TreeNode<Operation<?>> replacement = new TreeNode<>(Terminals.E.build(inputSpec));
 
-		final List<Rule> rules = List.of(ImmutableRule
-				.of((node) -> Functions.NAME_STR_TO_DOUBLE.equals(node.getData().getName()), (p, n) -> replacement));
+		final List<Rule> rules = List.of(ImmutableRule.of((node) -> Functions.NAME_STR_TO_DOUBLE.equals(node.getData()
+				.getName()), (p, n) -> replacement));
 		final net.bmahe.genetics4j.core.spec.EAConfiguration.Builder eaConfigurationBuilder = new EAConfiguration.Builder();
 		eaConfigurationBuilder.chromosomeSpecs(ProgramTreeChromosomeSpec.of(program))
 				.parentSelectionPolicy(Tournament.of(3))
@@ -291,8 +302,15 @@ public class ProgramRulesApplicatorMutatorTest {
 		logger.info("OutputRoot: {}", TreeNodeUtils.toStringTreeNode(outputRule));
 
 		assertEquals(root.getSize() - 1, outputRule.getSize());
-		assertEquals(root.getChild(0).getData(), outputRule.getChild(0).getData());
-		assertEquals(PINode.getData(), outputRule.getChild(0).getData());
-		assertEquals(replacement.getData(), outputRule.getChild(1).getData());
+		assertEquals(root.getChild(0)
+				.getData(),
+				outputRule.getChild(0)
+						.getData());
+		assertEquals(PINode.getData(),
+				outputRule.getChild(0)
+						.getData());
+		assertEquals(replacement.getData(),
+				outputRule.getChild(1)
+						.getData());
 	}
 }

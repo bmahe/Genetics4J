@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.selection.Selector;
-import net.bmahe.genetics4j.core.spec.EAConfiguration;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.moo.ObjectiveDistance;
 import net.bmahe.genetics4j.moo.ParetoUtils;
@@ -37,7 +37,7 @@ public class TournamentNSGA2Selector<T extends Comparable<T>> implements Selecto
 	}
 
 	@Override
-	public Population<T> select(final EAConfiguration<T> eaConfiguration, final int numIndividuals,
+	public Population<T> select(final AbstractEAConfiguration<T> eaConfiguration, final int numIndividuals,
 			final List<Genotype> population, final List<T> fitnessScore) {
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(population);
@@ -48,8 +48,10 @@ public class TournamentNSGA2Selector<T extends Comparable<T>> implements Selecto
 		logger.debug("Incoming population size is {}", population.size());
 
 		final Population<T> individuals = new Population<>();
-		if (tournamentNSGA2Selection.deduplicate().isPresent()) {
-			final Comparator<Genotype> individualDeduplicator = tournamentNSGA2Selection.deduplicate().get();
+		if (tournamentNSGA2Selection.deduplicate()
+				.isPresent()) {
+			final Comparator<Genotype> individualDeduplicator = tournamentNSGA2Selection.deduplicate()
+					.get();
 			final Set<Genotype> seenGenotype = new TreeSet<>(individualDeduplicator);
 
 			for (int i = 0; i < population.size(); i++) {
@@ -73,22 +75,26 @@ public class TournamentNSGA2Selector<T extends Comparable<T>> implements Selecto
 		logger.debug("Selecting {} individuals from a population of {}", numIndividuals, individuals.size());
 
 		switch (eaConfiguration.optimization()) {
-		case MAXIMZE:
-		case MINIMIZE:
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
+			case MAXIMZE:
+			case MINIMIZE:
+				break;
+			default:
+				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 		}
 
 		final int numberObjectives = tournamentNSGA2Selection.numberObjectives();
 
 		final Comparator<T> dominance = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
 				? tournamentNSGA2Selection.dominance()
-				: tournamentNSGA2Selection.dominance().reversed();
+				: tournamentNSGA2Selection.dominance()
+						.reversed();
 
 		final Function<Integer, Comparator<T>> objectiveComparator = Optimization.MAXIMZE
-				.equals(eaConfiguration.optimization()) ? tournamentNSGA2Selection.objectiveComparator()
-						: (m) -> tournamentNSGA2Selection.objectiveComparator().apply(m).reversed();
+				.equals(eaConfiguration.optimization())
+						? tournamentNSGA2Selection.objectiveComparator()
+						: (m) -> tournamentNSGA2Selection.objectiveComparator()
+								.apply(m)
+								.reversed();
 
 		final ObjectiveDistance<T> objectiveDistance = tournamentNSGA2Selection.distance();
 		final int numCandidates = tournamentNSGA2Selection.numCandidates();

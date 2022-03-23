@@ -44,4 +44,38 @@ public class DistributionUtils {
 
 		throw new IllegalArgumentException(String.format("Distribution not supported: %s", distribution));
 	}
+
+	public static Supplier<Float> distributionFloatValueSupplier(final RandomGenerator randomGenerator,
+			final float minValue, final float maxValue, final Distribution distribution) {
+		Validate.notNull(randomGenerator);
+		Validate.notNull(distribution);
+		Validate.isTrue(minValue <= maxValue);
+
+		if (distribution instanceof UniformDistribution) {
+			final float valueRange = maxValue - minValue;
+
+			return () -> minValue + randomGenerator.nextFloat() * valueRange;
+		}
+
+		if (distribution instanceof NormalDistribution) {
+			final var normalDistribution = (NormalDistribution) distribution;
+			final double mean = normalDistribution.mean();
+			final double standardDeviation = normalDistribution.standardDeviation();
+
+			return () -> {
+				final float value = (float) (mean + randomGenerator.nextGaussian() * standardDeviation);
+
+				if (value < minValue) {
+					return minValue;
+				} else if (value > maxValue) {
+					return maxValue;
+				}
+
+				return value;
+			};
+
+		}
+
+		throw new IllegalArgumentException(String.format("Distribution not supported: %s", distribution));
+	}
 }

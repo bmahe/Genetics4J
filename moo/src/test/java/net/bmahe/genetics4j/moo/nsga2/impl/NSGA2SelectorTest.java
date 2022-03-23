@@ -125,9 +125,13 @@ public class NSGA2SelectorTest {
 		assertEquals(population.get(1), selectedTopThree.getGenotype(0));
 
 		// Cannot garantee the order
-		assertTrue(population.get(0).equals(selectedTopThree.getGenotype(1))
-				|| population.get(0).equals(selectedTopThree.getGenotype(2)));
-		assertTrue(population.get(4).equals(selectedTopThree.getGenotype(1))
-				|| population.get(4).equals(selectedTopThree.getGenotype(2)));
+		assertTrue(population.get(0)
+				.equals(selectedTopThree.getGenotype(1))
+				|| population.get(0)
+						.equals(selectedTopThree.getGenotype(2)));
+		assertTrue(population.get(4)
+				.equals(selectedTopThree.getGenotype(1))
+				|| population.get(4)
+						.equals(selectedTopThree.getGenotype(2)));
 	}
 }
