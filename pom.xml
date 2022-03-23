@@ -51,12 +51,12 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 
-		<maven.asciidoctor.maven.plugin>2.2.1</maven.asciidoctor.maven.plugin>
+		<maven.asciidoctor.maven.plugin>2.2.2</maven.asciidoctor.maven.plugin>
 		<maven.asciidoctorj.diagram.version>2.2.1</maven.asciidoctorj.diagram.version>
 		<maven.changelog.plugin.version>2.3</maven.changelog.plugin.version>
 		<maven.changes.plugin.version>2.12.1</maven.changes.plugin.version>
 		<maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
-		<maven.compiler.plugin.version>3.9.0</maven.compiler.plugin.version>
+		<maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
 		<maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
 		<maven.doxia.module.markdown.version>1.9</maven.doxia.module.markdown.version>
 		<maven.exec.plugin.version>3.0.0</maven.exec.plugin.version>
@@ -66,19 +66,19 @@
 		<maven.gitlog.plugin.version>1.13.17</maven.gitlog.plugin.version>
 		<maven.install.plugin.version>2.5.2</maven.install.plugin.version>
 		<maven.jacoco.plugin.version>0.8.7</maven.jacoco.plugin.version>
-		<maven.jar.plugin.verison>3.2.0</maven.jar.plugin.verison>
-		<maven.javadoc.plugin.version>3.3.1</maven.javadoc.plugin.version>
+		<maven.jar.plugin.verison>3.2.2</maven.jar.plugin.verison>
+		<maven.javadoc.plugin.version>3.3.2</maven.javadoc.plugin.version>
 		<maven.jxr.plugin.version>3.1.1</maven.jxr.plugin.version>
 		<maven.pmd.plugin>3.15.0</maven.pmd.plugin>
-		<maven.project.info.reports.plugin.version>3.1.2</maven.project.info.reports.plugin.version>
+		<maven.project.info.reports.plugin.version>3.2.2</maven.project.info.reports.plugin.version>
 		<maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
 		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
-		<maven.site.plugin.version>3.9.1</maven.site.plugin.version>
+		<maven.site.plugin.version>3.11.0</maven.site.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
 		<maven.taglist.plugin>2.4</maven.taglist.plugin>
 		<maven.versions.plugin>2.4</maven.versions.plugin>
 		<umldoclet.version>2.0.2</umldoclet.version>
-		<pitest.plugin.version>1.7.3</pitest.plugin.version>
+		<pitest.plugin.version>1.7.4</pitest.plugin.version>
 		<pitest.junit5.plugin.version>0.15</pitest.junit5.plugin.version>
 
 		<apache.commons.cli.version>1.5.0</apache.commons.cli.version>
@@ -87,13 +87,13 @@
 		<apache.commons.io.version>2.11.0</apache.commons.io.version>
 		<apache.commons.lang.version>3.12.0</apache.commons.lang.version>
 		<apache.commons.math.version>3.6.1</apache.commons.math.version>
-		<apache.log4j.version>2.17.1</apache.log4j.version>
+		<apache.log4j.version>2.17.2</apache.log4j.version>
 		<dl4j.version>1.0.0-beta3</dl4j.version>
-		<immutables.version>2.8.8</immutables.version>
+		<immutables.version>2.9.0</immutables.version>
 		<jackson.version>2.13.1</jackson.version>
 		<jocl.version>2.0.4</jocl.version>
-		<junit.version>5.8.1</junit.version>
-		<mockito.version>4.0.0</mockito.version>
+		<junit.version>5.8.2</junit.version>
+		<mockito.version>4.4.0</mockito.version>
 
 		<skipPITests>${skipITs}</skipPITests>
 	</properties>
