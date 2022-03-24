@@ -69,16 +69,17 @@
 		<maven.jar.plugin.verison>3.2.2</maven.jar.plugin.verison>
 		<maven.javadoc.plugin.version>3.3.2</maven.javadoc.plugin.version>
 		<maven.jxr.plugin.version>3.1.1</maven.jxr.plugin.version>
-		<maven.pmd.plugin>3.15.0</maven.pmd.plugin>
+		<maven.pmd.plugin>3.16.0</maven.pmd.plugin>
 		<maven.project.info.reports.plugin.version>3.2.2</maven.project.info.reports.plugin.version>
 		<maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
 		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
-		<maven.site.plugin.version>3.11.0</maven.site.plugin.version>
+		<!-- 3.11.0 breaks gitlog plugins -->
+		<maven.site.plugin.version>3.10.0</maven.site.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-		<maven.taglist.plugin>2.4</maven.taglist.plugin>
-		<maven.versions.plugin>2.4</maven.versions.plugin>
+		<maven.taglist.plugin>3.0.0</maven.taglist.plugin>
+		<maven.versions.plugin>2.5</maven.versions.plugin>
 		<umldoclet.version>2.0.2</umldoclet.version>
-		<pitest.plugin.version>1.7.4</pitest.plugin.version>
+		<pitest.plugin.version>1.7.5</pitest.plugin.version>
 		<pitest.junit5.plugin.version>0.15</pitest.junit5.plugin.version>
 
 		<apache.commons.cli.version>1.5.0</apache.commons.cli.version>
