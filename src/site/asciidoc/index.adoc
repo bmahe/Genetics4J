@@ -17,7 +17,7 @@ Genetics4j is an open source library for Evolutionary Algorithms. This includes 
 * Multi-Objective Optimization support with algorithms such as NSGA2 and SPEA2
 * Supports multiple replacement strategies
 * Configurable and user friendly
-* Multithreaded implementation for faster execution
+* Multi-GPU and Multithreaded based implementations for faster execution
 * Clear separation between the problem definition and its execution model
 * Enhanced test coverage with link:https://en.wikipedia.org/wiki/Mutation_testing[mutation testing] :)
 
@@ -32,6 +32,7 @@ Genetics4j encompass multiple aspects of the Evolutionary Algorithms family thro
 * _core_: Contains the core features for *Genetic Algorithms*
 * _gp_: Contains features related to *Genetic Programming*
 * _moo_: Contains features related to *Multi-Objective Optimization*
+* _gpu_: Multi-GPU and hardware accelerator support
 * _samples_: Contains different examples to highlight the different features and how to use them
 * _extras_: Extra set of classes which can be useful but do not necessarily fit in other modules. Example: There is a CSV Evolution listener to record population over time along with any extra configurable attributes
 
@@ -51,6 +52,7 @@ There are various ways to learn more about _Genetics4j_:
 There are a few examples with this library. Namely:
 
 * link:https://bmahe.gitlab.io/genetics4j/samples/docs/clustering.html[Clustering] where we attempt to find the best way to cluster data and compare the different approaches
+* link:https://bmahe.gitlab.io/genetics4j/samples/docs/mixture_models_on_gpu.html[Mixture Models] where we attempt to find the best way to cluster data using mixture models with the help of GPUs
 * link:https://bmahe.gitlab.io/genetics4j/samples/docs/bloat_issues.html[6 ways to handle your bloat issues] where we explore different methods from the _Multi Objective Optimization_ field to find the best equation to represent a set of data points. This provides us a way to find a good trade-off between long and precise equations and shorter but less precise equations
 * link:https://bmahe.gitlab.io/genetics4j/samples/docs/fitness_sharing.html[Fitness Sharing] where we present one technique to reduce the likelihood to get stuck in a local optimum and explore a great set of diverse solutions
 

@@ -66,7 +66,7 @@ public class QuickStart {
 
 		// tag::quickstart_evolve[]
 		final EvolutionResult<Integer> evolutionResult = eaSystem.evolve();
-		logger.info("Best genotype: " + evolutionResult.bestGenotype());
+		logger.info("Best genotype: {}", evolutionResult.bestGenotype());
 		logger.info("  with fitness: {}", evolutionResult.bestFitness());
 		logger.info("  at generation: {}", evolutionResult.generation());
 		// end::quickstart_evolve[]

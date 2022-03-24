@@ -60,7 +60,7 @@ public class SimpleTest {
 		final EASystem<Double> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
 
 		final EvolutionResult<Double> evolutionResult = eaSystem.evolve();
-		logger.info("Best genotype: " + evolutionResult.bestGenotype());
+		logger.info("Best genotype: {}", evolutionResult.bestGenotype());
 
 		System.exit(0);
 	}

@@ -111,6 +111,9 @@ The _core_ module provides the following types of chromosomes out of the box:
 
 * Bits based chromosomes. See link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/BitChromosomeSpec.html[BitChromosomeSpec]
 * Integer based chromosomes. See link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/IntChromosomeSpec.html[IntChromosomeSpec]
+* Float based chromosomes. See link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/FloatChromosomeSpec.html[FloatChromosomeSpec]
+* Double based chromosomes. See link:../apidocs/net/bmahe/genetics4j/core/spec/chromosome/DoubleChromosomeSpec.html[DoubleChromosomeSpec]
+
 
 
 ### Fitness
