@@ -152,7 +152,7 @@ public class FitnessSharingExample {
 		final EASystem<Double> eaSystem = EASystemFactory.from(eaConfiguration, eaExecutionContext);
 
 		final EvolutionResult<Double> evolutionResult = eaSystem.evolve();
-		logger.info("Best genotype: " + evolutionResult.bestGenotype());
+		logger.info("Best genotype: {}", evolutionResult.bestGenotype());
 		logger.info("  with fitness: {}", evolutionResult.bestFitness());
 		logger.info("  at generation: {}", evolutionResult.generation());
 		// end::eaSystem[]
@@ -191,7 +191,7 @@ public class FitnessSharingExample {
 				eaExecutionContextWithFitnessSharing);
 
 		final EvolutionResult<Double> evolutionResultWithFitnessSharing = eaSystemWithFitnessSharing.evolve();
-		logger.info("Best genotype: " + evolutionResultWithFitnessSharing.bestGenotype());
+		logger.info("Best genotype: {}", evolutionResultWithFitnessSharing.bestGenotype());
 		logger.info("  with fitness: {}", evolutionResultWithFitnessSharing.bestFitness());
 		logger.info("  at generation: {}", evolutionResultWithFitnessSharing.generation());
 		// end::eaSystemWithFS[]
