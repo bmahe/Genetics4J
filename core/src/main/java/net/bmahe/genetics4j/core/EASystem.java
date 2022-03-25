@@ -276,7 +276,9 @@ public class EASystem<T extends Comparable<T>> {
 				}
 			}
 
-			logger.trace("[Generation {}] New population: {}", generation, Arrays.asList(newPopulation));
+			if (logger.isTraceEnabled()) {
+				logger.trace("[Generation {}] New population: {}", generation, Arrays.asList(newPopulation));
+			}
 			population = newPopulation;
 			generation++;
 		}
