@@ -67,13 +67,17 @@
 		<mixturemodel.data.fitness.so-cpu.csv>${project.build.outputDirectory}/mixturemodel/mixturemodel-so-cpu.csv.gz</mixturemodel.data.fitness.so-cpu.csv>
 		<mixturemodel.data.fitness.moo-cpu.csv>${project.build.outputDirectory}/mixturemodel/mixturemodel-moo-cpu.csv.gz</mixturemodel.data.fitness.moo-cpu.csv>
 		<mixturemodel.data.fitness.moo-gpu.csv>${project.build.outputDirectory}/mixturemodel/mixturemodel-moo-gpu.csv.gz</mixturemodel.data.fitness.moo-gpu.csv>
+		<mixturemodel.data.fitness.moo-gpu-with-seed.csv>${project.build.outputDirectory}/mixturemodel/mixturemodel-moo-gpu-seed.csv.gz</mixturemodel.data.fitness.moo-gpu-with-seed.csv>
 		<mixturemodel.data.fitness.so-cpu.dest>${project.build.directory}/site/docs/mixturemodel/mixturemodel-so-cpu.png</mixturemodel.data.fitness.so-cpu.dest>
 		<mixturemodel.data.fitness.moo-cpu.dest>${project.build.directory}/site/docs/mixturemodel/mixturemodel-moo-cpu.png</mixturemodel.data.fitness.moo-cpu.dest>
 		<mixturemodel.data.fitness.moo-gpu.dest>${project.build.directory}/site/docs/mixturemodel/mixturemodel-moo-gpu.png</mixturemodel.data.fitness.moo-gpu.dest>
+		<mixturemodel.data.fitness.moo-gpu-with-seed.dest>${project.build.directory}/site/docs/mixturemodel/mixturemodel-moo-gpu-seed.png</mixturemodel.data.fitness.moo-gpu-with-seed.dest>
 		<mixturemodel.data.fitness.commons-math.csv>${project.build.outputDirectory}/mixturemodel/commons-math.csv.gz</mixturemodel.data.fitness.commons-math.csv>
 		<mixturemodel.data.fitness.so-cpu-s100.dest>${project.build.directory}/site/docs/mixturemodel/mixturemodel-so-cpu-s100.png</mixturemodel.data.fitness.so-cpu-s100.dest>
 		<mixturemodel.data.fitness.moo-cpu-s100.dest>${project.build.directory}/site/docs/mixturemodel/mixturemodel-moo-cpu-s100.png</mixturemodel.data.fitness.moo-cpu-s100.dest>
 		<mixturemodel.data.fitness.moo-gpu-s100.dest>${project.build.directory}/site/docs/mixturemodel/mixturemodel-moo-gpu-s100.png</mixturemodel.data.fitness.moo-gpu-s100.dest>
+		<mixturemodel.data.fitness.moo-gpu-with-seed-s100.dest>${project.build.directory}/site/docs/mixturemodel/mixturemodel-moo-gpu-seed-s100.png</mixturemodel.data.fitness.moo-gpu-with-seed-s100.dest>
+
 		<mixturemodel.data.moo.cpu.1.csv>${project.build.outputDirectory}/mixturemodel/assigned-moo-cpu-1.csv.gz</mixturemodel.data.moo.cpu.1.csv>
 		<mixturemodel.data.moo.cpu.1.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-moo-cpu-1.png</mixturemodel.data.moo.cpu.1.png.dest>
 		<mixturemodel.data.moo.cpu.2.csv>${project.build.outputDirectory}/mixturemodel/assigned-moo-cpu-2.csv.gz</mixturemodel.data.moo.cpu.2.csv>
@@ -84,6 +88,7 @@
 		<mixturemodel.data.moo.cpu.4.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-moo-cpu-4.png</mixturemodel.data.moo.cpu.4.png.dest>
 		<mixturemodel.data.moo.cpu.5.csv>${project.build.outputDirectory}/mixturemodel/assigned-moo-cpu-5.csv.gz</mixturemodel.data.moo.cpu.5.csv>
 		<mixturemodel.data.moo.cpu.5.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-moo-cpu-5.png</mixturemodel.data.moo.cpu.5.png.dest>
+
 		<mixturemodel.data.moo.gpu.1.csv>${project.build.outputDirectory}/mixturemodel/assigned-mixturemodel-moo-gpu-1.csv.gz</mixturemodel.data.moo.gpu.1.csv>
 		<mixturemodel.data.moo.gpu.1.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-mixturemodel-moo-gpu-1.png</mixturemodel.data.moo.gpu.1.png.dest>
 		<mixturemodel.data.moo.gpu.2.csv>${project.build.outputDirectory}/mixturemodel/assigned-mixturemodel-moo-gpu-2.csv.gz</mixturemodel.data.moo.gpu.2.csv>
@@ -94,7 +99,14 @@
 		<mixturemodel.data.moo.gpu.4.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-mixturemodel-moo-gpu-4.png</mixturemodel.data.moo.gpu.4.png.dest>
 		<mixturemodel.data.moo.gpu.5.csv>${project.build.outputDirectory}/mixturemodel/assigned-mixturemodel-moo-gpu-5.csv.gz</mixturemodel.data.moo.gpu.5.csv>
 		<mixturemodel.data.moo.gpu.5.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-mixturemodel-moo-gpu-5.png</mixturemodel.data.moo.gpu.5.png.dest>
-	</properties>
+
+		<mixturemodel.data.moo.gpu-seed.1.csv>${project.build.outputDirectory}/mixturemodel/assigned-mixturemodel-moo-gpu-seed-1.csv.gz</mixturemodel.data.moo.gpu-seed.1.csv>
+		<mixturemodel.data.moo.gpu-seed.1.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-mixturemodel-moo-gpu-seed-1.png</mixturemodel.data.moo.gpu-seed.1.png.dest>
+		<mixturemodel.data.moo.gpu-seed.3.csv>${project.build.outputDirectory}/mixturemodel/assigned-mixturemodel-moo-gpu-seed-3.csv.gz</mixturemodel.data.moo.gpu-seed.3.csv>
+		<mixturemodel.data.moo.gpu-seed.3.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-mixturemodel-moo-gpu-seed-3.png</mixturemodel.data.moo.gpu-seed.3.png.dest>
+		<mixturemodel.data.moo.gpu-seed.4.csv>${project.build.outputDirectory}/mixturemodel/assigned-mixturemodel-moo-gpu-seed-4.csv.gz</mixturemodel.data.moo.gpu-seed.4.csv>
+		<mixturemodel.data.moo.gpu-seed.4.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-mixturemodel-moo-gpu-seed-4.png</mixturemodel.data.moo.gpu-seed.4.png.dest>
+</properties>
 
 	<dependencies>
 
@@ -795,6 +807,66 @@
 							<executable>${project.basedir}/scripts/plot_multi_fitness.py</executable>
 							<!-- arguments doesn't work. commandlineArgs works somehow -->
 							<commandlineArgs>-e ${mixturemodel.data.fitness.moo-gpu.csv} --name "Multi Objective Optimization - GPU" -e ${mixturemodel.data.fitness.commons-math.csv} --name "Apache Commons Math"  -d ${mixturemodel.data.fitness.moo-gpu-s100.dest}  --quantile=0.99 --start_index=200</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-MixtureModel-moo-gpu-seed-fitness-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_multi_fitness.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e ${mixturemodel.data.fitness.moo-gpu-with-seed.csv} --name "Multi Objective Optimization with seed - GPU" -e ${mixturemodel.data.fitness.commons-math.csv} --name "Apache Commons Math"  -d ${mixturemodel.data.fitness.moo-gpu-with-seed.dest}  --quantile=0.99</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-MixtureModel-moo-gpu-seed-s100-fitness-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_multi_fitness.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>-e ${mixturemodel.data.fitness.moo-gpu-with-seed.csv} --name "Multi Objective Optimization with seed - GPU" -e ${mixturemodel.data.fitness.commons-math.csv} --name "Apache Commons Math"  -d ${mixturemodel.data.fitness.moo-gpu-with-seed-s100.dest}  --quantile=0.99 --start_index=5</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-MixtureModel-moo-gpu-seed-1-data-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_clustering.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--result_membership=${mixturemodel.data.moo.gpu-seed.1.csv} --destination=${mixturemodel.data.moo.gpu-seed.1.png.dest} </commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-MixtureModel-moo-gpu-seed-3-data-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_clustering.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--result_membership=${mixturemodel.data.moo.gpu-seed.3.csv} --destination=${mixturemodel.data.moo.gpu-seed.3.png.dest} </commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-MixtureModel-moo-gpu-seed-4-data-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_clustering.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--result_membership=${mixturemodel.data.moo.gpu-seed.4.csv} --destination=${mixturemodel.data.moo.gpu-seed.4.png.dest} </commandlineArgs>
 						</configuration>
 					</execution>
 				</executions>

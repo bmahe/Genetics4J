@@ -324,6 +324,36 @@ And if we cut off the first 200 generations, we can better observe the slow incr
 
 image::mixturemodel/mixturemodel-moo-gpu-s100.png[Data plot]
 
+=== Fourth attempt - Multi Objective Optimization with seed over GPU
+
+Over the past few attempts, we have observed the Expectation-Maximization approach can yield quite good results in a short time but also that the Genetic Algorithm approach can explore many more potential solutions, especially thanks to the help of GPUs. So why not combining both?
+
+To do so, we need to pass the mixtures found by the Expectation-Maximization model as a seed individual of the Genetic Algorithm, which will use it as part of its initial population.
+This can be done using this parameter from EAConfiguration:
+
+[source,java,indent=0]
+----
+	eaConfigurationBuilder.seedPopulation(seedPopulation);
+----
+
+==== Results
+
+Then let's look at the results for the best likelyhood across the number of clusters:
+
+image::mixturemodel/assigned-mixturemodel-moo-gpu-seed-1.png[Data plot]
+
+image::mixturemodel/assigned-mixturemodel-moo-gpu-seed-3.png[Data plot]
+
+image::mixturemodel/assigned-mixturemodel-moo-gpu-seed-4.png[Data plot]
+
+
+If we look at the overall fitness, we can observe a similar behavior than before:
+
+image::mixturemodel/mixturemodel-moo-gpu-seed.png[Data plot]
+
+And if we cut off the first few generations to get a better view, we can observe the fitness improving upon the baseline pretty quickly:
+
+image::mixturemodel/mixturemodel-moo-gpu-seed-s100.png[Data plot]
 
 
 == Conclusion
@@ -331,6 +361,8 @@ image::mixturemodel/mixturemodel-moo-gpu-s100.png[Data plot]
 Genetic Algorithms can be pretty effective at clustering data without making some assumption about the underlying dataset. This can be especially be useful in more complex scenario. We also observe that the increase in parameters will also increase the time to find more acceptable solution as the solution space is much larger.
 
 Leveraging GPUs, we are also able to work on more complex challenges in a more reasonable time, enabling faster iterations and broader exploration of the solution space.
+
+Furthermore, combining both classical approaches such as Expectation-Maximization and Genetic Algorithm have enabled us to get some reasonable solutions pretty quickly while potentially avoiding local maxima.
 
 
 == Going further
@@ -341,4 +373,5 @@ This is a rather simple example but there are tons of room for improvement.
 * The way we compute the fitness score is far from being optimized, whether the CPU version or the GPU one
 * Instead of assuming centroids have a specific location, we could consider them instead as statistical distributions and thus a link:https://en.wikipedia.org/wiki/Mixture_model[Mixture model]
 * We have not explored _Fitness Sharing_
+* We have focused on normal distributions. But it would be fun to explore the combination of different types of distributions
 
