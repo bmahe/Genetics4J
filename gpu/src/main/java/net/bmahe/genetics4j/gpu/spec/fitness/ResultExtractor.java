@@ -12,10 +12,9 @@ import org.jocl.Sizeof;
 import net.bmahe.genetics4j.gpu.opencl.OpenCLExecutionContext;
 import net.bmahe.genetics4j.gpu.opencl.model.Device;
 import net.bmahe.genetics4j.gpu.spec.fitness.cldata.CLData;
-import net.bmahe.genetics4j.gpu.spec.fitness.cldata.ResultAllocator;
 
 public class ResultExtractor {
-	final static public Logger logger = LogManager.getLogger(ResultAllocator.class);
+	public static final Logger logger = LogManager.getLogger(ResultExtractor.class);
 
 	private final Map<Device, Map<Integer, CLData>> resultData;
 

@@ -9,6 +9,7 @@ import org.jocl.cl_kernel;
 import org.jocl.cl_program;
 
 import net.bmahe.genetics4j.gpu.opencl.model.Device;
+import net.bmahe.genetics4j.gpu.opencl.model.KernelInfo;
 import net.bmahe.genetics4j.gpu.opencl.model.Platform;
 
 @Value.Immutable
@@ -31,6 +32,9 @@ public interface OpenCLExecutionContext {
 
 	@Value.Parameter
 	Map<String, cl_kernel> kernels();
+
+	@Value.Parameter
+	Map<String, KernelInfo> kernelInfos();
 
 	public static class Builder extends ImmutableOpenCLExecutionContext.Builder {
 	}

@@ -30,10 +30,12 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.evaluation.FitnessEvaluator;
 import net.bmahe.genetics4j.gpu.opencl.DeviceReader;
 import net.bmahe.genetics4j.gpu.opencl.DeviceUtils;
+import net.bmahe.genetics4j.gpu.opencl.KernelInfoReader;
 import net.bmahe.genetics4j.gpu.opencl.OpenCLExecutionContext;
 import net.bmahe.genetics4j.gpu.opencl.PlatformReader;
 import net.bmahe.genetics4j.gpu.opencl.PlatformUtils;
 import net.bmahe.genetics4j.gpu.opencl.model.Device;
+import net.bmahe.genetics4j.gpu.opencl.model.KernelInfo;
 import net.bmahe.genetics4j.gpu.opencl.model.Platform;
 import net.bmahe.genetics4j.gpu.spec.GPUEAConfiguration;
 import net.bmahe.genetics4j.gpu.spec.GPUEAExecutionContext;
@@ -103,6 +105,7 @@ public class GPUFitnessEvaluator<T extends Comparable<T>> implements FitnessEval
 
 		final var platformReader = new PlatformReader();
 		final var deviceReader = new DeviceReader();
+		final var kernelInfoReader = new KernelInfoReader();
 
 		final int numPlatforms = PlatformUtils.numPlatforms();
 		logger.info("Found {} platforms", numPlatforms);
@@ -138,7 +141,7 @@ public class GPUFitnessEvaluator<T extends Comparable<T>> implements FitnessEval
 		if (logger.isTraceEnabled()) {
 			logger.trace("============================");
 			logger.trace("Selected devices:");
-			logger.trace("{}", selectedPlatformToDevice);
+			selectedPlatformToDevice.forEach(pd -> logger.trace("{}", pd));
 			logger.trace("============================");
 		}
 
@@ -180,6 +183,7 @@ public class GPUFitnessEvaluator<T extends Comparable<T>> implements FitnessEval
 					.kernelNames();
 
 			final Map<String, cl_kernel> kernels = new HashMap<>();
+			final Map<String, KernelInfo> kernelInfos = new HashMap<>();
 			for (final String kernelName : kernelNames) {
 
 				logger.info("\tCreate kernel {}", kernelName);
@@ -187,6 +191,10 @@ public class GPUFitnessEvaluator<T extends Comparable<T>> implements FitnessEval
 				Validate.notNull(kernel);
 
 				kernels.put(kernelName, kernel);
+
+				final var kernelInfo = kernelInfoReader.read(device.deviceId(), kernel, kernelName);
+				logger.trace("\t{}", kernelInfo);
+				kernelInfos.put(kernelName, kernelInfo);
 			}
 
 			clContexts.add(context);
@@ -200,6 +208,7 @@ public class GPUFitnessEvaluator<T extends Comparable<T>> implements FitnessEval
 					.clContext(context)
 					.clCommandQueue(commandQueue)
 					.kernels(kernels)
+					.kernelInfos(kernelInfos)
 					.clProgram(program)
 					.build();
 

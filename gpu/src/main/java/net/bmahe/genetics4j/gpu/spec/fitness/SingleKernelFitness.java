@@ -21,7 +21,7 @@ import net.bmahe.genetics4j.gpu.opencl.model.Device;
 import net.bmahe.genetics4j.gpu.spec.fitness.cldata.CLData;
 
 public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<T> {
-	public final static Logger logger = LogManager.getLogger(SingleKernelFitness.class);
+	public static final Logger logger = LogManager.getLogger(SingleKernelFitness.class);
 
 	private final SingleKernelFitnessDescriptor singleKernelFitnessDescriptor;
 	private final FitnessExtractor<T> fitnessExtractor;
@@ -94,10 +94,11 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 			final int argumentIdx = entry.getKey();
 			final var dataSupplier = entry.getValue();
 
-			logger.trace("[{}] Loading static data for index {}",
-					openCLExecutionContext.device()
-							.name(),
-					argumentIdx);
+			if (logger.isTraceEnabled()) {
+				final var deviceName = openCLExecutionContext.device()
+						.name();
+				logger.trace("[{}] Loading static data for index {}", deviceName, argumentIdx);
+			}
 			final CLData clData = dataSupplier.load(openCLExecutionContext);
 
 			final var mapData = staticData.computeIfAbsent(device, k -> new HashMap<>());
@@ -220,16 +221,20 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 
 		final long endTime = System.nanoTime();
 		final long duration = endTime - startTime;
-		logger.debug("{} - Took {} microsec for {} genotypes",
-				openCLExecutionContext.device()
-						.name(),
-				duration / 1000.,
-				genotypes.size());
+		if (logger.isDebugEnabled()) {
+			final var deviceName = openCLExecutionContext.device()
+					.name();
+			logger.debug("{} - Took {} microsec for {} genotypes", deviceName, duration / 1000., genotypes.size());
+		}
 
 		final var resultExtractor = new ResultExtractor(resultData);
 		return CompletableFuture.supplyAsync(() -> {
-			return fitnessExtractor
-					.compute(openCLExecutionContext, executorService, generation, genotypes, resultExtractor);
+			return fitnessExtractor.compute(openCLExecutionContext,
+					kernelExecutionContext,
+					executorService,
+					generation,
+					genotypes,
+					resultExtractor);
 		});
 	}
 

@@ -18,6 +18,28 @@ public class LocalMemoryAllocators {
 		};
 	}
 
+	public static LocalMemoryAllocator ofMaxWorkGroupSize(final int type, final int multiple) {
+		Validate.isTrue(multiple > 0);
+
+		return (openCLExecutionContext, generation, genotypes) -> {
+
+			final var device = openCLExecutionContext.device();
+			return type * device.maxWorkGroupSize() * multiple;
+		};
+	}
+
+	public static LocalMemoryAllocator ofMaxWorkGroupSize(final int type) {
+		return ofMaxWorkGroupSize(type, 1);
+	}
+
+	public static LocalMemoryAllocator ofMaxWorkGroupSizeFloat(final int multiple) {
+		return ofMaxWorkGroupSize(Sizeof.cl_float, multiple);
+	}
+
+	public static LocalMemoryAllocator ofMaxWorkGroupSizeFloat() {
+		return ofMaxWorkGroupSize(Sizeof.cl_float, 1);
+	}
+
 	public static LocalMemoryAllocator ofSizeFloat(final long size) {
 		Validate.isTrue(size > 0);
 

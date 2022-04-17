@@ -11,10 +11,10 @@ import net.bmahe.genetics4j.gpu.opencl.model.Platform;
 import net.bmahe.genetics4j.gpu.opencl.model.PlatformProfile;
 
 public class PlatformReader {
-	public final static Logger logger = LogManager.getLogger(PlatformReader.class);
+	public static final Logger logger = LogManager.getLogger(PlatformReader.class);
 
-	public final static String PROFILE_FULL_STR = "FULL_PROFILE";
-	public final static String PROFILE_EMBEDDED = "EMBEDDED_PROFILE";
+	public static final String PROFILE_FULL_STR = "FULL_PROFILE";
+	public static final String PROFILE_EMBEDDED = "EMBEDDED_PROFILE";
 
 	public Platform read(final cl_platform_id platformId) {
 		Validate.notNull(platformId);

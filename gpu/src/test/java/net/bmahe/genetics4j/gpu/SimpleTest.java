@@ -42,8 +42,8 @@ public class SimpleTest {
 
 		final int[] sizes = { chromosomeSize };
 
-		final FitnessExtractor<Float> fitnessExtractor = (openCLExecutionContext, executorService, generation, genotypes,
-				resultExtractor) -> {
+		final FitnessExtractor<Float> fitnessExtractor = (openCLExecutionContext, kernelExecutionContext, executorService,
+				generation, genotypes, resultExtractor) -> {
 
 			final float[] results = resultExtractor.extractFloatArray(openCLExecutionContext, 2);
 

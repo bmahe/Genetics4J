@@ -7,6 +7,8 @@ import org.jocl.cl_image_desc;
 import org.jocl.cl_image_format;
 import org.jocl.cl_mem;
 
+import net.bmahe.genetics4j.gpu.spec.fitness.MultipleComputer;
+
 public class ResultAllocators {
 
 	private ResultAllocators() {
@@ -38,19 +40,26 @@ public class ResultAllocators {
 		return ofSize(Sizeof.cl_int, size);
 	}
 
-	public static ResultAllocator ofMultiplePopulationSizeFloat(final int multiple) {
-		Validate.isTrue(multiple > 0);
+	public static ResultAllocator ofMultiplePopulationSizeFloat(final MultipleComputer multipleComputer) {
+		Validate.notNull(multipleComputer);
 
 		return (openCLExecutionContext, generation, genotypes) -> {
 
 			final var clContext = openCLExecutionContext.clContext();
 
+			final int multiple = multipleComputer.compute(openCLExecutionContext, generation, genotypes);
 			final int length = genotypes.size() * multiple;
 
 			final cl_mem clMem = CL.clCreateBuffer(clContext, CL.CL_MEM_WRITE_ONLY, Sizeof.cl_float * length, null, null);
 
 			return CLData.of(clMem, Sizeof.cl_float, length);
 		};
+	}
+
+	public static ResultAllocator ofMultiplePopulationSizeFloat(final int multiple) {
+		Validate.isTrue(multiple > 0);
+
+		return ofMultiplePopulationSizeFloat((openCLExecutionContext, generation, genotypes) -> multiple);
 	}
 
 	public static ResultAllocator ofPopulationSizeFloat() {

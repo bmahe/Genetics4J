@@ -12,7 +12,7 @@ import net.bmahe.genetics4j.gpu.opencl.model.Device;
 import net.bmahe.genetics4j.gpu.opencl.model.DeviceType;
 
 public class DeviceReader {
-	public final static Logger logger = LogManager.getLogger(DeviceReader.class);
+	public static final Logger logger = LogManager.getLogger(DeviceReader.class);
 
 	public Device read(final cl_platform_id platformId, final cl_device_id deviceId) {
 		Validate.notNull(platformId);
@@ -74,6 +74,13 @@ public class DeviceReader {
 
 		final int hasImageSupport = DeviceUtils.getDeviceInfoInt(deviceId, CL.CL_DEVICE_IMAGE_SUPPORT);
 		deviceBuilder.imageSupport(hasImageSupport != 0);
+
+		final long maxWorkGroupSize = DeviceUtils.getDeviceInfoLong(deviceId, CL.CL_DEVICE_MAX_WORK_GROUP_SIZE);
+		deviceBuilder.maxWorkGroupSize(maxWorkGroupSize);
+
+		final int preferredVectorWidthFloat = DeviceUtils.getDeviceInfoInt(deviceId,
+				CL.CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);
+		deviceBuilder.preferredVectorWidthFloat(preferredVectorWidthFloat);
 
 		return deviceBuilder.build();
 	}
