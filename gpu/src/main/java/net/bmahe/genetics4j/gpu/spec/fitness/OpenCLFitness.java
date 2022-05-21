@@ -11,7 +11,7 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.gpu.opencl.OpenCLExecutionContext;
 
 public abstract class OpenCLFitness<T extends Comparable<T>> {
-	final static public Logger logger = LogManager.getLogger(OpenCLFitness.class);
+	public static final Logger logger = LogManager.getLogger(OpenCLFitness.class);
 
 	public void beforeAllEvaluations() {
 	}

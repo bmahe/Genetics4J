@@ -12,16 +12,35 @@ public class LocalMemoryAllocators {
 		Validate.isTrue(type > 0);
 		Validate.isTrue(size > 0);
 
-		return (openCLExecutionContext, generation, genotypes) -> {
+		return (openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> {
 
 			return type * size;
 		};
 	}
 
+	public static LocalMemoryAllocator ofWorkGroupSize(final int type, final int multiple) {
+		Validate.isTrue(multiple > 0);
+
+		return (openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> {
+
+			final long[] workGroupSize = kernelExecutionContext.workGroupSize()
+					.get();
+			long totalWorkGroupSize = 1;
+			for (int i = 0; i < workGroupSize.length; i++) {
+				totalWorkGroupSize *= workGroupSize[i];
+			}
+			return type * totalWorkGroupSize * multiple;
+		};
+	}
+
+	public static LocalMemoryAllocator ofWorkGroupSize(final int type) {
+		return ofWorkGroupSize(type, 1);
+	}
+
 	public static LocalMemoryAllocator ofMaxWorkGroupSize(final int type, final int multiple) {
 		Validate.isTrue(multiple > 0);
 
-		return (openCLExecutionContext, generation, genotypes) -> {
+		return (openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> {
 
 			final var device = openCLExecutionContext.device();
 			return type * device.maxWorkGroupSize() * multiple;

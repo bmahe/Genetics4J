@@ -24,8 +24,7 @@ public abstract class Program {
 	@Value.Check
 	protected void check() {
 		Validate.notNull(kernelNames());
-		Validate.isTrue(kernelNames().size() > 0);
-
+		Validate.isTrue(kernelNames().isEmpty() == false);
 	}
 
 	public static Program ofContent(final String content, final String kernelName) {
@@ -57,5 +56,9 @@ public abstract class Program {
 				.addKernelNames(kernelName)
 				.buildOptions(buildOptions)
 				.build();
+	}
+
+	public static ImmutableProgram.Builder builder() {
+		return ImmutableProgram.builder();
 	}
 }

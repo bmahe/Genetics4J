@@ -18,7 +18,7 @@ public class ResultAllocators {
 		Validate.isTrue(type > 0);
 		Validate.isTrue(size > 0);
 
-		return (openCLExecutionContext, generation, genotypes) -> {
+		return (openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> {
 
 			final var clContext = openCLExecutionContext.clContext();
 
@@ -43,11 +43,12 @@ public class ResultAllocators {
 	public static ResultAllocator ofMultiplePopulationSizeFloat(final MultipleComputer multipleComputer) {
 		Validate.notNull(multipleComputer);
 
-		return (openCLExecutionContext, generation, genotypes) -> {
+		return (openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> {
 
 			final var clContext = openCLExecutionContext.clContext();
 
-			final int multiple = multipleComputer.compute(openCLExecutionContext, generation, genotypes);
+			final int multiple = multipleComputer
+					.compute(openCLExecutionContext, kernelExecutionContext, generation, genotypes);
 			final int length = genotypes.size() * multiple;
 
 			final cl_mem clMem = CL.clCreateBuffer(clContext, CL.CL_MEM_WRITE_ONLY, Sizeof.cl_float * length, null, null);
@@ -59,7 +60,8 @@ public class ResultAllocators {
 	public static ResultAllocator ofMultiplePopulationSizeFloat(final int multiple) {
 		Validate.isTrue(multiple > 0);
 
-		return ofMultiplePopulationSizeFloat((openCLExecutionContext, generation, genotypes) -> multiple);
+		return ofMultiplePopulationSizeFloat(
+				(openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> multiple);
 	}
 
 	public static ResultAllocator ofPopulationSizeFloat() {
@@ -73,7 +75,7 @@ public class ResultAllocators {
 		Validate.isTrue(channelOrder > 0);
 		Validate.isTrue(dataType > 0);
 
-		return (openCLExecutionContext, generation, genotypes) -> {
+		return (openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> {
 			final var clContext = openCLExecutionContext.clContext();
 
 			final cl_image_desc imageDesc = new cl_image_desc();
