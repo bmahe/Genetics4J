@@ -362,7 +362,7 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 							null,
 							null);
 
-					CL.clFinish(openCLExecutionContext.clCommandQueue());
+					//CL.clFinish(openCLExecutionContext.clCommandQueue());
 
 					final long endTime = System.nanoTime();
 					final long duration = endTime - startTime;
