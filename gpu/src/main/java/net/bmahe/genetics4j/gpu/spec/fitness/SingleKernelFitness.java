@@ -19,9 +19,10 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.gpu.opencl.OpenCLExecutionContext;
 import net.bmahe.genetics4j.gpu.opencl.model.Device;
 import net.bmahe.genetics4j.gpu.spec.fitness.cldata.CLData;
+import net.bmahe.genetics4j.gpu.spec.fitness.kernelcontext.KernelExecutionContext;
 
 public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<T> {
-	public final static Logger logger = LogManager.getLogger(SingleKernelFitness.class);
+	public static final Logger logger = LogManager.getLogger(SingleKernelFitness.class);
 
 	private final SingleKernelFitnessDescriptor singleKernelFitnessDescriptor;
 	private final FitnessExtractor<T> fitnessExtractor;
@@ -29,6 +30,8 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 	private final Map<Device, Map<Integer, CLData>> staticData = new ConcurrentHashMap<>();
 	private final Map<Device, Map<Integer, CLData>> data = new ConcurrentHashMap<>();
 	private final Map<Device, Map<Integer, CLData>> resultData = new ConcurrentHashMap<>();
+
+	private final Map<Device, KernelExecutionContext> kernelExecutionContexts = new ConcurrentHashMap<>();
 
 	protected void clearStaticData(final Device device) {
 		if (MapUtils.isEmpty(staticData) || MapUtils.isEmpty(staticData.get(device))) {
@@ -94,10 +97,11 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 			final int argumentIdx = entry.getKey();
 			final var dataSupplier = entry.getValue();
 
-			logger.trace("[{}] Loading static data for index {}",
-					openCLExecutionContext.device()
-							.name(),
-					argumentIdx);
+			if (logger.isTraceEnabled()) {
+				final var deviceName = openCLExecutionContext.device()
+						.name();
+				logger.trace("[{}] Loading static data for index {}", deviceName, argumentIdx);
+			}
 			final CLData clData = dataSupplier.load(openCLExecutionContext);
 
 			final var mapData = staticData.computeIfAbsent(device, k -> new HashMap<>());
@@ -117,6 +121,14 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 
 		final var kernelName = singleKernelFitnessDescriptor.kernelName();
 		final var kernel = kernels.get(kernelName);
+
+		if (kernelExecutionContexts.containsKey(device)) {
+			throw new IllegalStateException("Found existing kernelExecutionContext");
+		}
+		final var kernelExecutionContextComputer = singleKernelFitnessDescriptor.kernelExecutionContextComputer();
+		final var kernelExecutionContext = kernelExecutionContextComputer
+				.compute(openCLExecutionContext, generation, genotypes);
+		kernelExecutionContexts.put(device, kernelExecutionContext);
 
 		final var mapData = staticData.get(device);
 		if (MapUtils.isNotEmpty(mapData)) {
@@ -154,7 +166,8 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 				final int argumentIdx = entry.getKey();
 				final var localMemoryAllocator = entry.getValue();
 
-				final var size = localMemoryAllocator.load(openCLExecutionContext, generation, genotypes);
+				final var size = localMemoryAllocator
+						.load(openCLExecutionContext, kernelExecutionContext, generation, genotypes);
 				logger.trace("[{}] Setting local data for index {} with size of {}", device.name(), argumentIdx, size);
 
 				CL.clSetKernelArg(kernel, argumentIdx, size, null);
@@ -167,7 +180,8 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 				final int argumentIdx = entry.getKey();
 				final var resultAllocator = entry.getValue();
 
-				final var clDdata = resultAllocator.load(openCLExecutionContext, generation, genotypes);
+				final var clDdata = resultAllocator
+						.load(openCLExecutionContext, kernelExecutionContext, generation, genotypes);
 
 				final var dataMapping = resultData.computeIfAbsent(device, k -> new HashMap<>());
 				if (dataMapping.put(argumentIdx, clDdata) != null) {
@@ -185,52 +199,60 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 	public CompletableFuture<List<T>> compute(final OpenCLExecutionContext openCLExecutionContext,
 			final ExecutorService executorService, final long generation, List<Genotype> genotypes) {
 
-		final var clCommandQueue = openCLExecutionContext.clCommandQueue();
-		final var kernels = openCLExecutionContext.kernels();
-
-		final var kernelName = singleKernelFitnessDescriptor.kernelName();
-		final var kernel = kernels.get(kernelName);
-		if (kernel == null) {
-			throw new IllegalStateException("Could not find kernel [" + kernelName + "]");
-		}
-
-		final var kernelExecutionContextComputer = singleKernelFitnessDescriptor.kernelExecutionContextComputer();
-		final var kernelExecutionContext = kernelExecutionContextComputer
-				.compute(openCLExecutionContext, generation, genotypes);
-		final var globalWorkDimensions = kernelExecutionContext.globalWorkDimensions();
-		final var globalWorkSize = kernelExecutionContext.globalWorkSize();
-		final long[] workGroupSize = kernelExecutionContext.workGroupSize()
-				.orElse(null);
-
-		logger.trace("Starting computation on kernel {} for {} genotypes and global work size {} and local work size {}",
-				kernelName,
-				genotypes.size(),
-				globalWorkSize,
-				workGroupSize);
-		final long startTime = System.nanoTime();
-		CL.clEnqueueNDRangeKernel(clCommandQueue,
-				kernel,
-				globalWorkDimensions,
-				null,
-				globalWorkSize,
-				workGroupSize,
-				0,
-				null,
-				null);
-
-		final long endTime = System.nanoTime();
-		final long duration = endTime - startTime;
-		logger.debug("{} - Took {} microsec for {} genotypes",
-				openCLExecutionContext.device()
-						.name(),
-				duration / 1000.,
-				genotypes.size());
-
-		final var resultExtractor = new ResultExtractor(resultData);
 		return CompletableFuture.supplyAsync(() -> {
-			return fitnessExtractor
-					.compute(openCLExecutionContext, executorService, generation, genotypes, resultExtractor);
-		});
+			final var clCommandQueue = openCLExecutionContext.clCommandQueue();
+			final var kernels = openCLExecutionContext.kernels();
+
+			final var kernelName = singleKernelFitnessDescriptor.kernelName();
+			final var kernel = kernels.get(kernelName);
+			if (kernel == null) {
+				throw new IllegalStateException("Could not find kernel [" + kernelName + "]");
+			}
+
+			final var device = openCLExecutionContext.device();
+			final var kernelExecutionContext = kernelExecutionContexts.get(device);
+
+			final var globalWorkDimensions = kernelExecutionContext.globalWorkDimensions();
+			final var globalWorkSize = kernelExecutionContext.globalWorkSize();
+			final long[] workGroupSize = kernelExecutionContext.workGroupSize()
+					.orElse(null);
+
+			logger.trace(
+					"Starting computation on kernel {} for {} genotypes and global work size {} and local work size {}",
+					kernelName,
+					genotypes.size(),
+					globalWorkSize,
+					workGroupSize);
+			final long startTime = System.nanoTime();
+			CL.clEnqueueNDRangeKernel(clCommandQueue,
+					kernel,
+					globalWorkDimensions,
+					null,
+					globalWorkSize,
+					workGroupSize,
+					0,
+					null,
+					null);
+
+			final long endTime = System.nanoTime();
+			final long duration = endTime - startTime;
+			if (logger.isDebugEnabled()) {
+				final var deviceName = openCLExecutionContext.device()
+						.name();
+				logger.debug("{} - Took {} microsec for {} genotypes", deviceName, duration / 1000., genotypes.size());
+			}
+			return kernelExecutionContext;
+		}, executorService)
+				.thenApply(kernelExecutionContext -> {
+
+					final var resultExtractor = new ResultExtractor(resultData);
+					return fitnessExtractor.compute(openCLExecutionContext,
+							kernelExecutionContext,
+							executorService,
+							generation,
+							genotypes,
+							resultExtractor);
+				});
 	}
 
 	@Override
@@ -242,6 +264,7 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 		logger.trace("[{}] Releasing data", device.name());
 		clearData(device);
 		clearResultData(device);
+		kernelExecutionContexts.remove(device);
 	}
 
 	@Override

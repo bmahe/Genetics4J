@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.gpu.spec.fitness.cldata;
+package net.bmahe.genetics4j.gpu.spec.fitness;
 
 import java.util.List;
 
@@ -7,8 +7,8 @@ import net.bmahe.genetics4j.gpu.opencl.OpenCLExecutionContext;
 import net.bmahe.genetics4j.gpu.spec.fitness.kernelcontext.KernelExecutionContext;
 
 @FunctionalInterface
-public interface LocalMemoryAllocator {
+public interface MultipleComputer {
 
-	long load(final OpenCLExecutionContext openCLExecutionContext, final KernelExecutionContext kernelExecutionContext,
+	int compute(final OpenCLExecutionContext openCLExecutionContext, final KernelExecutionContext kernelExecutionContext,
 			final long generation, final List<Genotype> genotypes);
 }

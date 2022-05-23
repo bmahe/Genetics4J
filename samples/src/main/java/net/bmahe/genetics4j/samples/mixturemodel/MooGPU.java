@@ -79,7 +79,8 @@ public class MooGPU {
 	// tag::moo_gpu_fitness_extractor[]
 	public final FitnessExtractor<FitnessVector<Float>> fitnessExtractor(final int maxPossibleDistributions,
 			final double[][] samples) {
-		return (openCLExecutionContext, executorService, generation, genotypes, resultExtractor) -> {
+		return (openCLExecutionContext, kernelExecutionContext, executorService, generation, genotypes,
+				resultExtractor) -> {
 
 			final float[] results = resultExtractor.extractFloatArray(openCLExecutionContext, 5);
 

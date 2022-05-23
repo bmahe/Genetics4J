@@ -30,6 +30,10 @@ public interface Device {
 
 	boolean imageSupport();
 
+	long maxWorkGroupSize();
+
+	int preferredVectorWidthFloat();
+
 	static ImmutableDevice.Builder builder() {
 		return ImmutableDevice.builder();
 	}

@@ -29,7 +29,7 @@ stages:
   - deploy
 
 # This template uses jdk17 for verifying and deploying images
-image: maven:3.8.4-eclipse-temurin-17
+image: maven:3.8.5-eclipse-temurin-17
 
 # Cache downloaded dependencies and plugins between builds.
 # To keep cache across branches add 'key: "$CI_JOB_NAME"'
@@ -88,7 +88,7 @@ validate:jdk17:
 # Validate merge requests using JDK17 - OpenJDK
 validate:jdk17-openjdk:
   <<: *validate
-  image: maven:3.8.4-openjdk-17
+  image: maven:3.8.5-openjdk-17
   cache:
     key: "$CI_JOB_NAME-java17-openjdk"
   before_script:
@@ -98,7 +98,7 @@ validate:jdk17-openjdk:
 # Validate merge requests using JDK17 - Amazon Corretto
 validate:jdk17-amazoncorretto:
   <<: *validate
-  image: maven:3.8.4-amazoncorretto-17
+  image: maven:3.8.5-amazoncorretto-17
   cache:
     key: "$CI_JOB_NAME-java17-amazoncorretto"
   before_script:
@@ -108,9 +108,20 @@ validate:jdk17-amazoncorretto:
 # Validate merge requests using JDK17 - IBM Semeru
 validate:jdk17-ibm-semeru:
   <<: *validate
-  image: maven:3.8.4-ibm-semeru-17-focal
+  image: maven:3.8.5-ibm-semeru-17-focal
   cache:
     key: "$CI_JOB_NAME-java17-ibm-semeru"
+  before_script:
+    - apt-get update -yqq
+    - apt-get install -yqq gnuplot graphviz
+    - apt-get install -yqq pocl-opencl-icd opencl-headers
+
+# Validate merge requests using JDK18 - Temurin
+validate:jdk18-openjdk:
+  <<: *validate
+  image: maven:3.8.5-eclipse-temurin-18
+  cache:
+    key: "$CI_JOB_NAME-java18-temurin"
   before_script:
     - apt-get update -yqq
     - apt-get install -yqq gnuplot graphviz

@@ -7,6 +7,8 @@ import org.jocl.cl_image_desc;
 import org.jocl.cl_image_format;
 import org.jocl.cl_mem;
 
+import net.bmahe.genetics4j.gpu.spec.fitness.MultipleComputer;
+
 public class ResultAllocators {
 
 	private ResultAllocators() {
@@ -16,7 +18,7 @@ public class ResultAllocators {
 		Validate.isTrue(type > 0);
 		Validate.isTrue(size > 0);
 
-		return (openCLExecutionContext, generation, genotypes) -> {
+		return (openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> {
 
 			final var clContext = openCLExecutionContext.clContext();
 
@@ -38,19 +40,28 @@ public class ResultAllocators {
 		return ofSize(Sizeof.cl_int, size);
 	}
 
-	public static ResultAllocator ofMultiplePopulationSizeFloat(final int multiple) {
-		Validate.isTrue(multiple > 0);
+	public static ResultAllocator ofMultiplePopulationSizeFloat(final MultipleComputer multipleComputer) {
+		Validate.notNull(multipleComputer);
 
-		return (openCLExecutionContext, generation, genotypes) -> {
+		return (openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> {
 
 			final var clContext = openCLExecutionContext.clContext();
 
+			final int multiple = multipleComputer
+					.compute(openCLExecutionContext, kernelExecutionContext, generation, genotypes);
 			final int length = genotypes.size() * multiple;
 
 			final cl_mem clMem = CL.clCreateBuffer(clContext, CL.CL_MEM_WRITE_ONLY, Sizeof.cl_float * length, null, null);
 
 			return CLData.of(clMem, Sizeof.cl_float, length);
 		};
+	}
+
+	public static ResultAllocator ofMultiplePopulationSizeFloat(final int multiple) {
+		Validate.isTrue(multiple > 0);
+
+		return ofMultiplePopulationSizeFloat(
+				(openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> multiple);
 	}
 
 	public static ResultAllocator ofPopulationSizeFloat() {
@@ -64,7 +75,7 @@ public class ResultAllocators {
 		Validate.isTrue(channelOrder > 0);
 		Validate.isTrue(dataType > 0);
 
-		return (openCLExecutionContext, generation, genotypes) -> {
+		return (openCLExecutionContext, kernelExecutionContext, generation, genotypes) -> {
 			final var clContext = openCLExecutionContext.clContext();
 
 			final cl_image_desc imageDesc = new cl_image_desc();
