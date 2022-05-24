@@ -92,7 +92,7 @@
 		<jackson.version>2.13.1</jackson.version>
 		<jocl.version>2.0.4</jocl.version>
 		<junit.version>5.8.2</junit.version>
-		<mockito.version>4.4.0</mockito.version>
+		<mockito.version>4.5.0</mockito.version>
 
 		<skipPITests>${skipITs}</skipPITests>
 	</properties>
