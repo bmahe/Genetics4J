@@ -27,8 +27,9 @@ public class ProgramUtils {
 		final Operation operation = node.getData();
 		final List<TreeNode<Operation<?>>> children = node.getChildren();
 
-		final Object[] parameters = children != null ? children.stream().map(child -> execute(child, input)).toArray()
-				: new Object[] {};
+		final Object[] parameters = children != null ? children.stream()
+				.map(child -> execute(child, input))
+				.toArray() : new Object[] {};
 
 		return operation.apply(input, parameters);
 	}
