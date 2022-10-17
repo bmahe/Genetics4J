@@ -6,7 +6,7 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Root level="INFO">
+		<Root level="TRACE">
 			<AppenderRef ref="Console" />
 		</Root>
 
@@ -16,6 +16,8 @@
 		<Logger name="net.bmahe.genetics4j.gpu" level="DEBUG" />
 		<Logger name="net.bmahe.genetics4j.moo.nsga2" level="DEBUG" />
 		<Logger name="net.bmahe.genetics4j.moo.spea2" level="DEBUG" />
+		<Logger name="net.bmahe.genetics4j.neat" level="DEBUG" />
 		<Logger name="net.bmahe.genetics4j.samples" level="TRACE" />
+		<Logger name="net.bmahe.genetics4j.samples.neat" level="INFO" />
 	</Loggers>
 </Configuration>

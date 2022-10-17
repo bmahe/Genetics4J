@@ -14,7 +14,7 @@ import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.gp.spec.chromosome.ProgramTreeChromosomeSpec;
 import net.bmahe.genetics4j.gp.spec.combination.ProgramRandomCombine;
 
-public class ProgramRandomCombineHandler implements ChromosomeCombinatorHandler {
+public class ProgramRandomCombineHandler<T extends Comparable<T>> implements ChromosomeCombinatorHandler<T> {
 	final static public Logger logger = LogManager.getLogger(ProgramRandomCombineHandler.class);
 
 	final RandomGenerator randomGenerator;
@@ -26,7 +26,7 @@ public class ProgramRandomCombineHandler implements ChromosomeCombinatorHandler 
 	}
 
 	@Override
-	public boolean canHandle(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public boolean canHandle(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
@@ -36,7 +36,7 @@ public class ProgramRandomCombineHandler implements ChromosomeCombinatorHandler 
 	}
 
 	@Override
-	public ChromosomeCombinator resolve(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public ChromosomeCombinator<T> resolve(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosomeSpec) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
@@ -48,6 +48,6 @@ public class ProgramRandomCombineHandler implements ChromosomeCombinatorHandler 
 
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = (ProgramTreeChromosomeSpec) chromosomeSpec;
 
-		return new ProgramChromosomeCombinator(randomGenerator);
+		return new ProgramChromosomeCombinator<T>(randomGenerator);
 	}
 }

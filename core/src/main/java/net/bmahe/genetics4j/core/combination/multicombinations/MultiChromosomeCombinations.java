@@ -7,14 +7,15 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 
-public class MultiChromosomeCombinations implements ChromosomeCombinator {
+public class MultiChromosomeCombinations<T extends Comparable<T>> implements ChromosomeCombinator<T> {
 
 	private final RandomGenerator randomGenerator;
-	private final List<ChromosomeCombinator> chromosomeCombinators;
+	private final List<ChromosomeCombinator<T>> chromosomeCombinators;
 
 	public MultiChromosomeCombinations(final RandomGenerator _randomGenerator,
-			final List<ChromosomeCombinator> _chromosomeCombinators) {
+			final List<ChromosomeCombinator<T>> _chromosomeCombinators) {
 		Validate.notNull(_randomGenerator);
 		Validate.notNull(_chromosomeCombinators);
 
@@ -23,12 +24,14 @@ public class MultiChromosomeCombinations implements ChromosomeCombinator {
 	}
 
 	@Override
-	public List<Chromosome> combine(final Chromosome chromosome1, final Chromosome chromosome2) {
+	public List<Chromosome> combine(final AbstractEAConfiguration<T> eaConfiguration, final Chromosome chromosome1,
+			final T firstParentFitness, final Chromosome chromosome2, final T secondParentFitness) {
 
 		final int chromosomeCombinatorIndex = randomGenerator.nextInt(chromosomeCombinators.size());
-		final ChromosomeCombinator chromosomeCombinator = chromosomeCombinators.get(chromosomeCombinatorIndex);
+		final ChromosomeCombinator<T> chromosomeCombinator = chromosomeCombinators.get(chromosomeCombinatorIndex);
 
-		return chromosomeCombinator.combine(chromosome1, chromosome2);
+		return chromosomeCombinator
+				.combine(eaConfiguration, chromosome1, firstParentFitness, chromosome2, secondParentFitness);
 	}
 
 }

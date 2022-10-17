@@ -13,7 +13,7 @@ import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.mutation.SwapMutation;
 import net.bmahe.genetics4j.core.util.ChromosomeResolverUtils;
 
-public class SwapMutationPolicyHandler implements MutationPolicyHandler {
+public class SwapMutationPolicyHandler<T extends Comparable<T>> implements MutationPolicyHandler<T> {
 
 	private final RandomGenerator randomGenerator;
 
@@ -24,7 +24,7 @@ public class SwapMutationPolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public boolean canHandle(final MutationPolicyHandlerResolver mutationPolicyHandlerResolver,
+	public boolean canHandle(final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver,
 			final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicy);
 
@@ -32,8 +32,9 @@ public class SwapMutationPolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public Mutator createMutator(AbstractEAExecutionContext eaExecutionContext, AbstractEAConfiguration eaConfiguration,
-			MutationPolicyHandlerResolver mutationPolicyHandlerResolver, MutationPolicy mutationPolicy) {
+	public Mutator createMutator(final AbstractEAExecutionContext<T> eaExecutionContext,
+			final AbstractEAConfiguration<T> eaConfiguration,
+			final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(mutationPolicyHandlerResolver);

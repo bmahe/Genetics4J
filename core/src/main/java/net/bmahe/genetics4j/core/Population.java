@@ -1,11 +1,12 @@
 package net.bmahe.genetics4j.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 
-public class Population<T extends Comparable<T>> {
+public class Population<T extends Comparable<T>> implements Iterable<Individual<T>> {
 
 	private List<Genotype> genotypes;
 	private List<T> fitnesses;
@@ -18,7 +19,6 @@ public class Population<T extends Comparable<T>> {
 	public Population(final List<Genotype> _genotype, final List<T> _fitnesses) {
 		Validate.notNull(_genotype);
 		Validate.notNull(_fitnesses);
-		Validate.isTrue(_genotype.size() > 0);
 		Validate.isTrue(_genotype.size() == _fitnesses.size(),
 				"Size of genotype (%d) does not match size of fitnesses (%d)",
 				_genotype.size(),
@@ -50,6 +50,11 @@ public class Population<T extends Comparable<T>> {
 		this.fitnesses.addAll(population.getAllFitnesses());
 	}
 
+	@Override
+	public Iterator<Individual<T>> iterator() {
+		return new PopulationIterator<>(this);
+	}
+
 	public Genotype getGenotype(final int index) {
 		Validate.inclusiveBetween(0, genotypes.size() - 1, index);
 
@@ -60,6 +65,10 @@ public class Population<T extends Comparable<T>> {
 		Validate.inclusiveBetween(0, fitnesses.size() - 1, index);
 
 		return fitnesses.get(index);
+	}
+
+	public Individual<T> getIndividual(final int index) {
+		return Individual.of(getGenotype(index), getFitness(index));
 	}
 
 	public List<Genotype> getAllGenotypes() {
@@ -119,4 +128,23 @@ public class Population<T extends Comparable<T>> {
 	public static <U extends Comparable<U>> Population<U> of(final List<Genotype> _genotype, final List<U> _fitnesses) {
 		return new Population<U>(_genotype, _fitnesses);
 	}
+
+	public static <U extends Comparable<U>> Population<U> of(final List<Individual<U>> individuals) {
+		Validate.notNull(individuals);
+
+		final List<Genotype> genotypes = individuals.stream()
+				.map(Individual::genotype)
+				.toList();
+
+		final List<U> fitnesses = individuals.stream()
+				.map(Individual::fitness)
+				.toList();
+
+		return new Population<U>(genotypes, fitnesses);
+	}
+
+	public static <U extends Comparable<U>> Population<U> empty() {
+		return new Population<U>(List.of(), List.of());
+	}
+
 }

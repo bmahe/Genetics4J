@@ -136,6 +136,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>net.bmahe.genetics4j</groupId>
+			<artifactId>neat</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
@@ -163,6 +168,12 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>value</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Test dependencies -->

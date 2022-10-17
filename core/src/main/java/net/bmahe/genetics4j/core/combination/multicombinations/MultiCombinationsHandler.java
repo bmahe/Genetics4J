@@ -13,7 +13,7 @@ import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.combination.MultiCombinations;
 
-public class MultiCombinationsHandler implements ChromosomeCombinatorHandler {
+public class MultiCombinationsHandler<T extends Comparable<T>> implements ChromosomeCombinatorHandler<T> {
 
 	private final RandomGenerator randomGenerator;
 
@@ -24,7 +24,7 @@ public class MultiCombinationsHandler implements ChromosomeCombinatorHandler {
 	}
 
 	@Override
-	public boolean canHandle(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public boolean canHandle(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
@@ -44,7 +44,7 @@ public class MultiCombinationsHandler implements ChromosomeCombinatorHandler {
 	}
 
 	@Override
-	public ChromosomeCombinator resolve(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public ChromosomeCombinator<T> resolve(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
@@ -53,13 +53,13 @@ public class MultiCombinationsHandler implements ChromosomeCombinatorHandler {
 
 		final MultiCombinations multiCombinations = (MultiCombinations) combinationPolicy;
 
-		final List<ChromosomeCombinator> chromosomeCombinators = multiCombinations.combinationPolicies()
+		final List<ChromosomeCombinator<T>> chromosomeCombinators = multiCombinations.combinationPolicies()
 				.stream()
 				.map((cp) -> {
 					return chromosomeCombinatorResolver.resolve(cp, chromosome);
 				})
 				.collect(Collectors.toList());
 
-		return new MultiChromosomeCombinations(randomGenerator, chromosomeCombinators);
+		return new MultiChromosomeCombinations<T>(randomGenerator, chromosomeCombinators);
 	}
 }

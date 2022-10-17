@@ -59,10 +59,10 @@ public class EASystemFactory {
 
 		final var mutationPolicyHandlerResolver = new MutationPolicyHandlerResolver<T>(eaExecutionContext);
 
-		final var chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(eaExecutionContext);
+		final var chromosomeCombinatorResolver = new ChromosomeCombinatorResolver<T>(eaExecutionContext);
 
 		final CombinationPolicy combinationPolicy = eaConfiguration.combinationPolicy();
-		final List<ChromosomeCombinator> chromosomeCombinators = eaConfiguration.chromosomeSpecs()
+		final List<ChromosomeCombinator<T>> chromosomeCombinators = eaConfiguration.chromosomeSpecs()
 				.stream()
 				.map((chromosome) -> {
 					return chromosomeCombinatorResolver.resolve(combinationPolicy, chromosome);

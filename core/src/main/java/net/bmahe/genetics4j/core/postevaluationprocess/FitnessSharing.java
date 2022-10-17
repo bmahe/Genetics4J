@@ -9,10 +9,11 @@ import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 
 import net.bmahe.genetics4j.core.Genotype;
+import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
 
 @Value.Immutable
-public abstract class FitnessSharing implements Function<Population<Double>, Population<Double>> {
+public abstract class FitnessSharing<T extends Comparable<T>> implements Function<Population<T>, Population<T>> {
 
 	@Value.Parameter
 	public abstract BiFunction<Genotype, Genotype, Double> distance();
@@ -20,18 +21,21 @@ public abstract class FitnessSharing implements Function<Population<Double>, Pop
 	@Value.Parameter
 	public abstract Function<Double, Double> sharing();
 
+	@Value.Parameter
+	public abstract BiFunction<Individual<T>, Double, T> scaleFitness();
+
 	@Override
-	public Population<Double> apply(final Population<Double> population) {
+	public Population<T> apply(final Population<T> population) {
 		Validate.notNull(population);
 
 		if (population.isEmpty()) {
 			return population;
 		}
 
-		final List<Double> newFitness = new ArrayList<>();
+		final List<T> newFitness = new ArrayList<>();
 		for (int i = 0; i < population.size(); i++) {
 			final Genotype genotypeI = population.getGenotype(i);
-			final Double fitnessI = population.getFitness(i);
+			final Individual<T> individual = population.getIndividual(i);
 
 			double sumSharing = 0.0d;
 			for (int j = 0; j < population.size(); j++) {
@@ -42,20 +46,22 @@ public abstract class FitnessSharing implements Function<Population<Double>, Pop
 				sumSharing += sharing;
 			}
 
-			final double newFitnessI = fitnessI / sumSharing;
+			final T newFitnessI = scaleFitness().apply(individual, sumSharing);
 			newFitness.add(newFitnessI);
 		}
 
-		return Population.of(population.getAllGenotypes(), newFitness);
+		return Population.<T>of(population.getAllGenotypes(), newFitness);
 	}
 
-	public static FitnessSharing of(final BiFunction<Genotype, Genotype, Double> distance,
+	public static FitnessSharing<Double> of(final BiFunction<Genotype, Genotype, Double> distance,
 			final Function<Double, Double> sharing) {
-		return ImmutableFitnessSharing.of(distance, sharing);
+		return ImmutableFitnessSharing
+				.of(distance, sharing, (individual, sumSharing) -> individual.fitness() / sumSharing);
 	}
 
-	public static FitnessSharing ofStandard(final BiFunction<Genotype, Genotype, Double> distance, final double sigma) {
-		return ImmutableFitnessSharing.of(distance, (d) -> {
+	public static FitnessSharing<Double> ofStandard(final BiFunction<Genotype, Genotype, Double> distance,
+			final double sigma) {
+		return FitnessSharing.of(distance, (d) -> {
 			if (d < 0.0 || d > sigma) {
 				return 0.0;
 			}
@@ -64,14 +70,20 @@ public abstract class FitnessSharing implements Function<Population<Double>, Pop
 		});
 	}
 
-	public static FitnessSharing ofStandard(final BiFunction<Genotype, Genotype, Double> distance, final double sigma,
-			final double alpha) {
-		return ImmutableFitnessSharing.of(distance, (d) -> {
+	public static FitnessSharing<Double> ofStandard(final BiFunction<Genotype, Genotype, Double> distance,
+			final double sigma, final double alpha) {
+		return FitnessSharing.of(distance, (d) -> {
 			if (d < 0.0 || d > sigma) {
 				return 0.0;
 			}
 
 			return 1 - Math.pow(d / sigma, alpha);
 		});
+	}
+
+	public static FitnessSharing<Float> ofFloatFitness(final BiFunction<Genotype, Genotype, Double> distance,
+			final Function<Double, Double> sharing) {
+		return ImmutableFitnessSharing
+				.of(distance, sharing, (individual, sumSharing) -> (float) (individual.fitness() / sumSharing));
 	}
 }

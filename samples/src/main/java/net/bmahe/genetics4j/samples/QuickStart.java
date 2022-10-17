@@ -22,7 +22,7 @@ import net.bmahe.genetics4j.core.termination.Terminations;
 
 public class QuickStart {
 
-	final static public Logger logger = LogManager.getLogger(QuickStart.class);
+	public static final Logger logger = LogManager.getLogger(QuickStart.class);
 
 	public static void main(String[] args) {
 

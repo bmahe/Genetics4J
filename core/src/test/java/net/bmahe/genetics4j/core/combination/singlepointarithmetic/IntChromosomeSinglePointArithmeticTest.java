@@ -17,7 +17,7 @@ public class IntChromosomeSinglePointArithmeticTest {
 
 	@Test
 	public void randomIsRequired() {
-		assertThrows(NullPointerException.class, () -> new IntChromosomeSinglePointArithmetic(null, 0.5d));
+		assertThrows(NullPointerException.class, () -> new IntChromosomeSinglePointArithmetic<Integer>(null, 0.5d));
 	}
 
 	@Test
@@ -28,12 +28,12 @@ public class IntChromosomeSinglePointArithmeticTest {
 		when(mockRandom.nextInt(anyInt())).thenReturn(splitIndex);
 
 		final double alpha = 0.2;
-		final var intChromosomeSinglePointArithmetic = new IntChromosomeSinglePointArithmetic(mockRandom, alpha);
+		final var intChromosomeSinglePointArithmetic = new IntChromosomeSinglePointArithmetic<Integer>(mockRandom, alpha);
 
 		final var chromosome1 = new IntChromosome(4, 0, 10, new int[] { 0, 1, 2, 3 });
 		final var chromosome2 = new IntChromosome(4, 0, 10, new int[] { 3, 2, 1, 0 });
 
-		final var combinedChromosomes = intChromosomeSinglePointArithmetic.combine(chromosome1, chromosome2);
+		final var combinedChromosomes = intChromosomeSinglePointArithmetic.combine(null, chromosome1, 1, chromosome2, 1);
 		assertNotNull(combinedChromosomes);
 		assertEquals(2, combinedChromosomes.size());
 		final var combinedFirstChromosome = (IntChromosome) combinedChromosomes.get(0);

@@ -15,11 +15,11 @@ import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramApplyRules;
 import net.bmahe.genetics4j.gp.spec.mutation.Rule;
 
-public class ProgramRulesApplicatorPolicyHandler implements MutationPolicyHandler {
+public class ProgramRulesApplicatorPolicyHandler<T extends Comparable<T>> implements MutationPolicyHandler<T> {
 	final static public Logger logger = LogManager.getLogger(ProgramRulesApplicatorPolicyHandler.class);
 
 	@Override
-	public boolean canHandle(final MutationPolicyHandlerResolver mutationPolicyHandlerResolver,
+	public boolean canHandle(final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver,
 			final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicyHandlerResolver);
 		Validate.notNull(mutationPolicy);
@@ -28,9 +28,9 @@ public class ProgramRulesApplicatorPolicyHandler implements MutationPolicyHandle
 	}
 
 	@Override
-	public Mutator createMutator(final AbstractEAExecutionContext eaExecutionContext,
-			final AbstractEAConfiguration eaConfiguration,
-			final MutationPolicyHandlerResolver mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
+	public Mutator createMutator(final AbstractEAExecutionContext<T> eaExecutionContext,
+			final AbstractEAConfiguration<T> eaConfiguration,
+			final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(mutationPolicyHandlerResolver);

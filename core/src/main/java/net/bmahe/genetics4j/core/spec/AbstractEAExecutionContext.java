@@ -29,6 +29,7 @@ import net.bmahe.genetics4j.core.mutation.PartialMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.RandomMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.SwapMutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandler;
+import net.bmahe.genetics4j.core.mutation.chromosome.ChromosomeMutationHandlerFactory;
 import net.bmahe.genetics4j.core.mutation.chromosome.creepmutation.DoubleChromosomeCreepMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.creepmutation.FloatChromosomeCreepMutationHandler;
 import net.bmahe.genetics4j.core.mutation.chromosome.creepmutation.IntChromosomeCreepMutationHandler;
@@ -63,25 +64,25 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 	public static final int DEFAULT_POPULATION_SIZE = 100;
 
 	@Value.Default
-	public List<ChromosomeCombinatorHandler> defaultChromosomeCombinatorHandlers() {
-		return Arrays.asList(new MultiCombinationsHandler(randomGenerator()),
-				new IntOrderCrossoverHandler(randomGenerator()),
-				new MultiPointCrossoverCombinationHandler(randomGenerator()),
-				new MultiPointArithmeticCombinationHandler(randomGenerator()),
-				new SinglePointCrossoverHandler(randomGenerator()),
-				new SinglePointArithmeticCombinationHandler(randomGenerator()),
-				new EdgeRecombinationCrossoverHandler(randomGenerator()),
-				new PickFirstParentHandler());
+	public List<ChromosomeCombinatorHandler<T>> defaultChromosomeCombinatorHandlers() {
+		return Arrays.asList(new MultiCombinationsHandler<T>(randomGenerator()),
+				new IntOrderCrossoverHandler<T>(randomGenerator()),
+				new MultiPointCrossoverCombinationHandler<T>(randomGenerator()),
+				new MultiPointArithmeticCombinationHandler<T>(randomGenerator()),
+				new SinglePointCrossoverHandler<T>(randomGenerator()),
+				new SinglePointArithmeticCombinationHandler<T>(randomGenerator()),
+				new EdgeRecombinationCrossoverHandler<T>(randomGenerator()),
+				new PickFirstParentHandler<T>());
 	}
 
-	public abstract List<Function<AbstractEAExecutionContext<T>, ChromosomeCombinatorHandler>> chromosomeCombinatorHandlerFactories();
+	public abstract List<Function<AbstractEAExecutionContext<T>, ChromosomeCombinatorHandler<T>>> chromosomeCombinatorHandlerFactories();
 
 	@Value.Derived
-	public List<ChromosomeCombinatorHandler> chromosomeCombinatorHandlers() {
+	public List<ChromosomeCombinatorHandler<T>> chromosomeCombinatorHandlers() {
 
-		final List<ChromosomeCombinatorHandler> chromosomeCombinatorHandlers = new ArrayList<>();
+		final List<ChromosomeCombinatorHandler<T>> chromosomeCombinatorHandlers = new ArrayList<>();
 
-		final List<ChromosomeCombinatorHandler> defaultChromosomeCombinatorHandlers = defaultChromosomeCombinatorHandlers();
+		final List<ChromosomeCombinatorHandler<T>> defaultChromosomeCombinatorHandlers = defaultChromosomeCombinatorHandlers();
 		if (defaultChromosomeCombinatorHandlers.isEmpty() == false) {
 			chromosomeCombinatorHandlers.addAll(defaultChromosomeCombinatorHandlers);
 		}
@@ -128,22 +129,22 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 	/////////////////////////////////////////
 
 	@Value.Default
-	public List<MutationPolicyHandler> defaultMutationPolicyHandlers() {
-		return Arrays.asList(new RandomMutationPolicyHandler(randomGenerator()),
-				new SwapMutationPolicyHandler(randomGenerator()),
-				new MultiMutationsPolicyHandler(randomGenerator()),
-				new PartialMutationPolicyHandler(),
-				new CreepMutationPolicyHandler(randomGenerator()));
+	public List<MutationPolicyHandler<T>> defaultMutationPolicyHandlers() {
+		return Arrays.asList(new RandomMutationPolicyHandler<>(randomGenerator()),
+				new SwapMutationPolicyHandler<>(randomGenerator()),
+				new MultiMutationsPolicyHandler<>(randomGenerator()),
+				new PartialMutationPolicyHandler<>(),
+				new CreepMutationPolicyHandler<T>(randomGenerator()));
 	}
 
-	public abstract List<Function<AbstractEAExecutionContext<T>, MutationPolicyHandler>> mutationPolicyHandlerFactories();
+	public abstract List<Function<AbstractEAExecutionContext<T>, MutationPolicyHandler<T>>> mutationPolicyHandlerFactories();
 
 	@Value.Derived
-	public List<MutationPolicyHandler> mutationPolicyHandlers() {
+	public List<MutationPolicyHandler<T>> mutationPolicyHandlers() {
 
-		final List<MutationPolicyHandler> mutationPolicyHandlers = new ArrayList<>();
+		final List<MutationPolicyHandler<T>> mutationPolicyHandlers = new ArrayList<>();
 
-		final List<MutationPolicyHandler> defaultMutationPolicyHandlers = defaultMutationPolicyHandlers();
+		final List<MutationPolicyHandler<T>> defaultMutationPolicyHandlers = defaultMutationPolicyHandlers();
 		if (defaultMutationPolicyHandlers.isEmpty() == false) {
 			mutationPolicyHandlers.addAll(defaultMutationPolicyHandlers);
 		}
@@ -172,7 +173,7 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 				new FloatChromosomeCreepMutationHandler(randomGenerator()));
 	}
 
-	public abstract List<Function<AbstractEAExecutionContext<T>, ChromosomeMutationHandler<? extends Chromosome>>> chromosomeMutationPolicyHandlerFactories();
+	public abstract List<ChromosomeMutationHandlerFactory<T>> chromosomeMutationPolicyHandlerFactories();
 
 	@Value.Derived
 	public List<ChromosomeMutationHandler<? extends Chromosome>> chromosomeMutationPolicyHandlers() {

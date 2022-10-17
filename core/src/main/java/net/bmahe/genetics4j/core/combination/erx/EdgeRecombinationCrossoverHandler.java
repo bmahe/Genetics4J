@@ -12,7 +12,7 @@ import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.combination.EdgeRecombinationCrossover;
 
-public class EdgeRecombinationCrossoverHandler implements ChromosomeCombinatorHandler {
+public class EdgeRecombinationCrossoverHandler<T extends Comparable<T>> implements ChromosomeCombinatorHandler<T> {
 
 	private final RandomGenerator randomGenerator;
 
@@ -23,7 +23,7 @@ public class EdgeRecombinationCrossoverHandler implements ChromosomeCombinatorHa
 	}
 
 	@Override
-	public boolean canHandle(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public boolean canHandle(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(combinationPolicy);
 		Validate.notNull(chromosome);
@@ -32,13 +32,13 @@ public class EdgeRecombinationCrossoverHandler implements ChromosomeCombinatorHa
 	}
 
 	@Override
-	public ChromosomeCombinator resolve(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public ChromosomeCombinator<T> resolve(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
 		Validate.notNull(chromosome);
 		Validate.isTrue(canHandle(chromosomeCombinatorResolver, combinationPolicy, chromosome));
 
-		return new IntEdgeRecombinationCrossover(randomGenerator);
+		return new IntEdgeRecombinationCrossover<T>(randomGenerator);
 	}
 }

@@ -19,7 +19,7 @@ public class IntChromosomeSinglePointCrossoverTest {
 
 	@Test
 	public void randomIsRequired() {
-		assertThrows(NullPointerException.class, () -> new IntChromosomeSinglePointCrossover(null));
+		assertThrows(NullPointerException.class, () -> new IntChromosomeSinglePointCrossover<Integer>(null));
 	}
 
 	@Test
@@ -29,13 +29,13 @@ public class IntChromosomeSinglePointCrossoverTest {
 		final int splitIndex = 2;
 		when(mockRandom.nextInt(anyInt())).thenReturn(splitIndex);
 
-		final IntChromosomeSinglePointCrossover intChromosomeSinglePointCrossover = new IntChromosomeSinglePointCrossover(
-				mockRandom);
+		final var intChromosomeSinglePointCrossover = new IntChromosomeSinglePointCrossover<Integer>(mockRandom);
 
 		final IntChromosome chromosome1 = new IntChromosome(4, 0, 10, new int[] { 0, 1, 2, 3 });
 		final IntChromosome chromosome2 = new IntChromosome(4, 0, 10, new int[] { 3, 2, 1, 0 });
 
-		final List<Chromosome> combinedChromosomes = intChromosomeSinglePointCrossover.combine(chromosome1, chromosome2);
+		final List<Chromosome> combinedChromosomes = intChromosomeSinglePointCrossover
+				.combine(null, chromosome1, 1, chromosome2, 1);
 		assertNotNull(combinedChromosomes);
 		assertEquals(2, combinedChromosomes.size());
 		final IntChromosome combinedFirstChromosome = (IntChromosome) combinedChromosomes.get(0);

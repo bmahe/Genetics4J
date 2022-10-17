@@ -8,8 +8,9 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.IntChromosome;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 
-public class IntChromosomeSinglePointCrossover implements ChromosomeCombinator {
+public class IntChromosomeSinglePointCrossover<T extends Comparable<T>> implements ChromosomeCombinator<T> {
 
 	private final RandomGenerator randomGenerator;
 
@@ -20,7 +21,8 @@ public class IntChromosomeSinglePointCrossover implements ChromosomeCombinator {
 	}
 
 	@Override
-	public List<Chromosome> combine(final Chromosome chromosome1, final Chromosome chromosome2) {
+	public List<Chromosome> combine(final AbstractEAConfiguration<T> eaConfiguration, final Chromosome chromosome1,
+			final T firstParentFitness, final Chromosome chromosome2, final T secondParentFitness) {
 		Validate.notNull(chromosome1);
 		Validate.notNull(chromosome2);
 		Validate.isInstanceOf(IntChromosome.class, chromosome1);
@@ -49,7 +51,9 @@ public class IntChromosomeSinglePointCrossover implements ChromosomeCombinator {
 
 		return List.of(
 				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome1.getMaxValue(), firstChildValues),
-				new IntChromosome(numAlleles, intChromosome1.getMinValue(), intChromosome1.getMaxValue(),
+				new IntChromosome(numAlleles,
+						intChromosome1.getMinValue(),
+						intChromosome1.getMaxValue(),
 						secondChildValues));
 	}
 }

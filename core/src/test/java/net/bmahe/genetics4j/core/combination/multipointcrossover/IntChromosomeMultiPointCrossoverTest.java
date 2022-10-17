@@ -21,7 +21,7 @@ public class IntChromosomeMultiPointCrossoverTest {
 
 	@Test
 	public void randomIsRequired() {
-		assertThrows(NullPointerException.class, () -> new IntChromosomeMultiPointCrossover(null, null));
+		assertThrows(NullPointerException.class, () -> new IntChromosomeMultiPointCrossover<Integer>(null, null));
 	}
 
 	@Test
@@ -30,13 +30,14 @@ public class IntChromosomeMultiPointCrossoverTest {
 
 		when(mockRandom.ints(anyInt(), anyInt())).thenReturn(IntStream.of(1, 3, 4));
 
-		final IntChromosomeMultiPointCrossover intChromosomeMultiPointCrossover = new IntChromosomeMultiPointCrossover(
-				mockRandom, ImmutableMultiPointCrossover.of(3));
+		final var intChromosomeMultiPointCrossover = new IntChromosomeMultiPointCrossover<Integer>(mockRandom,
+				ImmutableMultiPointCrossover.of(3));
 
 		final IntChromosome chromosome1 = new IntChromosome(5, 0, 100, new int[] { 10, 11, 12, 13, 14 });
 		final IntChromosome chromosome2 = new IntChromosome(5, 0, 100, new int[] { 20, 21, 22, 23, 24 });
 
-		final List<Chromosome> combinedChromosomes = intChromosomeMultiPointCrossover.combine(chromosome1, chromosome2);
+		final List<Chromosome> combinedChromosomes = intChromosomeMultiPointCrossover
+				.combine(null, chromosome1, 1, chromosome2, 1);
 		assertNotNull(combinedChromosomes);
 		assertEquals(2, combinedChromosomes.size());
 

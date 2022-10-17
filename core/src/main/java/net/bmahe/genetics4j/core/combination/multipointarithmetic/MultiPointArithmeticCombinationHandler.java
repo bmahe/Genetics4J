@@ -14,7 +14,7 @@ import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointArithmetic;
 
-public class MultiPointArithmeticCombinationHandler implements ChromosomeCombinatorHandler {
+public class MultiPointArithmeticCombinationHandler<T extends Comparable<T>> implements ChromosomeCombinatorHandler<T> {
 
 	private final RandomGenerator randomGenerator;
 
@@ -25,7 +25,7 @@ public class MultiPointArithmeticCombinationHandler implements ChromosomeCombina
 	}
 
 	@Override
-	public boolean canHandle(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public boolean canHandle(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
@@ -36,7 +36,7 @@ public class MultiPointArithmeticCombinationHandler implements ChromosomeCombina
 	}
 
 	@Override
-	public ChromosomeCombinator resolve(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public ChromosomeCombinator<T> resolve(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
@@ -44,15 +44,15 @@ public class MultiPointArithmeticCombinationHandler implements ChromosomeCombina
 		Validate.isInstanceOf(MultiPointArithmetic.class, combinationPolicy);
 
 		if (chromosome instanceof IntChromosomeSpec) {
-			return new IntChromosomeMultiPointArithmetic(randomGenerator, (MultiPointArithmetic) combinationPolicy);
+			return new IntChromosomeMultiPointArithmetic<T>(randomGenerator, (MultiPointArithmetic) combinationPolicy);
 		}
 
 		if (chromosome instanceof DoubleChromosomeSpec) {
-			return new DoubleChromosomeMultiPointArithmetic(randomGenerator, (MultiPointArithmetic) combinationPolicy);
+			return new DoubleChromosomeMultiPointArithmetic<T>(randomGenerator, (MultiPointArithmetic) combinationPolicy);
 		}
 
 		if (chromosome instanceof FloatChromosomeSpec) {
-			return new FloatChromosomeMultiPointArithmetic(randomGenerator, (MultiPointArithmetic) combinationPolicy);
+			return new FloatChromosomeMultiPointArithmetic<T>(randomGenerator, (MultiPointArithmetic) combinationPolicy);
 		}
 
 		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);

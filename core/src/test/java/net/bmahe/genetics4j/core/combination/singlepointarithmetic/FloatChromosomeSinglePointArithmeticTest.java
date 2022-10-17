@@ -19,7 +19,7 @@ public class FloatChromosomeSinglePointArithmeticTest {
 
 	@Test
 	public void randomIsRequired() {
-		assertThrows(NullPointerException.class, () -> new FloatChromosomeSinglePointArithmetic(null, 0.5f));
+		assertThrows(NullPointerException.class, () -> new FloatChromosomeSinglePointArithmetic<Integer>(null, 0.5f));
 	}
 
 	@Test
@@ -30,12 +30,14 @@ public class FloatChromosomeSinglePointArithmeticTest {
 		when(mockRandom.nextInt(anyInt())).thenReturn(splitIndex);
 
 		final float alpha = 0.2f;
-		final var floatChromosomeSinglePointArithmetic = new FloatChromosomeSinglePointArithmetic(mockRandom, alpha);
+		final var floatChromosomeSinglePointArithmetic = new FloatChromosomeSinglePointArithmetic<Integer>(mockRandom,
+				alpha);
 
 		final var chromosome1 = new FloatChromosome(4, 0, 10, new float[] { 0, 1, 2, 3 });
 		final var chromosome2 = new FloatChromosome(4, 0, 10, new float[] { 3, 2, 1, 0 });
 
-		final var combinedChromosomes = floatChromosomeSinglePointArithmetic.combine(chromosome1, chromosome2);
+		final var combinedChromosomes = floatChromosomeSinglePointArithmetic
+				.combine(null, chromosome1, 1, chromosome2, 2);
 		assertNotNull(combinedChromosomes);
 		assertEquals(2, combinedChromosomes.size());
 

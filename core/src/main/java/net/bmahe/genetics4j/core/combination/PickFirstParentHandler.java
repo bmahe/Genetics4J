@@ -5,14 +5,15 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.combination.PickFirstParent;
 
-public class PickFirstParentHandler implements ChromosomeCombinatorHandler {
+public class PickFirstParentHandler<T extends Comparable<T>> implements ChromosomeCombinatorHandler<T> {
 
 	@Override
-	public boolean canHandle(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public boolean canHandle(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(combinationPolicy);
 
@@ -21,13 +22,14 @@ public class PickFirstParentHandler implements ChromosomeCombinatorHandler {
 	}
 
 	@Override
-	public ChromosomeCombinator resolve(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public ChromosomeCombinator<T> resolve(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 
-		return new ChromosomeCombinator() {
+		return new ChromosomeCombinator<T>() {
 
 			@Override
-			public List<Chromosome> combine(final Chromosome chromosome1, final Chromosome chromosome2) {
+			public List<Chromosome> combine(final AbstractEAConfiguration<T> eaConfiguration, final Chromosome chromosome1,
+					final T firstParentFitness, final Chromosome chromosome2, final T secondParentFitness) {
 				Validate.notNull(chromosome1);
 
 				return List.of(chromosome1);

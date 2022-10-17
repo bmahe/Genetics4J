@@ -14,7 +14,7 @@ import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointArithmetic;
 
-public class SinglePointArithmeticCombinationHandler implements ChromosomeCombinatorHandler {
+public class SinglePointArithmeticCombinationHandler<T extends Comparable<T>> implements ChromosomeCombinatorHandler<T> {
 
 	private final RandomGenerator randomGenerator;
 
@@ -25,7 +25,7 @@ public class SinglePointArithmeticCombinationHandler implements ChromosomeCombin
 	}
 
 	@Override
-	public boolean canHandle(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public boolean canHandle(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
@@ -36,7 +36,7 @@ public class SinglePointArithmeticCombinationHandler implements ChromosomeCombin
 	}
 
 	@Override
-	public ChromosomeCombinator resolve(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public ChromosomeCombinator<T> resolve(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
@@ -47,15 +47,15 @@ public class SinglePointArithmeticCombinationHandler implements ChromosomeCombin
 		final double alpha = singlePointArithmeticRecombination.alpha();
 
 		if (chromosome instanceof IntChromosomeSpec) {
-			return new IntChromosomeSinglePointArithmetic(randomGenerator, alpha);
+			return new IntChromosomeSinglePointArithmetic<T>(randomGenerator, alpha);
 		}
 
 		if (chromosome instanceof DoubleChromosomeSpec) {
-			return new DoubleChromosomeSinglePointArithmetic(randomGenerator, alpha);
+			return new DoubleChromosomeSinglePointArithmetic<T>(randomGenerator, alpha);
 		}
 
 		if (chromosome instanceof FloatChromosomeSpec) {
-			return new FloatChromosomeSinglePointArithmetic(randomGenerator, (float) alpha);
+			return new FloatChromosomeSinglePointArithmetic<T>(randomGenerator, (float) alpha);
 		}
 
 		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);
