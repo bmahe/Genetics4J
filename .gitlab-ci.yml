@@ -54,6 +54,7 @@ build:
       - gp/target
       - gpu/target
       - moo/target
+      - neat/target
       - samples/target
       - target
     expire_in: 1 week
@@ -82,6 +83,7 @@ validate:jdk17:
       - gp/target
       - gpu/target
       - moo/target
+      - neat/target
       - samples/target
     expire_in: 1 week
 
@@ -202,6 +204,18 @@ verify-moo:
     paths:
       - moo/target
     expire_in: 1 week
+
+verify-neat:
+  <<: *verify
+  script:
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE install -DskipTests -DskipPITests'
+    - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE --projects neat verify'
+    - 'rm -rfv $CI_PROJECT_DIR/.m2/repository/net/bmahe'
+  artifacts:
+    paths:
+      - neat/target
+    expire_in: 1 week
+
 
 verify-samples:
   <<: *verify
