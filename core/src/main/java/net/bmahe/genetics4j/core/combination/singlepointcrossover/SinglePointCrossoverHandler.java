@@ -15,7 +15,7 @@ import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 import net.bmahe.genetics4j.core.spec.combination.SinglePointCrossover;
 
-public class SinglePointCrossoverHandler implements ChromosomeCombinatorHandler {
+public class SinglePointCrossoverHandler<T extends Comparable<T>> implements ChromosomeCombinatorHandler<T> {
 
 	private final RandomGenerator randomGenerator;
 
@@ -26,7 +26,7 @@ public class SinglePointCrossoverHandler implements ChromosomeCombinatorHandler 
 	}
 
 	@Override
-	public boolean canHandle(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public boolean canHandle(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
@@ -38,7 +38,7 @@ public class SinglePointCrossoverHandler implements ChromosomeCombinatorHandler 
 	}
 
 	@Override
-	public ChromosomeCombinator resolve(final ChromosomeCombinatorResolver chromosomeCombinatorResolver,
+	public ChromosomeCombinator<T> resolve(final ChromosomeCombinatorResolver<T> chromosomeCombinatorResolver,
 			final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(chromosomeCombinatorResolver);
 		Validate.notNull(combinationPolicy);
@@ -46,19 +46,19 @@ public class SinglePointCrossoverHandler implements ChromosomeCombinatorHandler 
 		Validate.isInstanceOf(SinglePointCrossover.class, combinationPolicy);
 
 		if (chromosome instanceof BitChromosomeSpec) {
-			return new BitChromosomeSinglePointCrossover(randomGenerator);
+			return new BitChromosomeSinglePointCrossover<T>(randomGenerator);
 		}
 
 		if (chromosome instanceof IntChromosomeSpec) {
-			return new IntChromosomeSinglePointCrossover(randomGenerator);
+			return new IntChromosomeSinglePointCrossover<T>(randomGenerator);
 		}
 
 		if (chromosome instanceof DoubleChromosomeSpec) {
-			return new DoubleChromosomeSinglePointCrossover(randomGenerator);
+			return new DoubleChromosomeSinglePointCrossover<T>(randomGenerator);
 		}
 
 		if (chromosome instanceof FloatChromosomeSpec) {
-			return new FloatChromosomeSinglePointCrossover(randomGenerator);
+			return new FloatChromosomeSinglePointCrossover<T>(randomGenerator);
 		}
 
 		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);

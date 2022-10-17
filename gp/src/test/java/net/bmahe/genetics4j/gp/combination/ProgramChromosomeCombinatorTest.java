@@ -25,7 +25,7 @@ public class ProgramChromosomeCombinatorTest {
 
 	@Test
 	public void noRandomParameter() {
-		assertThrows(NullPointerException.class, () -> new ProgramChromosomeCombinator(null));
+		assertThrows(NullPointerException.class, () -> new ProgramChromosomeCombinator<Integer>(null));
 	}
 
 	@Test
@@ -40,18 +40,26 @@ public class ProgramChromosomeCombinatorTest {
 
 		final TreeNode<Operation<?>> nodeStrToDouble = new TreeNode<Operation<?>>(
 				Functions.STR_TO_DOUBLE.build(inputSpec));
-		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random).build(inputSpec)));
+		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random)
+				.build(inputSpec)));
 		root.addChild(nodeStrToDouble);
 
-		final ProgramChromosomeCombinator programChromosomeCombinator = new ProgramChromosomeCombinator(random);
+		final ProgramChromosomeCombinator<Integer> programChromosomeCombinator = new ProgramChromosomeCombinator<>(
+				random);
 		final Map<Class, List<TreeNode<Operation<?>>>> nodeMap = programChromosomeCombinator.returnedTypeToNode(root);
 
 		assertNotNull(nodeMap);
-		assertEquals(2, nodeMap.keySet().size());
+		assertEquals(2,
+				nodeMap.keySet()
+						.size());
 		assertTrue(nodeMap.containsKey(Double.class));
-		assertEquals(3, nodeMap.get(Double.class).size());
+		assertEquals(3,
+				nodeMap.get(Double.class)
+						.size());
 		assertTrue(nodeMap.containsKey(String.class));
-		assertEquals(1, nodeMap.get(String.class).size());
+		assertEquals(1,
+				nodeMap.get(String.class)
+						.size());
 
 	}
 
@@ -68,7 +76,8 @@ public class ProgramChromosomeCombinatorTest {
 
 		final TreeNode<Operation<?>> nodeStrToDouble = new TreeNode<Operation<?>>(
 				Functions.STR_TO_DOUBLE.build(inputSpec));
-		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random).build(inputSpec)));
+		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random)
+				.build(inputSpec)));
 		root.addChild(nodeStrToDouble);
 
 		// =======================
@@ -77,14 +86,21 @@ public class ProgramChromosomeCombinatorTest {
 
 		// =======================
 
-		final ProgramChromosomeCombinator programChromosomeCombinator = new ProgramChromosomeCombinator(random);
+		final ProgramChromosomeCombinator<Integer> programChromosomeCombinator = new ProgramChromosomeCombinator<>(
+				random);
 		final TreeNode<Operation<?>> newTreeNode = programChromosomeCombinator
 				.copyAndReplace(root, nodeStrToDouble, rootReplacement);
 
 		assertNotNull(newTreeNode);
-		assertEquals(2, newTreeNode.getChildren().size());
-		assertEquals(piNode.getData(), newTreeNode.getChild(0).getData());
-		assertEquals(rootReplacement.getData(), newTreeNode.getChild(1).getData());
+		assertEquals(2,
+				newTreeNode.getChildren()
+						.size());
+		assertEquals(piNode.getData(),
+				newTreeNode.getChild(0)
+						.getData());
+		assertEquals(rootReplacement.getData(),
+				newTreeNode.getChild(1)
+						.getData());
 	}
 
 	@Test
@@ -99,7 +115,8 @@ public class ProgramChromosomeCombinatorTest {
 
 		final TreeNode<Operation<?>> nodeStrToDouble = new TreeNode<Operation<?>>(
 				Functions.STR_TO_DOUBLE.build(inputSpec));
-		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random).build(inputSpec)));
+		nodeStrToDouble.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random)
+				.build(inputSpec)));
 		root.addChild(nodeStrToDouble);
 		final TreeChromosome<Operation<?>> chromosomeA = new TreeChromosome<>(root);
 
@@ -110,14 +127,16 @@ public class ProgramChromosomeCombinatorTest {
 
 		final TreeNode<Operation<?>> nodeStrToDouble2 = new TreeNode<Operation<?>>(
 				Functions.STR_TO_DOUBLE.build(inputSpec));
-		nodeStrToDouble2.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random).build(inputSpec)));
+		nodeStrToDouble2.addChild(new TreeNode<Operation<?>>(Terminals.InputString(random)
+				.build(inputSpec)));
 		rootB.addChild(nodeStrToDouble2);
 		final TreeChromosome<Operation<?>> chromosomeB = new TreeChromosome<>(rootB);
 
 		// =======================
 
-		final ProgramChromosomeCombinator programChromosomeCombinator = new ProgramChromosomeCombinator(random);
-		final List<Chromosome> combinedChromosomes = programChromosomeCombinator.combine(chromosomeA, chromosomeB);
+		final ProgramChromosomeCombinator<Integer> programChromosomeCombinator = new ProgramChromosomeCombinator<>(
+				random);
+		final List<Chromosome> combinedChromosomes = programChromosomeCombinator.combine(null, chromosomeA, 1, chromosomeB, 1);
 
 		assertNotNull(combinedChromosomes);
 		assertEquals(2, combinedChromosomes.size());
@@ -139,13 +158,15 @@ public class ProgramChromosomeCombinatorTest {
 
 		// =======================
 
-		final TreeNode<Operation<?>> rootB = new TreeNode<Operation<?>>(Terminals.InputString(random).build(inputSpec));
+		final TreeNode<Operation<?>> rootB = new TreeNode<Operation<?>>(Terminals.InputString(random)
+				.build(inputSpec));
 		final TreeChromosome<Operation<?>> chromosomeB = new TreeChromosome<>(rootB);
 
 		// =======================
 
-		final ProgramChromosomeCombinator programChromosomeCombinator = new ProgramChromosomeCombinator(random);
-		final List<Chromosome> combinedChromosomes = programChromosomeCombinator.combine(chromosomeA, chromosomeB);
+		final ProgramChromosomeCombinator<Integer> programChromosomeCombinator = new ProgramChromosomeCombinator<>(
+				random);
+		final List<Chromosome> combinedChromosomes = programChromosomeCombinator.combine(null, chromosomeA, 1, chromosomeB, 1);
 
 		assertNotNull(combinedChromosomes);
 		assertTrue(combinedChromosomes.isEmpty());

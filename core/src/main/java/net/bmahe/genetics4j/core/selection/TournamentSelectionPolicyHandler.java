@@ -18,7 +18,7 @@ import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.Tournament;
 
 public class TournamentSelectionPolicyHandler<T extends Comparable<T>> implements SelectionPolicyHandler<T> {
-	final static public Logger logger = LogManager.getLogger(TournamentSelectionPolicyHandler.class);
+	public static final Logger logger = LogManager.getLogger(TournamentSelectionPolicyHandler.class);
 
 	private final RandomGenerator randomGenerator;
 

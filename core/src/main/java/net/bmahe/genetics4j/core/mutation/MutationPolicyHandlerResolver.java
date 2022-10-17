@@ -10,7 +10,7 @@ import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 public class MutationPolicyHandlerResolver<T extends Comparable<T>> {
 
 	private final AbstractEAExecutionContext<T> eaExecutionContext;
-	private final List<MutationPolicyHandler> mutationPolicyHandlers;
+	private final List<MutationPolicyHandler<T>> mutationPolicyHandlers;
 
 	public MutationPolicyHandlerResolver(final AbstractEAExecutionContext<T> _eaExecutionContext) {
 		Validate.notNull(_eaExecutionContext);
@@ -26,7 +26,7 @@ public class MutationPolicyHandlerResolver<T extends Comparable<T>> {
 				.anyMatch((sph) -> sph.canHandle(this, mutationPolicy));
 	}
 
-	public MutationPolicyHandler resolve(final MutationPolicy mutationPolicy) {
+	public MutationPolicyHandler<T> resolve(final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicy);
 
 		return mutationPolicyHandlers.stream()

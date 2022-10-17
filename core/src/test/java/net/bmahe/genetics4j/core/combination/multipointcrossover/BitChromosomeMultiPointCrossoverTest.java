@@ -22,7 +22,7 @@ public class BitChromosomeMultiPointCrossoverTest {
 
 	@Test
 	public void randomIsRequired() {
-		assertThrows(NullPointerException.class, () -> new BitChromosomeMultiPointCrossover(null, null));
+		assertThrows(NullPointerException.class, () -> new BitChromosomeMultiPointCrossover<Integer>(null, null));
 	}
 
 	@Test
@@ -31,8 +31,8 @@ public class BitChromosomeMultiPointCrossoverTest {
 
 		when(mockRandom.ints(anyInt(), anyInt())).thenReturn(IntStream.of(1, 3, 4));
 
-		final BitChromosomeMultiPointCrossover bitChromosomeMultiPointCrossover = new BitChromosomeMultiPointCrossover(
-				mockRandom, ImmutableMultiPointCrossover.of(3));
+		final var bitChromosomeMultiPointCrossover = new BitChromosomeMultiPointCrossover<Integer>(mockRandom,
+				ImmutableMultiPointCrossover.of(3));
 
 		final BitSet bitSet1 = new BitSet();
 		bitSet1.set(1);
@@ -46,7 +46,8 @@ public class BitChromosomeMultiPointCrossoverTest {
 		final BitChromosome chromosome1 = new BitChromosome(5, bitSet1);
 		final BitChromosome chromosome2 = new BitChromosome(5, bitSet2);
 
-		final List<Chromosome> combinedChromosomes = bitChromosomeMultiPointCrossover.combine(chromosome1, chromosome2);
+		final List<Chromosome> combinedChromosomes = bitChromosomeMultiPointCrossover
+				.combine(null, chromosome1, 1, chromosome2, 1);
 		assertNotNull(combinedChromosomes);
 		assertEquals(2, combinedChromosomes.size());
 

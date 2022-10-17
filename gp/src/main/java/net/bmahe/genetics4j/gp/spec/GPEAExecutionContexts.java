@@ -50,11 +50,11 @@ public class GPEAExecutionContexts {
 		builder.randomGenerator(randomGenerator);
 
 		builder.addMutationPolicyHandlerFactories(
-				gsd -> new ProgramRandomPrunePolicyHandler(gsd.randomGenerator(), programHelper),
-				gsd -> new ProgramRandomMutatePolicyHandler(gsd.randomGenerator(), programGenerator),
-				gsd -> new NodeReplacementPolicyHandler(randomGenerator, programHelper),
-				gsd -> new ProgramRulesApplicatorPolicyHandler(),
-				gsd -> new TrimTreePolicyHandler(randomGenerator, programGenerator));
+				gsd -> new ProgramRandomPrunePolicyHandler<>(gsd.randomGenerator(), programHelper),
+				gsd -> new ProgramRandomMutatePolicyHandler<>(gsd.randomGenerator(), programGenerator),
+				gsd -> new NodeReplacementPolicyHandler<>(randomGenerator, programHelper),
+				gsd -> new ProgramRulesApplicatorPolicyHandler<>(),
+				gsd -> new TrimTreePolicyHandler<>(randomGenerator, programGenerator));
 
 		builder.addChromosomeCombinatorHandlerFactories(gsd -> new ProgramRandomCombineHandler(gsd.randomGenerator()));
 

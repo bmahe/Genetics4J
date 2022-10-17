@@ -4,12 +4,12 @@ import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
-public interface MutationPolicyHandler {
+public interface MutationPolicyHandler<T extends Comparable<T>> {
 
-	boolean canHandle(final MutationPolicyHandlerResolver mutationPolicyHandlerResolver,
+	boolean canHandle(final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver,
 			final MutationPolicy mutationPolicy);
 
-	Mutator createMutator(final AbstractEAExecutionContext eaExecutionContext,
-			final AbstractEAConfiguration eaConfiguration,
-			final MutationPolicyHandlerResolver mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy);
+	Mutator createMutator(final AbstractEAExecutionContext<T> eaExecutionContext,
+			final AbstractEAConfiguration<T> eaConfiguration,
+			final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy);
 }

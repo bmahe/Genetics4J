@@ -22,12 +22,13 @@ public class IntChromosomeMultiPointArithmeticTest {
 
 	@Test
 	public void randomIsRequired() {
-		assertThrows(NullPointerException.class, () -> new IntChromosomeMultiPointArithmetic(null, null));
+		assertThrows(NullPointerException.class, () -> new IntChromosomeMultiPointArithmetic<Integer>(null, null));
 	}
 
 	@Test
 	public void combinationPolicyIsRequired() {
-		assertThrows(NullPointerException.class, () -> new IntChromosomeMultiPointArithmetic(new Random(), null));
+		assertThrows(NullPointerException.class,
+				() -> new IntChromosomeMultiPointArithmetic<Integer>(new Random(), null));
 	}
 
 	private int mixAlleles(final int a, final int b, final double alpha) {
@@ -41,13 +42,14 @@ public class IntChromosomeMultiPointArithmeticTest {
 		when(mockRandom.ints(anyInt(), anyInt())).thenReturn(IntStream.of(1, 3, 4));
 
 		final double alpha = 0.8;
-		final var intChromosomeMultiPointCrossover = new IntChromosomeMultiPointArithmetic(mockRandom,
+		final var intChromosomeMultiPointCrossover = new IntChromosomeMultiPointArithmetic<Integer>(mockRandom,
 				MultiPointArithmetic.of(3, alpha));
 
 		final var chromosome1 = new IntChromosome(5, 0, 100, new int[] { 10, 11, 12, 13, 14 });
 		final var chromosome2 = new IntChromosome(5, 0, 100, new int[] { 20, 21, 22, 23, 24 });
 
-		final List<Chromosome> combinedChromosomes = intChromosomeMultiPointCrossover.combine(chromosome1, chromosome2);
+		final List<Chromosome> combinedChromosomes = intChromosomeMultiPointCrossover
+				.combine(null, chromosome1, 1, chromosome2, 1);
 		assertNotNull(combinedChromosomes);
 		assertEquals(2, combinedChromosomes.size());
 

@@ -8,9 +8,10 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.FloatChromosome;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.combination.MultiPointArithmetic;
 
-public class FloatChromosomeMultiPointArithmetic implements ChromosomeCombinator {
+public class FloatChromosomeMultiPointArithmetic<T extends Comparable<T>> implements ChromosomeCombinator<T> {
 
 	private final RandomGenerator randomGenerator;
 
@@ -26,7 +27,8 @@ public class FloatChromosomeMultiPointArithmetic implements ChromosomeCombinator
 	}
 
 	@Override
-	public List<Chromosome> combine(final Chromosome chromosome1, final Chromosome chromosome2) {
+	public List<Chromosome> combine(final AbstractEAConfiguration<T> eaConfiguration, final Chromosome chromosome1,
+			final T firstParentFitness, final Chromosome chromosome2, final T secondParentFitness) {
 		Validate.notNull(chromosome1);
 		Validate.notNull(chromosome2);
 		Validate.isInstanceOf(FloatChromosome.class, chromosome1);

@@ -20,7 +20,7 @@ public class BitChromosomeSinglePointCrossoverTest {
 
 	@Test
 	public void randomIsRequired() {
-		assertThrows(NullPointerException.class, () -> new BitChromosomeSinglePointCrossover(null));
+		assertThrows(NullPointerException.class, () -> new BitChromosomeSinglePointCrossover<Integer>(null));
 	}
 
 	@Test
@@ -30,13 +30,13 @@ public class BitChromosomeSinglePointCrossoverTest {
 		final int splitIndex = 2;
 		when(mockRandom.nextInt(anyInt())).thenReturn(splitIndex);
 
-		final BitChromosomeSinglePointCrossover bitChromosomeSinglePointCrossover = new BitChromosomeSinglePointCrossover(
-				mockRandom);
+		final var bitChromosomeSinglePointCrossover = new BitChromosomeSinglePointCrossover<Integer>(mockRandom);
 
 		final BitChromosome chromosome1 = new BitChromosome(4, BitSet.valueOf(new byte[] { 5 })); // 0101
 		final BitChromosome chromosome2 = new BitChromosome(4, BitSet.valueOf(new byte[] { 10 })); // 1010
 
-		final List<Chromosome> combinedChromosomes = bitChromosomeSinglePointCrossover.combine(chromosome1, chromosome2);
+		final List<Chromosome> combinedChromosomes = bitChromosomeSinglePointCrossover
+				.combine(null, chromosome1, 1, chromosome2, 1);
 		assertNotNull(combinedChromosomes);
 		assertEquals(2, combinedChromosomes.size());
 

@@ -8,12 +8,12 @@ import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.chromosome.ChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
 
-public class ChromosomeCombinatorResolver {
+public class ChromosomeCombinatorResolver<T extends Comparable<T>> {
 
-	final AbstractEAExecutionContext eaExecutionContext;
-	private List<ChromosomeCombinatorHandler> chromosomeCombinatorHandlers;
+	private final AbstractEAExecutionContext<T> eaExecutionContext;
+	private List<ChromosomeCombinatorHandler<T>> chromosomeCombinatorHandlers;
 
-	public ChromosomeCombinatorResolver(final AbstractEAExecutionContext _eaExecutionContext) {
+	public ChromosomeCombinatorResolver(final AbstractEAExecutionContext<T> _eaExecutionContext) {
 		Validate.notNull(_eaExecutionContext);
 
 		this.eaExecutionContext = _eaExecutionContext;
@@ -29,7 +29,7 @@ public class ChromosomeCombinatorResolver {
 
 	}
 
-	public ChromosomeCombinator resolve(final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
+	public ChromosomeCombinator<T> resolve(final CombinationPolicy combinationPolicy, final ChromosomeSpec chromosome) {
 		Validate.notNull(combinationPolicy);
 		Validate.notNull(chromosome);
 

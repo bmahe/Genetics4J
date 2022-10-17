@@ -13,8 +13,8 @@ import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
 public class ChromosomeResolverUtils {
 
-	public static ChromosomeMutationHandler<? extends Chromosome> findMatchingChromosomeMutationPolicyHandler(
-			final AbstractEAExecutionContext eaExecutionContext, final MutationPolicy mutationPolicy,
+	public static <T extends Comparable<T>> ChromosomeMutationHandler<? extends Chromosome> findMatchingChromosomeMutationPolicyHandler(
+			final AbstractEAExecutionContext<T> eaExecutionContext, final MutationPolicy mutationPolicy,
 			final ChromosomeSpec chromosomeSpec) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(mutationPolicy);
@@ -31,15 +31,14 @@ public class ChromosomeResolverUtils {
 								+ " and chromosome spec: " + chromosomeSpec));
 	}
 
-	@SuppressWarnings("rawtypes")
-	public static ChromosomeMutationHandler[] resolveChromosomeMutationHandlers(
-			final AbstractEAExecutionContext eaExecutionContext, final AbstractEAConfiguration eaConfiguration,
+	public static <T extends Comparable<T>> ChromosomeMutationHandler<? extends Chromosome>[] resolveChromosomeMutationHandlers(
+			final AbstractEAExecutionContext<T> eaExecutionContext, final AbstractEAConfiguration<T> eaConfiguration,
 			final MutationPolicy mutationPolicy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(mutationPolicy);
 
-		final ChromosomeMutationHandler[] chromosomePolicyHandlers = new ChromosomeMutationHandler[eaConfiguration
+		final ChromosomeMutationHandler<? extends Chromosome>[] chromosomePolicyHandlers = new ChromosomeMutationHandler[eaConfiguration
 				.chromosomeSpecs()
 				.size()];
 		final List<ChromosomeSpec> chromosomeSpecs = eaConfiguration.chromosomeSpecs();

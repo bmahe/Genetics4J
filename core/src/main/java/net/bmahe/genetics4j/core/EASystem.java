@@ -41,7 +41,7 @@ public class EASystem<T extends Comparable<T>> {
 	private final AbstractEAExecutionContext<T> eaExecutionContext;
 	private final int populationSize;
 
-	private final List<ChromosomeCombinator> chromosomeCombinators;
+	private final List<ChromosomeCombinator<T>> chromosomeCombinators;
 	private final ChromosomeFactoryProvider chromosomeFactoryProvider;
 
 	private final ReplacementStrategyImplementor<T> replacementStrategyImplementor;
@@ -53,7 +53,7 @@ public class EASystem<T extends Comparable<T>> {
 	private Selector<T> parentSelector;
 
 	public EASystem(final AbstractEAConfiguration<T> _eaConfiguration, final long _populationSize,
-			final List<ChromosomeCombinator> _chromosomeCombinators, final double _offspringRatio,
+			final List<ChromosomeCombinator<T>> _chromosomeCombinators, final double _offspringRatio,
 			final Selector<T> _parentSelectionPolicyHandler, final List<Mutator> _mutators,
 			final ReplacementStrategyImplementor<T> _replacementStrategyImplementor,
 			final AbstractEAExecutionContext<T> _eaExecutionContext, final FitnessEvaluator<T> _fitnessEvaluator) {
@@ -204,16 +204,20 @@ public class EASystem<T extends Comparable<T>> {
 			final int childrenNeeded = (int) (populationSize * offspringRatio);
 			final int parentsNeeded = (int) (childrenNeeded * 2);
 			logger.info("Selecting {} parents as we expect to generate {} children", parentsNeeded, childrenNeeded);
-			final List<Genotype> selectedParents = parentSelector
-					.select(eaConfiguration, parentsNeeded, population.getAllGenotypes(), population.getAllFitnesses())
-					.getAllGenotypes();
+			final Population<T> selectedParents = parentSelector
+					.select(eaConfiguration, parentsNeeded, population.getAllGenotypes(), population.getAllFitnesses());
 			logger.trace("Selected parents: {}", selectedParents);
+			Validate.isTrue(selectedParents.size() % 2 == 0);
 
 			logger.info("Combining parents into offsprings");
 			final List<Genotype> children = new ArrayList<>();
-			while (selectedParents.isEmpty() == false) {
-				final Genotype firstParent = selectedParents.remove(0);
-				final Genotype secondParent = selectedParents.remove(0);
+			int parentIndex = 0;
+			while (parentIndex + 1 < selectedParents.size()) {
+				final Genotype firstParent = selectedParents.getGenotype(parentIndex);
+				final T firstParentFitness = selectedParents.getFitness(parentIndex);
+
+				final Genotype secondParent = selectedParents.getGenotype(parentIndex + 1);
+				final T secondParentFitness = selectedParents.getFitness(parentIndex + 1);
 
 				final List<List<Chromosome>> chromosomes = new ArrayList<>();
 				for (int chromosomeIndex = 0; chromosomeIndex < eaConfiguration.numChromosomes(); chromosomeIndex++) {
@@ -222,7 +226,11 @@ public class EASystem<T extends Comparable<T>> {
 					final Chromosome secondChromosome = secondParent.getChromosome(chromosomeIndex);
 
 					final List<Chromosome> combinedChromosomes = chromosomeCombinators.get(chromosomeIndex)
-							.combine(firstChromosome, secondChromosome);
+							.combine(eaConfiguration,
+									firstChromosome,
+									firstParentFitness,
+									secondChromosome,
+									secondParentFitness);
 
 					chromosomes.add(combinedChromosomes);
 					logger.trace("Combining {} with {} ---> {}", firstChromosome, secondChromosome, combinedChromosomes);
@@ -231,6 +239,7 @@ public class EASystem<T extends Comparable<T>> {
 				final List<Genotype> offsprings = genotypeCombinator.combine(eaConfiguration, chromosomes);
 
 				children.addAll(offsprings);
+				parentIndex += 2;
 			}
 			logger.info("Generated {} offsprings", children.size());
 

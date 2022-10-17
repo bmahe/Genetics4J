@@ -12,7 +12,7 @@ import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.mutation.MultiMutations;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 
-public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
+public class MultiMutationsPolicyHandler<T extends Comparable<T>> implements MutationPolicyHandler<T> {
 
 	private final RandomGenerator randomGenerator;
 
@@ -23,7 +23,7 @@ public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public boolean canHandle(final MutationPolicyHandlerResolver mutationPolicyHandlerResolver,
+	public boolean canHandle(final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver,
 			final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicyHandlerResolver);
 		Validate.notNull(mutationPolicy);
@@ -40,9 +40,9 @@ public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public Mutator createMutator(final AbstractEAExecutionContext eaExecutionContext,
-			final AbstractEAConfiguration eaConfiguration,
-			final MutationPolicyHandlerResolver mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
+	public Mutator createMutator(final AbstractEAExecutionContext<T> eaExecutionContext,
+			final AbstractEAConfiguration<T> eaConfiguration,
+			final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(mutationPolicyHandlerResolver);
@@ -55,7 +55,7 @@ public class MultiMutationsPolicyHandler implements MutationPolicyHandler {
 				.stream()
 				.map((mp) -> {
 
-					final MutationPolicyHandler mutationPolicyHandler = mutationPolicyHandlerResolver.resolve(mp);
+					final MutationPolicyHandler<T> mutationPolicyHandler = mutationPolicyHandlerResolver.resolve(mp);
 
 					return mutationPolicyHandler
 							.createMutator(eaExecutionContext, eaConfiguration, mutationPolicyHandlerResolver, mp);

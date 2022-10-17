@@ -19,7 +19,7 @@ public class IntChromosomeOrderCrossoverTest {
 
 	@Test
 	public void randomIsRequired() {
-		assertThrows(NullPointerException.class, () -> new IntChromosomeOrderCrossover(null));
+		assertThrows(NullPointerException.class, () -> new IntChromosomeOrderCrossover<Integer>(null));
 	}
 
 	@Test
@@ -30,12 +30,13 @@ public class IntChromosomeOrderCrossoverTest {
 		final int rangeEnd = 3;
 		when(mockRandom.nextInt(anyInt())).thenReturn(rangeStart, rangeEnd);
 
-		final IntChromosomeOrderCrossover intChromosomeOrderCrossover = new IntChromosomeOrderCrossover(mockRandom);
+		final var intChromosomeOrderCrossover = new IntChromosomeOrderCrossover<Integer>(mockRandom);
 
 		final IntChromosome chromosome1 = new IntChromosome(5, 0, 10, new int[] { 0, 1, 2, 3, 4 });
 		final IntChromosome chromosome2 = new IntChromosome(5, 0, 10, new int[] { 4, 3, 2, 1, 0 });
 
-		final List<Chromosome> combinedChromosomes = intChromosomeOrderCrossover.combine(chromosome1, chromosome2);
+		final List<Chromosome> combinedChromosomes = intChromosomeOrderCrossover
+				.combine(null, chromosome1, 1, chromosome2, 1);
 		final IntChromosome combinedIntChromosome = (IntChromosome) combinedChromosomes.get(0);
 		assertNotNull(combinedIntChromosome);
 		assertEquals(5, combinedIntChromosome.getNumAlleles());

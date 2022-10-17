@@ -15,7 +15,7 @@ import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.gp.program.ProgramGenerator;
 import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomMutate;
 
-public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
+public class ProgramRandomMutatePolicyHandler<T extends Comparable<T>> implements MutationPolicyHandler<T> {
 	final static public Logger logger = LogManager.getLogger(ProgramRandomMutatePolicyHandler.class);
 
 	final RandomGenerator randomGenerator;
@@ -31,7 +31,7 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public boolean canHandle(final MutationPolicyHandlerResolver mutationPolicyHandlerResolver,
+	public boolean canHandle(final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver,
 			final MutationPolicy mutationPolicy) {
 		Validate.notNull(mutationPolicyHandlerResolver);
 		Validate.notNull(mutationPolicy);
@@ -40,9 +40,9 @@ public class ProgramRandomMutatePolicyHandler implements MutationPolicyHandler {
 	}
 
 	@Override
-	public Mutator createMutator(final AbstractEAExecutionContext eaExecutionContext,
-			final AbstractEAConfiguration eaConfiguration,
-			final MutationPolicyHandlerResolver mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
+	public Mutator createMutator(final AbstractEAExecutionContext<T> eaExecutionContext,
+			final AbstractEAConfiguration<T> eaConfiguration,
+			final MutationPolicyHandlerResolver<T> mutationPolicyHandlerResolver, final MutationPolicy mutationPolicy) {
 		Validate.notNull(eaExecutionContext);
 		Validate.notNull(eaConfiguration);
 		Validate.notNull(mutationPolicyHandlerResolver);

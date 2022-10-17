@@ -19,7 +19,7 @@ public class DoubleChromosomeSinglePointArithmeticTest {
 
 	@Test
 	public void randomIsRequired() {
-		assertThrows(NullPointerException.class, () -> new DoubleChromosomeSinglePointArithmetic(null, 0.5d));
+		assertThrows(NullPointerException.class, () -> new DoubleChromosomeSinglePointArithmetic<Integer>(null, 0.5d));
 	}
 
 	@Test
@@ -30,12 +30,14 @@ public class DoubleChromosomeSinglePointArithmeticTest {
 		when(mockRandom.nextInt(anyInt())).thenReturn(splitIndex);
 
 		final double alpha = 0.2d;
-		final var doubleChromosomeSinglePointArithmetic = new DoubleChromosomeSinglePointArithmetic(mockRandom, alpha);
+		final var doubleChromosomeSinglePointArithmetic = new DoubleChromosomeSinglePointArithmetic<Integer>(mockRandom,
+				alpha);
 
 		final var chromosome1 = new DoubleChromosome(4, 0, 10, new double[] { 0, 1, 2, 3 });
 		final var chromosome2 = new DoubleChromosome(4, 0, 10, new double[] { 3, 2, 1, 0 });
 
-		final var combinedChromosomes = doubleChromosomeSinglePointArithmetic.combine(chromosome1, chromosome2);
+		final var combinedChromosomes = doubleChromosomeSinglePointArithmetic
+				.combine(null, chromosome1, 1, chromosome2, 1);
 		assertNotNull(combinedChromosomes);
 		assertEquals(2, combinedChromosomes.size());
 

@@ -8,8 +8,9 @@ import org.apache.commons.lang3.Validate;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.chromosomes.DoubleChromosome;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
+import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 
-public class DoubleChromosomeSinglePointCrossover implements ChromosomeCombinator {
+public class DoubleChromosomeSinglePointCrossover<T extends Comparable<T>> implements ChromosomeCombinator<T> {
 
 	private final RandomGenerator randomGenerator;
 
@@ -20,7 +21,8 @@ public class DoubleChromosomeSinglePointCrossover implements ChromosomeCombinato
 	}
 
 	@Override
-	public List<Chromosome> combine(final Chromosome chromosome1, final Chromosome chromosome2) {
+	public List<Chromosome> combine(final AbstractEAConfiguration<T> eaConfiguration, final Chromosome chromosome1,
+			final T firstParentFitness, final Chromosome chromosome2, final T secondParentFitness) {
 		Validate.notNull(chromosome1);
 		Validate.notNull(chromosome2);
 		Validate.isInstanceOf(DoubleChromosome.class, chromosome1);
