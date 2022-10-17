@@ -12,6 +12,7 @@ See the website https://bmahe.gitlab.io/genetics4j/ for more information, quicks
 * Genetic Algorithms
 * Strongly Typed Genetic Programming
 * Multi-Objective Optimization support with algorithms such as NSGA2 and SPEA2
+* NeuroEvolution of Augmenting Topologies, also known as _NEAT_
 * Supports multiple replacement strategies
 * Configurable and user friendly
 * Multi-GPU and Multithreaded based implementations for faster execution
