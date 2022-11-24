@@ -306,7 +306,11 @@ public class NeatUtils {
 						.stream()
 						.anyMatch(candidate -> speciesPredicate.test(individual, candidate));
 
-				if (anyAncestorMatch) {
+				final boolean anyMemberMatch = currentSpecies.getMembers()
+						.stream()
+						.anyMatch(candidate -> speciesPredicate.test(individual, candidate));
+
+				if (anyAncestorMatch || anyMemberMatch) {
 					currentSpecies.addMember(individual);
 					existingSpeciesFound = true;
 				} else {
