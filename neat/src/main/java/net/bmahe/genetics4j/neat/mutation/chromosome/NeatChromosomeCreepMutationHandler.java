@@ -10,7 +10,6 @@ import net.bmahe.genetics4j.core.spec.mutation.CreepMutation;
 import net.bmahe.genetics4j.core.spec.statistics.distributions.Distribution;
 import net.bmahe.genetics4j.core.util.DistributionUtils;
 import net.bmahe.genetics4j.neat.Connection;
-import net.bmahe.genetics4j.neat.ImmutableConnection;
 import net.bmahe.genetics4j.neat.chromosomes.NeatChromosome;
 
 public class NeatChromosomeCreepMutationHandler extends AbstractNeatChromosomeConnectionMutationHandler<CreepMutation> {
@@ -26,7 +25,7 @@ public class NeatChromosomeCreepMutationHandler extends AbstractNeatChromosomeCo
 		Validate.notNull(neatChromosome);
 		Validate.notNull(oldConnection);
 
-		final var connectionBuilder = ImmutableConnection.builder()
+		final var connectionBuilder = Connection.builder()
 				.from(oldConnection);
 
 		final var minValue = neatChromosome.getMinWeightValue();

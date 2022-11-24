@@ -7,7 +7,6 @@ import org.apache.commons.lang3.Validate;
 
 import net.bmahe.genetics4j.core.spec.mutation.RandomMutation;
 import net.bmahe.genetics4j.neat.Connection;
-import net.bmahe.genetics4j.neat.ImmutableConnection;
 import net.bmahe.genetics4j.neat.chromosomes.NeatChromosome;
 
 public class NeatChromosomeRandomMutationHandler
@@ -25,7 +24,7 @@ public class NeatChromosomeRandomMutationHandler
 		Validate.notNull(neatChromosome);
 		Validate.notNull(oldConnection);
 
-		final var connectionBuilder = ImmutableConnection.builder()
+		final var connectionBuilder = Connection.builder()
 				.from(oldConnection);
 
 		final var minValue = neatChromosome.getMinWeightValue();
