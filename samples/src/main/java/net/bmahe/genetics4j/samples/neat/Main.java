@@ -106,7 +106,7 @@ public class Main {
 		final Builder<Float> eaConfigurationBuilder = new EAConfiguration.Builder<>();
 		eaConfigurationBuilder.chromosomeSpecs(NeatChromosomeSpec.of(3, 1, -5, 5))
 				.parentSelectionPolicy(NeatSelection.of(
-						(i1, i2) -> NeatUtils.compatibilityDistance(i1.genotype(), i2.genotype(), 0, 1, 1, 1f) < 3.0,
+						(i1, i2) -> NeatUtils.compatibilityDistance(i1.genotype(), i2.genotype(), 0, 1, 1, 0.4f) < 1.0,
 						Tournament.of(3)))
 				.combinationPolicy(NeatCombination.build())
 				.mutationPolicies(CreepMutation.of(0.30, NormalDistribution.of(0.0, 0.333)),
