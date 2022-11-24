@@ -10,9 +10,19 @@ import org.apache.logging.log4j.Logger;
 public class InnovationManager {
 	public static final Logger logger = LogManager.getLogger(InnovationManager.class);
 
-	private final AtomicInteger currentId = new AtomicInteger();
+	public static final int DEFAULT_INITIAL_ID = 0;
+
+	private final AtomicInteger currentId;
 
 	private final ConcurrentHashMap<ConnectionPair, Integer> innovationCache = new ConcurrentHashMap<>();
+
+	public InnovationManager(final int initialValue) {
+		currentId = new AtomicInteger(initialValue);
+	}
+
+	public InnovationManager() {
+		this(DEFAULT_INITIAL_ID);
+	}
 
 	public int computeNewId(final int from, final int to) {
 		Validate.isTrue(from != to);
