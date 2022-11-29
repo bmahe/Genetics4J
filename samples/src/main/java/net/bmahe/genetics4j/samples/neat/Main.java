@@ -121,6 +121,7 @@ public class Main {
 				.optimization(Optimization.MAXIMZE)
 				.termination(
 						Terminations.<Float>or(Terminations.ofStableFitness(200), Terminations.ofFitnessAtLeast(3.95f)));
+
 		final EAConfiguration<Float> eaConfiguration = eaConfigurationBuilder.build();
 
 		final var eaExecutionContextBuilder = NeatEAExecutionContexts.<Float>standard();

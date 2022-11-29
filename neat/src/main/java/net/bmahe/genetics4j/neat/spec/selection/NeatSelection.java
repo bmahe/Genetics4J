@@ -31,15 +31,20 @@ public abstract class NeatSelection<T extends Comparable<T>> implements Selectio
 		Validate.isTrue(perSpeciesKeepRatio() > 0.0f);
 	}
 
+	public static class Builder<T extends Comparable<T>> extends ImmutableNeatSelection.Builder<T> {
+	}
+
 	public static <U extends Comparable<U>> NeatSelection<U> build() {
-		return ImmutableNeatSelection.<U>builder()
-				.build();
+		return new Builder<U>().build();
+	}
+
+	public static <U extends Comparable<U>> Builder<U> builder() {
+		return new Builder<U>();
 	}
 
 	public static <U extends Comparable<U>> NeatSelection<U> of(final float perSpeciesKeepRatio,
 			final BiPredicate<Individual<U>, Individual<U>> speciesPredicate, final SelectionPolicy speciesSelection) {
-		return ImmutableNeatSelection.<U>builder()
-				.perSpeciesKeepRatio(perSpeciesKeepRatio)
+		return new Builder<U>().perSpeciesKeepRatio(perSpeciesKeepRatio)
 				.speciesPredicate(speciesPredicate)
 				.speciesSelection(speciesSelection)
 				.build();
@@ -47,8 +52,7 @@ public abstract class NeatSelection<T extends Comparable<T>> implements Selectio
 
 	public static <U extends Comparable<U>> NeatSelection<U> of(
 			final BiPredicate<Individual<U>, Individual<U>> speciesPredicate, final SelectionPolicy speciesSelection) {
-		return ImmutableNeatSelection.<U>builder()
-				.speciesPredicate(speciesPredicate)
+		return new Builder<U>().speciesPredicate(speciesPredicate)
 				.speciesSelection(speciesSelection)
 				.build();
 	}

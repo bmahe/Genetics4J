@@ -45,6 +45,57 @@ public class NeatSelectorImpl<T extends Number & Comparable<T>> implements Selec
 		this.previousSpecies = new ArrayList<>();
 	}
 
+	protected List<Species<T>> eliminateLowestPerformers(final AbstractEAConfiguration<T> eaConfiguration,
+			final List<Species<T>> allSpecies) {
+		Validate.notNull(eaConfiguration);
+		Validate.notNull(allSpecies);
+
+		final Comparator<Individual<T>> comparator = switch (eaConfiguration.optimization()) {
+			case MAXIMZE -> Comparator.comparing(Individual<T>::fitness);
+			case MINIMIZE -> Comparator.comparing(Individual<T>::fitness)
+					.reversed();
+		};
+
+		final float perSpeciesKeepRatio = neatSelection.perSpeciesKeepRatio();
+		logger.trace("Keeping only the best {} number of individuals per species", perSpeciesKeepRatio);
+
+		final int minSpeciesSize = neatSelection.minSpeciesSize();
+
+		return allSpecies.stream()
+				.map(species -> {
+					final float speciesSize = species.getMembers()
+							.size();
+					final int numIndividualtoKeep = (int) Math.max(minSpeciesSize, speciesSize * perSpeciesKeepRatio);
+
+					if (logger.isDebugEnabled()) {
+						logger.debug(
+								"Species id: {}, size: {}, perSepciesKeepRatio: {}, we want to keep {} members - best fitness: {}",
+								species.getId(),
+								speciesSize,
+								perSpeciesKeepRatio,
+								numIndividualtoKeep,
+								species.getMembers()
+										.stream()
+										.max(comparator)
+										.map(Individual::fitness));
+					}
+
+					final Species<T> trimmedSpecies = new Species<>(species.getId(), List.of());
+					if (numIndividualtoKeep > 0.0f) {
+						final var selectedIndividuals = species.getMembers()
+								.stream()
+								.sorted(comparator.reversed())
+								.limit(numIndividualtoKeep)
+								.toList();
+
+						trimmedSpecies.addAllMembers(selectedIndividuals);
+					}
+					return trimmedSpecies;
+				})
+				.filter(species -> species.getNumMembers() > 0)
+				.toList();
+	}
+
 	@Override
 	public Population<T> select(final AbstractEAConfiguration<T> eaConfiguration, final int numIndividuals,
 			final List<Genotype> genotypes, final List<T> fitnessScore) {
@@ -65,49 +116,10 @@ public class NeatSelectorImpl<T extends Number & Comparable<T>> implements Selec
 		logger.debug("Number of species found: {}", allSpecies.size());
 		logger.trace("Species: {}", allSpecies);
 
-		final Comparator<Individual<T>> comparator = switch (eaConfiguration.optimization()) {
-			case MAXIMZE -> Comparator.comparing(Individual<T>::fitness);
-			case MINIMIZE -> Comparator.comparing(Individual<T>::fitness)
-					.reversed();
-		};
-
-		final float perSpeciesKeepRatio = neatSelection.perSpeciesKeepRatio();
-		logger.trace("Keeping only the best {} number of individuals per species", perSpeciesKeepRatio);
-
-		final int minSpeciesSize = neatSelection.minSpeciesSize();
-
-		final var allTrimmedSpecies = allSpecies.stream()
-				.map(species -> {
-					final float speciesSize = species.getMembers()
-							.size();
-					final int numIndividualtoKeep = (int) Math.max(minSpeciesSize, speciesSize * perSpeciesKeepRatio);
-
-					logger.debug(
-							"Species id: {}, size: {}, perSepciesKeepRatio: {}, we want to keep {} members - best fitness: {}",
-							species.getId(),
-							speciesSize,
-							perSpeciesKeepRatio,
-							numIndividualtoKeep,
-							species.getMembers()
-									.stream()
-									.max(comparator)
-									.map(Individual::fitness));
-
-					final Species<T> trimmedSpecies = new Species<>(species.getId(), List.of());
-					if (numIndividualtoKeep > 0.0f) {
-						final var selectedIndividuals = species.getMembers()
-								.stream()
-								.sorted(comparator)
-								.limit(numIndividualtoKeep)
-								.toList();
-
-						trimmedSpecies.addAllMembers(selectedIndividuals);
-					}
-					return trimmedSpecies;
-				})
-				.filter(species -> species.getNumMembers() > 0)
-				.toList();
-
+		/**
+		 * We want to remove the bottom performers of each species
+		 */
+		final var allTrimmedSpecies = eliminateLowestPerformers(eaConfiguration, allSpecies);
 		logger.debug("After trimming, we have {} species", allTrimmedSpecies.size());
 
 		previousSpecies = allTrimmedSpecies;
@@ -161,10 +173,13 @@ public class NeatSelectorImpl<T extends Number & Comparable<T>> implements Selec
 							speciesIndex,
 							allTrimmedSpecies.get(speciesIndex)
 									.getId());
-					selected.addAll(speciesSelector.select(eaConfiguration,
+
+					final var selectedFromSpecies = speciesSelector.select(eaConfiguration,
 							numIndividualSpecies,
 							speciesPopulation.getAllGenotypes(),
-							speciesPopulation.getAllFitnesses()));
+							speciesPopulation.getAllFitnesses());
+
+					selected.addAll(selectedFromSpecies);
 				}
 
 				i++;
