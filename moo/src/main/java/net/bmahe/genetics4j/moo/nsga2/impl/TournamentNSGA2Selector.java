@@ -75,7 +75,7 @@ public class TournamentNSGA2Selector<T extends Comparable<T>> implements Selecto
 		logger.debug("Selecting {} individuals from a population of {}", numIndividuals, individuals.size());
 
 		switch (eaConfiguration.optimization()) {
-			case MAXIMZE:
+			case MAXIMIZE:
 			case MINIMIZE:
 				break;
 			default:
@@ -84,12 +84,12 @@ public class TournamentNSGA2Selector<T extends Comparable<T>> implements Selecto
 
 		final int numberObjectives = tournamentNSGA2Selection.numberObjectives();
 
-		final Comparator<T> dominance = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
+		final Comparator<T> dominance = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
 				? tournamentNSGA2Selection.dominance()
 				: tournamentNSGA2Selection.dominance()
 						.reversed();
 
-		final Function<Integer, Comparator<T>> objectiveComparator = Optimization.MAXIMZE
+		final Function<Integer, Comparator<T>> objectiveComparator = Optimization.MAXIMIZE
 				.equals(eaConfiguration.optimization())
 						? tournamentNSGA2Selection.objectiveComparator()
 						: (m) -> tournamentNSGA2Selection.objectiveComparator()

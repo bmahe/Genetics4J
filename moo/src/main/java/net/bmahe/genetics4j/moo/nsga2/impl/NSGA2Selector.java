@@ -69,7 +69,7 @@ public class NSGA2Selector<T extends Comparable<T>> implements Selector<T> {
 		logger.debug("Selecting {} individuals from a population of {}", numIndividuals, individuals.size());
 
 		switch (eaConfiguration.optimization()) {
-			case MAXIMZE:
+			case MAXIMIZE:
 			case MINIMIZE:
 				break;
 			default:
@@ -78,11 +78,11 @@ public class NSGA2Selector<T extends Comparable<T>> implements Selector<T> {
 
 		final int numberObjectives = nsga2Selection.numberObjectives();
 
-		final Comparator<T> dominance = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
+		final Comparator<T> dominance = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
 				? nsga2Selection.dominance()
 				: nsga2Selection.dominance().reversed();
 
-		final Function<Integer, Comparator<T>> objectiveComparator = Optimization.MAXIMZE
+		final Function<Integer, Comparator<T>> objectiveComparator = Optimization.MAXIMIZE
 				.equals(eaConfiguration.optimization()) ? nsga2Selection.objectiveComparator()
 						: (m) -> nsga2Selection.objectiveComparator().apply(m).reversed();
 

@@ -51,7 +51,7 @@ public class NeatSelectionImplTest {
 				.combinationPolicy(NeatCombination.build())
 				.mutationPolicies(RandomMutation.of(0.30))
 				.fitness(genotype -> 0)
-				.optimization(Optimization.MAXIMZE)
+				.optimization(Optimization.MAXIMIZE)
 				.termination(Terminations.ofMaxGeneration(1));
 		final EAConfiguration<Integer> eaConfiguration = eaConfigurationBuilder.build();
 

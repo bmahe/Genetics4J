@@ -44,7 +44,7 @@ public class TournamentSelector<T extends Comparable<T>> implements Selector<T> 
 		final Tournament<T> tournamentSelection = (Tournament<T>) selectionPolicy;
 
 		switch (eaConfiguration.optimization()) {
-			case MAXIMZE:
+			case MAXIMIZE:
 			case MINIMIZE:
 				break;
 			default:
@@ -52,7 +52,7 @@ public class TournamentSelector<T extends Comparable<T>> implements Selector<T> 
 		}
 
 		final Comparator<Individual<T>> baseComparator = tournamentSelection.comparator();
-		final Comparator<Individual<T>> comparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
+		final Comparator<Individual<T>> comparator = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
 				? baseComparator
 				: baseComparator.reversed();
 

@@ -103,14 +103,14 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 				|| doFitnessFirst == false);
 
 		switch (eaConfiguration.optimization()) {
-		case MAXIMZE:
+		case MAXIMIZE:
 		case MINIMIZE:
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 		}
 
-		final Comparator<Individual<T>> fitnessComparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
+		final Comparator<Individual<T>> fitnessComparator = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
 				? fitnessTournament.comparator()
 				: fitnessTournament.comparator().reversed();
 

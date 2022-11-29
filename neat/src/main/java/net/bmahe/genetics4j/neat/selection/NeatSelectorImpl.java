@@ -51,7 +51,7 @@ public class NeatSelectorImpl<T extends Number & Comparable<T>> implements Selec
 		Validate.notNull(allSpecies);
 
 		final Comparator<Individual<T>> comparator = switch (eaConfiguration.optimization()) {
-			case MAXIMZE -> Comparator.comparing(Individual<T>::fitness);
+			case MAXIMIZE -> Comparator.comparing(Individual<T>::fitness);
 			case MINIMIZE -> Comparator.comparing(Individual<T>::fitness)
 					.reversed();
 		};

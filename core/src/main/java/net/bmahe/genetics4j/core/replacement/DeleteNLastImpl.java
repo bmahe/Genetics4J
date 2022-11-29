@@ -40,14 +40,14 @@ public class DeleteNLastImpl<T extends Comparable<T>> implements ReplacementStra
 		Validate.isTrue(offsprings.size() == offspringScores.size());
 
 		switch (eaConfiguration.optimization()) {
-			case MAXIMZE:
+			case MAXIMIZE:
 			case MINIMIZE:
 				break;
 			default:
 				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 		}
 
-		final Comparator<T> populationComparator = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
+		final Comparator<T> populationComparator = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
 				? Comparator.naturalOrder()
 				: Comparator.reverseOrder();
 

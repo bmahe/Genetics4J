@@ -51,7 +51,7 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 				Validate.isTrue(population.size() == fitnessScore.size());
 
 				switch (eaConfiguration.optimization()) {
-					case MAXIMZE:
+					case MAXIMIZE:
 					case MINIMIZE:
 						break;
 					default:
@@ -75,7 +75,7 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 
 				for (int i = 0; i < population.size(); i++) {
 					if (eaConfiguration.optimization()
-							.equals(Optimization.MAXIMZE)) {
+							.equals(Optimization.MAXIMIZE)) {
 						sumFitness += fitnessScore.get(i)
 								.doubleValue();
 					} else {

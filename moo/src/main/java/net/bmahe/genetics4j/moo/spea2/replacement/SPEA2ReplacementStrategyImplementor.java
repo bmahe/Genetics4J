@@ -320,7 +320,7 @@ public class SPEA2ReplacementStrategyImplementor<T extends Comparable<T>> implem
 				offsprings.size());
 
 		switch (eaConfiguration.optimization()) {
-			case MAXIMZE:
+			case MAXIMIZE:
 			case MINIMIZE:
 				break;
 			default:
@@ -367,7 +367,7 @@ public class SPEA2ReplacementStrategyImplementor<T extends Comparable<T>> implem
 			combinedPopulation.addAll(offspringPopulation);
 		}
 
-		final Comparator<T> dominance = Optimization.MAXIMZE.equals(eaConfiguration.optimization())
+		final Comparator<T> dominance = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
 				? spea2Replacement.dominance()
 				: spea2Replacement.dominance().reversed();
 		final int k = spea2Replacement.k().orElseGet(() -> (int) Math.sqrt(combinedPopulation.size()));

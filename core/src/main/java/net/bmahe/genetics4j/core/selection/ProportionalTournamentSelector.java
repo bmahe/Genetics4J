@@ -49,17 +49,17 @@ public class ProportionalTournamentSelector<T extends Comparable<T>> implements 
 		final double proportionFirst = proportionalTournament.proportionFirst();
 
 		switch (eaConfiguration.optimization()) {
-		case MAXIMZE:
+		case MAXIMIZE:
 		case MINIMIZE:
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
 		}
 
-		final Comparator<Individual<T>> firstComparatorOptimize = Optimization.MAXIMZE
+		final Comparator<Individual<T>> firstComparatorOptimize = Optimization.MAXIMIZE
 				.equals(eaConfiguration.optimization()) ? firstComparator : firstComparator.reversed();
 
-		final Comparator<Individual<T>> secondComparatorOptimize = Optimization.MAXIMZE
+		final Comparator<Individual<T>> secondComparatorOptimize = Optimization.MAXIMIZE
 				.equals(eaConfiguration.optimization()) ? secondComparator : secondComparator.reversed();
 
 		logger.debug("Selecting {} individuals", numIndividuals);

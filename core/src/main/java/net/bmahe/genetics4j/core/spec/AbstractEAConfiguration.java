@@ -44,7 +44,7 @@ public abstract class AbstractEAConfiguration<T extends Comparable<T>> {
 	/**
 	 * Default optimization strategy
 	 */
-	public static final Optimization DEFAULT_OPTIMIZATION = Optimization.MAXIMZE;
+	public static final Optimization DEFAULT_OPTIMIZATION = Optimization.MAXIMIZE;
 
 	/**
 	 * Genotype of the population

@@ -118,7 +118,7 @@ public class Main {
 						AddNode.of(0.03),
 						AddConnection.of(0.05))
 				.fitness(fitnessNEAT(false))
-				.optimization(Optimization.MAXIMZE)
+				.optimization(Optimization.MAXIMIZE)
 				.termination(
 						Terminations.<Float>or(Terminations.ofStableFitness(200), Terminations.ofFitnessAtLeast(3.95f)));
 

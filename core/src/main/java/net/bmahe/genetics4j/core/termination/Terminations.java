@@ -137,7 +137,7 @@ public class Terminations {
 				Validate.isTrue(generation >= 0);
 
 				final Comparator<T> fitnessComparator = switch (eaConfiguration.optimization()) {
-					case MAXIMZE -> Comparator.naturalOrder();
+					case MAXIMIZE -> Comparator.naturalOrder();
 					case MINIMIZE -> Comparator.reverseOrder();
 					default -> throw new IllegalArgumentException("Unknown optimization " + eaConfiguration.optimization());
 				};
