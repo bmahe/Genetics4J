@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.BiFunction;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -23,7 +23,6 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.replacement.ReplacementStrategyImplementor;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.moo.spea2.spec.replacement.SPEA2Replacement;
 
 public class SPEA2ReplacementStrategyImplementor<T extends Comparable<T>> implements ReplacementStrategyImplementor<T> {
@@ -117,7 +116,9 @@ public class SPEA2ReplacementStrategyImplementor<T extends Comparable<T>> implem
 
 		final double[] density = new double[population.size()];
 		for (int i = 0; i < population.size(); i++) {
-			density[i] = 1.0d / (distances.get(i).get(k).getRight() + 2);
+			density[i] = 1.0d / (distances.get(i)
+					.get(k)
+					.getRight() + 2);
 		}
 
 		return density;
@@ -210,7 +211,8 @@ public class SPEA2ReplacementStrategyImplementor<T extends Comparable<T>> implem
 					selectedDistancesIndex.put(pair.getKey(), new HashMap<>());
 				}
 
-				selectedDistancesIndex.get(pair.getKey()).put(index, i);
+				selectedDistancesIndex.get(pair.getKey())
+						.put(index, i);
 			}
 		}
 
@@ -233,7 +235,10 @@ public class SPEA2ReplacementStrategyImplementor<T extends Comparable<T>> implem
 
 					while (result == 0 && j < minDistances.size() && l < distancesCandidate.size()) {
 
-						result = Double.compare(minDistances.get(j).getRight(), distancesCandidate.get(l).getRight());
+						result = Double.compare(minDistances.get(j)
+								.getRight(),
+								distancesCandidate.get(l)
+										.getRight());
 
 						j++;
 						j = skipNull(minDistances, j);
@@ -319,20 +324,14 @@ public class SPEA2ReplacementStrategyImplementor<T extends Comparable<T>> implem
 				population.size(),
 				offsprings.size());
 
-		switch (eaConfiguration.optimization()) {
-			case MAXIMIZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
-		}
-
 		final Population<T> archive = new Population<>(population, populationScores);
 		final Population<T> offspringPopulation = new Population<>(offsprings, offspringScores);
 
 		final Population<T> combinedPopulation = new Population<>();
-		if (spea2Replacement.deduplicate().isPresent()) {
-			final Comparator<Genotype> individualDeduplicator = spea2Replacement.deduplicate().get();
+		if (spea2Replacement.deduplicate()
+				.isPresent()) {
+			final Comparator<Genotype> individualDeduplicator = spea2Replacement.deduplicate()
+					.get();
 			final Set<Genotype> seenGenotype = new TreeSet<>(individualDeduplicator);
 
 			for (int i = 0; i < archive.size(); i++) {
@@ -367,18 +366,21 @@ public class SPEA2ReplacementStrategyImplementor<T extends Comparable<T>> implem
 			combinedPopulation.addAll(offspringPopulation);
 		}
 
-		final Comparator<T> dominance = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
-				? spea2Replacement.dominance()
-				: spea2Replacement.dominance().reversed();
-		final int k = spea2Replacement.k().orElseGet(() -> (int) Math.sqrt(combinedPopulation.size()));
+		final Comparator<T> dominance = switch (eaConfiguration.optimization()) {
+			case MAXIMIZE -> spea2Replacement.dominance();
+			case MINIMIZE -> spea2Replacement.dominance()
+					.reversed();
+		};
+
+		final int k = spea2Replacement.k()
+				.orElseGet(() -> (int) Math.sqrt(combinedPopulation.size()));
 		logger.trace("Using k={}", k);
 		Validate.isTrue(k > 0);
 
 		///////////////// Fitness computation //////////////////////
 		final double[] strengths = computeStrength(dominance, combinedPopulation);
 
-		final double[][] distanceObjectives = computeObjectiveDistances(spea2Replacement.distance(),
-				combinedPopulation);
+		final double[][] distanceObjectives = computeObjectiveDistances(spea2Replacement.distance(), combinedPopulation);
 
 		final double[] rawFitness = computeRawFitness(dominance, strengths, combinedPopulation);
 

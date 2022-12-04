@@ -16,7 +16,6 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.moo.ObjectiveDistance;
 import net.bmahe.genetics4j.moo.ParetoUtils;
 import net.bmahe.genetics4j.moo.nsga2.spec.NSGA2Selection;
@@ -44,8 +43,10 @@ public class NSGA2Selector<T extends Comparable<T>> implements Selector<T> {
 		logger.debug("Incoming population size is {}", population.size());
 
 		final Population<T> individuals = new Population<>();
-		if (nsga2Selection.deduplicate().isPresent()) {
-			final Comparator<Genotype> individualDeduplicator = nsga2Selection.deduplicate().get();
+		if (nsga2Selection.deduplicate()
+				.isPresent()) {
+			final Comparator<Genotype> individualDeduplicator = nsga2Selection.deduplicate()
+					.get();
 			final Set<Genotype> seenGenotype = new TreeSet<>(individualDeduplicator);
 
 			for (int i = 0; i < population.size(); i++) {
@@ -68,23 +69,20 @@ public class NSGA2Selector<T extends Comparable<T>> implements Selector<T> {
 
 		logger.debug("Selecting {} individuals from a population of {}", numIndividuals, individuals.size());
 
-		switch (eaConfiguration.optimization()) {
-			case MAXIMIZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
-		}
-
 		final int numberObjectives = nsga2Selection.numberObjectives();
 
-		final Comparator<T> dominance = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
-				? nsga2Selection.dominance()
-				: nsga2Selection.dominance().reversed();
+		final Comparator<T> dominance = switch (eaConfiguration.optimization()) {
+			case MAXIMIZE -> nsga2Selection.dominance();
+			case MINIMIZE -> nsga2Selection.dominance()
+					.reversed();
+		};
 
-		final Function<Integer, Comparator<T>> objectiveComparator = Optimization.MAXIMIZE
-				.equals(eaConfiguration.optimization()) ? nsga2Selection.objectiveComparator()
-						: (m) -> nsga2Selection.objectiveComparator().apply(m).reversed();
+		final Function<Integer, Comparator<T>> objectiveComparator = switch (eaConfiguration.optimization()) {
+			case MAXIMIZE -> nsga2Selection.objectiveComparator();
+			case MINIMIZE -> (m) -> nsga2Selection.objectiveComparator()
+					.apply(m)
+					.reversed();
+		};
 
 		final ObjectiveDistance<T> objectiveDistance = nsga2Selection.distance();
 
@@ -102,7 +100,8 @@ public class NSGA2Selector<T extends Comparable<T>> implements Selector<T> {
 		final Population<T> selectedIndividuals = new Population<>();
 		int currentFrontIndex = 0;
 		while (selectedIndividuals.size() < numIndividuals && currentFrontIndex < rankedPopulation.size()
-				&& rankedPopulation.get(currentFrontIndex).size() > 0) {
+				&& rankedPopulation.get(currentFrontIndex)
+						.size() > 0) {
 
 			final Set<Integer> currentFront = rankedPopulation.get(currentFrontIndex);
 
@@ -124,8 +123,7 @@ public class NSGA2Selector<T extends Comparable<T>> implements Selector<T> {
 							crowdingDistanceAssignment[individualIndex]);
 				}
 
-				selectedIndividuals.add(individuals.getGenotype(individualIndex),
-						individuals.getFitness(individualIndex));
+				selectedIndividuals.add(individuals.getGenotype(individualIndex), individuals.getFitness(individualIndex));
 			}
 
 			logger.trace("Selected {} individuals from rank {}", bestIndividuals.size(), currentFrontIndex);

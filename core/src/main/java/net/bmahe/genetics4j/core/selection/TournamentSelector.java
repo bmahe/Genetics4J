@@ -12,7 +12,6 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.Tournament;
 
@@ -43,18 +42,11 @@ public class TournamentSelector<T extends Comparable<T>> implements Selector<T> 
 		@SuppressWarnings("unchecked")
 		final Tournament<T> tournamentSelection = (Tournament<T>) selectionPolicy;
 
-		switch (eaConfiguration.optimization()) {
-			case MAXIMIZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
-		}
-
 		final Comparator<Individual<T>> baseComparator = tournamentSelection.comparator();
-		final Comparator<Individual<T>> comparator = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
-				? baseComparator
-				: baseComparator.reversed();
+		final Comparator<Individual<T>> comparator = switch (eaConfiguration.optimization()) {
+			case MAXIMIZE -> baseComparator;
+			case MINIMIZE -> baseComparator.reversed();
+		};
 
 		logger.debug("Selecting {} individuals", numIndividuals);
 

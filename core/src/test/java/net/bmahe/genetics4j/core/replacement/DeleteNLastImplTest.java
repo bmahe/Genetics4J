@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -20,7 +21,6 @@ import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.chromosomes.factory.IntChromosomeFactory;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.chromosome.IntChromosomeSpec;
 import net.bmahe.genetics4j.core.spec.replacement.DeleteNLast;
 import net.bmahe.genetics4j.core.spec.selection.RandomSelection;
@@ -78,7 +78,7 @@ public class DeleteNLastImplTest {
 		logger.info("\nOffsprings: {}", offsprings);
 
 		final AbstractEAConfiguration<Integer> mockEAConfiguration = mock(AbstractEAConfiguration.class);
-		when(mockEAConfiguration.optimization()).thenReturn(Optimization.MINIMIZE);
+		when(mockEAConfiguration.fitnessComparator()).thenReturn(Comparator.reverseOrder());
 
 		final Population<Integer> nextGeneration = deleteNLastImpl.select(mockEAConfiguration,
 				populationSize,
@@ -91,13 +91,18 @@ public class DeleteNLastImplTest {
 		logger.info("\nNext Generation: {}", nextGeneration);
 
 		assertEquals(populationSize, nextGeneration.size());
-		assertTrue(nextGeneration.getAllGenotypes().containsAll(offsprings.getAllGenotypes().subList(0, 2)));
-		assertFalse(nextGeneration.getAllGenotypes().contains(population.getGenotype(6)));
-		assertFalse(nextGeneration.getAllGenotypes().contains(population.getGenotype(8)));
+		assertTrue(nextGeneration.getAllGenotypes()
+				.containsAll(offsprings.getAllGenotypes()
+						.subList(0, 2)));
+		assertFalse(nextGeneration.getAllGenotypes()
+				.contains(population.getGenotype(6)));
+		assertFalse(nextGeneration.getAllGenotypes()
+				.contains(population.getGenotype(8)));
 
 		for (int j = 0; j < populationSize; j++) {
 			if (j != 6 && j != 8) {
-				assertTrue(nextGeneration.getAllGenotypes().contains(population.getGenotype(j)));
+				assertTrue(nextGeneration.getAllGenotypes()
+						.contains(population.getGenotype(j)));
 			}
 		}
 	}

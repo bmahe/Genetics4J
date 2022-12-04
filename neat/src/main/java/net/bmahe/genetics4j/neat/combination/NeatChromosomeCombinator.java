@@ -67,12 +67,7 @@ public class NeatChromosomeCombinator<T extends Comparable<T>> implements Chromo
 		if (firstChromosome instanceof NeatChromosome firstNeatChromosome
 				&& secondChromosome instanceof NeatChromosome secondNeatChromosome) {
 
-			final Comparator<T> fitnessComparator = switch (eaConfiguration.optimization()) {
-				case MAXIMIZE -> Comparator.naturalOrder();
-				case MINIMIZE -> Comparator.reverseOrder();
-				default -> throw new IllegalArgumentException(
-						"optimization not supported: " + eaConfiguration.optimization());
-			};
+			final Comparator<T> fitnessComparator = eaConfiguration.fitnessComparator();
 
 			NeatChromosome bestChromosome = firstNeatChromosome;
 			T bestFitness = firstParentFitness;
