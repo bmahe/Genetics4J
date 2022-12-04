@@ -10,7 +10,6 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
-import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.RouletteWheel;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
@@ -50,14 +49,6 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 				Validate.isTrue(numIndividuals > 0);
 				Validate.isTrue(population.size() == fitnessScore.size());
 
-				switch (eaConfiguration.optimization()) {
-					case MAXIMIZE:
-					case MINIMIZE:
-						break;
-					default:
-						throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
-				}
-
 				final Population<T> selectedIndividuals = new Population<>();
 
 				final double minFitness = fitnessScore.stream()
@@ -74,14 +65,14 @@ public class RouletteWheelSelectionPolicyHandler<T extends Number & Comparable<T
 				final double[] probabilities = new double[population.size()];
 
 				for (int i = 0; i < population.size(); i++) {
-					if (eaConfiguration.optimization()
-							.equals(Optimization.MAXIMIZE)) {
-						sumFitness += fitnessScore.get(i)
+					final double score = switch (eaConfiguration.optimization()) {
+						case MAXIMIZE -> fitnessScore.get(i)
 								.doubleValue();
-					} else {
-						sumFitness += reversedBase - fitnessScore.get(i)
+						case MINIMIZE -> reversedBase - fitnessScore.get(i)
 								.doubleValue();
-					}
+					};
+
+					sumFitness += score;
 					probabilities[i] = sumFitness;
 				}
 

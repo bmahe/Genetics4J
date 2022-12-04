@@ -15,7 +15,6 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.moo.ObjectiveDistance;
 import net.bmahe.genetics4j.moo.ParetoUtils;
 import net.bmahe.genetics4j.moo.nsga2.spec.TournamentNSGA2Selection;
@@ -74,27 +73,20 @@ public class TournamentNSGA2Selector<T extends Comparable<T>> implements Selecto
 
 		logger.debug("Selecting {} individuals from a population of {}", numIndividuals, individuals.size());
 
-		switch (eaConfiguration.optimization()) {
-			case MAXIMIZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
-		}
-
 		final int numberObjectives = tournamentNSGA2Selection.numberObjectives();
 
-		final Comparator<T> dominance = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
-				? tournamentNSGA2Selection.dominance()
-				: tournamentNSGA2Selection.dominance()
-						.reversed();
+		final Comparator<T> dominance = switch (eaConfiguration.optimization()) {
+			case MAXIMIZE -> tournamentNSGA2Selection.dominance();
+			case MINIMIZE -> tournamentNSGA2Selection.dominance()
+					.reversed();
+		};
 
-		final Function<Integer, Comparator<T>> objectiveComparator = Optimization.MAXIMIZE
-				.equals(eaConfiguration.optimization())
-						? tournamentNSGA2Selection.objectiveComparator()
-						: (m) -> tournamentNSGA2Selection.objectiveComparator()
-								.apply(m)
-								.reversed();
+		final Function<Integer, Comparator<T>> objectiveComparator = switch (eaConfiguration.optimization()) {
+			case MAXIMIZE -> tournamentNSGA2Selection.objectiveComparator();
+			case MINIMIZE -> (m) -> tournamentNSGA2Selection.objectiveComparator()
+					.apply(m)
+					.reversed();
+		};
 
 		final ObjectiveDistance<T> objectiveDistance = tournamentNSGA2Selection.distance();
 		final int numCandidates = tournamentNSGA2Selection.numCandidates();

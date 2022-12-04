@@ -36,17 +36,7 @@ public abstract class EvolutionResult<T extends Comparable<T>> {
 		Validate.isTrue(population.size() == fitness.size());
 		Validate.isTrue(population.size() > 0);
 
-		switch (eaConfiguration().optimization()) {
-			case MAXIMIZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration().optimization());
-		}
-
-		final Comparator<T> comparator = Optimization.MAXIMIZE.equals(eaConfiguration().optimization())
-				? Comparator.naturalOrder()
-				: Comparator.reverseOrder();
+		final Comparator<T> comparator = eaConfiguration().fitnessComparator();
 
 		final Optional<Integer> bestIndexOpt = IntStream.range(0, fitness.size())
 				.boxed()

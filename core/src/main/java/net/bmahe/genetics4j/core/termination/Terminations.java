@@ -96,7 +96,8 @@ public class Terminations {
 					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
-				return fitness.stream().anyMatch((fitnessValue) -> threshold.compareTo(fitnessValue) <= 0);
+				return fitness.stream()
+						.anyMatch((fitnessValue) -> threshold.compareTo(fitnessValue) <= 0);
 			}
 		};
 	}
@@ -110,7 +111,8 @@ public class Terminations {
 					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
-				return fitness.stream().anyMatch((fitnessValue) -> threshold.compareTo(fitnessValue) >= 0);
+				return fitness.stream()
+						.anyMatch((fitnessValue) -> threshold.compareTo(fitnessValue) >= 0);
 			}
 		};
 	}
@@ -136,13 +138,10 @@ public class Terminations {
 					final List<Genotype> population, final List<T> fitness) {
 				Validate.isTrue(generation >= 0);
 
-				final Comparator<T> fitnessComparator = switch (eaConfiguration.optimization()) {
-					case MAXIMIZE -> Comparator.naturalOrder();
-					case MINIMIZE -> Comparator.reverseOrder();
-					default -> throw new IllegalArgumentException("Unknown optimization " + eaConfiguration.optimization());
-				};
+				final Comparator<T> fitnessComparator = eaConfiguration.fitnessComparator();
 
-				final Optional<T> bestFitnessOpt = fitness.stream().max(fitnessComparator);
+				final Optional<T> bestFitnessOpt = fitness.stream()
+						.max(fitnessComparator);
 
 				if (lastImprovedGeneration < 0
 						|| bestFitnessOpt.map(bestFitness -> fitnessComparator.compare(bestFitness, lastBestFitness) > 0)

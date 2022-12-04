@@ -14,7 +14,6 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.DoubleTournament;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 import net.bmahe.genetics4j.core.spec.selection.Tournament;
@@ -102,17 +101,11 @@ public class DoubleTournamentSelector<T extends Comparable<T>> implements Select
 		Validate.isTrue((doFitnessFirst && parsimonyTournamentSize <= 2.0 && parsimonyTournamentSize >= 0.0)
 				|| doFitnessFirst == false);
 
-		switch (eaConfiguration.optimization()) {
-		case MAXIMIZE:
-		case MINIMIZE:
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
-		}
-
-		final Comparator<Individual<T>> fitnessComparator = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
-				? fitnessTournament.comparator()
-				: fitnessTournament.comparator().reversed();
+		final Comparator<Individual<T>> fitnessComparator = switch (eaConfiguration.optimization()) {
+			case MAXIMIZE -> fitnessTournament.comparator();
+			case MINIMIZE -> fitnessTournament.comparator()
+					.reversed();
+		};
 
 		logger.debug("Selecting {} individuals", numIndividuals);
 

@@ -12,7 +12,6 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.selection.ProportionalTournament;
 import net.bmahe.genetics4j.core.spec.selection.SelectionPolicy;
 
@@ -48,19 +47,15 @@ public class ProportionalTournamentSelector<T extends Comparable<T>> implements 
 		final int numCandidates = proportionalTournament.numCandidates();
 		final double proportionFirst = proportionalTournament.proportionFirst();
 
-		switch (eaConfiguration.optimization()) {
-		case MAXIMIZE:
-		case MINIMIZE:
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
-		}
+		final Comparator<Individual<T>> firstComparatorOptimize = switch (eaConfiguration.optimization()) {
+			case MAXIMIZE -> firstComparator;
+			case MINIMIZE -> firstComparator.reversed();
+		};
 
-		final Comparator<Individual<T>> firstComparatorOptimize = Optimization.MAXIMIZE
-				.equals(eaConfiguration.optimization()) ? firstComparator : firstComparator.reversed();
-
-		final Comparator<Individual<T>> secondComparatorOptimize = Optimization.MAXIMIZE
-				.equals(eaConfiguration.optimization()) ? secondComparator : secondComparator.reversed();
+		final Comparator<Individual<T>> secondComparatorOptimize = switch (eaConfiguration.optimization()) {
+			case MAXIMIZE -> secondComparator;
+			case MINIMIZE -> secondComparator.reversed();
+		};
 
 		logger.debug("Selecting {} individuals", numIndividuals);
 

@@ -2,6 +2,7 @@ package net.bmahe.genetics4j.core.spec;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -202,5 +203,18 @@ public abstract class AbstractEAConfiguration<T extends Comparable<T>> {
 	 */
 	public int numChromosomes() {
 		return chromosomeSpecs().size();
+	}
+
+	/**
+	 * Return a comparator based on the optimization method and natural order
+	 * 
+	 * @return
+	 */
+	public Comparator<T> fitnessComparator() {
+
+		return switch (optimization()) {
+			case MAXIMIZE -> Comparator.naturalOrder();
+			case MINIMIZE -> Comparator.reverseOrder();
+		};
 	}
 }

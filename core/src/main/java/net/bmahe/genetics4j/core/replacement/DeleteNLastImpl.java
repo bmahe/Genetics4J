@@ -10,7 +10,6 @@ import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.core.selection.Selector;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
-import net.bmahe.genetics4j.core.spec.Optimization;
 import net.bmahe.genetics4j.core.spec.replacement.DeleteNLast;
 
 public class DeleteNLastImpl<T extends Comparable<T>> implements ReplacementStrategyImplementor<T> {
@@ -39,17 +38,7 @@ public class DeleteNLastImpl<T extends Comparable<T>> implements ReplacementStra
 		Validate.notNull(offspringScores);
 		Validate.isTrue(offsprings.size() == offspringScores.size());
 
-		switch (eaConfiguration.optimization()) {
-			case MAXIMIZE:
-			case MINIMIZE:
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported optimization " + eaConfiguration.optimization());
-		}
-
-		final Comparator<T> populationComparator = Optimization.MAXIMIZE.equals(eaConfiguration.optimization())
-				? Comparator.naturalOrder()
-				: Comparator.reverseOrder();
+		final Comparator<T> populationComparator = eaConfiguration.fitnessComparator();
 
 		final Population<T> selected = new Population<>();
 
