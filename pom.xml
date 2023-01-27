@@ -50,7 +50,7 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 
 		<maven.asciidoctor.maven.plugin>2.2.2</maven.asciidoctor.maven.plugin>
-		<maven.asciidoctorj.diagram.version>2.2.1</maven.asciidoctorj.diagram.version>
+		<maven.asciidoctorj.diagram.version>2.2.3</maven.asciidoctorj.diagram.version>
 		<maven.changelog.plugin.version>2.3</maven.changelog.plugin.version>
 		<maven.changes.plugin.version>2.12.1</maven.changes.plugin.version>
 		<maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
@@ -75,10 +75,10 @@
 		<maven.site.plugin.version>3.10.0</maven.site.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
 		<maven.taglist.plugin>3.0.0</maven.taglist.plugin>
-		<maven.versions.plugin>2.6</maven.versions.plugin>
+		<maven.versions.plugin>2.7</maven.versions.plugin>
 		<umldoclet.version>2.0.2</umldoclet.version>
-		<pitest.plugin.version>1.9.8</pitest.plugin.version>
-		<pitest.junit5.plugin.version>1.1.0</pitest.junit5.plugin.version>
+		<pitest.plugin.version>1.10.4</pitest.plugin.version>
+		<pitest.junit5.plugin.version>1.1.2</pitest.junit5.plugin.version>
 
 		<apache.commons.cli.version>1.5.0</apache.commons.cli.version>
 		<apache.commons.collections.version>4.4</apache.commons.collections.version>
@@ -88,10 +88,10 @@
 		<apache.commons.math.version>3.6.1</apache.commons.math.version>
 		<apache.log4j.version>2.19.0</apache.log4j.version>
 		<dl4j.version>1.0.0-beta3</dl4j.version>
-		<immutables.version>2.9.1</immutables.version>
+		<immutables.version>2.9.2</immutables.version>
 		<jackson.version>2.13.1</jackson.version>
 		<jocl.version>2.0.4</jocl.version>
-		<junit.version>5.9.0</junit.version>
+		<junit.version>5.9.1</junit.version>
 		<mockito.version>4.6.0</mockito.version>
 
 		<skipPITests>${skipITs}</skipPITests>
