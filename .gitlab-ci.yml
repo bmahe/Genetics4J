@@ -123,9 +123,6 @@ semgrep:
   stage: test
   image: returntocorp/semgrep:latest
   script: semgrep ci
-  rules:
-  - changes:
-      - .gitlab-ci.yml
   variables:
     SEMGREP_APP_TOKEN: $SEMGREP_APP_TOKEN
     GITLAB_TOKEN: $SEMGREP_PERSONAL_ACCESS_TOKEN
