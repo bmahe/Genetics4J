@@ -3,8 +3,6 @@ package net.bmahe.genetics4j.neat;
 import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 
-import net.bmahe.genetics4j.neat.spec.ImmutableNeatChromosomeSpec;
-
 @Value.Immutable
 public interface Connection {
 
