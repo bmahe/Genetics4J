@@ -29,12 +29,15 @@ public class NeatConnectedChromosomeFactory implements ChromosomeFactory<NeatChr
 
 	@Override
 	public boolean canHandle(final ChromosomeSpec chromosomeSpec) {
+		Validate.notNull(chromosomeSpec);
+
 		return chromosomeSpec instanceof NeatChromosomeSpec;
 	}
 
 	@Override
 	public NeatChromosome generate(final ChromosomeSpec chromosomeSpec) {
 		Validate.notNull(chromosomeSpec);
+		Validate.isInstanceOf(NeatChromosomeSpec.class, chromosomeSpec);
 
 		final NeatChromosomeSpec neatChromosomeSpec = (NeatChromosomeSpec) chromosomeSpec;
 		final int numInputs = neatChromosomeSpec.numInputs();
