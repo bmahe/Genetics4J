@@ -5,7 +5,7 @@ Genetics4j
 
 Genetics4j is an open source library for Evolutionary Algorithms. This includes Genetic Algorithm, Genetic Programming and more!
 
-See the website https://bmahe.gitlab.io/genetics4j/ for more information, quickstart and examples.
+See the website https://genetics4j.org for more information, quickstart and examples.
 
 # Features
 
@@ -23,19 +23,19 @@ See the website https://bmahe.gitlab.io/genetics4j/ for more information, quicks
 
 There are various ways to learn more about _Genetics4j_:
 
-* There is a [Quickstart](https://bmahe.gitlab.io/genetics4j/docs/quickstart.html) guide to help you get up and running in minutes!
+* There is a [Quickstart](https://genetics4j.org/docs/quickstart.html) guide to help you get up and running in minutes!
 * Each module contains its own documentation
-* Javadocs are built for the [whole project](https://bmahe.gitlab.io/genetics4j/apidocs/index.html) as well as for each individual modules. They can be found under _Project Reports_
-* Various additional reports are also published under _Project Reports_, including [changelogs](https://bmahe.gitlab.io/genetics4j/gitlog.html) and tests results and coverage
+* Javadocs are built for the [whole project](https://genetics4j.org/apidocs/index.html) as well as for each individual modules. They can be found under _Project Reports_
+* Various additional reports are also published under _Project Reports_, including [changelogs](https://genetics4j.org/gitlog.html) and tests results and coverage
 
 # Examples
 
 There are a few examples with this library. Namely:
 
-* [Clustering](https://bmahe.gitlab.io/genetics4j/samples/docs/clustering.html) where we attempt to find the best way to cluster data and compare the different approaches
-* [Mixture Models](https://bmahe.gitlab.io/genetics4j/samples/docs/mixture_models_on_gpu.html) where we attempt to find the best way to cluster data using mixture models with the help of GPUs
-* [6 ways to handle your bloat issues](https://bmahe.gitlab.io/genetics4j/samples/docs/bloat_issues.html) where we explore different methods from the _Multi Objective Optimization_ field to find the best equation to represent a set of data points. This provides us a way to find a good trade-off between long and precise equations and shorter but less precise equations
-* [Fitness Sharing](https://bmahe.gitlab.io/genetics4j/samples/docs/fitness_sharing.html) where we present one technique to reduce the likelihood to get stuck in a local optimum and explore a great set of diverse solutions
+* [Clustering](https://genetics4j.org/samples/docs/clustering.html) where we attempt to find the best way to cluster data and compare the different approaches
+* [Mixture Models](https://genetics4j.org/samples/docs/mixture_models_on_gpu.html) where we attempt to find the best way to cluster data using mixture models with the help of GPUs
+* [6 ways to handle your bloat issues](https://genetics4j.org/samples/docs/bloat_issues.html) where we explore different methods from the _Multi Objective Optimization_ field to find the best equation to represent a set of data points. This provides us a way to find a good trade-off between long and precise equations and shorter but less precise equations
+* [Fitness Sharing](https://genetics4j.org/samples/docs/fitness_sharing.html) where we present one technique to reduce the likelihood to get stuck in a local optimum and explore a great set of diverse solutions
 
 
 # License

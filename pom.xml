@@ -9,7 +9,7 @@
 
 	<name>Genetics4j</name>
 	<description>Genetics4j</description>
-	<url>https://bmahe.gitlab.io/genetics4j/</url>
+	<url>https://genetics4j.org/</url>
 	<inceptionYear>2019</inceptionYear>
 
 	<licenses>
@@ -39,7 +39,7 @@
 	</developers>
 
 	<properties>
-		<website.url>https://bmahe.gitlab.io/genetics4j</website.url>
+		<website.url>https://genetics4j.org</website.url>
 		<gitlab.project.id>13863766</gitlab.project.id>
 		<project.recommended.version>${project.version}</project.recommended.version>
 

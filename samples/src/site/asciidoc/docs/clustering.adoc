@@ -124,7 +124,7 @@ include::{sourcedir}/net/bmahe/genetics4j/samples/clustering/FitnessUtils.java[t
 
 === Fitness Sharing
 
-K-means and Genetic Algorithms share a similar issue about possibly focusing on a local maximum and missing a better solution. To that end, we will make use of link:https://bmahe.gitlab.io/genetics4j/samples/docs/fitness_sharing.html[Fitness Sharing] and use the accumulated distance between each cluster as the distance function between two solution. This will make the evolutionary process lower the scores of similar solutions and thus ensure more diversity in the population.
+K-means and Genetic Algorithms share a similar issue about possibly focusing on a local maximum and missing a better solution. To that end, we will make use of link:https://genetics4j.org/samples/docs/fitness_sharing.html[Fitness Sharing] and use the accumulated distance between each cluster as the distance function between two solution. This will make the evolutionary process lower the scores of similar solutions and thus ensure more diversity in the population.
 
 The fitness sharing is therefore defined as:
 
@@ -199,7 +199,7 @@ image::clustering_fitness_with_sse_plot.png[Data plot]
 We can observe the fitness still converges as fast as previously, but does take longer to stabilize. This could be attributed to the fact we are including two different objectives in our fitness function and their scales can be pretty different. To improve it, we could look into different paths:
 
 * Use a different scoring method than silhouette which would not only look at the clustering but also the location of the centroids. link:https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index[Davies–Bouldin index] looks interesting in that regard
-* Revisit the different methodologies used for multi-objectives optimization problems. See link:https://bmahe.gitlab.io/genetics4j/samples/docs/bloat_issues.html[6 ways to handle your bloat issues]
+* Revisit the different methodologies used for multi-objectives optimization problems. See link:https://genetics4j.org/samples/docs/bloat_issues.html[6 ways to handle your bloat issues]
 
 
 With regards to the clustering and the location of the centroids, we can indeed observe much better results:
