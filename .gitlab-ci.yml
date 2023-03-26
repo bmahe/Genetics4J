@@ -122,10 +122,13 @@ validate:jdk19-temurin:
 semgrep:
   stage: test
   image: returntocorp/semgrep:latest
-  script: semgrep ci
+  script: semgrep ci --json > semgrep.json
   variables:
     SEMGREP_APP_TOKEN: $SEMGREP_APP_TOKEN
     GITLAB_TOKEN: $SEMGREP_PERSONAL_ACCESS_TOKEN
+  artifacts:
+    paths:
+      - semgrep.json
 
 
 .verify: &verify
