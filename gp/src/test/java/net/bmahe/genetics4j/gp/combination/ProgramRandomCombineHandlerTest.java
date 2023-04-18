@@ -35,7 +35,7 @@ public class ProgramRandomCombineHandlerTest {
 
 	@Test
 	public void noRandomParameter() {
-		assertThrows(NullPointerException.class, () -> new ProgramRandomCombineHandler(null));
+		assertThrows(NullPointerException.class, () -> new ProgramRandomCombineHandler<Integer>(null));
 	}
 
 	@Test
@@ -62,31 +62,30 @@ public class ProgramRandomCombineHandlerTest {
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<?> eaExecutionContextBuilder = EAExecutionContexts
-				.standard();
+		final var eaExecutionContextBuilder = EAExecutionContexts.<Integer>standard();
 		eaExecutionContextBuilder.populationSize(500);
 		eaExecutionContextBuilder
-				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler<>(random, programHelper));
 		eaExecutionContextBuilder
-				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler<>(random, programGenerator));
 
-		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler<>(random));
 
-		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
-				.builder();
+		final var chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider.builder();
 		chromosomeFactoryProviderBuilder.randomGenerator(random);
 		chromosomeFactoryProviderBuilder
 				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
-		final EAExecutionContext eaExecutionContext = eaExecutionContextBuilder.build();
+		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 
-		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
+		final ChromosomeCombinatorResolver<Integer> chromosomeCombinatorResolver = new ChromosomeCombinatorResolver<>(
 				eaExecutionContext);
 
 		final ProgramRandomCombine programRandomCombine = ProgramRandomCombine.build();
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = ProgramTreeChromosomeSpec.of(program);
 
-		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
+		final ProgramRandomCombineHandler<Integer> programRandomCombineHandler = new ProgramRandomCombineHandler<>(
+				random);
 
 		assertTrue(programRandomCombineHandler
 				.canHandle(chromosomeCombinatorResolver, programRandomCombine, programTreeChromosomeSpec));
@@ -122,33 +121,32 @@ public class ProgramRandomCombineHandlerTest {
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<?> eaExecutionContextBuilder = EAExecutionContexts
-				.standard();
+		final var eaExecutionContextBuilder = EAExecutionContexts.<Integer>standard();
 		eaExecutionContextBuilder.populationSize(500);
 		eaExecutionContextBuilder
-				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler<>(random, programHelper));
 		eaExecutionContextBuilder
-				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler<>(random, programGenerator));
 
-		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler<>(random));
 
-		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
-				.builder();
+		final var chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider.builder();
 		chromosomeFactoryProviderBuilder.randomGenerator(random);
 		chromosomeFactoryProviderBuilder
 				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
-		final EAExecutionContext eaExecutionContext = eaExecutionContextBuilder.build();
+		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 
-		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
+		final ChromosomeCombinatorResolver<Integer> chromosomeCombinatorResolver = new ChromosomeCombinatorResolver<>(
 				eaExecutionContext);
 
 		final ProgramRandomCombine programRandomCombine = ProgramRandomCombine.build();
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = ProgramTreeChromosomeSpec.of(program);
 
-		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
+		final ProgramRandomCombineHandler<Integer> programRandomCombineHandler = new ProgramRandomCombineHandler<>(
+				random);
 
-		final ChromosomeCombinator chromosomeCombinator = programRandomCombineHandler
+		final ChromosomeCombinator<Integer> chromosomeCombinator = programRandomCombineHandler
 				.resolve(chromosomeCombinatorResolver, programRandomCombine, programTreeChromosomeSpec);
 		assertNotNull(chromosomeCombinator);
 	}
@@ -156,8 +154,6 @@ public class ProgramRandomCombineHandlerTest {
 	@Test
 	public void resolveNoResolver() {
 		final Random random = new Random();
-		final ProgramHelper programHelper = new ProgramHelper(random);
-		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
 		final Builder programBuilder = ImmutableProgram.builder();
 		programBuilder.addFunctions(Functions.ADD, Functions.SIN, Functions.EXP);
@@ -170,7 +166,8 @@ public class ProgramRandomCombineHandlerTest {
 		final ProgramRandomCombine programRandomCombine = ProgramRandomCombine.build();
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = ProgramTreeChromosomeSpec.of(program);
 
-		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
+		final ProgramRandomCombineHandler<Integer> programRandomCombineHandler = new ProgramRandomCombineHandler<>(
+				random);
 
 		assertThrows(NullPointerException.class,
 				() -> programRandomCombineHandler.resolve(null, programRandomCombine, programTreeChromosomeSpec));
@@ -190,30 +187,29 @@ public class ProgramRandomCombineHandlerTest {
 		programBuilder.maxDepth(4);
 		final Program program = programBuilder.build();
 
-		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<?> eaExecutionContextBuilder = EAExecutionContexts
-				.standard();
+		final var eaExecutionContextBuilder = EAExecutionContexts.<Integer>standard();
 		eaExecutionContextBuilder.populationSize(500);
 		eaExecutionContextBuilder
-				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler<>(random, programHelper));
 		eaExecutionContextBuilder
-				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler<>(random, programGenerator));
 
-		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler<>(random));
 
-		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
-				.builder();
+		final var chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider.builder();
 		chromosomeFactoryProviderBuilder.randomGenerator(random);
 		chromosomeFactoryProviderBuilder
 				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
-		final EAExecutionContext eaExecutionContext = eaExecutionContextBuilder.build();
+		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 
-		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
+		final ChromosomeCombinatorResolver<Integer> chromosomeCombinatorResolver = new ChromosomeCombinatorResolver<>(
 				eaExecutionContext);
 
 		final ProgramTreeChromosomeSpec programTreeChromosomeSpec = ProgramTreeChromosomeSpec.of(program);
 
-		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
+		final ProgramRandomCombineHandler<Integer> programRandomCombineHandler = new ProgramRandomCombineHandler<>(
+				random);
 
 		assertThrows(NullPointerException.class,
 				() -> programRandomCombineHandler.resolve(chromosomeCombinatorResolver, null, programTreeChromosomeSpec));
@@ -225,30 +221,29 @@ public class ProgramRandomCombineHandlerTest {
 		final ProgramHelper programHelper = new ProgramHelper(random);
 		final StdProgramGenerator programGenerator = new StdProgramGenerator(programHelper, random);
 
-		final net.bmahe.genetics4j.core.spec.ImmutableEAExecutionContext.Builder<?> eaExecutionContextBuilder = EAExecutionContexts
-				.standard();
+		final var eaExecutionContextBuilder = EAExecutionContexts.<Integer>standard();
 		eaExecutionContextBuilder.populationSize(500);
 		eaExecutionContextBuilder
-				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler(random, programHelper));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomPrunePolicyHandler<>(random, programHelper));
 		eaExecutionContextBuilder
-				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler(random, programGenerator));
+				.addDefaultMutationPolicyHandlers(new ProgramRandomMutatePolicyHandler<>(random, programGenerator));
 
-		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler(random));
+		eaExecutionContextBuilder.addDefaultChromosomeCombinatorHandlers(new ProgramRandomCombineHandler<>(random));
 
-		net.bmahe.genetics4j.core.chromosomes.factory.ImmutableChromosomeFactoryProvider.Builder chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider
-				.builder();
+		final var chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider.builder();
 		chromosomeFactoryProviderBuilder.randomGenerator(random);
 		chromosomeFactoryProviderBuilder
 				.addDefaultChromosomeFactories(new ProgramTreeChromosomeFactory(programGenerator));
 		eaExecutionContextBuilder.chromosomeFactoryProvider(chromosomeFactoryProviderBuilder.build());
-		final EAExecutionContext eaExecutionContext = eaExecutionContextBuilder.build();
+		final EAExecutionContext<Integer> eaExecutionContext = eaExecutionContextBuilder.build();
 
-		final ChromosomeCombinatorResolver chromosomeCombinatorResolver = new ChromosomeCombinatorResolver(
+		final ChromosomeCombinatorResolver<Integer> chromosomeCombinatorResolver = new ChromosomeCombinatorResolver<>(
 				eaExecutionContext);
 
 		final ProgramRandomCombine programRandomCombine = ProgramRandomCombine.build();
 
-		final ProgramRandomCombineHandler programRandomCombineHandler = new ProgramRandomCombineHandler(random);
+		final ProgramRandomCombineHandler<Integer> programRandomCombineHandler = new ProgramRandomCombineHandler<>(
+				random);
 
 		assertThrows(NullPointerException.class,
 				() -> programRandomCombineHandler.resolve(chromosomeCombinatorResolver, programRandomCombine, null));

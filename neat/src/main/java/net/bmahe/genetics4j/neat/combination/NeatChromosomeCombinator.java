@@ -18,11 +18,13 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.neat.Connection;
 import net.bmahe.genetics4j.neat.chromosomes.NeatChromosome;
+import net.bmahe.genetics4j.neat.spec.combination.NeatCombination;
 
 public class NeatChromosomeCombinator<T extends Comparable<T>> implements ChromosomeCombinator<T> {
 	public static final Logger logger = LogManager.getLogger(NeatChromosomeCombinator.class);
 
 	private final RandomGenerator randomGenerator;
+	private final NeatCombination neatCombination;
 
 	private boolean linksCacheContainsConnection(final Map<Integer, Set<Integer>> linksCache,
 			final Connection connection) {
@@ -47,10 +49,26 @@ public class NeatChromosomeCombinator<T extends Comparable<T>> implements Chromo
 				.add(toNodeIndex);
 	}
 
-	public NeatChromosomeCombinator(final RandomGenerator _randomGenerator) {
+	protected boolean shouldReEnable(final Connection chosenParent, final Connection otherParent) {
+		Validate.notNull(chosenParent);
+		Validate.notNull(otherParent);
+
+		boolean shouldReEnable = false;
+		if (chosenParent.isEnabled() == false && otherParent.isEnabled() == true) {
+			if (randomGenerator.nextDouble() < neatCombination.reenableGeneInheritanceThresold()) {
+				shouldReEnable = true;
+			}
+		}
+
+		return shouldReEnable;
+	}
+
+	public NeatChromosomeCombinator(final RandomGenerator _randomGenerator, final NeatCombination _neatCombination) {
 		Validate.notNull(_randomGenerator);
+		Validate.notNull(_neatCombination);
 
 		this.randomGenerator = _randomGenerator;
+		this.neatCombination = _neatCombination;
 	}
 
 	@Override
@@ -64,161 +82,134 @@ public class NeatChromosomeCombinator<T extends Comparable<T>> implements Chromo
 		Validate.notNull(secondParentFitness);
 		Validate.isInstanceOf(NeatChromosome.class, secondChromosome);
 
-		if (firstChromosome instanceof NeatChromosome firstNeatChromosome
-				&& secondChromosome instanceof NeatChromosome secondNeatChromosome) {
+		final NeatChromosome firstNeatChromosome = (NeatChromosome) firstChromosome;
+		final NeatChromosome secondNeatChromosome = (NeatChromosome) secondChromosome;
+		final Comparator<T> fitnessComparator = eaConfiguration.fitnessComparator();
+		final double inheritanceThresold = neatCombination.inheritanceThresold();
 
-			final Comparator<T> fitnessComparator = eaConfiguration.fitnessComparator();
+		NeatChromosome bestChromosome = firstNeatChromosome;
+		NeatChromosome worstChromosome = secondNeatChromosome;
 
-			NeatChromosome bestChromosome = firstNeatChromosome;
-			T bestFitness = firstParentFitness;
-			NeatChromosome worstChromosome = secondNeatChromosome;
-			T worstFitness = secondParentFitness;
+		final int fitnessComparison = fitnessComparator.compare(firstParentFitness, secondParentFitness);
+		if (fitnessComparison < 0) {
+			bestChromosome = secondNeatChromosome;
+			worstChromosome = firstNeatChromosome;
+		}
 
-			final List<Connection> combinedConnections = new ArrayList<>();
-			final Map<Integer, Set<Integer>> linksCache = new HashMap<>();
+		final List<Connection> combinedConnections = new ArrayList<>();
+		final Map<Integer, Set<Integer>> linksCache = new HashMap<>();
 
-			if (fitnessComparator.compare(bestFitness, worstFitness) == 0) {
+		final var bestConnections = bestChromosome.getConnections();
+		final var worstConnections = worstChromosome.getConnections();
 
-				final var bestConnections = bestChromosome.getConnections();
-				final var worstConnections = worstChromosome.getConnections();
+		int indexBest = 0;
+		int indexWorst = 0;
 
-				int indexBest = 0;
-				int indexWorst = 0;
+		while (indexBest < bestConnections.size() && indexWorst < worstConnections.size()) {
 
-				while (indexBest < bestConnections.size() && indexWorst < worstConnections.size()) {
+			final var bestConnection = bestConnections.get(indexBest);
+			final var worstConnection = worstConnections.get(indexWorst);
 
-					final var bestConnection = bestConnections.get(indexBest);
-					final var worstConnection = worstConnections.get(indexWorst);
+			if (bestConnection.innovation() == worstConnection.innovation()) {
+				/**
+				 * If innovation is the same, we pick the connection randomly
+				 */
+				var original = bestConnection;
+				var other = worstConnection;
+				if (randomGenerator.nextDouble() < 1 - inheritanceThresold) {
+					original = worstConnection;
+					other = bestConnection;
+				}
+				if (linksCacheContainsConnection(linksCache, original) == false) {
 
-					if (bestConnection.innovation() == worstConnection.innovation()) {
-						/**
-						 * If innovation is the same, we pick the connection randomly
-						 */
-						final var original = randomGenerator.nextDouble() < 0.5 ? bestConnection : worstConnection;
-						if (linksCacheContainsConnection(linksCache, original) == false) {
-							combinedConnections.add(Connection.copyOf(original));
-							insertInlinksCache(linksCache, original);
-						}
-						indexBest++;
-						indexWorst++;
-					} else if (bestConnection.innovation() > worstConnection.innovation()) {
+					/**
+					 * If the chosen gene is disabled but the other one is enabled, then there is a
+					 * chance we will re-enable it
+					 */
+					final boolean isEnabled = shouldReEnable(original, other) ? true : original.isEnabled();
 
-						if (randomGenerator.nextDouble() < 0.5) {
-							final var original = worstConnection;
-							if (linksCacheContainsConnection(linksCache, original) == false) {
-								combinedConnections.add(Connection.copyOf(original));
-								insertInlinksCache(linksCache, original);
-							}
-						}
+					final var childConnection = Connection.builder()
+							.from(original)
+							.isEnabled(isEnabled)
+							.build();
+					combinedConnections.add(childConnection);
+					insertInlinksCache(linksCache, original);
+				}
+				indexBest++;
+				indexWorst++;
+			} else if (bestConnection.innovation() > worstConnection.innovation()) {
 
-						indexWorst++;
-					} else {
-						if (randomGenerator.nextDouble() < 0.5) {
-							if (linksCacheContainsConnection(linksCache, bestConnection) == false) {
-								combinedConnections.add(Connection.copyOf(bestConnection));
-								insertInlinksCache(linksCache, bestConnection);
-							}
-						}
-						indexBest++;
+				/**
+				 * If the fitnesses are equal, then we randomly inherit from the parent
+				 * Otherwise, we do not inherit from the lesser gene
+				 */
+				if (fitnessComparison == 0 && randomGenerator.nextDouble() < 1.0 - inheritanceThresold) {
+					final var original = worstConnection;
+					if (linksCacheContainsConnection(linksCache, original) == false) {
+						combinedConnections.add(Connection.copyOf(original));
+						insertInlinksCache(linksCache, original);
 					}
 				}
 
-				while (indexBest < bestConnections.size()) {
-					if (randomGenerator.nextDouble() < 0.5) {
-						final var bestConnection = bestConnections.get(indexBest);
-						if (linksCacheContainsConnection(linksCache, bestConnection) == false) {
-							combinedConnections.add(Connection.copyOf(bestConnection));
-							insertInlinksCache(linksCache, bestConnection);
-						}
-
-					}
-					indexBest++;
-				}
-
-				while (indexWorst < worstConnections.size()) {
-					if (randomGenerator.nextDouble() < 0.5) {
-						final var worstConnection = worstConnections.get(indexWorst);
-						if (linksCacheContainsConnection(linksCache, worstConnection) == false) {
-							combinedConnections.add(Connection.copyOf(worstConnection));
-							insertInlinksCache(linksCache, worstConnection);
-						}
-
-					}
-					indexWorst++;
-				}
-
+				indexWorst++;
 			} else {
 
-				if (fitnessComparator.compare(firstParentFitness, secondParentFitness) < 0) {
-					bestChromosome = secondNeatChromosome;
-					bestFitness = secondParentFitness;
-					worstChromosome = firstNeatChromosome;
-					worstFitness = firstParentFitness;
-				}
+				/**
+				 * If the fitnesses are equal, then we randomly inherit from the parent
+				 * Otherwise, we always inherit from the better gene
+				 */
 
-				final var bestConnections = bestChromosome.getConnections();
-				final var worstConnections = worstChromosome.getConnections();
-
-				int indexBest = 0;
-				int indexWorst = 0;
-
-				while (indexBest < bestConnections.size() && indexWorst < worstConnections.size()) {
-
-					final var bestConnection = bestConnections.get(indexBest);
-					final var worstConnection = worstConnections.get(indexWorst);
-
-					if (bestConnection.innovation() == worstConnection.innovation()) {
-						/**
-						 * If innovation is the same, we pick the connection randomly
-						 */
-						final var original = randomGenerator.nextDouble() < 0.5 ? bestConnection : worstConnection;
-						if (linksCacheContainsConnection(linksCache, original) == false) {
-							combinedConnections.add(Connection.copyOf(original));
-							insertInlinksCache(linksCache, original);
-						}
-
-						indexBest++;
-						indexWorst++;
-					} else if (bestConnection.innovation() > worstConnection.innovation()) {
-
-						/**
-						 * If worstConnection is missing in bestConnection, we ignore it
-						 */
-
-						indexWorst++;
-					} else {
-						/**
-						 * Only bestConnection has that innovation. So we keep it
-						 */
-						if (linksCacheContainsConnection(linksCache, bestConnection) == false) {
-							combinedConnections.add(Connection.copyOf(bestConnection));
-							insertInlinksCache(linksCache, bestConnection);
-						}
-
-						indexBest++;
-					}
-				}
-
-				while (indexBest < bestConnections.size()) {
-					final var bestConnection = bestConnections.get(indexBest);
+				if (fitnessComparison != 0 || randomGenerator.nextDouble() < inheritanceThresold) {
 					if (linksCacheContainsConnection(linksCache, bestConnection) == false) {
 						combinedConnections.add(Connection.copyOf(bestConnection));
 						insertInlinksCache(linksCache, bestConnection);
 					}
+				}
+				indexBest++;
+			}
+		}
 
-					indexBest++;
+		/*
+		 * Case where the best connection has more genes. It's called excess genes
+		 */
+		while (indexBest < bestConnections.size()) {
+			/**
+			 * If the fitnesses are equal, then we randomly inherit from the parent
+			 * Otherwise, we always inherit from the better gene
+			 */
+			if (fitnessComparison != 0 || randomGenerator.nextDouble() < inheritanceThresold) {
+				final var bestConnection = bestConnections.get(indexBest);
+				if (linksCacheContainsConnection(linksCache, bestConnection) == false) {
+					combinedConnections.add(Connection.copyOf(bestConnection));
+					insertInlinksCache(linksCache, bestConnection);
 				}
 
 			}
-
-			return List.of(new NeatChromosome(bestChromosome.getNumInputs(),
-					bestChromosome.getNumOutputs(),
-					bestChromosome.getMinWeightValue(),
-					bestChromosome.getMaxWeightValue(),
-					combinedConnections));
+			indexBest++;
 		}
 
-		throw new IllegalStateException("Cannot process chromosomes " + firstChromosome + " or " + secondChromosome);
-	}
+		/*
+		 * Case where the worst connection has more genes. It's called excess genes.
+		 * Since we don't inherit when their fitness aren't equal, it means we can skip
+		 * the excess genes from the weaker connections. However we will randomly
+		 * inherit if their fitnesses are equal
+		 */
+		while (fitnessComparison == 0 && indexWorst < worstConnections.size()) {
+			if (randomGenerator.nextDouble() < 1.0 - inheritanceThresold) {
+				final var worstConnection = worstConnections.get(indexWorst);
+				if (linksCacheContainsConnection(linksCache, worstConnection) == false) {
+					combinedConnections.add(Connection.copyOf(worstConnection));
+					insertInlinksCache(linksCache, worstConnection);
+				}
 
+			}
+			indexWorst++;
+		}
+
+		return List.of(new NeatChromosome(bestChromosome.getNumInputs(),
+				bestChromosome.getNumOutputs(),
+				bestChromosome.getMinWeightValue(),
+				bestChromosome.getMaxWeightValue(),
+				combinedConnections));
+	}
 }

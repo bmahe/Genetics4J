@@ -49,8 +49,8 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 
-		<maven.asciidoctor.maven.plugin>2.2.2</maven.asciidoctor.maven.plugin>
-		<maven.asciidoctorj.diagram.version>2.2.4</maven.asciidoctorj.diagram.version>
+		<maven.asciidoctor.maven.plugin>2.2.3</maven.asciidoctor.maven.plugin>
+		<maven.asciidoctorj.diagram.version>2.2.7</maven.asciidoctorj.diagram.version>
 		<maven.changelog.plugin.version>2.3</maven.changelog.plugin.version>
 		<maven.changes.plugin.version>2.12.1</maven.changes.plugin.version>
 		<maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
@@ -86,13 +86,13 @@
 		<apache.commons.io.version>2.11.0</apache.commons.io.version>
 		<apache.commons.lang.version>3.12.0</apache.commons.lang.version>
 		<apache.commons.math.version>3.6.1</apache.commons.math.version>
-		<apache.log4j.version>2.19.0</apache.log4j.version>
+		<apache.log4j.version>2.20.0</apache.log4j.version>
 		<dl4j.version>1.0.0-beta3</dl4j.version>
 		<immutables.version>2.9.3</immutables.version>
 		<jackson.version>2.13.1</jackson.version>
 		<jocl.version>2.0.4</jocl.version>
 		<junit.version>5.9.2</junit.version>
-		<mockito.version>5.1.1</mockito.version>
+		<mockito.version>5.3.0</mockito.version>
 
 		<skipPITests>${skipITs}</skipPITests>
 	</properties>

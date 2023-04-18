@@ -4,8 +4,8 @@ import java.util.random.RandomGenerator;
 
 import org.apache.commons.lang3.Validate;
 
-import net.bmahe.genetics4j.core.Genotype;
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
+import net.bmahe.genetics4j.core.mutation.GenericMutatorImpl;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandler;
 import net.bmahe.genetics4j.core.mutation.MutationPolicyHandlerResolver;
 import net.bmahe.genetics4j.core.mutation.Mutator;
@@ -50,32 +50,9 @@ public class NeatConnectionWeightPolicyHandler<T extends Comparable<T>> implemen
 		final ChromosomeMutationHandler<? extends Chromosome>[] chromosomeMutationHandlers = ChromosomeResolverUtils
 				.resolveChromosomeMutationHandlers(eaExecutionContext, eaConfiguration, mutationPolicy);
 
-		return new Mutator() {
-
-			@Override
-			public Genotype mutate(final Genotype original) {
-				Validate.notNull(original);
-
-				final Chromosome[] chromosomes = original.getChromosomes();
-				final Chromosome[] newChromosomes = new Chromosome[chromosomes.length];
-
-				if (randomGenerator.nextDouble() < populationMutationProbability) {
-
-					for (int i = 0; i < chromosomes.length; i++) {
-						final Chromosome chromosome = chromosomes[i];
-						final Chromosome mutatedChromosome = chromosomeMutationHandlers[i].mutate(mutationPolicy, chromosome);
-
-						newChromosomes[i] = mutatedChromosome;
-					}
-				} else {
-					for (int i = 0; i < chromosomes.length; i++) {
-						final Chromosome chromosome = chromosomes[i];
-						newChromosomes[i] = chromosome;
-					}
-				}
-
-				return new Genotype(newChromosomes);
-			}
-		};
+		return new GenericMutatorImpl(randomGenerator,
+				chromosomeMutationHandlers,
+				mutationPolicy,
+				populationMutationProbability);
 	}
 }

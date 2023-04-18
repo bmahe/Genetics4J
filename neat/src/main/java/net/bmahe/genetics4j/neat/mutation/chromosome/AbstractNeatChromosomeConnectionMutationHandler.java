@@ -21,7 +21,6 @@ import net.bmahe.genetics4j.neat.spec.NeatChromosomeSpec;
 public abstract class AbstractNeatChromosomeConnectionMutationHandler<T>
 		implements ChromosomeMutationHandler<NeatChromosome>
 {
-
 	public final Logger logger = LogManager.getLogger(this.getClass());
 
 	private final Class<T> mutationClazz;

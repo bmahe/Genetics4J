@@ -22,7 +22,7 @@ public class NodeReplacementPolicyHandlerTest {
 
 	@Test
 	public void noCtorArguments() {
-		assertThrows(NullPointerException.class, () -> new NodeReplacementPolicyHandler(null, null));
+		assertThrows(NullPointerException.class, () -> new NodeReplacementPolicyHandler<>(null, null));
 	}
 
 	@Test
@@ -30,12 +30,12 @@ public class NodeReplacementPolicyHandlerTest {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
-		assertThrows(NullPointerException.class, () -> new NodeReplacementPolicyHandler(null, programHelper));
+		assertThrows(NullPointerException.class, () -> new NodeReplacementPolicyHandler<>(null, programHelper));
 	}
 
 	@Test
 	public void noProgramGeneratorCtorArguments() {
-		assertThrows(NullPointerException.class, () -> new NodeReplacementPolicyHandler(new Random(), null));
+		assertThrows(NullPointerException.class, () -> new NodeReplacementPolicyHandler<>(new Random(), null));
 	}
 
 	@Test
@@ -45,7 +45,8 @@ public class NodeReplacementPolicyHandlerTest {
 
 		final NodeReplacement mutationPolicy = NodeReplacement.of(0.12);
 
-		final NodeReplacementPolicyHandler nodeReplacementPolicyHandler = new NodeReplacementPolicyHandler(random,
+		final NodeReplacementPolicyHandler<Integer> nodeReplacementPolicyHandler = new NodeReplacementPolicyHandler<>(
+				random,
 				programHelper);
 
 		assertThrows(NullPointerException.class, () -> nodeReplacementPolicyHandler.canHandle(null, mutationPolicy));
@@ -56,10 +57,10 @@ public class NodeReplacementPolicyHandlerTest {
 		final Random random = new Random();
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
-		final NodeReplacementPolicyHandler nodeReplacementPolicyHandler = new NodeReplacementPolicyHandler(random,
-				programHelper);
+		final var nodeReplacementPolicyHandler = new NodeReplacementPolicyHandler<Integer>(random, programHelper);
 
-		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(MutationPolicyHandlerResolver.class);
+		final MutationPolicyHandlerResolver<Integer> mockMutationPolicyHandlerResolver = mock(
+				MutationPolicyHandlerResolver.class);
 		assertThrows(NullPointerException.class,
 				() -> nodeReplacementPolicyHandler.canHandle(mockMutationPolicyHandlerResolver, null));
 	}
@@ -70,10 +71,10 @@ public class NodeReplacementPolicyHandlerTest {
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
 		final NodeReplacement mutationPolicy = NodeReplacement.of(0.12);
-		final NodeReplacementPolicyHandler nodeReplacementPolicyHandler = new NodeReplacementPolicyHandler(random,
-				programHelper);
+		final var nodeReplacementPolicyHandler = new NodeReplacementPolicyHandler<Integer>(random, programHelper);
 
-		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(MutationPolicyHandlerResolver.class);
+		final MutationPolicyHandlerResolver<Integer> mockMutationPolicyHandlerResolver = mock(
+				MutationPolicyHandlerResolver.class);
 
 		assertTrue(nodeReplacementPolicyHandler.canHandle(mockMutationPolicyHandlerResolver, mutationPolicy));
 		assertFalse(
@@ -86,12 +87,12 @@ public class NodeReplacementPolicyHandlerTest {
 		final ProgramHelper programHelper = new ProgramHelper(random);
 
 		final NodeReplacement mutationPolicy = NodeReplacement.of(0.12);
-		final NodeReplacementPolicyHandler nodeReplacementPolicyHandler = new NodeReplacementPolicyHandler(random,
-				programHelper);
+		final var nodeReplacementPolicyHandler = new NodeReplacementPolicyHandler<Integer>(random, programHelper);
 
-		final MutationPolicyHandlerResolver mockMutationPolicyHandlerResolver = mock(MutationPolicyHandlerResolver.class);
-		final EAExecutionContext mockEaExecutionContext = mock(EAExecutionContext.class);
-		final AbstractEAConfiguration mockEaConfiguration = mock(AbstractEAConfiguration.class);
+		final MutationPolicyHandlerResolver<Integer> mockMutationPolicyHandlerResolver = mock(
+				MutationPolicyHandlerResolver.class);
+		final EAExecutionContext<Integer> mockEaExecutionContext = mock(EAExecutionContext.class);
+		final AbstractEAConfiguration<Integer> mockEaConfiguration = mock(AbstractEAConfiguration.class);
 
 		final Mutator mutator = nodeReplacementPolicyHandler.createMutator(mockEaExecutionContext,
 				mockEaConfiguration,

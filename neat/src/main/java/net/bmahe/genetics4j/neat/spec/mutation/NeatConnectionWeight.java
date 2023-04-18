@@ -34,7 +34,7 @@ public abstract class NeatConnectionWeight implements MutationPolicy {
 	}
 
 	public static NeatConnectionWeight build() {
-		return new ImmutableNeatConnectionWeight.Builder().build();
+		return new Builder().build();
 	}
 
 	public static Builder builder() {

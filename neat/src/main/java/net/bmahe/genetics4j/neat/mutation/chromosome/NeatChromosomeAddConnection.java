@@ -93,5 +93,4 @@ public class NeatChromosomeAddConnection implements ChromosomeMutationHandler<Ne
 
 		return new NeatChromosome(numInputs, numOutputs, minValue, maxValue, newConnections);
 	}
-
 }

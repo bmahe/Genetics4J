@@ -39,12 +39,9 @@ public class NeatCombinationHandler<T extends Comparable<T>> implements Chromoso
 		Validate.notNull(combinationPolicy);
 		Validate.notNull(chromosome);
 		Validate.isInstanceOf(NeatCombination.class, combinationPolicy);
+		Validate.isInstanceOf(NeatChromosomeSpec.class, chromosome);
 
-		if (chromosome instanceof NeatChromosomeSpec) {
-			return new NeatChromosomeCombinator<>(randomGenerator);
-		}
-
-		throw new IllegalArgumentException("Could not handle chromosome " + chromosome);
+		final var neatCombination = (NeatCombination) combinationPolicy;
+		return new NeatChromosomeCombinator<>(randomGenerator, neatCombination);
 	}
-
 }
