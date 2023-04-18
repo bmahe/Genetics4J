@@ -1,4 +1,4 @@
-package net.bmahe.genetics4j.neat.mutation;
+package net.bmahe.genetics4j.neat.mutation.chromosome;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
