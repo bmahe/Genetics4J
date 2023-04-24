@@ -39,6 +39,38 @@ public class NeatChromosomeConnectionWeightMutationHandler implements Chromosome
 		return mutationPolicy instanceof NeatConnectionWeight && chromosome instanceof NeatChromosomeSpec;
 	}
 
+	protected float perturbateWeight(final float weight, final float disturbance, final float minValue,
+			final float maxValue) {
+		Validate.isTrue(minValue <= maxValue);
+
+		float newWeight = weight + disturbance;
+		if (newWeight > maxValue) {
+			newWeight = maxValue;
+		} else if (newWeight < minValue) {
+			newWeight = minValue;
+		}
+
+		return newWeight;
+	}
+
+	protected Connection mutateConnection(final Connection connection, final double perturbationRatio,
+			final Supplier<Float> distributionValueSupplier, final Supplier<Float> distributionNewValueSupplier,
+			final float minValue, final float maxValue) {
+
+		final var connectionBuilder = Connection.builder()
+				.from(connection);
+
+		float newWeight = connection.weight();
+		if (randomGenerator.nextDouble() < perturbationRatio) {
+			final float disturbance = distributionValueSupplier.get();
+			newWeight = perturbateWeight(newWeight, disturbance, minValue, maxValue);
+		} else {
+			newWeight = distributionNewValueSupplier.get();
+		}
+		connectionBuilder.weight(newWeight);
+		return connectionBuilder.build();
+	}
+
 	@Override
 	public NeatChromosome mutate(final MutationPolicy mutationPolicy, final Chromosome chromosome) {
 		Validate.notNull(mutationPolicy);
@@ -55,30 +87,21 @@ public class NeatChromosomeConnectionWeightMutationHandler implements Chromosome
 		final var neatConnectionWeight = (NeatConnectionWeight) mutationPolicy;
 		final Distribution perturbationDistribution = neatConnectionWeight.perturbationDistribution();
 		final double perturbationRatio = neatConnectionWeight.perturbationRatio();
+		final Distribution newValuesDistribution = neatConnectionWeight.newValuesDistribution();
 
 		final Supplier<Float> distributionValueSupplier = DistributionUtils
 				.distributionFloatValueSupplier(randomGenerator, minValue, maxValue, perturbationDistribution);
+		final Supplier<Float> distributionNewValueSupplier = DistributionUtils
+				.distributionFloatValueSupplier(randomGenerator, minValue, maxValue, newValuesDistribution);
 
 		final var oldConnections = neatChromosome.getConnections();
 		final List<Connection> newConnections = oldConnections.stream()
-				.map(connection -> {
-					final var connectionBuilder = Connection.builder()
-							.from(connection);
-
-					float newWeight = connection.weight();
-					if (randomGenerator.nextDouble() < perturbationRatio) {
-						newWeight += distributionValueSupplier.get();
-						if (newWeight > maxValue) {
-							newWeight = maxValue;
-						} else if (newWeight < minValue) {
-							newWeight = minValue;
-						}
-					} else {
-						newWeight = randomGenerator.nextFloat(minValue, maxValue);
-					}
-					connectionBuilder.weight(newWeight);
-					return (Connection) connectionBuilder.build();
-				})
+				.map(connection -> mutateConnection(connection,
+						perturbationRatio,
+						distributionValueSupplier,
+						distributionNewValueSupplier,
+						minValue,
+						maxValue))
 				.toList();
 
 		return new NeatChromosome(numInputs, numOutputs, minValue, maxValue, newConnections);

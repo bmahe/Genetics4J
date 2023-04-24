@@ -32,12 +32,8 @@ public class NeatChromosomeRandomMutationHandler
 
 		final var randomGenerator = getRandomGenerator();
 
+		// TODO use distribution
 		float newWeight = randomGenerator.nextFloat(maxValue - minValue) + minValue;
-		if (newWeight > maxValue) {
-			newWeight = maxValue;
-		} else if (newWeight < minValue) {
-			newWeight = minValue;
-		}
 		connectionBuilder.weight(newWeight);
 		return List.of(connectionBuilder.build());
 	}
