@@ -55,9 +55,7 @@ public class DistributionUtils {
 			final float valueRange = maxValue - minValue;
 
 			return () -> minValue + randomGenerator.nextFloat() * valueRange;
-		}
-
-		if (distribution instanceof NormalDistribution) {
+		} else if (distribution instanceof NormalDistribution) {
 			final var normalDistribution = (NormalDistribution) distribution;
 			final double mean = normalDistribution.mean();
 			final double standardDeviation = normalDistribution.standardDeviation();
@@ -73,7 +71,6 @@ public class DistributionUtils {
 
 				return value;
 			};
-
 		}
 
 		throw new IllegalArgumentException(String.format("Distribution not supported: %s", distribution));

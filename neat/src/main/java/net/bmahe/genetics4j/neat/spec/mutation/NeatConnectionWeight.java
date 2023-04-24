@@ -6,6 +6,7 @@ import org.immutables.value.Value;
 import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
 import net.bmahe.genetics4j.core.spec.statistics.distributions.Distribution;
 import net.bmahe.genetics4j.core.spec.statistics.distributions.NormalDistribution;
+import net.bmahe.genetics4j.core.spec.statistics.distributions.UniformDistribution;
 
 @Value.Immutable
 public abstract class NeatConnectionWeight implements MutationPolicy {
@@ -23,6 +24,11 @@ public abstract class NeatConnectionWeight implements MutationPolicy {
 	@Value.Default
 	public Distribution perturbationDistribution() {
 		return NormalDistribution.of(0.0, 1.0);
+	}
+
+	@Value.Default
+	public Distribution newValuesDistribution() {
+		return UniformDistribution.build();
 	}
 
 	@Value.Check

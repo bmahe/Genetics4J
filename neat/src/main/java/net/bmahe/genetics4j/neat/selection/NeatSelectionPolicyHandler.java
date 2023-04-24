@@ -55,5 +55,4 @@ public class NeatSelectionPolicyHandler<T extends Number & Comparable<T>> implem
 
 		return new NeatSelectorImpl<>(randomGenerator, neatSelection, speciesIdGenerator, speciesSelector);
 	}
-
 }
