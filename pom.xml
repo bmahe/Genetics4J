@@ -331,6 +331,7 @@
 								<coderay-css>style</coderay-css>
 								<icons>font</icons>
 								<project-recommended-version>${project.recommended.version}</project-recommended-version>
+								<outdir>${project.build.directory}/site/docs</outdir>
 							</attributes>
 							<requires>
 								<require>asciidoctor-diagram</require>

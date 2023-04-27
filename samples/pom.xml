@@ -106,6 +106,14 @@
 		<mixturemodel.data.moo.gpu-seed.3.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-mixturemodel-moo-gpu-seed-3.png</mixturemodel.data.moo.gpu-seed.3.png.dest>
 		<mixturemodel.data.moo.gpu-seed.4.csv>${project.build.outputDirectory}/mixturemodel/assigned-mixturemodel-moo-gpu-seed-4.csv.gz</mixturemodel.data.moo.gpu-seed.4.csv>
 		<mixturemodel.data.moo.gpu-seed.4.png.dest>${project.build.directory}/site/docs/mixturemodel/assigned-mixturemodel-moo-gpu-seed-4.png</mixturemodel.data.moo.gpu-seed.4.png.dest>
+
+		<neat.xor.csv.filename>${project.build.directory}/site/docs/neat/xor.csv</neat.xor.csv.filename>
+		<neat.xor.best_network.dot>${project.build.directory}/site/docs/neat/xor.dot</neat.xor.best_network.dot>
+		<neat.xor.fitness.png>${project.build.directory}/site/docs/neat/fitness.png</neat.xor.fitness.png>
+		<neat.xor.num_nodes.png>${project.build.directory}/site/docs/neat/num_nodes.png</neat.xor.num_nodes.png>
+		<neat.xor.num_connections.png>${project.build.directory}/site/docs/neat/num_connections.png</neat.xor.num_connections.png>
+		<neat.xor.num_connections_enabled.png>${project.build.directory}/site/docs/neat/num_connections_enabled.png</neat.xor.num_connections_enabled.png>
+		<neat.xor.num_connections_disabled.png>${project.build.directory}/site/docs/neat/num_connections_disabled.png</neat.xor.num_connections_disabled.png>
 </properties>
 
 	<dependencies>
@@ -215,6 +223,7 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>${maven.exec.plugin.version}</version>
 				<executions>
+
 					<!-- Fitness Sharing Document -->
 					<execution>
 						<id>example-FitnessSharingExample-process</id>
@@ -880,6 +889,84 @@
 							<commandlineArgs>--result_membership=${mixturemodel.data.moo.gpu-seed.4.csv} --destination=${mixturemodel.data.moo.gpu-seed.4.png.dest} </commandlineArgs>
 						</configuration>
 					</execution>
+
+					<!-- NEAT -->
+					<execution>
+						<id>example-neat-xor</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<mainClass>net.bmahe.genetics4j.samples.neat.Main</mainClass>
+							<arguments>
+								<argument>--save=${neat.xor.best_network.dot}</argument>
+								<argument>--csv-dest=${neat.xor.csv.filename}</argument>
+							</arguments>
+							<cleanupDaemonThreads>false</cleanupDaemonThreads>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-neat-xor-fitness-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_fitness.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--execution_trace=${neat.xor.csv.filename} --destination=${neat.xor.fitness.png}</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-neat-xor-num_nodes-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_fitness.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--execution_trace=${neat.xor.csv.filename} --destination=${neat.xor.num_nodes.png} -l individual_num_nodes -t 'Number of nodes'</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-neat-xor-num_connections-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_fitness.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--execution_trace="${neat.xor.csv.filename}" --destination="${neat.xor.num_connections.png}" -l "individual_num_connections" -t "Number of connections"</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-neat-xor-num_connections-enabled-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_fitness.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--execution_trace="${neat.xor.csv.filename}" --destination="${neat.xor.num_connections_enabled.png}" -l "individual_num_connections_enabled" -t "Number of enabled connections"</commandlineArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>example-neat-xor-num_connections-disabled-plot</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-site</phase>
+						<configuration>
+							<executable>${project.basedir}/scripts/plot_fitness.py</executable>
+							<!-- arguments doesn't work. commandlineArgs works somehow -->
+							<commandlineArgs>--execution_trace="${neat.xor.csv.filename}" --destination="${neat.xor.num_connections_disabled.png}" -l "individual_num_connections_disabled" -t "Number of disabled connections"</commandlineArgs>
+						</configuration>
+					</execution>
+
 				</executions>
 			</plugin>
 		</plugins>

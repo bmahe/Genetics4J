@@ -1,0 +1,192 @@
+= Impelementing XOR with NEAT
+:stem:
+:toc:
+:docinfo:
+:sourcedir: ../../../src/main/java
+:outdir: ../../target/site
+:icons: font
+
+== Preface
+
+All the executions and plots are generated from scratch at build time. This means results may vary from execution to execution.
+
+This also creates some constraints in terms of execution time. A proper analysis would have us execute each approach many times prior to making any generalization, which we cannot afford here.
+
+While I could use the same seed for the random generator and therefore generate reproducible results, this wouldn't be befitting of a demonstration of evolutionary algorithms.
+
+Note also the purpose of this document is to serve me as notes and is not meant to be taken as exhaustive or a fully fledged blog post.
+
+
+
+== Introduction
+
+Implementing a *XOR* gate with NEAT is a typical demonstration as it is not only used in the original paper 
+link:https://nn.cs.utexas.edu/?stanley:ec02[Evolving Neural Networks Through Augmenting Topologies] but also a problem
+that does require the use of an additional node in the network.
+
+Therefore it is an ideal use case to explore.
+
+
+== Methodology
+
+=== Chromosomes
+
+We want to implement a *XOR* gate, and as such will need 2 input nodes and 1 output node. We will also add a bias node that will always be set to 1.
+The networks will be fully connected upon initialization and look something like:
+
+[graphviz, svg]
+....
+digraph g {
+	rankdir=LR;
+
+	A -> xor
+	B -> xor
+	bias -> xor
+
+	xor[label="A xor B"]
+}
+....
+
+The connections will be enabled and their weight randomly selected.
+
+The network used will be a feed forward network (ie. no loops), and will use _tanh_ as its activation function.
+
+This translates in code to:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/neat/Main.java[tags=network_definition]
+----
+
+Where _connections_ is the list of connections defining the network
+
+
+=== Fitness
+
+The fitness will be computed by evaluating each of the possible inputs and comparing them with the expected output of a
+XOR gate. The closer to the expectations, the higher will the score be.
+
+Since we want a more fine grained fitness for better comparing individuals, we will use the distance to the expectations
+as an error measurement and deduct it from the ideal score. Thus scores can go from 0 to 4, where 4 means a perfect score.
+
+The code to implement the fitness is:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/neat/Main.java[tags=fitness_definition]
+----
+
+=== Configuration
+
+To specify the problem, we can use a standard _EAConfiguration_ with the following tweaks:
+
+* We define the chromosome of type _NeatChromosome_ with 3 inputs and one output
+* We have a specific selection for the parents
+* We have a specific set of operators for the mutations
+* We have a specific _NeatCombination_ that implements the combination of two parents as specified in the _NEAT_ paper
+* We assume a fitness equal or greater to 3.95 is good enough to our goal
+
+
+The configuration is defined as:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/neat/Main.java[tags=eaConfiguration]
+----
+
+
+
+With regards to the selection policy, while there exist a factory with sensible defaults
+(see link:../neat/apidocs/net/bmahe/genetics4j/neat/spec/selection/NeatSelection.html#ofDefault()[NeatSelection::ofDefault] ), we do want to ensure the following:
+
+* We only keep the top 20% of the individuals for each species
+* We will always keep at least 1 individual for a species
+* Selecting individuals within a species is done through tournaments
+
+Thus the code will be: 
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/neat/Main.java[tags=neatSelection]
+----
+
+
+In terms of mutations, we can find the two main types of mutations being separated:
+
+* The mutations that affect weights, such as creep, neat or random changes.
+* The mutations that affect the structure
+
+It is to be noted how high are set the mutations:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/neat/Main.java[tags=neatMutations]
+----
+
+
+And then we need the execution context, which will be very simple as we only want to specify the population and some
+evolution listeners so we can log and record how the algorithm performs:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/neat/Main.java[tags=eaExecutionContext]
+----
+
+
+Finally, we can launch the computations:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/net/bmahe/genetics4j/samples/neat/Main.java[tags=evolve]
+----
+
+== Results
+
+
+The results are pretty nice and it will consistently find a solution very quickly. The networks are small and do tend 
+to exhibit similar patterns.
+
+It is interesting to note that the bias node has consistently its connections disabled or outright removed.
+
+
+Here is an example of solution:
+
+graphviz::{outdir}/neat/xor.dot[svg]
+
+Note: remember that all the results in this article are re-computed at each build.
+
+
+We can also look at the evolution of the fitness over time:
+
+image::neat/fitness.png[Fitness plot]
+
+
+It is also interesting to look at the nodes:
+
+image::neat/num_nodes.png[Number of nodes]
+
+And the connections:
+
+image::neat/num_connections.png[Number of connections]
+
+image::neat/num_connections_enabled.png[Number of enabled connections]
+
+image::neat/num_connections_disabled.png[Number of disabled connections]
+
+
+We can observe that while the solutions are consistently small, there is a steady increase in nodes and connections over time.
+
+
+== Conclusion
+
+
+_NEAT_ is a very powerful algorithm that can derive great results very quickly. However its parameters are very
+sensitive and could lead to a different outcome if not tweak appropriately.
+
+There are also a few topics I would like to dive deeper into in the future:
+
+* Visualizing the species over time. It would be nice to see how they evolve over time
+* Digging into the relationship between number of nodes and connection with their fitness
+* Digging into the sensibitility to parameters
+* Changing starting conditions and not using a fully connected network
+* Automatically adjust the compatibility threshold as discussed in the link:https://www.cs.ucf.edu/~kstanley/neat.html[NEAT FAQ]

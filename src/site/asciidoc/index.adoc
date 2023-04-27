@@ -57,5 +57,5 @@ There are a few examples with this library. Namely:
 * link:https://genetics4j.org/samples/docs/mixture_models_on_gpu.html[Mixture Models] where we attempt to find the best way to cluster data using mixture models with the help of GPUs
 * link:https://genetics4j.org/samples/docs/bloat_issues.html[6 ways to handle your bloat issues] where we explore different methods from the _Multi Objective Optimization_ field to find the best equation to represent a set of data points. This provides us a way to find a good trade-off between long and precise equations and shorter but less precise equations
 * link:https://genetics4j.org/samples/docs/fitness_sharing.html[Fitness Sharing] where we present one technique to reduce the likelihood to get stuck in a local optimum and explore a great set of diverse solutions
-
+* link:https://genetics4j.org/samples/docs/neat_xor.html[Impelementing XOR with NEAT] where we implement a XOR gate with NeuroEvolution of Augmenting Topologies (_NEAT_)
 
