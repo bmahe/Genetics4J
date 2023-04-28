@@ -12,12 +12,16 @@ import net.bmahe.genetics4j.neat.chromosomes.factory.NeatConnectedChromosomeFact
 import net.bmahe.genetics4j.neat.combination.NeatCombinationHandler;
 import net.bmahe.genetics4j.neat.mutation.AddConnectionPolicyHandler;
 import net.bmahe.genetics4j.neat.mutation.AddNodePolicyHandler;
+import net.bmahe.genetics4j.neat.mutation.DeleteConnectionPolicyHandler;
+import net.bmahe.genetics4j.neat.mutation.DeleteNodePolicyHandler;
 import net.bmahe.genetics4j.neat.mutation.NeatConnectionWeightPolicyHandler;
 import net.bmahe.genetics4j.neat.mutation.NeatSwitchStatePolicyHandler;
 import net.bmahe.genetics4j.neat.mutation.chromosome.NeatChromosomeAddConnection;
 import net.bmahe.genetics4j.neat.mutation.chromosome.NeatChromosomeAddNodeMutationHandler;
 import net.bmahe.genetics4j.neat.mutation.chromosome.NeatChromosomeConnectionWeightMutationHandler;
 import net.bmahe.genetics4j.neat.mutation.chromosome.NeatChromosomeCreepMutationHandler;
+import net.bmahe.genetics4j.neat.mutation.chromosome.NeatChromosomeDeleteConnection;
+import net.bmahe.genetics4j.neat.mutation.chromosome.NeatChromosomeDeleteNodeMutationHandler;
 import net.bmahe.genetics4j.neat.mutation.chromosome.NeatChromosomeRandomMutationHandler;
 import net.bmahe.genetics4j.neat.mutation.chromosome.NeatChromosomeSwitchStateHandler;
 import net.bmahe.genetics4j.neat.selection.NeatSelectionPolicyHandler;
@@ -55,7 +59,9 @@ public class NeatEAExecutionContexts {
 						ec -> new NeatSelectionPolicyHandler<>(ec.randomGenerator(), speciesIdGenerator))
 				.addMutationPolicyHandlerFactories(ec -> new NeatSwitchStatePolicyHandler<>(ec.randomGenerator()),
 						ec -> new AddNodePolicyHandler<>(ec.randomGenerator()),
+						ec -> new DeleteNodePolicyHandler<>(ec.randomGenerator()),
 						ec -> new AddConnectionPolicyHandler<>(ec.randomGenerator()),
+						ec -> new DeleteConnectionPolicyHandler<>(ec.randomGenerator()),
 						ec -> new NeatConnectionWeightPolicyHandler<>(ec.randomGenerator()))
 				.addChromosomeCombinatorHandlerFactories(ec -> new NeatCombinationHandler<>(ec.randomGenerator()))
 				.addChromosomeMutationPolicyHandlerFactories(
@@ -63,7 +69,9 @@ public class NeatEAExecutionContexts {
 						ec -> new NeatChromosomeCreepMutationHandler(ec.randomGenerator()),
 						ec -> new NeatChromosomeRandomMutationHandler(ec.randomGenerator()),
 						ec -> new NeatChromosomeAddNodeMutationHandler(ec.randomGenerator(), innovationManager),
+						ec -> new NeatChromosomeDeleteNodeMutationHandler(ec.randomGenerator()),
 						ec -> new NeatChromosomeAddConnection(ec.randomGenerator(), innovationManager),
+						ec -> new NeatChromosomeDeleteConnection(ec.randomGenerator()),
 						ec -> new NeatChromosomeConnectionWeightMutationHandler(ec.randomGenerator()));
 
 		return builder;

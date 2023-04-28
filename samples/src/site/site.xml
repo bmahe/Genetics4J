@@ -60,6 +60,7 @@
 			<item name="6 Ways to Deal with your Bloat Issues" href="docs/bloat_issues.html" />
 			<item name="Clustering" href="docs/clustering.html" />
 			<item name="Mixture Models on GPU" href="docs/mixture_models_on_gpu.html" />
+			<item name="NEAT - Implementing XOR" href="docs/neat_xor.html" />
 		</menu>
 		<menu ref="reports" inherit="top"/>
 		<footer />
