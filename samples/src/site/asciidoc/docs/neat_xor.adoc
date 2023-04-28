@@ -97,7 +97,7 @@ include::{sourcedir}/net/bmahe/genetics4j/samples/neat/Main.java[tags=eaConfigur
 
 
 With regards to the selection policy, while there exist a factory with sensible defaults
-(see link:../neat/apidocs/net/bmahe/genetics4j/neat/spec/selection/NeatSelection.html#ofDefault()[NeatSelection::ofDefault] ), we do want to ensure the following:
+(see link:../../neat/apidocs/net/bmahe/genetics4j/neat/spec/selection/NeatSelection.html#ofDefault()[NeatSelection::ofDefault] ), we do want to ensure the following:
 
 * We only keep the top 20% of the individuals for each species
 * We will always keep at least 1 individual for a species
