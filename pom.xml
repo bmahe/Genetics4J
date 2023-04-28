@@ -61,7 +61,7 @@
 		<maven.failsafe.plugin.version>3.0.0</maven.failsafe.plugin.version>
 		<maven.findbugs.version>3.0.5</maven.findbugs.version>
 		<maven.git.id.plugin.version>4.9.10</maven.git.id.plugin.version>
-		<maven.gitlog.plugin.version>1.13.17</maven.gitlog.plugin.version>
+		<maven.gitlog.plugin.version>1.14.0</maven.gitlog.plugin.version>
 		<maven.install.plugin.version>3.1.1</maven.install.plugin.version>
 		<maven.jacoco.plugin.version>0.8.8</maven.jacoco.plugin.version>
 		<maven.jar.plugin.verison>3.3.0</maven.jar.plugin.verison>
@@ -91,8 +91,8 @@
 		<immutables.version>2.9.3</immutables.version>
 		<jackson.version>2.13.1</jackson.version>
 		<jocl.version>2.0.4</jocl.version>
-		<junit.version>5.9.2</junit.version>
-		<mockito.version>5.3.0</mockito.version>
+		<junit.version>5.9.3</junit.version>
+		<mockito.version>5.3.1</mockito.version>
 
 		<skipPITests>${skipITs}</skipPITests>
 	</properties>
