@@ -172,4 +172,83 @@ public class ElitismImplTest {
 			assertEquals(fitnessScore.get(i), selected.getFitness(i + offset));
 		}
 	}
+
+	@Test
+	public void atLeastSpecified() {
+
+		final var elitismSpec = Elitism.builder()
+				.offspringSelectionPolicy(SelectAll.build())
+				.survivorSelectionPolicy(SelectAll.build())
+				.offspringRatio(0.6)
+				.atLeastNumOffsprings(5)
+				.atLeastNumSurvivors(10)
+				.build();
+
+		final EAExecutionContext<Double> eaExecutionContext = EAExecutionContexts.<Double>forScalarFitness()
+				.populationSize(100)
+				.build();
+		final SelectionPolicyHandlerResolver<Double> selectionPolicyHandlerResolver = new SelectionPolicyHandlerResolver<>(
+				eaExecutionContext);
+
+		final var selectAllPolicyHandler = new SelectAllPolicyHandler<Double>();
+		final var allSelector = selectAllPolicyHandler.resolve(eaExecutionContext,
+				SIMPLE_MAXIMIZING_EA_CONFIGURATION,
+				selectionPolicyHandlerResolver,
+				SelectAll.build());
+
+		final int populationSize = 20;
+		final List<Genotype> population = new ArrayList<Genotype>(populationSize);
+		final List<Double> fitnessScore = new ArrayList<>(populationSize);
+
+		final List<Genotype> offsprings = new ArrayList<Genotype>(populationSize);
+		final List<Double> offspringsFitnessScore = new ArrayList<>(populationSize);
+
+		for (int i = 0; i < populationSize; i++) {
+			final IntChromosome intChromosome = new IntChromosome(4, 0, 10, new int[] { i, i + 1, i + 2, i + 3 });
+			final Genotype genotype = new Genotype(new Chromosome[] { intChromosome });
+
+			if (i < populationSize / 2) {
+				population.add(genotype);
+				fitnessScore.add((double) i);
+			} else {
+				offsprings.add(genotype);
+				offspringsFitnessScore.add((double) i);
+			}
+		}
+
+		final ElitismImpl<Double> elitismImpl = new ElitismImpl<>(elitismSpec, allSelector, allSelector);
+
+		final int selectionSize = 15;
+
+		assertThrows(IllegalArgumentException.class,
+				() -> elitismImpl.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION,
+						10,
+						population,
+						fitnessScore,
+						offsprings,
+						offspringsFitnessScore));
+
+		final Population<Double> selected = elitismImpl.select(SIMPLE_MAXIMIZING_EA_CONFIGURATION,
+				selectionSize,
+				population,
+				fitnessScore,
+				offsprings,
+				offspringsFitnessScore);
+
+		assertNotNull(selected);
+		assertEquals(selectionSize, selected.size());
+
+		logger.info("Selected: {}", selected);
+
+		for (int i = 0; i < elitismSpec.atLeastNumOffsprings(); i++) {
+			assertEquals(offsprings.get(i), selected.getGenotype(i));
+			assertEquals(offspringsFitnessScore.get(i), selected.getFitness(i));
+		}
+
+		final int offset = elitismSpec.atLeastNumOffsprings();
+		for (int i = 0; i < elitismSpec.atLeastNumSurvivors(); i++) {
+			assertEquals(population.get(i), selected.getGenotype(i + offset));
+			assertEquals(fitnessScore.get(i), selected.getFitness(i + offset));
+		}
+	}
 }
