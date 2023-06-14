@@ -42,27 +42,41 @@ public class ElitismImpl<T extends Comparable<T>> implements ReplacementStrategy
 		Validate.notNull(offsprings);
 		Validate.notNull(offspringScores);
 		Validate.isTrue(offsprings.size() == offspringScores.size());
+		Validate.isTrue(elitismSpec.atLeastNumOffsprings() + elitismSpec.atLeastNumSurvivors() <= numIndividuals);
 
-		final int offspringNeeded = (int) (elitismSpec.offspringRatio() * numIndividuals);
+		final int scaledOffspring = (int) (elitismSpec.offspringRatio() * numIndividuals);
+		final int offspringNeeded = Math.max(scaledOffspring, elitismSpec.atLeastNumOffsprings());
 		final int survivorNeeded = numIndividuals - offspringNeeded;
 
-		logger.debug("We have {} individuals requested and an offspring ratio of {}",
+		final int adjustedOffspringNeeded;
+		final int adjustedSurvivorNeeded;
+		if (survivorNeeded < elitismSpec.atLeastNumSurvivors()) {
+			// Alternatively, it could be numIndividuals - elitismSpec.atLeastNumSurvivors()
+			adjustedOffspringNeeded = offspringNeeded - (elitismSpec.atLeastNumSurvivors() - survivorNeeded);
+			adjustedSurvivorNeeded = elitismSpec.atLeastNumSurvivors();
+		} else {
+			adjustedOffspringNeeded = offspringNeeded;
+			adjustedSurvivorNeeded = survivorNeeded;
+		}
+
+		logger.debug("We have {} individuals requested and an offspring ratio of {}. Survivors:{}, Offsprings:{}",
 				numIndividuals,
-				elitismSpec.offspringRatio());
+				elitismSpec.offspringRatio(),
+				adjustedSurvivorNeeded,
+				adjustedOffspringNeeded);
 
 		final Population<T> selected = new Population<>();
 
-		logger.info("Selecting {} offsprings", offspringNeeded);
+		logger.info("Selecting {} offsprings", adjustedOffspringNeeded);
 		final Population<T> selectedOffspring = offspringSelector
-				.select(eaConfiguration, offspringNeeded, offsprings, offspringScores);
+				.select(eaConfiguration, adjustedOffspringNeeded, offsprings, offspringScores);
 		selected.addAll(selectedOffspring);
 
-		logger.info("Selecting {} survivors", survivorNeeded);
+		logger.info("Selecting {} survivors", adjustedSurvivorNeeded);
 		final Population<T> selectedSurvivors = survivorSelector
-				.select(eaConfiguration, survivorNeeded, population, populationScores);
+				.select(eaConfiguration, adjustedSurvivorNeeded, population, populationScores);
 		selected.addAll(selectedSurvivors);
 
 		return selected;
 	}
-
 }
