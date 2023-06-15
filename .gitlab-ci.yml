@@ -114,7 +114,7 @@ validate:jdk20-temurin:
   image: maven:3.9.1-eclipse-temurin-20
   cache:
     key: "$CI_JOB_NAME-java19-temurin"
-   variables:
+  variables:
     JOB_MAVEN_OVERRIDE: " -Djava.version=20 "
   before_script:
     - apt-get update -yqq
