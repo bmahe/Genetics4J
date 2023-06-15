@@ -19,16 +19,12 @@ public interface Elitism extends ReplacementStrategy {
 	static final int DEFAULT_AT_LEAST_NUM_SURVIVORS = 1;
 
 	/**
-	 * Describe which offsprings to select for the next generation
-	 * 
-	 * @return
+	 * {@return the policy used to select offsprings for the next generation}
 	 */
 	SelectionPolicy offspringSelectionPolicy();
 
 	/**
-	 * The elitism will always select at least that many offsprings
-	 * 
-	 * @return
+	 * {@return how many offsprings that elitism will always select}
 	 */
 	@Value.Default
 	default int atLeastNumOffsprings() {
@@ -36,16 +32,12 @@ public interface Elitism extends ReplacementStrategy {
 	}
 
 	/**
-	 * Describe which survivors to select for the next generation
-	 * 
-	 * @return
+	 * {@return the policy used to select survivors for the next generation}
 	 */
 	SelectionPolicy survivorSelectionPolicy();
 
 	/**
-	 * The elitism will always select at least that many survivors
-	 * 
-	 * @return
+	 * {@return how many survivors that elitism will always select}
 	 */
 	@Value.Default
 	default int atLeastNumSurvivors() {
@@ -53,12 +45,10 @@ public interface Elitism extends ReplacementStrategy {
 	}
 
 	/**
-	 * Defines how many children will be generated at each iteration. Value must be
-	 * between 0 and 1 (inclusive)
+	 * {@return how many children will be generated at each iteration. Value
+	 * must be between 0 and 1 (inclusive)
 	 * <p>
-	 * The number of survivor will be the complement of it, or 1 - offspringRatio()
-	 * 
-	 * @return
+	 * The number of survivor will be the complement of it, or 1 - offspringRatio()}
 	 */
 	@Value.Default
 	default double offspringRatio() {
