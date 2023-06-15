@@ -228,7 +228,7 @@ site:
     - apt-get install -yqq pocl-opencl-icd opencl-headers
     - pip3 install matplotlib pandas
     - mvn site site:stage -Dproject.recommended.version="${RECOMMENDED_VERSION}"
-    - "sed -i -e 's/<title>.*<\/title>/<title>Genetics4j<\/title>/' target/staging/index.html"
+    - "sed -i -e 's/<title>.*<\\/title>/<title>Genetics4j<\\/title>/' target/staging/index.html"
 
 pages:
   stage: deploy
