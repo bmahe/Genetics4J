@@ -53,12 +53,12 @@
 		<maven.asciidoctorj.diagram.version>2.2.9</maven.asciidoctorj.diagram.version>
 		<maven.changelog.plugin.version>2.3</maven.changelog.plugin.version>
 		<maven.changes.plugin.version>2.12.1</maven.changes.plugin.version>
-		<maven.clean.plugin.version>3.2.0</maven.clean.plugin.version>
+		<maven.clean.plugin.version>3.3.1</maven.clean.plugin.version>
 		<maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
 		<maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
 		<maven.doxia.module.markdown.version>1.9</maven.doxia.module.markdown.version>
 		<maven.exec.plugin.version>3.1.0</maven.exec.plugin.version>
-		<maven.failsafe.plugin.version>3.1.0</maven.failsafe.plugin.version>
+		<maven.failsafe.plugin.version>3.1.2</maven.failsafe.plugin.version>
 		<maven.findbugs.version>3.0.5</maven.findbugs.version>
 		<maven.git.id.plugin.version>4.9.10</maven.git.id.plugin.version>
 		<maven.install.plugin.version>3.1.1</maven.install.plugin.version>
@@ -67,16 +67,16 @@
 		<maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
 		<maven.jxr.plugin.version>3.3.0</maven.jxr.plugin.version>
 		<maven.pmd.plugin>3.21.0</maven.pmd.plugin>
-		<maven.project.info.reports.plugin.version>3.4.3</maven.project.info.reports.plugin.version>
+		<maven.project.info.reports.plugin.version>3.4.5</maven.project.info.reports.plugin.version>
 		<maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
 		<maven.serviceloader.plugin>1.4.0</maven.serviceloader.plugin>
 		<maven.source.plugin.version>3.3.0</maven.source.plugin.version>
 		<maven.site.plugin.version>3.12.1</maven.site.plugin.version>
-		<maven.surefire.plugin.version>3.1.0</maven.surefire.plugin.version>
+		<maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
 		<maven.taglist.plugin>3.0.0</maven.taglist.plugin>
-		<maven.versions.plugin>2.15.0</maven.versions.plugin>
+		<maven.versions.plugin>2.16.0</maven.versions.plugin>
 		<umldoclet.version>2.0.2</umldoclet.version>
-		<pitest.plugin.version>1.14.1</pitest.plugin.version>
+		<pitest.plugin.version>1.14.2</pitest.plugin.version>
 		<pitest.junit5.plugin.version>1.2.0</pitest.junit5.plugin.version>
 
 		<apache.commons.cli.version>1.5.0</apache.commons.cli.version>
@@ -91,7 +91,7 @@
 		<jackson.version>2.13.1</jackson.version>
 		<jocl.version>2.0.5</jocl.version>
 		<junit.version>5.9.3</junit.version>
-		<mockito.version>5.3.1</mockito.version>
+		<mockito.version>5.4.0</mockito.version>
 
 		<skipPITests>${skipITs}</skipPITests>
 	</properties>
