@@ -124,13 +124,13 @@ validate:jdk20-temurin:
 semgrep:
   stage: test
   image: returntocorp/semgrep:latest
-  script: semgrep ci --json > semgrep.json
+  script: semgrep ci --junit-xml > semgrep.xml
   variables:
     SEMGREP_APP_TOKEN: $SEMGREP_APP_TOKEN
     GITLAB_TOKEN: $SEMGREP_PERSONAL_ACCESS_TOKEN
   artifacts:
     paths:
-      - semgrep.json
+      - semgrep.xml
 
 
 .verify: &verify
