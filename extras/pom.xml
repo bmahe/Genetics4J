@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>net.bmahe.genetics4j</groupId>
 		<artifactId>parent</artifactId>
-		<version>3.2-SNAPSHOT</version>
+		<version>3.2</version>
 	</parent>
 
 	<groupId>net.bmahe.genetics4j</groupId>
 	<artifactId>extras</artifactId>
-	<version>3.2-SNAPSHOT</version>
+	<version>3.2</version>
 	<packaging>jar</packaging>
 
 	<name>Additional utilities</name>
