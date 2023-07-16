@@ -4,7 +4,7 @@
 
 	<groupId>net.bmahe.genetics4j</groupId>
 	<artifactId>parent</artifactId>
-	<version>3.3</version>
+	<version>3.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Genetics4j</name>
@@ -28,7 +28,7 @@
 		<url>https://gitlab.com/bmahe/genetics4j</url>
 		<connection>scm:git:git@gitlab.com:bmahe/genetics4j.git</connection>
 		<developerConnection>scm:git:git@gitlab.com:bmahe/genetics4j.git</developerConnection>
-		<tag>r3.3</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<developers>
@@ -125,37 +125,37 @@
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>core</artifactId>
-				<version>3.3</version>
+				<version>3.4-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>gp</artifactId>
-				<version>3.3</version>
+				<version>3.4-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>gpu</artifactId>
-				<version>3.3</version>
+				<version>3.4-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>moo</artifactId>
-				<version>3.3</version>
+				<version>3.4-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>extras</artifactId>
-				<version>3.3</version>
+				<version>3.4-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
 				<groupId>net.bmahe.genetics4j</groupId>
 				<artifactId>neat</artifactId>
-				<version>3.3</version>
+				<version>3.4-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
