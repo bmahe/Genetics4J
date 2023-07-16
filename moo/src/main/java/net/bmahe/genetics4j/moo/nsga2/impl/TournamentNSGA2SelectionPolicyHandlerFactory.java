@@ -18,6 +18,6 @@ public class TournamentNSGA2SelectionPolicyHandlerFactory<T extends Comparable<T
 		Validate.notNull(abstractEAExecutionContext);
 
 		final RandomGenerator randomGenerator = abstractEAExecutionContext.randomGenerator();
-		return new TournamentSelectionPolicyHandler<T>(randomGenerator);
+		return new TournamentNSGA2SelectionPolicyHandler<T>(randomGenerator);
 	}
 }
