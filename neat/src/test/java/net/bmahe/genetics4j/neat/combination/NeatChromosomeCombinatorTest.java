@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
@@ -18,19 +19,24 @@ import net.bmahe.genetics4j.core.chromosomes.Chromosome;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.neat.Connection;
 import net.bmahe.genetics4j.neat.chromosomes.NeatChromosome;
+import net.bmahe.genetics4j.neat.combination.parentcompare.ParentComparisonHandler;
+import net.bmahe.genetics4j.neat.combination.parentcompare.ParentComparisonHandlerLocator;
 import net.bmahe.genetics4j.neat.spec.combination.NeatCombination;
 
 public class NeatChromosomeCombinatorTest {
 
 	@Test
 	public void constructorNeedsRandom() {
-		assertThrows(NullPointerException.class, () -> new NeatChromosomeCombinator<>(null, NeatCombination.build()));
+		assertThrows(NullPointerException.class,
+				() -> new NeatChromosomeCombinator<>(null, NeatCombination.build(), mock(ParentComparisonHandler.class)));
 	}
 
 	@Test
 	public void constructorNeedsCombinationPolicy() {
 		assertThrows(NullPointerException.class,
-				() -> new NeatChromosomeCombinator<>(RandomGenerator.getDefault(), null));
+				() -> new NeatChromosomeCombinator<>(RandomGenerator.getDefault(),
+						null,
+						mock(ParentComparisonHandler.class)));
 	}
 
 	private void shouldReEnable(final boolean expectEnable) {
@@ -40,8 +46,12 @@ public class NeatChromosomeCombinatorTest {
 				.reenableGeneInheritanceThresold(expectEnable ? 1.0d : 0.0d)
 				.build();
 
+		final ParentComparisonHandlerLocator parentComparisonHandlerLocator = new ParentComparisonHandlerLocator();
+		final Optional<ParentComparisonHandler> parentComparisonHandlerOpt = parentComparisonHandlerLocator
+				.find(neatCombination.parentComparisonPolicy());
 		final NeatChromosomeCombinator<Integer> neatChromosomeCombinator = new NeatChromosomeCombinator<>(randomGenerator,
-				neatCombination);
+				neatCombination,
+				parentComparisonHandlerOpt.get());
 
 		final Connection connectionDisabled = Connection.of(0, 10, 0.2f, false, 0);
 		final Connection connectionEnabled = Connection.of(0, 10, 0.2f, true, 0);
@@ -77,8 +87,12 @@ public class NeatChromosomeCombinatorTest {
 				.reenableGeneInheritanceThresold(reEnableGene ? 1.0d : 0.0d)
 				.build();
 
+		final ParentComparisonHandlerLocator parentComparisonHandlerLocator = new ParentComparisonHandlerLocator();
+		final Optional<ParentComparisonHandler> parentComparisonHandlerOpt = parentComparisonHandlerLocator
+				.find(neatCombination.parentComparisonPolicy());
 		final NeatChromosomeCombinator<Integer> neatChromosomeCombinator = new NeatChromosomeCombinator<>(randomGenerator,
-				neatCombination);
+				neatCombination,
+				parentComparisonHandlerOpt.get());
 
 		final var neatChromosomeA = new NeatChromosome(3,
 				3,
