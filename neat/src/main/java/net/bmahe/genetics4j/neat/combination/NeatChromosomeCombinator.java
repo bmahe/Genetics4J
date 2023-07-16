@@ -18,13 +18,17 @@ import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.spec.AbstractEAConfiguration;
 import net.bmahe.genetics4j.neat.Connection;
 import net.bmahe.genetics4j.neat.chromosomes.NeatChromosome;
+import net.bmahe.genetics4j.neat.combination.parentcompare.ChosenOtherChromosome;
+import net.bmahe.genetics4j.neat.combination.parentcompare.ParentComparisonHandler;
 import net.bmahe.genetics4j.neat.spec.combination.NeatCombination;
+import net.bmahe.genetics4j.neat.spec.combination.parentcompare.ParentComparisonPolicy;
 
 public class NeatChromosomeCombinator<T extends Comparable<T>> implements ChromosomeCombinator<T> {
 	public static final Logger logger = LogManager.getLogger(NeatChromosomeCombinator.class);
 
 	private final RandomGenerator randomGenerator;
 	private final NeatCombination neatCombination;
+	private final ParentComparisonHandler parentComparisonHandler;
 
 	private boolean linksCacheContainsConnection(final Map<Integer, Set<Integer>> linksCache,
 			final Connection connection) {
@@ -63,12 +67,15 @@ public class NeatChromosomeCombinator<T extends Comparable<T>> implements Chromo
 		return shouldReEnable;
 	}
 
-	public NeatChromosomeCombinator(final RandomGenerator _randomGenerator, final NeatCombination _neatCombination) {
+	public NeatChromosomeCombinator(final RandomGenerator _randomGenerator, final NeatCombination _neatCombination,
+			final ParentComparisonHandler _parentComparisonHandler) {
 		Validate.notNull(_randomGenerator);
 		Validate.notNull(_neatCombination);
+		Validate.notNull(_parentComparisonHandler);
 
 		this.randomGenerator = _randomGenerator;
 		this.neatCombination = _neatCombination;
+		this.parentComparisonHandler = _parentComparisonHandler;
 	}
 
 	@Override
@@ -86,15 +93,13 @@ public class NeatChromosomeCombinator<T extends Comparable<T>> implements Chromo
 		final NeatChromosome secondNeatChromosome = (NeatChromosome) secondChromosome;
 		final Comparator<T> fitnessComparator = eaConfiguration.fitnessComparator();
 		final double inheritanceThresold = neatCombination.inheritanceThresold();
-
-		NeatChromosome bestChromosome = firstNeatChromosome;
-		NeatChromosome worstChromosome = secondNeatChromosome;
+		final ParentComparisonPolicy parentComparisonPolicy = neatCombination.parentComparisonPolicy();
 
 		final int fitnessComparison = fitnessComparator.compare(firstParentFitness, secondParentFitness);
-		if (fitnessComparison < 0) {
-			bestChromosome = secondNeatChromosome;
-			worstChromosome = firstNeatChromosome;
-		}
+		final ChosenOtherChromosome comparedChromosomes = parentComparisonHandler
+				.compare(parentComparisonPolicy, firstNeatChromosome, secondNeatChromosome, fitnessComparison);
+		final NeatChromosome bestChromosome = comparedChromosomes.chosen();
+		final NeatChromosome worstChromosome = comparedChromosomes.other();
 
 		final List<Connection> combinedConnections = new ArrayList<>();
 		final Map<Integer, Set<Integer>> linksCache = new HashMap<>();

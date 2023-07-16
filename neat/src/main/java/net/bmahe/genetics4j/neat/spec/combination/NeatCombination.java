@@ -4,8 +4,8 @@ import org.apache.commons.lang3.Validate;
 import org.immutables.value.Value;
 
 import net.bmahe.genetics4j.core.spec.combination.CombinationPolicy;
-import net.bmahe.genetics4j.core.spec.replacement.ImmutableGenerationalReplacement;
-import net.bmahe.genetics4j.core.spec.replacement.GenerationalReplacement.Builder;
+import net.bmahe.genetics4j.neat.spec.combination.parentcompare.ParentComparisonPolicy;
+import net.bmahe.genetics4j.neat.spec.combination.parentcompare.FitnessComparison;
 
 @Value.Immutable
 public interface NeatCombination extends CombinationPolicy {
@@ -31,16 +31,23 @@ public interface NeatCombination extends CombinationPolicy {
 	}
 
 	/**
-	 * If a gene is disabled in either parent, there is a chance it will get
-	 * re-enabled if it is enabled in either parent.
+	 * {@return If a gene is disabled in either parent, there is a chance it will
+	 * get re-enabled if it is enabled in either parent.
 	 * <br/>
-	 * This setting configures that threshold
+	 * This setting configures that threshold}
 	 * 
-	 * @return
 	 */
 	@Value.Default
 	default public double reenableGeneInheritanceThresold() {
 		return DEFAULT_REENABLE_GENE_INHERITANCE_THRESHOLD;
+	}
+
+	/**
+	 * {@return The policy used to compare parents. Defaults to fitness comparison.}
+	 */
+	@Value.Default
+	default public ParentComparisonPolicy parentComparisonPolicy() {
+		return FitnessComparison.build();
 	}
 
 	@Value.Check

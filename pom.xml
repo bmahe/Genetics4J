@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.bmahe.genetics4j</groupId>
@@ -69,6 +71,7 @@
 		<maven.pmd.plugin>3.21.0</maven.pmd.plugin>
 		<maven.project.info.reports.plugin.version>3.4.3</maven.project.info.reports.plugin.version>
 		<maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
+		<maven.serviceloader.plugin>1.4.0</maven.serviceloader.plugin>
 		<maven.source.plugin.version>3.3.0</maven.source.plugin.version>
 		<maven.site.plugin.version>3.12.1</maven.site.plugin.version>
 		<maven.surefire.plugin.version>3.1.0</maven.surefire.plugin.version>
@@ -309,6 +312,19 @@
 				</plugin>
 
 				<plugin>
+					<groupId>eu.somatik.serviceloader-maven-plugin</groupId>
+					<artifactId>serviceloader-maven-plugin</artifactId>
+					<version>${maven.serviceloader.plugin}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>generate</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>${maven.site.plugin.version}</version>
 					<executions>
@@ -328,7 +344,8 @@
 								<source-highlighter>coderay</source-highlighter>
 								<coderay-css>style</coderay-css>
 								<icons>font</icons>
-								<project-recommended-version>${project.recommended.version}</project-recommended-version>
+								<project-recommended-version>
+									${project.recommended.version}</project-recommended-version>
 								<outdir>${project.build.directory}/site/docs</outdir>
 							</attributes>
 							<requires>
@@ -608,18 +625,21 @@
 		</site>
 		<repository>
 			<id>gitlab-maven</id>
-			<url>https://gitlab.com/api/v4/projects/${gitlab.project.id}/packages/maven</url>
+			<url>
+				https://gitlab.com/api/v4/projects/${gitlab.project.id}/packages/maven</url>
 		</repository>
 		<snapshotRepository>
 			<id>gitlab-maven</id>
-			<url>https://gitlab.com/api/v4/projects/${gitlab.project.id}/packages/maven</url>
+			<url>
+				https://gitlab.com/api/v4/projects/${gitlab.project.id}/packages/maven</url>
 		</snapshotRepository>
 	</distributionManagement>
 
 	<repositories>
 		<repository>
 			<id>gitlab-maven</id>
-			<url>https://gitlab.com/api/v4/projects/${gitlab.project.id}/packages/maven</url>
+			<url>
+				https://gitlab.com/api/v4/projects/${gitlab.project.id}/packages/maven</url>
 		</repository>
 	</repositories>
 </project>
