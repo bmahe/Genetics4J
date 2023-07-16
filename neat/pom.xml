@@ -72,6 +72,7 @@
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
 			</plugin>
+
 			<plugin>
 				<groupId>eu.somatik.serviceloader-maven-plugin</groupId>
 				<artifactId>serviceloader-maven-plugin</artifactId>

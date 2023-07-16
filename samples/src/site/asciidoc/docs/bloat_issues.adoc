@@ -242,12 +242,13 @@ However I noticed a definitive improvement in the results with this approach as 
 Removing duplicates helps applying continuous pressure from the front and reducing the impact of close but not identical individuals.
 
 
-Also of note that it is easy to add support for MOO by enriching the _EAExecutionContext_:
+The execution context is created through a helper class:
 [source,java,indent=0]
 ----
 include::{sourcedir}/net/bmahe/genetics4j/samples/symbolicregression/SymbolicRegressionWithMOO.java[tags=eae_moo]
 ----
 
+Also of note that it is easy to add support for MOO as the relevant code is automatically loaded and made available as long as it can be located on the classpath.
 
 Here are some plots of an execution:
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
+import java.util.ServiceLoader;
 import java.util.random.RandomGenerator;
 
 import org.immutables.value.Value;
@@ -75,8 +75,9 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 				new PickFirstParentHandler<T>());
 	}
 
-	public abstract List<Function<AbstractEAExecutionContext<T>, ChromosomeCombinatorHandler<T>>> chromosomeCombinatorHandlerFactories();
+	public abstract List<ChromosomeCombinatorHandlerFactory<T>> chromosomeCombinatorHandlerFactories();
 
+	@SuppressWarnings("unchecked")
 	@Value.Derived
 	public List<ChromosomeCombinatorHandler<T>> chromosomeCombinatorHandlers() {
 
@@ -89,6 +90,15 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 
 		chromosomeCombinatorHandlerFactories().stream()
 				.map(factory -> factory.apply(this))
+				.forEach(cch -> chromosomeCombinatorHandlers.add(cch));
+
+		@SuppressWarnings("rawtypes")
+		final ServiceLoader<ChromosomeCombinatorHandlerFactory> serviceLoader = ServiceLoader
+				.load(ChromosomeCombinatorHandlerFactory.class);
+
+		serviceLoader.stream()
+				.map(provider -> provider.get())
+				.map(factory -> (ChromosomeCombinatorHandler<T>) factory.apply(this))
 				.forEach(cch -> chromosomeCombinatorHandlers.add(cch));
 
 		return Collections.unmodifiableList(chromosomeCombinatorHandlers);
@@ -107,8 +117,9 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 				new SelectAllPolicyHandler<T>());
 	}
 
-	public abstract List<Function<AbstractEAExecutionContext<T>, SelectionPolicyHandler<T>>> selectionPolicyHandlerFactories();
+	public abstract List<SelectionPolicyHandlerFactory<T>> selectionPolicyHandlerFactories();
 
+	@SuppressWarnings("unchecked")
 	@Value.Derived
 	public List<SelectionPolicyHandler<T>> selectionPolicyHandlers() {
 
@@ -122,6 +133,15 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 		selectionPolicyHandlerFactories().stream()
 				.map(factory -> factory.apply(this))
 				.forEach(sph -> selectionPolicyHandlers.add(sph));
+
+		@SuppressWarnings("rawtypes")
+		final ServiceLoader<SelectionPolicyHandlerFactory> serviceLoader = ServiceLoader
+				.load(SelectionPolicyHandlerFactory.class);
+
+		serviceLoader.stream()
+				.map(provider -> provider.get())
+				.map(factory -> (SelectionPolicyHandler<T>) factory.apply(this))
+				.forEach(cch -> selectionPolicyHandlers.add(cch));
 
 		return Collections.unmodifiableList(selectionPolicyHandlers);
 	}
@@ -137,8 +157,9 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 				new CreepMutationPolicyHandler<T>(randomGenerator()));
 	}
 
-	public abstract List<Function<AbstractEAExecutionContext<T>, MutationPolicyHandler<T>>> mutationPolicyHandlerFactories();
+	public abstract List<MutationPolicyHandlerFactory<T>> mutationPolicyHandlerFactories();
 
+	@SuppressWarnings("unchecked")
 	@Value.Derived
 	public List<MutationPolicyHandler<T>> mutationPolicyHandlers() {
 
@@ -152,6 +173,15 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 		mutationPolicyHandlerFactories().stream()
 				.map(factory -> factory.apply(this))
 				.forEach(mph -> mutationPolicyHandlers.add(mph));
+
+		@SuppressWarnings("rawtypes")
+		final ServiceLoader<MutationPolicyHandlerFactory> serviceLoader = ServiceLoader
+				.load(MutationPolicyHandlerFactory.class);
+
+		serviceLoader.stream()
+				.map(provider -> provider.get())
+				.map(factory -> (MutationPolicyHandler<T>) factory.apply(this))
+				.forEach(cch -> mutationPolicyHandlers.add(cch));
 
 		return Collections.unmodifiableList(mutationPolicyHandlers);
 	}
@@ -175,6 +205,7 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 
 	public abstract List<ChromosomeMutationHandlerFactory<T>> chromosomeMutationPolicyHandlerFactories();
 
+	@SuppressWarnings("unchecked")
 	@Value.Derived
 	public List<ChromosomeMutationHandler<? extends Chromosome>> chromosomeMutationPolicyHandlers() {
 
@@ -189,6 +220,15 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 				.map(factory -> factory.apply(this))
 				.forEach(cmh -> chromosomeMutationPolicyHandlers.add(cmh));
 
+		@SuppressWarnings("rawtypes")
+		final ServiceLoader<ChromosomeMutationHandlerFactory> serviceLoader = ServiceLoader
+				.load(ChromosomeMutationHandlerFactory.class);
+
+		serviceLoader.stream()
+				.map(provider -> provider.get())
+				.map(factory -> (ChromosomeMutationHandler<? extends Chromosome>) factory.apply(this))
+				.forEach(cch -> chromosomeMutationPolicyHandlers.add(cch));
+
 		return Collections.unmodifiableList(chromosomeMutationPolicyHandlers);
 	}
 
@@ -199,8 +239,9 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 		return List.of(new ElitismReplacementStrategyHandler<>(), new GenerationalReplacementStrategyHandler<>());
 	}
 
-	public abstract List<Function<AbstractEAExecutionContext<T>, ReplacementStrategyHandler<T>>> replacementStrategyHandlerFactories();
+	public abstract List<ReplacementStrategyHandlerFactory<T>> replacementStrategyHandlerFactories();
 
+	@SuppressWarnings("unchecked")
 	@Value.Derived
 	public List<ReplacementStrategyHandler<T>> replacementStrategyHandlers() {
 		final List<ReplacementStrategyHandler<T>> replacementStrategyHandlers = new ArrayList<>();
@@ -213,6 +254,15 @@ public abstract class AbstractEAExecutionContext<T extends Comparable<T>> {
 		replacementStrategyHandlerFactories().stream()
 				.map(factory -> factory.apply(this))
 				.forEach(esh -> replacementStrategyHandlers.add(esh));
+
+		@SuppressWarnings("rawtypes")
+		final ServiceLoader<ReplacementStrategyHandlerFactory> serviceLoader = ServiceLoader
+				.load(ReplacementStrategyHandlerFactory.class);
+
+		serviceLoader.stream()
+				.map(provider -> provider.get())
+				.map(factory -> (ReplacementStrategyHandler<T>) factory.apply(this))
+				.forEach(cch -> replacementStrategyHandlers.add(cch));
 
 		return Collections.unmodifiableList(replacementStrategyHandlers);
 	}

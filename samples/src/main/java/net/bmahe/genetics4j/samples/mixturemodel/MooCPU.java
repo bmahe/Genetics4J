@@ -42,7 +42,6 @@ import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.extras.evolutionlisteners.CSVEvolutionListener;
 import net.bmahe.genetics4j.extras.evolutionlisteners.ColumnExtractor;
 import net.bmahe.genetics4j.moo.FitnessVector;
-import net.bmahe.genetics4j.moo.MOOEAExecutionContexts;
 import net.bmahe.genetics4j.moo.nsga2.spec.NSGA2Selection;
 import net.bmahe.genetics4j.moo.nsga2.spec.TournamentNSGA2Selection;
 
@@ -167,7 +166,6 @@ public class MooCPU {
 										.get(1))));
 
 		final var eaExecutionContextBuilder = EAExecutionContexts.<FitnessVector<Float>>standard();
-		MOOEAExecutionContexts.enrichWithMOO(eaExecutionContextBuilder);
 		eaExecutionContextBuilder.populationSize(250)
 				.addEvolutionListeners(csvEvolutionListener,
 						EvolutionListeners.<FitnessVector<Float>>ofLogTopN(logger,
