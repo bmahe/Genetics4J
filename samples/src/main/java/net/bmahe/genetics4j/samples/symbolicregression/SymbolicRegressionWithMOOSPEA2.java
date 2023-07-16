@@ -47,7 +47,6 @@ import net.bmahe.genetics4j.gp.spec.mutation.ProgramRandomPrune;
 import net.bmahe.genetics4j.gp.utils.ProgramUtils;
 import net.bmahe.genetics4j.gp.utils.TreeNodeUtils;
 import net.bmahe.genetics4j.moo.FitnessVector;
-import net.bmahe.genetics4j.moo.MOOEAExecutionContexts;
 import net.bmahe.genetics4j.moo.nsga2.spec.TournamentNSGA2Selection;
 import net.bmahe.genetics4j.moo.spea2.spec.replacement.SPEA2Replacement;
 
@@ -132,7 +131,6 @@ public class SymbolicRegressionWithMOOSPEA2 {
 		// end::ea_config[]
 
 		final var eaExecutionContextBuilder = GPEAExecutionContexts.<FitnessVector<Double>>forGP(random);
-		MOOEAExecutionContexts.enrichWithMOO(eaExecutionContextBuilder);
 		eaExecutionContextBuilder.populationSize(populationSize);
 		eaExecutionContextBuilder.numberOfPartitions(Math.max(1,
 				Runtime.getRuntime()

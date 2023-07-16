@@ -56,7 +56,7 @@ public class GPEAExecutionContexts {
 				gsd -> new ProgramRulesApplicatorPolicyHandler<>(),
 				gsd -> new TrimTreePolicyHandler<>(randomGenerator, programGenerator));
 
-		builder.addChromosomeCombinatorHandlerFactories(gsd -> new ProgramRandomCombineHandler(gsd.randomGenerator()));
+		builder.addChromosomeCombinatorHandlerFactories(gsd -> new ProgramRandomCombineHandler<T>(gsd.randomGenerator()));
 
 		final var chromosomeFactoryProviderBuilder = ImmutableChromosomeFactoryProvider.builder();
 		chromosomeFactoryProviderBuilder.randomGenerator(randomGenerator);

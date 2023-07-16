@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -15,7 +17,8 @@
 	<packaging>jar</packaging>
 
 	<name>Multi-Objective Optimization</name>
-	<description>Library for supporting Multi-Objective Optimization in the context of Genetic Algorithms</description>
+	<description>Library for supporting Multi-Objective Optimization in the
+		context of Genetic Algorithms</description>
 
 	<dependencies>
 		<dependency>
@@ -69,6 +72,21 @@
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>eu.somatik.serviceloader-maven-plugin</groupId>
+				<artifactId>serviceloader-maven-plugin</artifactId>
+				<configuration>
+					<services>
+						<param>
+							net.bmahe.genetics4j.core.spec.ReplacementStrategyHandlerFactory
+						</param>
+						<param>
+							net.bmahe.genetics4j.core.spec.SelectionPolicyHandlerFactory
+						</param>
+					</services>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -40,7 +40,6 @@ import net.bmahe.genetics4j.core.spec.statistics.distributions.NormalDistributio
 import net.bmahe.genetics4j.core.termination.Terminations;
 import net.bmahe.genetics4j.extras.evolutionlisteners.CSVEvolutionListener;
 import net.bmahe.genetics4j.extras.evolutionlisteners.ColumnExtractor;
-import net.bmahe.genetics4j.moo.MOOEAExecutionContexts;
 
 public class SingleObjectiveMethod {
 	final static public Logger logger = LogManager.getLogger(SingleObjectiveMethod.class);
@@ -139,7 +138,6 @@ public class SingleObjectiveMethod {
 						ColumnExtractor.of("fitness", e -> e.fitness())));
 
 		final var eaExecutionContextBuilder = EAExecutionContexts.<Double>standard();
-		MOOEAExecutionContexts.enrichWithMOO(eaExecutionContextBuilder);
 		eaExecutionContextBuilder.populationSize(250)
 				.addEvolutionListeners(csvEvolutionListener, EvolutionListeners.ofLogTopN(logger, 5))
 				.build();
