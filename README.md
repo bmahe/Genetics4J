@@ -2,6 +2,7 @@ Genetics4j
 ==========
 
 [![pipeline status](https://gitlab.com/bmahe/genetics4j/badges/master/pipeline.svg)](https://gitlab.com/bmahe/genetics4j/-/commits/master)
+![Dynamic XML Badge](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F13863766%2Fjobs%2Fartifacts%2Fmaster%2Fraw%2Fsemgrep.xml%3Fjob%3Dsemgrep&query=%2Ftestsuites%2F%40failures&label=Semgrep%20Finding&color=blue&link=https%3A%2F%2Fsemgrep.dev%2F)
 
 Genetics4j is an open source library for Evolutionary Algorithms. This includes Genetic Algorithm, Genetic Programming and more!
 
