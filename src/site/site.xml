@@ -25,6 +25,9 @@
 	</custom>
 	
 	<body>
+		<head>
+			${SITE_HEADER_EXTRA}
+		</head>
 		<menu ref="parent"  inherit="top"/>
 		<menu ref="modules" inherit="top"/>
 		<menu name="Documentation">
