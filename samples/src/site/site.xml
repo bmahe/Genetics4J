@@ -49,6 +49,7 @@
 				});
 			</script>
 		]]>
+		${SITE_HEADER_EXTRA}
 	</head>
 
 
