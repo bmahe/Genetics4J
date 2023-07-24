@@ -122,7 +122,7 @@ public class GPUFitnessEvaluator<T extends Comparable<T>> implements FitnessEval
 				.flatMap(platform -> {
 					final var platformId = platform.platformId();
 					final int numDevices = DeviceUtils.numDevices(platformId);
-					logger.trace("\tFound {} devices", numDevices);
+					logger.trace("\tPlatform {}: {} devices", platform.name(), numDevices);
 
 					final var deviceIds = DeviceUtils.getDeviceIds(platformId, numDevices);
 					return deviceIds.stream()
@@ -141,7 +141,10 @@ public class GPUFitnessEvaluator<T extends Comparable<T>> implements FitnessEval
 		if (logger.isTraceEnabled()) {
 			logger.trace("============================");
 			logger.trace("Selected devices:");
-			selectedPlatformToDevice.forEach(pd -> logger.trace("{}", pd));
+			selectedPlatformToDevice.forEach(pd -> {
+				logger.trace("{}", pd.getLeft());
+				logger.trace("\t{}", pd.getRight());
+			});
 			logger.trace("============================");
 		}
 
