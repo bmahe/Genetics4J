@@ -267,9 +267,6 @@ public class EASystem<T extends Comparable<T>> {
 
 		fitnessEvaluator.preEvaluation();
 
-		final int initialPopulationSize = eaExecutionContext.populationSize();
-		logger.info("Generating initial population of {} individuals", initialPopulationSize);
-
 		long generation = 0;
 		final List<Genotype> genotypes = initializePopulation();
 
