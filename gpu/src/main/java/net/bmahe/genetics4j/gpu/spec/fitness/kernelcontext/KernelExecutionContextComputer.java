@@ -8,7 +8,7 @@ import net.bmahe.genetics4j.gpu.opencl.OpenCLExecutionContext;
 @FunctionalInterface
 public interface KernelExecutionContextComputer {
 
-	KernelExecutionContext compute(final OpenCLExecutionContext openCLExecutionContext, final long generation,
-			final List<Genotype> genotypes);
+	KernelExecutionContext compute(final OpenCLExecutionContext openCLExecutionContext, final String kernelName,
+			final long generation, final List<Genotype> genotypes);
 
 }

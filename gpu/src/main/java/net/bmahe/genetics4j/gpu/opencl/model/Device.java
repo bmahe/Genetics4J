@@ -18,6 +18,8 @@ public interface Device {
 
 	String driverVersion();
 
+	int maxClockFrequency();
+
 	Set<DeviceType> deviceType();
 
 	Set<String> builtInKernels();
@@ -26,11 +28,11 @@ public interface Device {
 
 	int maxWorkItemDimensions();
 
-	int maxClockFrequency();
+	long maxWorkGroupSize();
+
+	long[] maxWorkItemSizes();
 
 	boolean imageSupport();
-
-	long maxWorkGroupSize();
 
 	int preferredVectorWidthFloat();
 

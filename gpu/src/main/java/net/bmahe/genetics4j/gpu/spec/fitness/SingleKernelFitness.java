@@ -127,7 +127,7 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 		}
 		final var kernelExecutionContextComputer = singleKernelFitnessDescriptor.kernelExecutionContextComputer();
 		final var kernelExecutionContext = kernelExecutionContextComputer
-				.compute(openCLExecutionContext, generation, genotypes);
+				.compute(openCLExecutionContext, kernelName, generation, genotypes);
 		kernelExecutionContexts.put(device, kernelExecutionContext);
 
 		final var mapData = staticData.get(device);
