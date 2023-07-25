@@ -36,6 +36,10 @@ public interface OpenCLExecutionContext {
 	@Value.Parameter
 	Map<String, KernelInfo> kernelInfos();
 
+	default KernelInfo kernelInfo(final String kernelName) {
+		return kernelInfos().get(kernelName);
+	}
+
 	public static class Builder extends ImmutableOpenCLExecutionContext.Builder {
 	}
 

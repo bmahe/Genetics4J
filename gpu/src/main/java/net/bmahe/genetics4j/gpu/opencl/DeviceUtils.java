@@ -56,11 +56,20 @@ public class DeviceUtils {
 		return new String(buffer, 0, buffer.length - 1);
 	}
 
+	public static long[] getDeviceInfoLongArray(final cl_device_id deviceId, final int parameter, final int size) {
+		Validate.notNull(deviceId);
+		Validate.isTrue(size > 0);
+
+		final long[] values = new long[size];
+		CL.clGetDeviceInfo(deviceId, parameter, Sizeof.cl_long * size, Pointer.to(values), null);
+
+		return values;
+	}
+
 	public static long getDeviceInfoLong(final cl_device_id deviceId, final int parameter) {
 		Validate.notNull(deviceId);
 
-		final long[] values = new long[1];
-		CL.clGetDeviceInfo(deviceId, parameter, Sizeof.cl_long, Pointer.to(values), null);
+		final long[] values = getDeviceInfoLongArray(deviceId, parameter, 1);
 
 		return values[0];
 	}

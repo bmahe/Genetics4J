@@ -82,6 +82,10 @@ public class DeviceReader {
 				CL.CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);
 		deviceBuilder.preferredVectorWidthFloat(preferredVectorWidthFloat);
 
+		final long[] maxWorkItemSizes = DeviceUtils
+				.getDeviceInfoLongArray(deviceId, CL.CL_DEVICE_MAX_WORK_ITEM_SIZES, maxWorkItemDimensions);
+		deviceBuilder.maxWorkItemSizes(maxWorkItemSizes);
+
 		return deviceBuilder.build();
 	}
 }

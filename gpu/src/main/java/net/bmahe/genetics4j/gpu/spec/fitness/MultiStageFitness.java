@@ -99,7 +99,7 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 
 			final CLData clStaticData = staticDataMap.get(argumentName);
 
-			logger.trace("[{}] Loading static data with name {} for index {}", device.name(), argumentName, argumentIndex);
+			logger.trace("[{}] Index {} - Loading static data with name {}", device.name(), argumentIndex, argumentName);
 
 			CL.clSetKernelArg(kernel, argumentIndex, Sizeof.cl_mem, Pointer.to(clStaticData.clMem()));
 		}
@@ -128,7 +128,7 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 
 				final var size = localMemoryAllocator
 						.load(openCLExecutionContext, kernelExecutionContext, generation, genotypes);
-				logger.trace("[{}] Setting local data for index {} with size of {}", device.name(), argumentIdx, size);
+				logger.trace("[{}] Index {} - Setting local data with size of {}", device.name(), argumentIdx, size);
 
 				CL.clSetKernelArg(kernel, argumentIdx, size, null);
 			}
@@ -161,12 +161,11 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 				if (data.put(argumentIdx, clDdata) != null) {
 					throw new IllegalArgumentException("Multiple data configured for index " + argumentIdx);
 				}
-				logger.trace("[{}] Loading data for index {}", device.name(), argumentIdx);
+				logger.trace("[{}] Index {} - Loading data of size {}", device.name(), argumentIdx, clDdata.size());
 
 				CL.clSetKernelArg(kernel, argumentIdx, Sizeof.cl_mem, Pointer.to(clDdata.clMem()));
 			}
 		}
-
 	}
 
 	@Override
@@ -236,7 +235,7 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 				 */
 				final var kernelExecutionContextComputer = stageDescriptor.kernelExecutionContextComputer();
 				final var kernelExecutionContext = kernelExecutionContextComputer
-						.compute(openCLExecutionContext, generation, genotypes);
+						.compute(openCLExecutionContext, kernelName, generation, genotypes);
 
 				/**
 				 * Map previous results to new arguments
@@ -268,6 +267,10 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 										"Could not find previous argument with index " + oldKeyArgument);
 							}
 
+							logger.trace("[{}] Index {} - Reuse previous result that had index {}",
+									device.name(),
+									newKeyArgument,
+									oldKeyArgument);
 							CL.clSetKernelArg(kernel, newKeyArgument, Sizeof.cl_mem, Pointer.to(previousResultData.clMem()));
 							reusedArguments.add(previousResultData);
 						}
@@ -288,6 +291,14 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 
 								throw new IllegalArgumentException(
 										"Could not find previous argument with index " + oldKeyArgument);
+							}
+
+							if (logger.isTraceEnabled()) {
+								logger.trace("[{}] Index {} - Setting previous result size of {} of previous argument index {}",
+										device.name(),
+										newKeyArgument,
+										previousResultData.size(),
+										oldKeyArgument);
 							}
 
 							CL.clSetKernelArg(kernel,
@@ -329,7 +340,13 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 							throw new IllegalArgumentException(
 									"Multiple result allocators configured for index " + argumentIdx);
 						}
-						logger.trace("[{}] Preparing result data memory for index {}", device.name(), argumentIdx);
+						if (logger.isTraceEnabled()) {
+							logger.trace("[{}] Index {} - Allocate result data memory of type {} and size {}",
+									device.name(),
+									argumentIdx,
+									clDdata.clType(),
+									clDdata.size());
+						}
 
 						CL.clSetKernelArg(kernel, argumentIdx, Sizeof.cl_mem, Pointer.to(clDdata.clMem()));
 					}
@@ -362,7 +379,7 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 							null,
 							null);
 
-					//CL.clFinish(openCLExecutionContext.clCommandQueue());
+					// CL.clFinish(openCLExecutionContext.clCommandQueue());
 
 					final long endTime = System.nanoTime();
 					final long duration = endTime - startTime;
