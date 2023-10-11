@@ -62,6 +62,7 @@
 			<item name="Clustering" href="docs/clustering.html" />
 			<item name="Mixture Models on GPU" href="docs/mixture_models_on_gpu.html" />
 			<item name="NEAT - Implementing XOR" href="docs/neat_xor.html" />
+			<item name="Evolutionary Painting" href="docs/evolutionary_painting.html" />
 		</menu>
 		<menu ref="reports" inherit="top"/>
 		<footer />
