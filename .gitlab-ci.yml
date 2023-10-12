@@ -28,8 +28,8 @@ stages:
   - package
   - deploy
 
-# This template uses jdk17 for verifying and deploying images
-image: maven:3.9.4-eclipse-temurin-17
+# This template uses jdk21 for verifying and deploying images
+image: maven:3.9.4-amazoncorretto-21
 
 # Cache downloaded dependencies and plugins between builds.
 # To keep cache across branches add 'key: "$CI_JOB_NAME"'
