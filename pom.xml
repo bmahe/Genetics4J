@@ -45,7 +45,7 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 
@@ -107,11 +107,11 @@
 
 	<profiles>
 
-		<!-- Update once pitest supports java 21 -->
+		<!-- Update once pitest supports java 22 -->
 		<profile>
 			<id>pitest-java</id>
 			<activation>
-				<jdk>21</jdk>
+				<jdk>22</jdk>
 			</activation>
 			<properties>
 				<skipPITests>true</skipPITests>
