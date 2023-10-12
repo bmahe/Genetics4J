@@ -1,5 +1,6 @@
 package net.bmahe.genetics4j.core.util;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 
@@ -13,66 +14,64 @@ public class DistributionUtils {
 
 	public static Supplier<Double> distributionValueSupplier(final RandomGenerator randomGenerator,
 			final double minValue, final double maxValue, final Distribution distribution) {
-		Validate.notNull(randomGenerator);
-		Validate.notNull(distribution);
+		Objects.requireNonNull(randomGenerator);
+		Objects.requireNonNull(distribution);
 		Validate.isTrue(minValue <= maxValue);
 
-		if (distribution instanceof UniformDistribution) {
-			final double valueRange = maxValue - minValue;
+		return switch (distribution) {
+			case UniformDistribution ud -> {
+				final double valueRange = maxValue - minValue;
+				yield () -> minValue + randomGenerator.nextDouble() * valueRange;
+			}
+			case NormalDistribution normalDistribution -> {
+				final double mean = normalDistribution.mean();
+				final double standardDeviation = normalDistribution.standardDeviation();
 
-			return () -> minValue + randomGenerator.nextDouble() * valueRange;
-		}
+				yield () -> {
+					final double value = mean + randomGenerator.nextGaussian() * standardDeviation;
 
-		if (distribution instanceof NormalDistribution) {
-			final var normalDistribution = (NormalDistribution) distribution;
-			final double mean = normalDistribution.mean();
-			final double standardDeviation = normalDistribution.standardDeviation();
+					if (value < minValue) {
+						return minValue;
+					} else if (value > maxValue) {
+						return maxValue;
+					}
 
-			return () -> {
-				final double value = mean + randomGenerator.nextGaussian() * standardDeviation;
-
-				if (value < minValue) {
-					return minValue;
-				} else if (value > maxValue) {
-					return maxValue;
-				}
-
-				return value;
-			};
-
-		}
-
-		throw new IllegalArgumentException(String.format("Distribution not supported: %s", distribution));
+					return value;
+				};
+			}
+			default -> throw new IllegalArgumentException(String.format("Distribution not supported: %s", distribution));
+		};
 	}
 
 	public static Supplier<Float> distributionFloatValueSupplier(final RandomGenerator randomGenerator,
 			final float minValue, final float maxValue, final Distribution distribution) {
-		Validate.notNull(randomGenerator);
-		Validate.notNull(distribution);
+		Objects.requireNonNull(randomGenerator);
+		Objects.requireNonNull(distribution);
 		Validate.isTrue(minValue <= maxValue);
 
-		if (distribution instanceof UniformDistribution) {
-			final float valueRange = maxValue - minValue;
+		return switch (distribution) {
+			case UniformDistribution ud -> {
+				final float valueRange = maxValue - minValue;
 
-			return () -> minValue + randomGenerator.nextFloat() * valueRange;
-		} else if (distribution instanceof NormalDistribution) {
-			final var normalDistribution = (NormalDistribution) distribution;
-			final double mean = normalDistribution.mean();
-			final double standardDeviation = normalDistribution.standardDeviation();
+				yield () -> minValue + randomGenerator.nextFloat() * valueRange;
+			}
+			case NormalDistribution normalDistribution -> {
+				final double mean = normalDistribution.mean();
+				final double standardDeviation = normalDistribution.standardDeviation();
 
-			return () -> {
-				final float value = (float) (mean + randomGenerator.nextGaussian() * standardDeviation);
+				yield () -> {
+					final float value = (float) (mean + randomGenerator.nextGaussian() * standardDeviation);
 
-				if (value < minValue) {
-					return minValue;
-				} else if (value > maxValue) {
-					return maxValue;
-				}
+					if (value < minValue) {
+						return minValue;
+					} else if (value > maxValue) {
+						return maxValue;
+					}
 
-				return value;
-			};
-		}
-
-		throw new IllegalArgumentException(String.format("Distribution not supported: %s", distribution));
+					return value;
+				};
+			}
+			default -> throw new IllegalArgumentException(String.format("Distribution not supported: %s", distribution));
+		};
 	}
 }
