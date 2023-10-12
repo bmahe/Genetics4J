@@ -50,7 +50,7 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 
 		<maven.asciidoctor.maven.plugin>2.2.4</maven.asciidoctor.maven.plugin>
-		<maven.asciidoctorj.diagram.version>2.2.11</maven.asciidoctorj.diagram.version>
+		<maven.asciidoctorj.diagram.version>2.2.13</maven.asciidoctorj.diagram.version>
 		<maven.changelog.plugin.version>2.3</maven.changelog.plugin.version>
 		<maven.changes.plugin.version>2.12.1</maven.changes.plugin.version>
 		<maven.clean.plugin.version>3.3.1</maven.clean.plugin.version>
@@ -64,7 +64,7 @@
 		<maven.install.plugin.version>3.1.1</maven.install.plugin.version>
 		<maven.jacoco.plugin.version>0.8.10</maven.jacoco.plugin.version>
 		<maven.jar.plugin.verison>3.3.0</maven.jar.plugin.verison>
-		<maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
+		<maven.javadoc.plugin.version>3.6.0</maven.javadoc.plugin.version>
 		<maven.jxr.plugin.version>3.3.0</maven.jxr.plugin.version>
 		<maven.pmd.plugin>3.21.0</maven.pmd.plugin>
 		<maven.project.info.reports.plugin.version>3.4.5</maven.project.info.reports.plugin.version>
@@ -74,23 +74,23 @@
 		<maven.site.plugin.version>3.12.1</maven.site.plugin.version>
 		<maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
 		<maven.taglist.plugin>3.0.0</maven.taglist.plugin>
-		<maven.versions.plugin>2.16.0</maven.versions.plugin>
+		<maven.versions.plugin>2.16.1</maven.versions.plugin>
 		<umldoclet.version>2.0.2</umldoclet.version>
-		<pitest.plugin.version>1.14.2</pitest.plugin.version>
+		<pitest.plugin.version>1.15.1</pitest.plugin.version>
 		<pitest.junit5.plugin.version>1.2.0</pitest.junit5.plugin.version>
 
 		<apache.commons.cli.version>1.5.0</apache.commons.cli.version>
 		<apache.commons.collections.version>4.4</apache.commons.collections.version>
 		<apache.commons.csv.version>1.10.0</apache.commons.csv.version>
-		<apache.commons.io.version>2.13.0</apache.commons.io.version>
-		<apache.commons.lang.version>3.12.0</apache.commons.lang.version>
+		<apache.commons.io.version>2.14.0</apache.commons.io.version>
+		<apache.commons.lang.version>3.13.0</apache.commons.lang.version>
 		<apache.commons.math.version>3.6.1</apache.commons.math.version>
 		<apache.log4j.version>2.20.0</apache.log4j.version>
-		<immutables.version>2.9.3</immutables.version>
+		<immutables.version>2.10.0</immutables.version>
 		<jackson.version>2.13.1</jackson.version>
 		<jocl.version>2.0.5</jocl.version>
-		<junit.version>5.9.3</junit.version>
-		<mockito.version>5.4.0</mockito.version>
+		<junit.version>5.10.0</junit.version>
+		<mockito.version>5.6.0</mockito.version>
 
 		<skipPITests>${skipITs}</skipPITests>
 	</properties>
