@@ -42,7 +42,7 @@ As mentioned in the <<section_overview>>, we want to model our painting as a ser
 
 Since the paint strokes are additive, we can work on a subset of the strokes at a time and make our way to the final painting that way. This means we will define iterations of N strokes that we will optimize and then move on to the next iteration until satisfied or some limits are reached (ex: number of strokes, fitness reached or unable to improve, etc.). Thus each iteration will run a full genetic algorithm optimization on the current subset of strokes and will build upon the generated painting from the previous iteration.
 
-[graphviz, svg]
+[graphviz, "evolutionary_painting-diagram-iterations", format=svg]
 ....
 digraph G {
 	rankdir=LR;

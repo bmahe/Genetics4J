@@ -566,6 +566,7 @@
 				</reportSets>
 			</plugin>
 
+<!-- TODO: renable pmd when it supports java 21 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
@@ -582,6 +583,8 @@
 					</formats>
 				</configuration>
 			</plugin>
+-->
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
