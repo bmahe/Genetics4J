@@ -14,7 +14,6 @@ variables:
 # See https://gitlab.com/help/user/application_security/index.md
 include:
   - template: Dependency-Scanning.gitlab-ci.yml
-  - template: License-Scanning.gitlab-ci.yml
   - template: SAST.gitlab-ci.yml
 
 spotbugs-sast:
