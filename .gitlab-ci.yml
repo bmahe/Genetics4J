@@ -14,12 +14,11 @@ variables:
 # See https://gitlab.com/help/user/application_security/index.md
 include:
   - template: Dependency-Scanning.gitlab-ci.yml
-  - template: License-Scanning.gitlab-ci.yml
   - template: SAST.gitlab-ci.yml
 
 spotbugs-sast:
   variables:
-    SAST_JAVA_VERSION: 17
+    SAST_JAVA_VERSION: 21
 
 stages:
   - build
@@ -28,8 +27,8 @@ stages:
   - package
   - deploy
 
-# This template uses jdk17 for verifying and deploying images
-image: maven:3.9.1-eclipse-temurin-17
+# This template uses jdk21 for verifying and deploying images
+image: maven:3.9.4-eclipse-temurin-21
 
 # Cache downloaded dependencies and plugins between builds.
 # To keep cache across branches add 'key: "$CI_JOB_NAME"'
@@ -71,11 +70,11 @@ build:
   script:
     - 'mvn $MAVEN_CLI_OPTS $JOB_MAVEN_OVERRIDE test -DskipPITests -Dmaven.javadoc.skip=true'
 
-# Validate merge requests using JDK17 - Temurin (default)
-validate:jdk17:
+# Validate merge requests using JDK21 - Temurin (default)
+validate:jdk21:
   <<: *validate
   cache:
-    key: "$CI_JOB_NAME-java17"
+    key: "$CI_JOB_NAME-java21"
   artifacts:
     paths:
       - core/target
@@ -87,39 +86,15 @@ validate:jdk17:
       - samples/target
     expire_in: 1 week
 
-# Validate merge requests using JDK17 - Amazon Corretto
-validate:jdk17-amazoncorretto:
+# Validate merge requests using JDK21 - Amazon Corretto
+validate:jdk21-amazoncorretto:
   <<: *validate
-  image: maven:3.9.1-amazoncorretto-17
+  image: maven:3.9.4-amazoncorretto-21
   cache:
-    key: "$CI_JOB_NAME-java17-amazoncorretto"
+    key: "$CI_JOB_NAME-java21-amazoncorretto"
   before_script:
     - yum install -y gnuplot graphviz
     - yum install -y python3 python3-pip
-
-# Validate merge requests using JDK17 - IBM Semeru
-validate:jdk17-ibm-semeru:
-  <<: *validate
-  image: maven:3.9.1-ibm-semeru-17-focal
-  cache:
-    key: "$CI_JOB_NAME-java17-ibm-semeru"
-  before_script:
-    - apt-get update -yqq
-    - apt-get install -yqq gnuplot graphviz
-    - apt-get install -yqq pocl-opencl-icd opencl-headers
-
-# Validate merge requests using JDK20 - Temurin
-validate:jdk20-temurin:
-  <<: *validate
-  image: maven:3.9.1-eclipse-temurin-20
-  cache:
-    key: "$CI_JOB_NAME-java19-temurin"
-  variables:
-    JOB_MAVEN_OVERRIDE: " -Djava.version=20 "
-  before_script:
-    - apt-get update -yqq
-    - apt-get install -yqq gnuplot graphviz
-    - apt-get install -yqq pocl-opencl-icd opencl-headers
 
 semgrep:
   stage: test
@@ -136,11 +111,12 @@ semgrep:
 .verify: &verify
   stage: verify
   cache:
-    key: "$CI_JOB_NAME-java17"
+    key: "$CI_JOB_NAME-java21-verify"
   before_script:
     - apt-get update -yqq
     - apt-get install -yqq gnuplot graphviz
     - apt-get install -yqq pocl-opencl-icd opencl-headers
+
 
 verify-core:
   <<: *verify

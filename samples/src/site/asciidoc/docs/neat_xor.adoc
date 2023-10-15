@@ -34,7 +34,7 @@ Therefore it is an ideal use case to explore.
 We want to implement a *XOR* gate, and as such will need 2 input nodes and 1 output node. We will also add a bias node that will always be set to 1.
 The networks will be fully connected upon initialization and look something like:
 
-[graphviz, svg]
+[graphviz,  "neat-xor", format=svg]
 ....
 digraph g {
 	rankdir=LR;
