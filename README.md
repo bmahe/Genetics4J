@@ -39,6 +39,7 @@ There are a few examples with this library. Namely:
 * [6 ways to handle your bloat issues](https://genetics4j.org/samples/docs/bloat_issues.html) where we explore different methods from the _Multi Objective Optimization_ field to find the best equation to represent a set of data points. This provides us a way to find a good trade-off between long and precise equations and shorter but less precise equations
 * [Fitness Sharing](https://genetics4j.org/samples/docs/fitness_sharing.html) where we present one technique to reduce the likelihood to get stuck in a local optimum and explore a great set of diverse solutions
 * [Impelementing XOR with NEAT](https://genetics4j.org/samples/docs/neat_xor.html) where we implement a XOR gate with NeuroEvolution of Augmenting Topologies (_NEAT_)
+* [Evolutionary Painting with GPUs](https://genetics4j.org/samples/docs/evolutionary_painting.html) where we use genetic algorithms to generate whole paintings. We also use GPUs for faster computations
 
 
 # License
