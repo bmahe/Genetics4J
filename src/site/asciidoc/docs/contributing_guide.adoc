@@ -22,7 +22,7 @@ Everything in this repository is licensed under the Apache License v2.0
 
 In order to build it, you will need:
 
-* Java >= 11
+* Java >= 21
 * Apache Maven 3
 
 === Coordination
