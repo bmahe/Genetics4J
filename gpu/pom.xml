@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>net.bmahe.genetics4j</groupId>
 		<artifactId>parent</artifactId>
-		<version>4.0-SNAPSHOT</version>
+		<version>4.0</version>
 	</parent>
 
 	<groupId>net.bmahe.genetics4j</groupId>
 	<artifactId>gpu</artifactId>
-	<version>4.0-SNAPSHOT</version>
+	<version>4.0</version>
 	<packaging>jar</packaging>
 
 	<name>GPU</name>
