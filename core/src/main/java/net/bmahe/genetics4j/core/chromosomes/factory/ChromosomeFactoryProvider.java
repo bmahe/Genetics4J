@@ -3,10 +3,10 @@ package net.bmahe.genetics4j.core.chromosomes.factory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.random.RandomGenerator;
 
-import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.immutables.value.Value;
@@ -50,7 +50,7 @@ public abstract class ChromosomeFactoryProvider {
 	}
 
 	public ChromosomeFactory<? extends Chromosome> provideChromosomeFactory(final ChromosomeSpec chromosomeSpec) {
-		Validate.notNull(chromosomeSpec);
+		Objects.requireNonNull(chromosomeSpec);
 
 		final List<ChromosomeFactory<? extends Chromosome>> chromosomeFactories = chromosomeFactories();
 
@@ -61,5 +61,9 @@ public abstract class ChromosomeFactoryProvider {
 				.findFirst()
 				.orElseThrow(() -> new IllegalStateException(
 						"Could not find a chromosome factory for chromosome spec: " + chromosomeSpec));
+	}
+
+	public static ImmutableChromosomeFactoryProvider.Builder builder() {
+		return ImmutableChromosomeFactoryProvider.builder();
 	}
 }
