@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 public class MultiIntCounterTest {
-	final static public Logger logger = LogManager.getLogger(MultiIntCounterTest.class);
+	public static final Logger logger = LogManager.getLogger(MultiIntCounterTest.class);
 
 	@Test
 	public void basicValidation() {

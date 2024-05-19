@@ -3,8 +3,7 @@ package net.bmahe.genetics4j.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
+import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
@@ -12,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.bmahe.genetics4j.core.chromosomes.Chromosome;
-import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactory;
 import net.bmahe.genetics4j.core.chromosomes.factory.ChromosomeFactoryProvider;
 import net.bmahe.genetics4j.core.combination.ChromosomeCombinator;
 import net.bmahe.genetics4j.core.combination.GenotypeCombinator;
@@ -26,6 +24,7 @@ import net.bmahe.genetics4j.core.spec.AbstractEAExecutionContext;
 import net.bmahe.genetics4j.core.spec.EvolutionResult;
 import net.bmahe.genetics4j.core.spec.ImmutableEvolutionResult;
 import net.bmahe.genetics4j.core.termination.Termination;
+import net.bmahe.genetics4j.core.util.GenotypeGenerator;
 
 /**
  * Main class used to manage and execute the evolution process
@@ -35,6 +34,7 @@ import net.bmahe.genetics4j.core.termination.Termination;
 public class EASystem<T extends Comparable<T>> {
 	final static public Logger logger = LogManager.getLogger(EASystem.class);
 
+	private final GenotypeGenerator<T> genotypeGenerator;
 	private final FitnessEvaluator<T> fitnessEvaluator;
 	private final AbstractEAConfiguration<T> eaConfiguration;
 	private final AbstractEAExecutionContext<T> eaExecutionContext;
@@ -56,15 +56,15 @@ public class EASystem<T extends Comparable<T>> {
 			final Selector<T> _parentSelectionPolicyHandler, final List<Mutator> _mutators,
 			final ReplacementStrategyImplementor<T> _replacementStrategyImplementor,
 			final AbstractEAExecutionContext<T> _eaExecutionContext, final FitnessEvaluator<T> _fitnessEvaluator) {
-		Validate.notNull(_eaConfiguration);
+		Objects.requireNonNull(_eaConfiguration);
 		Validate.isTrue(_populationSize > 0);
-		Validate.notNull(_chromosomeCombinators);
+		Objects.requireNonNull(_chromosomeCombinators);
 		Validate.isTrue(_chromosomeCombinators.size() == _eaConfiguration.numChromosomes());
 		Validate.inclusiveBetween(0.0, 1.0, _offspringRatio);
-		Validate.notNull(_parentSelectionPolicyHandler);
-		Validate.notNull(_replacementStrategyImplementor);
-		Validate.notNull(_eaExecutionContext);
-		Validate.notNull(_fitnessEvaluator);
+		Objects.requireNonNull(_parentSelectionPolicyHandler);
+		Objects.requireNonNull(_replacementStrategyImplementor);
+		Objects.requireNonNull(_eaExecutionContext);
+		Objects.requireNonNull(_fitnessEvaluator);
 
 		this.eaConfiguration = _eaConfiguration;
 		this.eaExecutionContext = _eaExecutionContext;
@@ -78,51 +78,12 @@ public class EASystem<T extends Comparable<T>> {
 		parentSelector = _parentSelectionPolicyHandler;
 
 		this.replacementStrategyImplementor = _replacementStrategyImplementor;
-	}
-
-	private List<Genotype> generateGenotype(final AbstractEAConfiguration<T> eaConfiguration, final int numPopulation) {
-		Validate.notNull(eaConfiguration);
-		Validate.isTrue(numPopulation > 0);
-
-		logger.info("Generating {} individuals", numPopulation);
-
-		final Optional<Supplier<Genotype>> populationGenerator = eaConfiguration.genotypeGenerator();
-
-		final List<Genotype> population = new ArrayList<>();
-
-		// Override
-		if (populationGenerator.isPresent()) {
-			final Supplier<Genotype> populationSupplier = populationGenerator.get();
-
-			for (int i = 0; i < numPopulation; i++) {
-				population.add(populationSupplier.get());
-			}
-
-		} else {
-
-			final int numChromosomes = eaConfiguration.numChromosomes();
-			final ChromosomeFactory<? extends Chromosome>[] chromosomeFactories = new ChromosomeFactory<?>[numChromosomes];
-			for (int i = 0; i < numChromosomes; i++) {
-				chromosomeFactories[i] = chromosomeFactoryProvider
-						.provideChromosomeFactory(eaConfiguration.getChromosomeSpec(i));
-			}
-
-			for (int i = 0; i < numPopulation; i++) {
-
-				final Chromosome[] chromosomes = new Chromosome[numChromosomes];
-				for (int j = 0; j < numChromosomes; j++) {
-					chromosomes[j] = chromosomeFactories[j].generate(eaConfiguration.getChromosomeSpec(j));
-				}
-
-				population.add(new Genotype(chromosomes));
-			}
-		}
-		return population;
+		this.genotypeGenerator = new GenotypeGenerator<>(chromosomeFactoryProvider, eaConfiguration);
 	}
 
 	private List<T> evaluate(final long generation, final List<Genotype> population) {
 		Validate.isTrue(generation >= 0);
-		Validate.notNull(population);
+		Objects.requireNonNull(population);
 		Validate.isTrue(population.size() > 0);
 
 		logger.debug("Evaluating population of size {}", population.size());
@@ -150,7 +111,7 @@ public class EASystem<T extends Comparable<T>> {
 					missingInitialIndividualCount,
 					initialPopulationSize);
 
-			final var extraIndividuals = generateGenotype(eaConfiguration, missingInitialIndividualCount);
+			final var extraIndividuals = genotypeGenerator.generateGenotypes(missingInitialIndividualCount);
 			genotypes.addAll(extraIndividuals);
 		}
 
@@ -158,7 +119,7 @@ public class EASystem<T extends Comparable<T>> {
 	}
 
 	private List<Genotype> mutateGenotypes(final List<Genotype> genotypes) {
-		Validate.notNull(genotypes);
+		Objects.requireNonNull(genotypes);
 
 		return genotypes.stream()
 				.map(child -> {
@@ -174,8 +135,8 @@ public class EASystem<T extends Comparable<T>> {
 	}
 
 	private List<Genotype> combineParents(final Population<T> parents, final GenotypeCombinator genotypeCombinator) {
-		Validate.notNull(parents);
-		Validate.notNull(genotypeCombinator);
+		Objects.requireNonNull(parents);
+		Objects.requireNonNull(genotypeCombinator);
 
 		final List<Genotype> children = new ArrayList<>();
 		int parentIndex = 0;
@@ -216,7 +177,7 @@ public class EASystem<T extends Comparable<T>> {
 	 * @return
 	 */
 	private List<Genotype> createBasicOffsprings(final Population<T> population, final int offspringsNeeded) {
-		Validate.notNull(population);
+		Objects.requireNonNull(population);
 		Validate.isTrue(offspringsNeeded > 0);
 
 		final GenotypeCombinator genotypeCombinator = eaConfiguration.genotypeCombinator();
@@ -243,7 +204,7 @@ public class EASystem<T extends Comparable<T>> {
 	}
 
 	public List<Genotype> createOffsprings(final Population<T> population, final int offspringsNeeded) {
-		Validate.notNull(population);
+		Objects.requireNonNull(population);
 		Validate.isTrue(offspringsNeeded > 0);
 
 		final List<Genotype> offpsrings = createBasicOffsprings(population, offspringsNeeded);
@@ -307,8 +268,8 @@ public class EASystem<T extends Comparable<T>> {
 
 			if (newPopulation.size() < nextGenerationPopulationSize) {
 				logger.info("New population only has {} members. Generating more individuals", newPopulation.size());
-				final List<Genotype> additionalIndividuals = generateGenotype(eaConfiguration,
-						nextGenerationPopulationSize - newPopulation.size());
+				final List<Genotype> additionalIndividuals = genotypeGenerator
+						.generateGenotypes(nextGenerationPopulationSize - newPopulation.size());
 				logger.debug("Number of generated individuals: {}", additionalIndividuals.size());
 
 				if (additionalIndividuals.size() > 0) {
@@ -341,7 +302,7 @@ public class EASystem<T extends Comparable<T>> {
 
 	public List<T> evaluateOnce(final long generation, final List<Genotype> genotypes) {
 		Validate.isTrue(generation >= 0);
-		Validate.notNull(genotypes);
+		Objects.requireNonNull(genotypes);
 		Validate.isTrue(genotypes.size() > 0);
 
 		fitnessEvaluator.preEvaluation();
