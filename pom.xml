@@ -299,7 +299,7 @@
 							<avoidCallsTo>org.slf4j</avoidCallsTo>
 							<avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
 							<avoidCallsTo>org.apache.commons.lang3.Validate</avoidCallsTo>
-							<avoidCallsTo>java.util.Objects.requireNonNull</avoidCallsTo>
+							<avoidCallsTo>java.util.Objects</avoidCallsTo>
 						</avoidCallsTo>
 					</configuration>
 					<dependencies>
