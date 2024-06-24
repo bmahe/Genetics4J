@@ -1,5 +1,6 @@
 package net.bmahe.genetics4j.gp.program;
 
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
@@ -26,10 +27,10 @@ public abstract class Program {
 
 	@Value.Check
 	protected void check() {
-		Validate.notNull(functions());
+		Objects.requireNonNull(functions());
 		Validate.isTrue(functions().size() > 0);
 
-		Validate.notNull(terminal());
+		Objects.requireNonNull(terminal());
 		Validate.isTrue(terminal().size() > 0);
 	}
 }
