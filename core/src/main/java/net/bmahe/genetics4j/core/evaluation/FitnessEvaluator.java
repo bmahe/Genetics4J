@@ -19,7 +19,8 @@ public interface FitnessEvaluator<T extends Comparable<T>> {
 
 	/**
 	 * Compute the fitness for a list of genotypes
-	 * 
+	 *
+	 * @param generation
 	 * @param genotypes Population to evaluate
 	 * @return Their associated fitnesses
 	 */
