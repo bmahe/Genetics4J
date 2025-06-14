@@ -2,6 +2,7 @@ package net.bmahe.genetics4j.core.combination.ordercrossover;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.random.RandomGenerator;
 
@@ -17,7 +18,7 @@ public class IntChromosomeOrderCrossover<T extends Comparable<T>> implements Chr
 	private final RandomGenerator randomGenerator;
 
 	public IntChromosomeOrderCrossover(final RandomGenerator _randomGenerator) {
-		Validate.notNull(_randomGenerator);
+		Objects.requireNonNull(_randomGenerator);
 
 		this.randomGenerator = _randomGenerator;
 	}
@@ -25,8 +26,8 @@ public class IntChromosomeOrderCrossover<T extends Comparable<T>> implements Chr
 	@Override
 	public List<Chromosome> combine(final AbstractEAConfiguration<T> eaConfiguration, final Chromosome chromosome1,
 			final T firstParentFitness, final Chromosome chromosome2, final T secondParentFitness) {
-		Validate.notNull(chromosome1);
-		Validate.notNull(chromosome2);
+		Objects.requireNonNull(chromosome1);
+		Objects.requireNonNull(chromosome2);
 		Validate.isInstanceOf(IntChromosome.class, chromosome1);
 		Validate.isInstanceOf(IntChromosome.class, chromosome2);
 		Validate.isTrue(chromosome1.getNumAlleles() == chromosome2.getNumAlleles());
