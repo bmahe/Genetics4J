@@ -21,6 +21,87 @@ import net.bmahe.genetics4j.gpu.opencl.model.Device;
 import net.bmahe.genetics4j.gpu.spec.fitness.cldata.CLData;
 import net.bmahe.genetics4j.gpu.spec.fitness.kernelcontext.KernelExecutionContext;
 
+/**
+ * GPU-accelerated fitness evaluator that executes a single OpenCL kernel for fitness computation.
+ * 
+ * <p>SingleKernelFitness provides a comprehensive framework for implementing fitness evaluation using
+ * a single OpenCL kernel. It manages the complete lifecycle of GPU computation including data loading,
+ * kernel execution, and result extraction, making it suitable for most GPU-accelerated evolutionary
+ * algorithm scenarios.
+ * 
+ * <p>Key features:
+ * <ul>
+ * <li><strong>Single kernel execution</strong>: Executes one OpenCL kernel per fitness evaluation</li>
+ * <li><strong>Data management</strong>: Handles static data, dynamic data, and result allocation</li>
+ * <li><strong>Memory lifecycle</strong>: Automatic cleanup of OpenCL memory objects</li>
+ * <li><strong>Multi-device support</strong>: Supports concurrent execution across multiple devices</li>
+ * <li><strong>Local memory</strong>: Configurable local memory allocation for kernel optimization</li>
+ * </ul>
+ * 
+ * <p>Data flow architecture:
+ * <ul>
+ * <li><strong>Static data</strong>: Algorithm parameters loaded once before all evaluations</li>
+ * <li><strong>Dynamic data</strong>: Population data loaded before each generation</li>
+ * <li><strong>Local memory</strong>: Work group local memory allocated based on kernel requirements</li>
+ * <li><strong>Result data</strong>: Output buffers allocated for fitness results and intermediate data</li>
+ * </ul>
+ * 
+ * <p>Typical usage pattern:
+ * <pre>{@code
+ * // Define kernel and data configuration
+ * SingleKernelFitnessDescriptor descriptor = SingleKernelFitnessDescriptor.builder()
+ *     .kernelName("fitness_evaluation")
+ *     .addDataLoader(0, populationDataLoader)
+ *     .addStaticDataLoader(1, parametersDataLoader)
+ *     .addResultAllocator(2, fitnessResultAllocator)
+ *     .kernelExecutionContextComputer(executionContextComputer)
+ *     .build();
+ * 
+ * // Define fitness extraction from GPU results
+ * FitnessExtractor<Double> extractor = (context, kernelCtx, executor, generation, genotypes, results) -> {
+ *     float[] fitnessValues = results.extractFloatArray(context, 2);
+ *     return Arrays.stream(fitnessValues)
+ *         .mapToDouble(f -> (double) f)
+ *         .boxed()
+ *         .collect(Collectors.toList());
+ * };
+ * 
+ * // Create single kernel fitness evaluator
+ * SingleKernelFitness<Double> fitness = SingleKernelFitness.of(descriptor, extractor);
+ * }</pre>
+ * 
+ * <p>Kernel execution workflow:
+ * <ol>
+ * <li><strong>Initialization</strong>: Load static data once before all evaluations</li>
+ * <li><strong>Data preparation</strong>: Load generation-specific data and allocate result buffers</li>
+ * <li><strong>Kernel setup</strong>: Configure kernel arguments with data references</li>
+ * <li><strong>Execution</strong>: Launch kernel with optimized work group configuration</li>
+ * <li><strong>Result extraction</strong>: Extract fitness values from GPU memory</li>
+ * <li><strong>Cleanup</strong>: Release generation-specific memory resources</li>
+ * </ol>
+ * 
+ * <p>Memory management strategy:
+ * <ul>
+ * <li><strong>Static data persistence</strong>: Static data remains allocated across generations</li>
+ * <li><strong>Dynamic allocation</strong>: Generation data is allocated and released per evaluation</li>
+ * <li><strong>Result buffer reuse</strong>: Result buffers can be reused with proper sizing</li>
+ * <li><strong>Automatic cleanup</strong>: Memory is automatically released in lifecycle methods</li>
+ * </ul>
+ * 
+ * <p>Performance optimization features:
+ * <ul>
+ * <li><strong>Asynchronous execution</strong>: Kernel execution returns CompletableFuture for pipeline processing</li>
+ * <li><strong>Work group optimization</strong>: Configurable work group sizes for optimal device utilization</li>
+ * <li><strong>Memory coalescing</strong>: Support for optimized memory access patterns</li>
+ * <li><strong>Local memory utilization</strong>: Efficient use of device local memory for performance</li>
+ * </ul>
+ * 
+ * @param <T> the fitness value type, must be Comparable for optimization algorithms
+ * @see OpenCLFitness
+ * @see SingleKernelFitnessDescriptor
+ * @see FitnessExtractor
+ * @see net.bmahe.genetics4j.gpu.spec.fitness.cldata.DataLoader
+ */
 public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<T> {
 	public static final Logger logger = LogManager.getLogger(SingleKernelFitness.class);
 
@@ -75,6 +156,13 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 		resultData.remove(device);
 	}
 
+	/**
+	 * Constructs a SingleKernelFitness with the specified kernel descriptor and fitness extractor.
+	 * 
+	 * @param _singleKernelFitnessDescriptor configuration for kernel execution and data management
+	 * @param _fitnessExtractor function to extract fitness values from GPU computation results
+	 * @throws IllegalArgumentException if any parameter is null
+	 */
 	public SingleKernelFitness(final SingleKernelFitnessDescriptor _singleKernelFitnessDescriptor,
 			final FitnessExtractor<T> _fitnessExtractor) {
 		Validate.notNull(_singleKernelFitnessDescriptor);
@@ -277,6 +365,15 @@ public class SingleKernelFitness<T extends Comparable<T>> extends OpenCLFitness<
 		clearStaticData(device);
 	}
 
+	/**
+	 * Creates a new SingleKernelFitness instance with the specified configuration.
+	 * 
+	 * @param <U> the fitness value type
+	 * @param singleKernelFitnessDescriptor configuration for kernel execution and data management
+	 * @param fitnessExtractor function to extract fitness values from GPU computation results
+	 * @return a new SingleKernelFitness instance
+	 * @throws IllegalArgumentException if any parameter is null
+	 */
 	public static <U extends Comparable<U>> SingleKernelFitness<U> of(
 			final SingleKernelFitnessDescriptor singleKernelFitnessDescriptor,
 			final FitnessExtractor<U> fitnessExtractor) {

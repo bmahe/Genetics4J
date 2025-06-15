@@ -26,6 +26,103 @@ import net.bmahe.genetics4j.gpu.spec.fitness.kernelcontext.KernelExecutionContex
 import net.bmahe.genetics4j.gpu.spec.fitness.multistage.MultiStageDescriptor;
 import net.bmahe.genetics4j.gpu.spec.fitness.multistage.StageDescriptor;
 
+/**
+ * GPU-accelerated fitness evaluator that executes multiple sequential OpenCL kernels for complex fitness computation.
+ * 
+ * <p>MultiStageFitness provides a framework for implementing fitness evaluation that requires multiple sequential
+ * GPU kernel executions, where each stage can use results from previous stages as input. This is ideal for complex
+ * fitness functions that require multiple computational phases, such as neural network training, multi-objective
+ * optimization, or hierarchical problem decomposition.
+ * 
+ * <p>Key features:
+ * <ul>
+ * <li><strong>Sequential execution</strong>: Multiple OpenCL kernels executed in sequence</li>
+ * <li><strong>Inter-stage data flow</strong>: Results from earlier stages used as inputs to later stages</li>
+ * <li><strong>Memory optimization</strong>: Automatic cleanup and reuse of intermediate results</li>
+ * <li><strong>Pipeline processing</strong>: Support for complex computational pipelines</li>
+ * <li><strong>Stage configuration</strong>: Individual configuration for each computational stage</li>
+ * </ul>
+ * 
+ * <p>Multi-stage computation architecture:
+ * <ul>
+ * <li><strong>Stage descriptors</strong>: Each stage defines its kernel, data loaders, and result allocators</li>
+ * <li><strong>Data reuse patterns</strong>: Previous stage results can be reused as arguments or size parameters</li>
+ * <li><strong>Memory lifecycle</strong>: Automatic management of intermediate results between stages</li>
+ * <li><strong>Static data sharing</strong>: Algorithm parameters shared across all stages</li>
+ * </ul>
+ * 
+ * <p>Typical usage pattern:
+ * <pre>{@code
+ * // Define multi-stage descriptor with sequential kernels
+ * MultiStageDescriptor descriptor = MultiStageDescriptor.builder()
+ *     .addStaticDataLoader("parameters", parametersLoader)
+ *     .addStage(StageDescriptor.builder()
+ *         .kernelName("preprocessing")
+ *         .addDataLoader(0, inputDataLoader)
+ *         .addResultAllocator(1, preprocessedResultAllocator)
+ *         .build())
+ *     .addStage(StageDescriptor.builder()
+ *         .kernelName("fitness_evaluation")
+ *         .reusePreviousResultAsArgument(1, 0)  // Use previous result as input
+ *         .addResultAllocator(1, fitnessResultAllocator)
+ *         .build())
+ *     .build();
+ * 
+ * // Define fitness extraction from final stage results
+ * FitnessExtractor<Double> extractor = (context, kernelCtx, executor, generation, genotypes, results) -> {
+ *     float[] fitnessValues = results.extractFloatArray(context, 1);
+ *     return Arrays.stream(fitnessValues)
+ *         .mapToDouble(f -> (double) f)
+ *         .boxed()
+ *         .collect(Collectors.toList());
+ * };
+ * 
+ * // Create multi-stage fitness evaluator
+ * MultiStageFitness<Double> fitness = MultiStageFitness.of(descriptor, extractor);
+ * }</pre>
+ * 
+ * <p>Stage execution workflow:
+ * <ol>
+ * <li><strong>Initialization</strong>: Load shared static data once before all evaluations</li>
+ * <li><strong>Stage iteration</strong>: For each stage in sequence:</li>
+ * <li><strong>Context computation</strong>: Calculate kernel execution parameters for the stage</li>
+ * <li><strong>Data preparation</strong>: Load stage-specific data and map previous results</li>
+ * <li><strong>Kernel execution</strong>: Execute the stage kernel with configured parameters</li>
+ * <li><strong>Result management</strong>: Store results for potential use in subsequent stages</li>
+ * <li><strong>Final extraction</strong>: Extract fitness values from the last stage results</li>
+ * <li><strong>Cleanup</strong>: Release all intermediate and final result memory</li>
+ * </ol>
+ * 
+ * <p>Inter-stage data flow patterns:
+ * <ul>
+ * <li><strong>Result reuse</strong>: Use previous stage output buffers as input to subsequent stages</li>
+ * <li><strong>Size propagation</strong>: Use previous stage result sizes as parameters for memory allocation</li>
+ * <li><strong>Memory optimization</strong>: Automatic cleanup of intermediate results no longer needed</li>
+ * <li><strong>Data type preservation</strong>: Maintain OpenCL data types across stage boundaries</li>
+ * </ul>
+ * 
+ * <p>Memory management strategy:
+ * <ul>
+ * <li><strong>Static data persistence</strong>: Shared parameters allocated once across all stages</li>
+ * <li><strong>Intermediate cleanup</strong>: Automatic release of stage results when no longer needed</li>
+ * <li><strong>Result chaining</strong>: Efficient memory reuse between consecutive stages</li>
+ * <li><strong>Final cleanup</strong>: Complete memory cleanup after fitness extraction</li>
+ * </ul>
+ * 
+ * <p>Performance optimization features:
+ * <ul>
+ * <li><strong>Pipeline efficiency</strong>: Minimized memory transfers between stages</li>
+ * <li><strong>Memory coalescing</strong>: Optimized data layouts for GPU memory access</li>
+ * <li><strong>Stage-specific tuning</strong>: Individual work group optimization per stage</li>
+ * <li><strong>Asynchronous execution</strong>: Non-blocking fitness computation</li>
+ * </ul>
+ * 
+ * @param <T> the fitness value type, must be Comparable for optimization algorithms
+ * @see OpenCLFitness
+ * @see MultiStageDescriptor
+ * @see StageDescriptor
+ * @see FitnessExtractor
+ */
 public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T> {
 	public static final Logger logger = LogManager.getLogger(MultiStageFitness.class);
 
@@ -197,6 +294,13 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 		}
 	}
 
+	/**
+	 * Constructs a MultiStageFitness with the specified stage descriptor and fitness extractor.
+	 * 
+	 * @param _multiStageDescriptor configuration for multi-stage kernel execution and data management
+	 * @param _fitnessExtractor function to extract fitness values from final stage results
+	 * @throws IllegalArgumentException if any parameter is null
+	 */
 	public MultiStageFitness(final MultiStageDescriptor _multiStageDescriptor,
 			final FitnessExtractor<T> _fitnessExtractor) {
 		Validate.notNull(_multiStageDescriptor);
@@ -440,6 +544,15 @@ public class MultiStageFitness<T extends Comparable<T>> extends OpenCLFitness<T>
 		clearStaticData(device);
 	}
 
+	/**
+	 * Creates a new MultiStageFitness instance with the specified configuration.
+	 * 
+	 * @param <U> the fitness value type
+	 * @param multiStageDescriptor configuration for multi-stage kernel execution and data management
+	 * @param fitnessExtractor function to extract fitness values from final stage results
+	 * @return a new MultiStageFitness instance
+	 * @throws IllegalArgumentException if any parameter is null
+	 */
 	public static <U extends Comparable<U>> MultiStageFitness<U> of(final MultiStageDescriptor multiStageDescriptor,
 			final FitnessExtractor<U> fitnessExtractor) {
 		Validate.notNull(multiStageDescriptor);
