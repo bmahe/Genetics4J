@@ -42,7 +42,7 @@ import org.apache.commons.lang3.Validate;
  * @param <T> the type of data stored in tree nodes
  * @see TreeNode
  * @see Chromosome
- * @see net.bmahe.genetics4j.gp
+ * @see TreeNode
  */
 public class TreeChromosome<T> implements Chromosome {
 

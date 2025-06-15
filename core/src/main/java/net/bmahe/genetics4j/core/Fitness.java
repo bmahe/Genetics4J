@@ -18,7 +18,7 @@ package net.bmahe.genetics4j.core;
  * <ul>
  * <li><strong>Minimization</strong>: Lower values indicate better solutions (errors, costs)</li>
  * <li><strong>Maximization</strong>: Higher values indicate better solutions (profits, accuracy)</li>
- * <li><strong>Multi-objective</strong>: Use {@link net.bmahe.genetics4j.moo.FitnessVector} for multiple objectives</li>
+ * <li><strong>Multi-objective</strong>: Use FitnessVector from the MOO module for multiple objectives</li>
  * </ul>
  * 
  * @param <T> the type of the fitness value, must be comparable for selection operations
