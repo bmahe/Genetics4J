@@ -27,9 +27,84 @@ import net.bmahe.genetics4j.core.termination.Termination;
 import net.bmahe.genetics4j.core.util.GenotypeGenerator;
 
 /**
- * Main class used to manage and execute the evolution process
- *
- * @param <T>
+ * Main orchestrator class for evolutionary algorithms, managing the complete evolution process.
+ * 
+ * <p>EASystem serves as the central coordinator that brings together all components of an evolutionary
+ * algorithm including genetic operators, selection strategies, evaluation functions, and termination
+ * criteria. It manages the evolutionary cycle and provides a unified interface for running optimizations.
+ * 
+ * <p>The system coordinates the following evolutionary process:
+ * <ol>
+ * <li><strong>Initialization</strong>: Generate initial population of random genotypes</li>
+ * <li><strong>Evaluation</strong>: Compute fitness values for all individuals</li>
+ * <li><strong>Selection</strong>: Choose parents for reproduction based on fitness</li>
+ * <li><strong>Reproduction</strong>: Create offspring through crossover and mutation</li>
+ * <li><strong>Replacement</strong>: Integrate offspring into next generation</li>
+ * <li><strong>Termination check</strong>: Determine if stopping criteria are met</li>
+ * <li><strong>Iteration</strong>: Repeat until termination conditions are satisfied</li>
+ * </ol>
+ * 
+ * <p>Key responsibilities include:
+ * <ul>
+ * <li><strong>Population management</strong>: Maintaining population size and diversity</li>
+ * <li><strong>Genetic operator coordination</strong>: Applying crossover, mutation, and selection</li>
+ * <li><strong>Fitness evaluation orchestration</strong>: Managing parallel and synchronous evaluation</li>
+ * <li><strong>Evolution monitoring</strong>: Providing hooks for logging and progress tracking</li>
+ * <li><strong>Resource management</strong>: Efficient memory usage and computation distribution</li>
+ * </ul>
+ * 
+ * <p>Configuration components:
+ * <ul>
+ * <li><strong>EAConfiguration</strong>: Defines genetic representation and operator policies</li>
+ * <li><strong>EAExecutionContext</strong>: Provides runtime services and factory implementations</li>
+ * <li><strong>FitnessEvaluator</strong>: Computes quality measures for candidate solutions</li>
+ * <li><strong>Termination criteria</strong>: Determines when to stop evolution</li>
+ * </ul>
+ * 
+ * <p>The system supports various evolutionary paradigms:
+ * <ul>
+ * <li><strong>Genetic Algorithms</strong>: Traditional binary and real-valued optimization</li>
+ * <li><strong>Genetic Programming</strong>: Evolution of tree-structured programs</li>
+ * <li><strong>Evolution Strategies</strong>: Real-valued optimization with adaptive parameters</li>
+ * <li><strong>Multi-objective optimization</strong>: Pareto-based optimization with multiple objectives</li>
+ * </ul>
+ * 
+ * <p>Example usage:
+ * <pre>{@code
+ * // Configure the evolutionary algorithm
+ * EAConfiguration<Double> config = EAConfigurationBuilder.<Double>builder()
+ *     .chromosomeSpecs(DoubleChromosomeSpec.of(10, -5.0, 5.0))
+ *     .parentSelectionPolicy(Tournament.of(3))
+ *     .mutationPolicy(RandomMutation.of(0.1))
+ *     .build();
+ * 
+ * // Set up execution context
+ * EAExecutionContext<Double> context = EAExecutionContexts.forScalarFitness();
+ * 
+ * // Create fitness evaluator
+ * Fitness<Double> fitness = genotype -> {
+ *     // Implement problem-specific fitness function
+ *     return computeFitness(genotype);
+ * };
+ * 
+ * // Build and run the evolutionary system
+ * EASystem<Double> system = EASystemFactory.from(config, context, fitness);
+ * EvolutionResult<Double> result = system.evolve(
+ *     populationSize: 100,
+ *     termination: Terminations.generations(1000)
+ * );
+ * }</pre>
+ * 
+ * <p>Thread safety: EASystem instances are generally not thread-safe and should not be shared
+ * between multiple threads without external synchronization. However, the system supports
+ * parallel fitness evaluation internally when configured appropriately.
+ * 
+ * @param <T> the type of fitness values, must be comparable for selection and ranking
+ * @see EASystemFactory
+ * @see net.bmahe.genetics4j.core.spec.EAConfiguration
+ * @see net.bmahe.genetics4j.core.spec.EAExecutionContext
+ * @see FitnessEvaluator
+ * @see Termination
  */
 public class EASystem<T extends Comparable<T>> {
 	final static public Logger logger = LogManager.getLogger(EASystem.class);
