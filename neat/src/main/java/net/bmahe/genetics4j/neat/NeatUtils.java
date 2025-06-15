@@ -20,6 +20,51 @@ import net.bmahe.genetics4j.core.Individual;
 import net.bmahe.genetics4j.core.Population;
 import net.bmahe.genetics4j.neat.chromosomes.NeatChromosome;
 
+/**
+ * Utility class providing core algorithmic operations for the NEAT (NeuroEvolution of Augmenting Topologies) algorithm.
+ * 
+ * <p>NeatUtils contains essential algorithms and helper methods for implementing NEAT neural network evolution,
+ * including network topology analysis, compatibility distance calculation, speciation, and structural operations.
+ * These utilities support the NEAT algorithm's key features of topology innovation, structural mutation, and 
+ * species-based population organization.
+ * 
+ * <p>Key functionality areas:
+ * <ul>
+ * <li><strong>Network topology analysis</strong>: Computing network layers, forward/backward connections, and dead node detection</li>
+ * <li><strong>Compatibility distance</strong>: Measuring genetic similarity between neural networks for speciation</li>
+ * <li><strong>Speciation management</strong>: Organizing populations into species based on genetic similarity</li>
+ * <li><strong>Structural analysis</strong>: Analyzing network connectivity patterns and structural properties</li>
+ * </ul>
+ * 
+ * <p>NEAT algorithm integration:
+ * <ul>
+ * <li><strong>Innovation tracking</strong>: Support for historical marking and innovation numbers</li>
+ * <li><strong>Structural mutations</strong>: Utilities for add-node and add-connection operations</li>
+ * <li><strong>Network evaluation</strong>: Layer-based network evaluation ordering</li>
+ * <li><strong>Population diversity</strong>: Species-based diversity maintenance</li>
+ * </ul>
+ * 
+ * <p>Core NEAT concepts implemented:
+ * <ul>
+ * <li><strong>Genetic similarity</strong>: Compatibility distance based on excess, disjoint, and weight differences</li>
+ * <li><strong>Topological innovation</strong>: Structural changes tracked through innovation numbers</li>
+ * <li><strong>Speciation</strong>: Dynamic species formation based on genetic distance thresholds</li>
+ * <li><strong>Network evaluation</strong>: Feed-forward evaluation through computed network layers</li>
+ * </ul>
+ * 
+ * <p>Algorithmic foundations:
+ * <ul>
+ * <li><strong>Graph algorithms</strong>: Topological sorting, connectivity analysis, and layer computation</li>
+ * <li><strong>Genetic distance metrics</strong>: NEAT-specific compatibility distance calculation</li>
+ * <li><strong>Population clustering</strong>: Species formation and maintenance algorithms</li>
+ * <li><strong>Network optimization</strong>: Dead node removal and structural simplification</li>
+ * </ul>
+ * 
+ * @see NeatChromosome
+ * @see Connection
+ * @see Species
+ * @see InnovationManager
+ */
 public class NeatUtils {
 
 	private NeatUtils() {

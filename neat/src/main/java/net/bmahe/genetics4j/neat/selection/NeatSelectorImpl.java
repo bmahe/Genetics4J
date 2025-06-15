@@ -21,6 +21,105 @@ import net.bmahe.genetics4j.neat.Species;
 import net.bmahe.genetics4j.neat.SpeciesIdGenerator;
 import net.bmahe.genetics4j.neat.spec.selection.NeatSelection;
 
+/**
+ * Concrete implementation of species-based selection for NEAT (NeuroEvolution of Augmenting Topologies) algorithm.
+ * 
+ * <p>NeatSelectorImpl implements the core species-based selection mechanism that is fundamental to NEAT's
+ * ability to maintain population diversity and protect structural innovations. It organizes the population
+ * into species based on genetic compatibility, applies fitness sharing within species, manages species
+ * lifecycle, and allocates reproduction opportunities across species.
+ * 
+ * <p>NEAT selection process:
+ * <ol>
+ * <li><strong>Species assignment</strong>: Organize population into species using compatibility predicate</li>
+ * <li><strong>Species trimming</strong>: Remove lower-performing individuals within each species</li>
+ * <li><strong>Species filtering</strong>: Eliminate species below minimum viable size</li>
+ * <li><strong>Reproduction allocation</strong>: Determine number of offspring for each species</li>
+ * <li><strong>Parent selection</strong>: Select parents within species using configured selector</li>
+ * <li><strong>Species maintenance</strong>: Update species representatives for next generation</li>
+ * </ol>
+ * 
+ * <p>Key features:
+ * <ul>
+ * <li><strong>Genetic compatibility</strong>: Groups individuals with similar network topologies</li>
+ * <li><strong>Fitness sharing</strong>: Reduces competition between similar individuals</li>
+ * <li><strong>Innovation protection</strong>: Allows new topologies time to optimize</li>
+ * <li><strong>Population diversity</strong>: Maintains multiple species exploring different solutions</li>
+ * </ul>
+ * 
+ * <p>Species management:
+ * <ul>
+ * <li><strong>Species formation</strong>: Creates new species when compatibility threshold exceeded</li>
+ * <li><strong>Species growth</strong>: Assigns compatible individuals to existing species</li>
+ * <li><strong>Species extinction</strong>: Eliminates species that fall below minimum size</li>
+ * <li><strong>Species continuity</strong>: Maintains species representatives across generations</li>
+ * </ul>
+ * 
+ * <p>Common usage patterns:
+ * <pre>{@code
+ * // Create NEAT selector implementation
+ * RandomGenerator randomGen = RandomGenerator.getDefault();
+ * SpeciesIdGenerator speciesIdGen = new SpeciesIdGenerator();
+ * 
+ * // Configure species predicate for compatibility
+ * BiPredicate<Individual<Double>, Individual<Double>> speciesPredicate = 
+ *     (i1, i2) -> NeatUtils.compatibilityDistance(
+ *         i1.genotype(), i2.genotype(), 0, 2, 2, 1.0f
+ *     ) < 3.0;  // Compatibility threshold
+ * 
+ * // Configure NEAT selection policy
+ * NeatSelection<Double> neatSelection = NeatSelection.<Double>builder()
+ *     .perSpeciesKeepRatio(0.8f)  // Keep top 80% of each species
+ *     .minSpeciesSize(5)  // Minimum 5 individuals per species
+ *     .speciesPredicate(speciesPredicate)
+ *     .speciesSelection(Tournament.of(3))  // Tournament within species
+ *     .build();
+ * 
+ * // Create within-species selector
+ * Selector<Double> speciesSelector = new TournamentSelector<>(randomGen, 3);
+ * 
+ * // Create NEAT selector
+ * NeatSelectorImpl<Double> selector = new NeatSelectorImpl<>(
+ *     randomGen, neatSelection, speciesIdGen, speciesSelector
+ * );
+ * 
+ * // Use in population selection
+ * Population<Double> selectedPopulation = selector.select(
+ *     eaConfiguration, population, 100  // Select 100 individuals
+ * );
+ * }</pre>
+ * 
+ * <p>Species lifecycle management:
+ * <ul>
+ * <li><strong>Initialization</strong>: Empty species list for first generation</li>
+ * <li><strong>Assignment</strong>: Individuals assigned to species based on compatibility</li>
+ * <li><strong>Trimming</strong>: Poor performers removed while preserving species diversity</li>
+ * <li><strong>Reproduction</strong>: Offspring allocated proportionally to species average fitness</li>
+ * <li><strong>Evolution</strong>: Species composition changes as population evolves</li>
+ * </ul>
+ * 
+ * <p>Fitness sharing mechanism:
+ * <ul>
+ * <li><strong>Within-species competition</strong>: Individuals primarily compete within their species</li>
+ * <li><strong>Species-based allocation</strong>: Reproduction opportunities distributed across species</li>
+ * <li><strong>Diversity protection</strong>: Prevents single topology from dominating population</li>
+ * <li><strong>Innovation preservation</strong>: New structural innovations get time to optimize</li>
+ * </ul>
+ * 
+ * <p>Performance considerations:
+ * <ul>
+ * <li><strong>Compatibility caching</strong>: Species assignment optimized for repeated use</li>
+ * <li><strong>Efficient trimming</strong>: In-place species membership updates</li>
+ * <li><strong>Memory management</strong>: Species structures reused across generations</li>
+ * <li><strong>Parallel processing</strong>: Species-based organization enables concurrent operations</li>
+ * </ul>
+ * 
+ * @param <T> the fitness value type (typically Double)
+ * @see NeatSelection
+ * @see Species
+ * @see SpeciesIdGenerator
+ * @see Selector
+ */
 public class NeatSelectorImpl<T extends Number & Comparable<T>> implements Selector<T> {
 	public static final Logger logger = LogManager.getLogger(NeatSelectorImpl.class);
 
@@ -31,6 +130,19 @@ public class NeatSelectorImpl<T extends Number & Comparable<T>> implements Selec
 
 	private List<Species<T>> previousSpecies;
 
+	/**
+	 * Constructs a new NEAT selector implementation with the specified components.
+	 * 
+	 * <p>The selector uses the random generator for stochastic decisions, the NEAT selection
+	 * policy for species management parameters, the species ID generator for creating new
+	 * species, and the species selector for within-species parent selection.
+	 * 
+	 * @param _randomGenerator random number generator for stochastic selection operations
+	 * @param _neatSelection NEAT selection policy defining species management parameters
+	 * @param _speciesIdGenerator generator for unique species identifiers
+	 * @param _speciesSelector selector for choosing parents within each species
+	 * @throws IllegalArgumentException if any parameter is null
+	 */
 	public NeatSelectorImpl(final RandomGenerator _randomGenerator, final NeatSelection<T> _neatSelection,
 			final SpeciesIdGenerator _speciesIdGenerator, final Selector<T> _speciesSelector) {
 		Validate.notNull(_randomGenerator);
@@ -46,6 +158,21 @@ public class NeatSelectorImpl<T extends Number & Comparable<T>> implements Selec
 		this.previousSpecies = new ArrayList<>();
 	}
 
+	/**
+	 * Trims a species by removing lower-performing individuals while preserving minimum viable size.
+	 * 
+	 * <p>This method applies fitness-based selection within a species, keeping the best performers
+	 * while ensuring the species maintains sufficient size for genetic diversity. The number of
+	 * individuals kept is the maximum of the minimum species size and the keep ratio applied to
+	 * the current species size.
+	 * 
+	 * @param species the species to trim
+	 * @param comparator comparator for ranking individuals by fitness
+	 * @param minSpeciesSize minimum number of individuals to keep
+	 * @param perSpeciesKeepRatio proportion of current species to preserve
+	 * @return a new species containing only the selected individuals
+	 * @throws IllegalArgumentException if species is null
+	 */
 	protected Species<T> trimSpecies(final Species<T> species, final Comparator<Individual<T>> comparator,
 			final int minSpeciesSize, final float perSpeciesKeepRatio) {
 		Validate.notNull(species);
@@ -79,6 +206,18 @@ public class NeatSelectorImpl<T extends Number & Comparable<T>> implements Selec
 
 	}
 
+	/**
+	 * Eliminates the lowest-performing individuals from all species while maintaining species diversity.
+	 * 
+	 * <p>This method applies the species trimming process to all species in the population,
+	 * removing poor performers within each species while preserving the overall species
+	 * structure. Species that become empty after trimming are filtered out.
+	 * 
+	 * @param eaConfiguration evolutionary algorithm configuration containing fitness comparator
+	 * @param allSpecies list of all species in the population
+	 * @return list of species after trimming, with empty species removed
+	 * @throws IllegalArgumentException if any parameter is null
+	 */
 	protected List<Species<T>> eliminateLowestPerformers(final AbstractEAConfiguration<T> eaConfiguration,
 			final List<Species<T>> allSpecies) {
 		Validate.notNull(eaConfiguration);
