@@ -200,6 +200,8 @@ site:
     paths:
     - target/staging
   script:
+    - ls -altrh core/target
+    - ls -altrh core/target/pit-reports
     - apt-get update -yqq
     - apt-get install -yqq gnuplot graphviz
     - apt-get install -yqq python3.10 python3-pip
