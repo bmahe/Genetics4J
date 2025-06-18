@@ -207,7 +207,7 @@ site:
     - apt-get install -yqq python3.10 python3-pip
     - apt-get install -yqq pocl-opencl-icd opencl-headers
     - pip3 install matplotlib pandas
-    - mvn site site:stage -Dproject.recommended.version="${RECOMMENDED_VERSION}"
+    - mvn site site:stage -Dproject.recommended.version="${RECOMMENDED_VERSION}" -Dmaven.compiler.skip=true
     - "sed -i -e 's/<title>.*<\\/title>/<title>Genetics4j<\\/title>/' target/staging/index.html"
 
 pages:
