@@ -198,6 +198,7 @@ site:
   stage: package
   artifacts:
     paths:
+    - core/target
     - target/staging
   script:
     - ls -altrh core/target
