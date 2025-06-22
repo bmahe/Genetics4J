@@ -19,8 +19,8 @@ import net.bmahe.genetics4j.core.spec.mutation.MutationPolicy;
  * @param <T> Type of the fitness measurement
  */
 @Value.Immutable
-public abstract class EAConfiguration<T extends Comparable<T>> extends AbstractEAConfiguration<T>{
-	
+public abstract class EAConfiguration<T extends Comparable<T>> extends AbstractEAConfiguration<T> {
+
 	/**
 	 * Defines how should individuals' fitness be assessed
 	 * 

@@ -27,49 +27,80 @@ import net.bmahe.genetics4j.core.termination.Termination;
 import net.bmahe.genetics4j.core.util.GenotypeGenerator;
 
 /**
- * Main orchestrator class for evolutionary algorithms, managing the complete evolution process.
+ * Main orchestrator class for evolutionary algorithms, managing the complete
+ * evolution process.
  * 
- * <p>EASystem serves as the central coordinator that brings together all components of an evolutionary
- * algorithm including genetic operators, selection strategies, evaluation functions, and termination
- * criteria. It manages the evolutionary cycle and provides a unified interface for running optimizations.
+ * <p>
+ * EASystem serves as the central coordinator that brings together all
+ * components of an evolutionary
+ * algorithm including genetic operators, selection strategies, evaluation
+ * functions, and termination
+ * criteria. It manages the evolutionary cycle and provides a unified interface
+ * for running optimizations.
  * 
- * <p>The system coordinates the following evolutionary process:
+ * <p>
+ * The system coordinates the following evolutionary process:
  * <ol>
- * <li><strong>Initialization</strong>: Generate initial population of random genotypes</li>
- * <li><strong>Evaluation</strong>: Compute fitness values for all individuals</li>
- * <li><strong>Selection</strong>: Choose parents for reproduction based on fitness</li>
- * <li><strong>Reproduction</strong>: Create offspring through crossover and mutation</li>
- * <li><strong>Replacement</strong>: Integrate offspring into next generation</li>
- * <li><strong>Termination check</strong>: Determine if stopping criteria are met</li>
- * <li><strong>Iteration</strong>: Repeat until termination conditions are satisfied</li>
+ * <li><strong>Initialization</strong>: Generate initial population of random
+ * genotypes</li>
+ * <li><strong>Evaluation</strong>: Compute fitness values for all
+ * individuals</li>
+ * <li><strong>Selection</strong>: Choose parents for reproduction based on
+ * fitness</li>
+ * <li><strong>Reproduction</strong>: Create offspring through crossover and
+ * mutation</li>
+ * <li><strong>Replacement</strong>: Integrate offspring into next
+ * generation</li>
+ * <li><strong>Termination check</strong>: Determine if stopping criteria are
+ * met</li>
+ * <li><strong>Iteration</strong>: Repeat until termination conditions are
+ * satisfied</li>
  * </ol>
  * 
- * <p>Key responsibilities include:
+ * <p>
+ * Key responsibilities include:
  * <ul>
- * <li><strong>Population management</strong>: Maintaining population size and diversity</li>
- * <li><strong>Genetic operator coordination</strong>: Applying crossover, mutation, and selection</li>
- * <li><strong>Fitness evaluation orchestration</strong>: Managing parallel and synchronous evaluation</li>
- * <li><strong>Evolution monitoring</strong>: Providing hooks for logging and progress tracking</li>
- * <li><strong>Resource management</strong>: Efficient memory usage and computation distribution</li>
+ * <li><strong>Population management</strong>: Maintaining population size and
+ * diversity</li>
+ * <li><strong>Genetic operator coordination</strong>: Applying crossover,
+ * mutation, and selection</li>
+ * <li><strong>Fitness evaluation orchestration</strong>: Managing parallel and
+ * synchronous evaluation</li>
+ * <li><strong>Evolution monitoring</strong>: Providing hooks for logging and
+ * progress tracking</li>
+ * <li><strong>Resource management</strong>: Efficient memory usage and
+ * computation distribution</li>
  * </ul>
  * 
- * <p>Configuration components:
+ * <p>
+ * Configuration components:
  * <ul>
- * <li><strong>EAConfiguration</strong>: Defines genetic representation and operator policies</li>
- * <li><strong>EAExecutionContext</strong>: Provides runtime services and factory implementations</li>
- * <li><strong>FitnessEvaluator</strong>: Computes quality measures for candidate solutions</li>
- * <li><strong>Termination criteria</strong>: Determines when to stop evolution</li>
+ * <li><strong>EAConfiguration</strong>: Defines genetic representation and
+ * operator policies</li>
+ * <li><strong>EAExecutionContext</strong>: Provides runtime services and
+ * factory implementations</li>
+ * <li><strong>FitnessEvaluator</strong>: Computes quality measures for
+ * candidate solutions</li>
+ * <li><strong>Termination criteria</strong>: Determines when to stop
+ * evolution</li>
  * </ul>
  * 
- * <p>The system supports various evolutionary paradigms:
+ * <p>
+ * The system supports various evolutionary paradigms:
  * <ul>
- * <li><strong>Genetic Algorithms</strong>: Traditional binary and real-valued optimization</li>
- * <li><strong>Genetic Programming</strong>: Evolution of tree-structured programs</li>
- * <li><strong>Evolution Strategies</strong>: Real-valued optimization with adaptive parameters</li>
- * <li><strong>Multi-objective optimization</strong>: Pareto-based optimization with multiple objectives</li>
+ * <li><strong>Genetic Algorithms</strong>: Traditional binary and real-valued
+ * optimization</li>
+ * <li><strong>Genetic Programming</strong>: Evolution of tree-structured
+ * programs</li>
+ * <li><strong>Evolution Strategies</strong>: Real-valued optimization with
+ * adaptive parameters</li>
+ * <li><strong>Multi-objective optimization</strong>: Pareto-based optimization
+ * with multiple objectives</li>
  * </ul>
  * 
- * <p>Example usage:
+ * <p>
+ * Example usage:
+ * 
  * <pre>{@code
  * // Configure the evolutionary algorithm
  * EAConfiguration<Double> config = EAConfigurationBuilder.<Double>builder()
@@ -95,11 +126,15 @@ import net.bmahe.genetics4j.core.util.GenotypeGenerator;
  * );
  * }</pre>
  * 
- * <p>Thread safety: EASystem instances are generally not thread-safe and should not be shared
- * between multiple threads without external synchronization. However, the system supports
+ * <p>
+ * Thread safety: EASystem instances are generally not thread-safe and should
+ * not be shared
+ * between multiple threads without external synchronization. However, the
+ * system supports
  * parallel fitness evaluation internally when configured appropriately.
  * 
- * @param <T> the type of fitness values, must be comparable for selection and ranking
+ * @param <T> the type of fitness values, must be comparable for selection and
+ *            ranking
  * @see EASystemFactory
  * @see net.bmahe.genetics4j.core.spec.EAConfiguration
  * @see net.bmahe.genetics4j.core.spec.EAExecutionContext
@@ -270,14 +305,44 @@ public class EASystem<T extends Comparable<T>> {
 		return offsprings;
 	}
 
+	/**
+	 * Gets the evolutionary algorithm configuration used by this system.
+	 * 
+	 * @return the EA configuration containing genetic operators, chromosome specs,
+	 *         and evolutionary parameters
+	 */
 	public AbstractEAConfiguration<T> getEAConfiguration() {
 		return eaConfiguration;
 	}
 
+	/**
+	 * Gets the target population size for each generation.
+	 * 
+	 * @return the population size as configured for this evolutionary system
+	 */
 	public long getPopulationSize() {
 		return populationSize;
 	}
 
+	/**
+	 * Creates offspring from the given population through selection, crossover, and
+	 * mutation.
+	 * 
+	 * <p>
+	 * This method orchestrates the reproductive process by:
+	 * <ol>
+	 * <li>Selecting parents from the population using the configured selection
+	 * strategy</li>
+	 * <li>Applying crossover operations to generate basic offspring</li>
+	 * <li>Applying mutation operators to introduce genetic variation</li>
+	 * </ol>
+	 * 
+	 * @param population       the current population to select parents from
+	 * @param offspringsNeeded the number of offspring to generate
+	 * @return a list of mutated offspring genotypes
+	 * @throws NullPointerException     if population is null
+	 * @throws IllegalArgumentException if offspringsNeeded is not positive
+	 */
 	public List<Genotype> createOffsprings(final Population<T> population, final int offspringsNeeded) {
 		Objects.requireNonNull(population);
 		Validate.isTrue(offspringsNeeded > 0);
@@ -292,9 +357,28 @@ public class EASystem<T extends Comparable<T>> {
 	}
 
 	/**
-	 * Triggers the evolutionary process
+	 * Executes the complete evolutionary algorithm process until termination
+	 * criteria are met.
 	 * 
-	 * @return
+	 * <p>
+	 * This is the main entry point for running evolution. The method manages the
+	 * entire
+	 * evolutionary cycle including:
+	 * <ul>
+	 * <li>Initial population generation and evaluation</li>
+	 * <li>Iterative evolution through selection, reproduction, and replacement</li>
+	 * <li>Progress monitoring via evolution listeners</li>
+	 * <li>Termination condition checking</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * The evolution process continues until the configured termination criteria
+	 * (e.g., maximum generations, target fitness, convergence) are satisfied.
+	 * 
+	 * @return an EvolutionResult containing the final population, fitness values,
+	 *         generation count, and configuration details
+	 * @see Termination
+	 * @see EvolutionResult
 	 */
 	public EvolutionResult<T> evolve() {
 		final Termination<T> termination = eaConfiguration.termination();
@@ -375,6 +459,32 @@ public class EASystem<T extends Comparable<T>> {
 				.of(eaConfiguration, generation, population.getAllGenotypes(), population.getAllFitnesses());
 	}
 
+	/**
+	 * Evaluates a collection of genotypes once without running the full
+	 * evolutionary process.
+	 * 
+	 * <p>
+	 * This method provides a way to evaluate genotypes using the configured fitness
+	 * evaluator
+	 * without executing the complete evolutionary algorithm. It handles the
+	 * pre/post evaluation
+	 * lifecycle and notifies evolution listeners of the results.
+	 * 
+	 * <p>
+	 * Useful for:
+	 * <ul>
+	 * <li>Testing fitness functions with specific genotypes</li>
+	 * <li>Evaluating externally generated populations</li>
+	 * <li>Batch evaluation scenarios</li>
+	 * </ul>
+	 * 
+	 * @param generation the generation number for logging and listener notification
+	 * @param genotypes  the list of genotypes to evaluate
+	 * @return a list of fitness values corresponding to the input genotypes
+	 * @throws IllegalArgumentException if generation is negative or genotypes is
+	 *                                  empty
+	 * @throws NullPointerException     if genotypes is null
+	 */
 	public List<T> evaluateOnce(final long generation, final List<Genotype> genotypes) {
 		Validate.isTrue(generation >= 0);
 		Objects.requireNonNull(genotypes);
